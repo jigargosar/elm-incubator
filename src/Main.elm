@@ -79,18 +79,23 @@ update message model =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Browser.Events.onClick
-            (pathDomIdsDecoder
-                |> JD.map
-                    (\pathIds ->
-                        let
-                            _ =
-                                Debug.log "pathIds1" pathIds
-                        in
-                        NoOp
-                    )
-            )
+        [ onClickOutside siDomId (ShowResults False)
         ]
+
+
+onClickOutside : String -> msg -> Sub msg
+onClickOutside domId msg =
+    Browser.Events.onClick
+        (pathDomIdsDecoder
+            |> JD.andThen
+                (\pathIds ->
+                    if List.member domId pathIds then
+                        JD.fail "inside"
+
+                    else
+                        JD.succeed msg
+                )
+        )
 
 
 nonEmpty : String -> Maybe String
