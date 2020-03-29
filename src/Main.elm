@@ -86,24 +86,11 @@ viewSearch (SI v _) =
         showResults =
             True
     in
-    div
-        [ class "pv2 ph3"
-        , class "ba b--moon-gray "
-        , class "fw-b--transparent fw-shadow-1"
-        , class "flex flex-column"
-        , if showResults then
-            style "border-radius" "1.25rem"
+    if showResults then
+        viewSearchWithResults v
 
-          else
-            class "br-pill"
-        ]
-        [ viewIP v
-        , if showResults then
-            div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
-
-          else
-            text ""
-        ]
+    else
+        viewSearchWithResults v
 
 
 viewSearchWithResults v =
