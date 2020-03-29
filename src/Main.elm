@@ -144,13 +144,13 @@ viewIP v =
         , onFocus (ShowResults True)
         , autofocus True
         , Html.Events.preventDefaultOn "keydown"
-            (JD.andThen ipKeyDownDispatcher keyDecoder)
+            (JD.andThen sipKeyDownDispatcher keyDecoder)
         ]
         []
 
 
-ipKeyDownDispatcher : String -> Decoder ( Msg, Bool )
-ipKeyDownDispatcher key =
+sipKeyDownDispatcher : String -> Decoder ( Msg, Bool )
+sipKeyDownDispatcher key =
     case key of
         "Escape" ->
             JD.succeed ( ShowResults False, False )
