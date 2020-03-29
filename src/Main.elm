@@ -134,22 +134,22 @@ viewIP v =
         , value v
         , onFocus (ShowResults True)
         , autofocus True
-        , Html.Events.on "keydown"
+        , Html.Events.preventDefaultOn "keydown"
             (keyDecoder
                 |> JD.andThen
                     (\key ->
                         case key of
                             "Escape" ->
-                                JD.succeed (ShowResults False)
+                                JD.succeed ( ShowResults False, False )
 
                             "Tab" ->
-                                JD.succeed (ShowResults False)
+                                JD.succeed ( ShowResults False, False )
 
                             "ArrowUp" ->
-                                JD.succeed SIUp
+                                JD.succeed ( SIUp, True )
 
                             "ArrowDown" ->
-                                JD.succeed SIDown
+                                JD.succeed ( SIDown, True )
 
                             _ ->
                                 JD.fail "nah!"
