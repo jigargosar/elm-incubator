@@ -125,7 +125,6 @@ viewIP v =
         , class "lh-title flex-auto"
         , value v
         , onFocus (ShowResults True)
-        , onBlur (ShowResults False)
         , autofocus True
         ]
         []
