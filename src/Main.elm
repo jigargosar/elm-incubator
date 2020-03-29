@@ -37,7 +37,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( Model (SI "" False)
+    ( Model (SI "foo bar" False)
     , Cmd.none
     )
 
