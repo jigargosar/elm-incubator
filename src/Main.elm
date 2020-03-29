@@ -65,17 +65,20 @@ subscriptions _ =
 view : Model -> Html Msg
 view _ =
     div [ class "measure-wide center" ]
-        [ div
-            [ class "pv2 ph3"
-            , class "ba br-pill b--moon-gray "
-            , class "fw-b--transparent fw-shadow-1"
-            , class "flex"
+        []
+
+
+searchInput =
+    div
+        [ class "pv2 ph3"
+        , class "ba br-pill b--moon-gray "
+        , class "fw-b--transparent fw-shadow-1"
+        , class "flex"
+        ]
+        [ input
+            [ class "bg-transparent bn outline-0"
+            , class "lh-title flex-auto"
+            , autofocus True
             ]
-            [ input
-                [ class "bg-transparent bn outline-0"
-                , class "lh-title flex-auto"
-                , autofocus True
-                ]
-                []
-            ]
+            []
         ]
