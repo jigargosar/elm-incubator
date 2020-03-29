@@ -1,8 +1,8 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, input, text)
+import Html.Attributes exposing (autofocus, class)
 
 
 
@@ -65,4 +65,16 @@ subscriptions _ =
 view : Model -> Html Msg
 view _ =
     div [ class "measure-wide center" ]
-        [ text "HI" ]
+        [ div
+            [ class "pv2 ph3"
+            , class "ba br-pill b--silver"
+            , class "flex"
+            ]
+            [ input
+                [ class "bg-transparent bn outline-0"
+                , class "flex-auto"
+                , autofocus True
+                ]
+                []
+            ]
+        ]
