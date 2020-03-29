@@ -67,7 +67,8 @@ view _ =
     div [ class "measure-wide center" ]
         [ div
             [ class "pv2 ph3"
-            , class "ba br-pill b--silver"
+            , class "ba br-pill b--moon-gray "
+            , class "fw-b--transparent fw-shadow-1"
             , class "flex"
             ]
             [ input
