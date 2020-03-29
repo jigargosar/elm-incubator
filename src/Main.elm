@@ -98,12 +98,12 @@ view (Model si) =
         ]
 
 
-viewSearch (SI v showResults) =
+viewSearch (SI qs showResults) =
     if showResults then
-        viewSearchWithResults v
+        viewSearchWithResults qs
 
     else
-        viewSearchSimple v
+        viewSearchSimple qs
 
 
 siDomId =
