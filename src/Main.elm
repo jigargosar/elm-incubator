@@ -90,47 +90,7 @@ subscriptions _ =
                         NoOp
                     )
             )
-        , Browser.Events.onClick
-            (JD.field "path" (JD.list JD.value)
-                |> JD.andThen decodePathList
-                |> JD.map
-                    (\pathIds ->
-                        let
-                            _ =
-                                Debug.log "pathIds2" pathIds
-                        in
-                        NoOp
-                    )
-            )
         ]
-
-
-decodePathList : List JD.Value -> Decoder (List String)
-decodePathList es =
-    let
-        res =
-            List.foldl
-                (\e l ->
-                    case JD.decodeValue domIdDecoder e of
-                        Err err ->
-                            let
-                                _ =
-                                    Debug.log "errzz" err
-                            in
-                            l
-
-                        Ok ei ->
-                            ei :: l
-                )
-                []
-                es
-    in
-    JD.succeed res
-
-
-domIdDecoder : Decoder String
-domIdDecoder =
-    JD.field "id" JD.string
 
 
 nonEmpty : String -> Maybe String
