@@ -114,7 +114,7 @@ viewSearchWithResults v =
         , class "flex flex-column"
         , style "border-radius" "1.25rem"
         ]
-        [ viewIP v
+        [ viewSIP v
         , div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
         ]
 
@@ -128,7 +128,7 @@ viewSearchSimple v =
         , class "flex flex-column"
         , class "br-pill"
         ]
-        [ viewIP v
+        [ viewSIP v
         ]
 
 
@@ -136,7 +136,7 @@ viewRI t =
     div [ class "f5 lh-title ttc" ] [ text t ]
 
 
-viewIP v =
+viewSIP v =
     input
         [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
