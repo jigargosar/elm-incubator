@@ -117,7 +117,9 @@ pathDomIdsDecoder =
                 |> JD.map (Maybe.andThen nonEmpty)
     in
     JD.field "path"
-        (JD.list nonEmptyDomIdDecoder |> JD.map (List.filterMap identity))
+        (JD.list nonEmptyDomIdDecoder
+            |> JD.map (List.filterMap identity)
+        )
 
 
 
