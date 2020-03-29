@@ -85,17 +85,16 @@ subscriptions _ =
 
 onClickOutside : String -> msg -> Sub msg
 onClickOutside domId msg =
-    Browser.Events.onClick
-        (pathDomIdsDecoder
-            |> JD.andThen
-                (\pathIds ->
-                    if List.member domId pathIds then
-                        JD.fail "inside"
+    let
+        func pathIds =
+            if List.member domId pathIds then
+                JD.fail "inside"
 
-                    else
-                        JD.succeed msg
-                )
-        )
+            else
+                JD.succeed msg
+    in
+    Browser.Events.onClick
+        (JD.andThen func pathDomIdsDecoder)
 
 
 pathDomIdsDecoder : Decoder (List String)
