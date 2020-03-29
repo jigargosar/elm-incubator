@@ -81,14 +81,18 @@ view (Model si) =
         ]
 
 
-viewSearch (SI v showResults) =
+viewSearch (SI v _) =
+    let
+        showResults =
+            True
+    in
     div
         [ class "pv2 ph3"
         , class "ba b--moon-gray "
         , class "fw-b--transparent fw-shadow-1"
         , class "flex flex-column"
         , if showResults then
-            style "border-radius" "1.5rem"
+            style "border-radius" "1.25rem"
 
           else
             class "br-pill"
@@ -99,6 +103,31 @@ viewSearch (SI v showResults) =
 
           else
             text ""
+        ]
+
+
+viewSearchWithResults v =
+    div
+        [ class "pv2 ph3"
+        , class "ba b--moon-gray "
+        , class "fw-b--transparent fw-shadow-1"
+        , class "flex flex-column"
+        , style "border-radius" "1.25rem"
+        ]
+        [ viewIP v
+        , div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
+        ]
+
+
+viewSearchWithoutResults v =
+    div
+        [ class "pv2 ph3"
+        , class "ba b--moon-gray "
+        , class "fw-b--transparent fw-shadow-1"
+        , class "flex flex-column"
+        , class "br-pill"
+        ]
+        [ viewIP v
         ]
 
 
