@@ -98,6 +98,22 @@ onClickOutside domId msg =
         )
 
 
+pathDomIdsDecoder : Decoder (List String)
+pathDomIdsDecoder =
+    let
+        nonEmptyDomIdDecoder : Decoder (Maybe String)
+        nonEmptyDomIdDecoder =
+            JD.oneOf
+                [ JD.field "id" (JD.map nonEmpty JD.string)
+                , JD.succeed Nothing
+                ]
+    in
+    JD.field "path"
+        (JD.list nonEmptyDomIdDecoder
+            |> JD.map (List.filterMap identity)
+        )
+
+
 nonEmpty : String -> Maybe String
 nonEmpty s =
     case s of
@@ -106,20 +122,6 @@ nonEmpty s =
 
         _ ->
             Just s
-
-
-pathDomIdsDecoder : Decoder (List String)
-pathDomIdsDecoder =
-    let
-        nonEmptyDomIdDecoder : Decoder (Maybe String)
-        nonEmptyDomIdDecoder =
-            JD.maybe (JD.field "id" JD.string)
-                |> JD.map (Maybe.andThen nonEmpty)
-    in
-    JD.field "path"
-        (JD.list nonEmptyDomIdDecoder
-            |> JD.map (List.filterMap identity)
-        )
 
 
 
