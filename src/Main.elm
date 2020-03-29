@@ -1,7 +1,5 @@
 module Main exposing (main)
 
--- Browser.Element Scaffold
-
 import Browser
 import Html exposing (Html, text)
 
