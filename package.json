@@ -1,7 +1,7 @@
 {
-  "name": "elm-template",
+  "name": "elm-incubator",
   "version": "1.0.0",
-  "description": "Elm Template",
+  "description": "Elm Incubator",
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack -p"
