@@ -99,9 +99,14 @@ viewSearch (SI v showResults) =
         viewSearchSimple v
 
 
+siDomId =
+    "si-dom-id"
+
+
 viewSearchWithResults v =
     div
-        [ class "pv2 ph3"
+        [ Html.Attributes.id siDomId
+        , class "pv2 ph3"
         , class "ba b--transparent shadow-1"
         , class "flex flex-column"
         , style "border-radius" "1.25rem"
@@ -113,7 +118,8 @@ viewSearchWithResults v =
 
 viewSearchSimple v =
     div
-        [ class "pv2 ph3"
+        [ Html.Attributes.id siDomId
+        , class "pv2 ph3"
         , class "ba b--moon-gray "
         , class "fw-b--transparent fw-shadow-1"
         , class "flex flex-column"
