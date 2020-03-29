@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (Html, div, input, text)
-import Html.Attributes exposing (autofocus, class)
+import Html.Attributes exposing (autofocus, class, value)
 
 
 
@@ -65,11 +65,11 @@ subscriptions _ =
 view : Model -> Html Msg
 view _ =
     div [ class "measure-wide center" ]
-        [ searchInput
+        [ searchInput { af = True, v = "Jigar Gosar" }
         ]
 
 
-searchInput =
+searchInput c =
     div
         [ class "pv2 ph3"
         , class "ba br-pill b--moon-gray "
@@ -79,7 +79,8 @@ searchInput =
         [ input
             [ class "bg-transparent bn outline-0"
             , class "lh-title flex-auto"
-            , autofocus True
+            , autofocus c.af
+            , value c.v
             ]
             []
         ]
