@@ -65,7 +65,8 @@ subscriptions _ =
 view : Model -> Html Msg
 view _ =
     div [ class "measure-wide center" ]
-        []
+        [ searchInput
+        ]
 
 
 searchInput =
