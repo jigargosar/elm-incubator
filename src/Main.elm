@@ -93,8 +93,7 @@ viewSearch (SI v showResults) =
 viewSearchWithResults v =
     div
         [ class "pv2 ph3"
-        , class "ba b--moon-gray "
-        , class "fw-b--transparent fw-shadow-1"
+        , class "ba b--transparent shadow-1"
         , class "flex flex-column"
         , style "border-radius" "1.25rem"
         ]
