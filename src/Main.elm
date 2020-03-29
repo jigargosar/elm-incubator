@@ -144,7 +144,7 @@ viewIP v =
         , onFocus (ShowResults True)
         , autofocus True
         , Html.Events.preventDefaultOn "keydown"
-            (keyDecoder |> JD.andThen ipKeyDownDispatcher)
+            (JD.andThen ipKeyDownDispatcher keyDecoder)
         ]
         []
 
