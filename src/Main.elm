@@ -149,13 +149,13 @@ viewSIP v =
         , onInput QChanged
         , value v
         , Html.Events.preventDefaultOn "keydown"
-            (JD.andThen sipKeyDownDispatcher keyDecoder)
+            (JD.andThen inputDispatcher keyDecoder)
         ]
         []
 
 
-sipKeyDownDispatcher : String -> Decoder ( Msg, Bool )
-sipKeyDownDispatcher key =
+inputDispatcher : String -> Decoder ( Msg, Bool )
+inputDispatcher key =
     case key of
         "Escape" ->
             JD.succeed ( ShowResults False, False )
