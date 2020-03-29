@@ -88,11 +88,14 @@ viewSearch (SI v showResults) =
         , class "fw-b--transparent fw-shadow-1"
         , class "flex"
         ]
-        [ input
-            [ class "bg-transparent bn outline-0"
-            , class "lh-title flex-auto"
-            , value v
-            , autofocus True
-            ]
-            []
+        [ viewIP v ]
+
+
+viewIP v =
+    input
+        [ class "bg-transparent bn outline-0"
+        , class "lh-title flex-auto"
+        , value v
+        , autofocus True
         ]
+        []
