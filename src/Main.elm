@@ -52,7 +52,7 @@ init _ =
 type Msg
     = NoOp
     | ShowResults Bool
-    | QueryChanged String
+    | QChanged String
     | QCursorUp
     | QCursorDown
 
@@ -68,7 +68,7 @@ update message ((Model (SI qs sr)) as model) =
             , Cmd.none
             )
 
-        QueryChanged nqs ->
+        QChanged nqs ->
             ( Model (SI nqs sr)
             , Cmd.none
             )
@@ -146,7 +146,7 @@ viewSIP v =
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus (ShowResults True)
-        , onInput QueryChanged
+        , onInput QChanged
         , value v
         , Html.Events.preventDefaultOn "keydown"
             (JD.andThen sipKeyDownDispatcher keyDecoder)
