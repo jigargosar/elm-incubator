@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, text)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
 
 
 
@@ -63,4 +64,5 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view _ =
-    text "Hi"
+    div [ class "measure-wide center" ]
+        [ text "HI" ]
