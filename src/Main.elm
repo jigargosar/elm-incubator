@@ -65,7 +65,7 @@ subscriptions _ =
 view : Model -> Html Msg
 view _ =
     div [ class "pt4 measure-wide center" ]
-        [ searchInput { af = True, v = "Jigar Gosar" }
+        [ searchInput { ia = [ autofocus True, value "Jigar Gosar" ] }
         ]
 
 
@@ -77,10 +77,9 @@ searchInput c =
         , class "flex"
         ]
         [ input
-            [ class "bg-transparent bn outline-0"
-            , class "lh-title flex-auto"
-            , autofocus c.af
-            , value c.v
-            ]
+            (class "bg-transparent bn outline-0"
+                :: class "lh-title flex-auto"
+                :: c.ia
+            )
             []
         ]
