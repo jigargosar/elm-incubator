@@ -1,9 +1,26 @@
-import { pathOr } from 'ramda'
+import { pathOr, zipObj } from 'ramda'
 
 require('./styles.css')
 require('tachyons')
 
+function Cache(keys) {
+  return {
+    onCacheKV: ([key, val]) => {
+      if (keys.includes(key)) {
+        localStorage.setItem(key, JSON.stringify(val))
+      } else {
+        console.error('Invalid Cache Key:', key, 'validKeys:', keys)
+      }
+    },
+    getAll: () => {
+      const getParsed = key => parseTruthyOrNull(localStorage.getItem(key))
+      return zipObj(keys, keys.map(getParsed))
+    },
+  }
+}
+
 {
+  const cache = Cache([])
   const [app, subscribe] = initElmModuleWithPortHelpers(
     {
       node: document.getElementById('root'),
@@ -14,12 +31,7 @@ require('tachyons')
           window.innerWidth - document.body.clientWidth,
           window.innerHeight - document.body.clientHeight,
         ],
-        oz: JSON.parse(localStorage.getItem('oz')) || null,
-        logDict: JSON.parse(localStorage.getItem('logDict') || '{}'),
-        projectDict: JSON.parse(
-          localStorage.getItem('projectDict') || '{}',
-        ),
-        changes: JSON.parse(localStorage.getItem('changes') || null),
+        cache: cache.getAll(),
       },
     },
     require('./Main.elm'),
@@ -32,7 +44,7 @@ require('tachyons')
   })
 
   subscribe('saveOZ', function(oz) {
-    localStorage.setItem("oz", JSON.stringify(oz))
+    localStorage.setItem('oz', JSON.stringify(oz))
   })
 
   function beaconData(elem) {
@@ -96,4 +108,20 @@ function initElmModuleWithPortHelpers(initParams, module) {
   }
 
   return [app, subscribe]
+}
+
+function parseTruthyOrNull(str) {
+  try {
+    return JSON.parse(str) || null
+  } catch (e) {
+    return null
+  }
+}
+
+function fromKeys(kfn) {
+  return fromKeysC1
+
+  function fromKeysC1(ks) {
+    return zipObj(ks, ks.map(kfn))
+  }
 }
