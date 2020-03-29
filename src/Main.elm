@@ -83,6 +83,10 @@ subscriptions _ =
         ]
 
 
+
+-- ON CLICK OUTSIDE HELPERS
+
+
 onClickOutside : String -> msg -> Sub msg
 onClickOutside domId msg =
     let
