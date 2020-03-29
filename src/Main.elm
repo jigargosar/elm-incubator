@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (Html, div, input, text)
-import Html.Attributes exposing (autofocus, class, value)
+import Html.Attributes exposing (autofocus, class, style, value)
 
 
 
@@ -84,11 +84,26 @@ view (Model si) =
 viewSearch (SI v showResults) =
     div
         [ class "pv2 ph3"
-        , class "ba br-pill b--moon-gray "
+        , class "ba b--moon-gray "
         , class "fw-b--transparent fw-shadow-1"
-        , class "flex"
+        , class "flex flex-column"
+        , if showResults then
+            style "border-radius" "1.5rem"
+
+          else
+            class "br-pill"
         ]
-        [ viewIP v ]
+        [ viewIP v
+        , if showResults then
+            div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
+
+          else
+            text ""
+        ]
+
+
+viewRI t =
+    div [ class "f5 lh-title ttc" ] [ text t ]
 
 
 viewIP v =
