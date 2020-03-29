@@ -51,6 +51,8 @@ init _ =
 type Msg
     = NoOp
     | ShowResults Bool
+    | SIUp
+    | SIDown
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -65,6 +67,12 @@ update message model =
                     Model (SI v showResults)
             , Cmd.none
             )
+
+        SIUp ->
+            ( model, Cmd.none )
+
+        SIDown ->
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -136,6 +144,12 @@ viewIP v =
 
                             "Tab" ->
                                 JD.succeed (ShowResults False)
+
+                            "ArrowUp" ->
+                                JD.succeed SIUp
+
+                            "ArrowDown" ->
+                                JD.succeed SIDown
 
                             _ ->
                                 JD.fail "nah!"
