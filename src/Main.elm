@@ -99,18 +99,18 @@ onClickOutside domId msg =
 
 pathDomIdsDecoder : Decoder (List String)
 pathDomIdsDecoder =
-    let
-        maybeIdDecoder : Decoder (Maybe String)
-        maybeIdDecoder =
-            JD.oneOf
-                [ JD.field "id" (JD.map nonEmpty JD.string)
-                , JD.succeed Nothing
-                ]
-    in
     JD.field "path"
-        (JD.list maybeIdDecoder
+        (JD.list maybeDomIdDecoder
             |> JD.map (List.filterMap identity)
         )
+
+
+maybeDomIdDecoder : Decoder (Maybe String)
+maybeDomIdDecoder =
+    JD.oneOf
+        [ JD.field "id" (JD.map nonEmpty JD.string)
+        , JD.succeed Nothing
+        ]
 
 
 nonEmpty : String -> Maybe String
