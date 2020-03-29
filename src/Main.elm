@@ -110,7 +110,7 @@ siDomId =
     "si-dom-id"
 
 
-viewSearchWithResults v =
+viewSearchWithResults qs =
     div
         [ Html.Attributes.id siDomId
         , class "pv2 ph3"
@@ -118,12 +118,12 @@ viewSearchWithResults v =
         , class "flex flex-column"
         , style "border-radius" "1.25rem"
         ]
-        [ viewSIP v
+        [ viewSearchInput qs
         , div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
         ]
 
 
-viewSearchSimple v =
+viewSearchSimple qs =
     div
         [ Html.Attributes.id siDomId
         , class "pv2 ph3"
@@ -132,7 +132,7 @@ viewSearchSimple v =
         , class "flex flex-column"
         , class "br-pill"
         ]
-        [ viewSIP v
+        [ viewSearchInput qs
         ]
 
 
@@ -140,22 +140,22 @@ viewRI t =
     div [ class "f5 lh-title ttc" ] [ text t ]
 
 
-viewSIP v =
+viewSearchInput qs =
     input
         [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus (ShowResults True)
         , onInput QChanged
-        , value v
+        , value qs
         , Html.Events.preventDefaultOn "keydown"
-            (JD.andThen inputDispatcher keyDecoder)
+            (JD.andThen keyDownDispatcher keyDecoder)
         ]
         []
 
 
-inputDispatcher : String -> Decoder ( Msg, Bool )
-inputDispatcher key =
+keyDownDispatcher : String -> Decoder ( Msg, Bool )
+keyDownDispatcher key =
     case key of
         "Escape" ->
             JD.succeed ( ShowResults False, False )
