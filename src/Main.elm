@@ -73,7 +73,7 @@ view _ =
             ]
             [ input
                 [ class "bg-transparent bn outline-0"
-                , class "flex-auto"
+                , class "lh-title flex-auto"
                 , autofocus True
                 ]
                 []
