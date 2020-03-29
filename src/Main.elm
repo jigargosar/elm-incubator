@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (autofocus, class, style, value)
+import Html.Events exposing (onBlur, onFocus)
 
 
 
@@ -48,7 +49,7 @@ init _ =
 
 type Msg
     = NoOp
-    | OnSIFocusChange Bool
+    | ShowResults Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -57,10 +58,10 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        OnSIFocusChange isFocused ->
+        ShowResults showResults ->
             ( case model of
                 Model (SI v _) ->
-                    Model (SI v isFocused)
+                    Model (SI v showResults)
             , Cmd.none
             )
 
@@ -81,16 +82,12 @@ view (Model si) =
         ]
 
 
-viewSearch (SI v _) =
-    let
-        showResults =
-            True
-    in
+viewSearch (SI v showResults) =
     if showResults then
         viewSearchWithResults v
 
     else
-        viewSearchWithResults v
+        viewSearchSimple v
 
 
 viewSearchWithResults v =
@@ -106,7 +103,7 @@ viewSearchWithResults v =
         ]
 
 
-viewSearchWithoutResults v =
+viewSearchSimple v =
     div
         [ class "pv2 ph3"
         , class "ba b--moon-gray "
@@ -127,6 +124,8 @@ viewIP v =
         [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , value v
+        , onFocus (ShowResults True)
+        , onBlur (ShowResults False)
         , autofocus True
         ]
         []
