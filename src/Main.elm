@@ -101,15 +101,15 @@ onClickOutside domId msg =
 pathDomIdsDecoder : Decoder (List String)
 pathDomIdsDecoder =
     let
-        nonEmptyDomIdDecoder : Decoder (Maybe String)
-        nonEmptyDomIdDecoder =
+        maybeIdDecoder : Decoder (Maybe String)
+        maybeIdDecoder =
             JD.oneOf
                 [ JD.field "id" (JD.map nonEmpty JD.string)
                 , JD.succeed Nothing
                 ]
     in
     JD.field "path"
-        (JD.list nonEmptyDomIdDecoder
+        (JD.list maybeIdDecoder
             |> JD.map (List.filterMap identity)
         )
 
