@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (autofocus, class, style, value)
-import Html.Events exposing (onBlur, onFocus)
+import Html.Events exposing (onFocus)
 import Json.Decode as JD exposing (Decoder)
 
 
@@ -80,12 +80,12 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onClick
-            (pathIdsDecoder
+            (pathDomIdsDecoder
                 |> JD.map
                     (\pathIds ->
                         let
                             _ =
-                                Debug.log "pathIds" pathIds
+                                Debug.log "pathIds1" pathIds
                         in
                         NoOp
                     )
@@ -97,7 +97,7 @@ subscriptions _ =
                     (\pathIds ->
                         let
                             _ =
-                                Debug.log "pathIds" pathIds
+                                Debug.log "pathIds2" pathIds
                         in
                         NoOp
                     )
@@ -105,37 +105,54 @@ subscriptions _ =
         ]
 
 
-decodePath pv =
-    case JD.decodeValue (JD.list domIdDecoder) pv of
-        Err e ->
-            JD.fail (JD.errorToString e)
-
-        Ok ok ->
-            JD.succeed ok
-
-
+decodePathList : List JD.Value -> Decoder (List String)
 decodePathList es =
-    case es of
-        f :: _ ->
-            case JD.decodeValue domIdDecoder f of
-                Err e ->
-                    JD.fail (JD.errorToString e)
+    let
+        res =
+            List.foldl
+                (\e l ->
+                    case JD.decodeValue domIdDecoder e of
+                        Err err ->
+                            let
+                                _ =
+                                    Debug.log "errzz" err
+                            in
+                            l
 
-                Ok ok ->
-                    JD.succeed ok
-
-        _ ->
-            JD.fail "bar"
+                        Ok ei ->
+                            ei :: l
+                )
+                []
+                es
+    in
+    JD.succeed res
 
 
 domIdDecoder : Decoder String
 domIdDecoder =
-    JD.map identity (JD.field "id" JD.string)
+    JD.field "id" JD.string
 
 
-pathIdsDecoder : Decoder (List String)
-pathIdsDecoder =
-    JD.field "path" (JD.list domIdDecoder)
+nonEmpty : String -> Maybe String
+nonEmpty s =
+    case s of
+        "" ->
+            Nothing
+
+        _ ->
+            Just s
+
+
+pathDomIdsDecoder : Decoder (List String)
+pathDomIdsDecoder =
+    let
+        nonEmptyDomIdDecoder : Decoder (Maybe String)
+        nonEmptyDomIdDecoder =
+            JD.maybe (JD.field "id" JD.string)
+                |> JD.map (Maybe.andThen nonEmpty)
+    in
+    JD.field "path"
+        (JD.list nonEmptyDomIdDecoder |> JD.map (List.filterMap identity))
 
 
 
