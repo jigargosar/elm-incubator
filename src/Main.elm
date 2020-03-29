@@ -64,7 +64,7 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view _ =
-    div [ class "measure-wide center" ]
+    div [ class "pt4 measure-wide center" ]
         [ searchInput { af = True, v = "Jigar Gosar" }
         ]
 
