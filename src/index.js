@@ -36,6 +36,7 @@ function Cache(keys) {
     },
     require('./Main.elm'),
   )
+
   if (hasPath(['ports', 'cacheKV', 'subscribe'], app)) {
     subscribe('cacheKV', cache.onCacheKV)
   }
