@@ -149,6 +149,7 @@ viewIP v =
         []
 
 
+pdOnSIKey : String -> Decoder ( Msg, Bool )
 pdOnSIKey key =
     case key of
         "Escape" ->
