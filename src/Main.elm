@@ -5,6 +5,20 @@ import Html exposing (Html, text)
 
 
 
+-- Main
+
+
+main : Program Flags Model Msg
+main =
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+
 -- Model
 
 
@@ -50,17 +64,3 @@ subscriptions _ =
 view : Model -> Html Msg
 view _ =
     text "Hi"
-
-
-
--- Main
-
-
-main : Program Flags Model Msg
-main =
-    Browser.element
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
