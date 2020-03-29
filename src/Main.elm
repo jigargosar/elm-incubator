@@ -84,50 +84,6 @@ subscriptions _ =
 
 
 
--- ON CLICK OUTSIDE HELPERS
-
-
-onClickOutside : String -> msg -> Sub msg
-onClickOutside domId msg =
-    let
-        func pathIds =
-            if List.member domId pathIds then
-                JD.fail "inside"
-
-            else
-                JD.succeed msg
-    in
-    Browser.Events.onClick
-        (JD.andThen func pathDomIdsDecoder)
-
-
-pathDomIdsDecoder : Decoder (List String)
-pathDomIdsDecoder =
-    JD.field "path"
-        (JD.list maybeDomIdDecoder
-            |> JD.map (List.filterMap identity)
-        )
-
-
-maybeDomIdDecoder : Decoder (Maybe String)
-maybeDomIdDecoder =
-    JD.oneOf
-        [ JD.field "id" (JD.map nonEmpty JD.string)
-        , JD.succeed Nothing
-        ]
-
-
-nonEmpty : String -> Maybe String
-nonEmpty s =
-    case s of
-        "" ->
-            Nothing
-
-        _ ->
-            Just s
-
-
-
 -- View
 
 
@@ -215,3 +171,47 @@ viewIP v =
 keyDecoder : Decoder String
 keyDecoder =
     JD.field "key" JD.string
+
+
+
+-- ON CLICK OUTSIDE SUB
+
+
+onClickOutside : String -> msg -> Sub msg
+onClickOutside domId msg =
+    let
+        func pathIds =
+            if List.member domId pathIds then
+                JD.fail "inside"
+
+            else
+                JD.succeed msg
+    in
+    Browser.Events.onClick
+        (JD.andThen func pathDomIdsDecoder)
+
+
+pathDomIdsDecoder : Decoder (List String)
+pathDomIdsDecoder =
+    JD.field "path"
+        (JD.list maybeDomIdDecoder
+            |> JD.map (List.filterMap identity)
+        )
+
+
+maybeDomIdDecoder : Decoder (Maybe String)
+maybeDomIdDecoder =
+    JD.oneOf
+        [ JD.field "id" (JD.map nonEmpty JD.string)
+        , JD.succeed Nothing
+        ]
+
+
+nonEmpty : String -> Maybe String
+nonEmpty s =
+    case s of
+        "" ->
+            Nothing
+
+        _ ->
+            Just s
