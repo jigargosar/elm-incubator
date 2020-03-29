@@ -53,8 +53,8 @@ type Msg
     = NoOp
     | ShowResults Bool
     | QueryChanged String
-    | SIUp
-    | SIDown
+    | QCursorUp
+    | QCursorDown
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -73,10 +73,10 @@ update message ((Model (SI qs sr)) as model) =
             , Cmd.none
             )
 
-        SIUp ->
+        QCursorUp ->
             ( model, Cmd.none )
 
-        SIDown ->
+        QCursorDown ->
             ( model, Cmd.none )
 
 
@@ -164,10 +164,10 @@ sipKeyDownDispatcher key =
             JD.succeed ( ShowResults False, False )
 
         "ArrowUp" ->
-            JD.succeed ( SIUp, True )
+            JD.succeed ( QCursorUp, True )
 
         "ArrowDown" ->
-            JD.succeed ( SIDown, True )
+            JD.succeed ( QCursorDown, True )
 
         _ ->
             JD.fail "nah!"
