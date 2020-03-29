@@ -4,6 +4,7 @@ import Browser
 import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (autofocus, class, style, value)
 import Html.Events exposing (onBlur, onFocus)
+import Json.Decode as JD exposing (Decoder)
 
 
 
@@ -125,5 +126,25 @@ viewIP v =
         , value v
         , onFocus (ShowResults True)
         , autofocus True
+        , Html.Events.on "keydown"
+            (keyDecoder
+                |> JD.andThen
+                    (\key ->
+                        case key of
+                            "Escape" ->
+                                JD.succeed (ShowResults False)
+
+                            "Tab" ->
+                                JD.succeed (ShowResults False)
+
+                            _ ->
+                                JD.fail "nah!"
+                    )
+            )
         ]
         []
+
+
+keyDecoder : Decoder String
+keyDecoder =
+    JD.field "key" JD.string
