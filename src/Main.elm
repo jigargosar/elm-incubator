@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events
 import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (autofocus, class, style, value)
 import Html.Events exposing (onBlur, onFocus)
@@ -77,7 +78,64 @@ update message model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch
+        [ Browser.Events.onClick
+            (pathIdsDecoder
+                |> JD.map
+                    (\pathIds ->
+                        let
+                            _ =
+                                Debug.log "pathIds" pathIds
+                        in
+                        NoOp
+                    )
+            )
+        , Browser.Events.onClick
+            (JD.field "path" (JD.list JD.value)
+                |> JD.andThen decodePathList
+                |> JD.map
+                    (\pathIds ->
+                        let
+                            _ =
+                                Debug.log "pathIds" pathIds
+                        in
+                        NoOp
+                    )
+            )
+        ]
+
+
+decodePath pv =
+    case JD.decodeValue (JD.list domIdDecoder) pv of
+        Err e ->
+            JD.fail (JD.errorToString e)
+
+        Ok ok ->
+            JD.succeed ok
+
+
+decodePathList es =
+    case es of
+        f :: _ ->
+            case JD.decodeValue domIdDecoder f of
+                Err e ->
+                    JD.fail (JD.errorToString e)
+
+                Ok ok ->
+                    JD.succeed ok
+
+        _ ->
+            JD.fail "bar"
+
+
+domIdDecoder : Decoder String
+domIdDecoder =
+    JD.map identity (JD.field "id" JD.string)
+
+
+pathIdsDecoder : Decoder (List String)
+pathIdsDecoder =
+    JD.field "path" (JD.list domIdDecoder)
 
 
 
