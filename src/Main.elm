@@ -23,8 +23,12 @@ main =
 -- Model
 
 
-type alias Model =
-    {}
+type Model
+    = Model SearchInput
+
+
+type SearchInput
+    = SI String Bool
 
 
 type alias Flags =
@@ -33,7 +37,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( {}
+    ( Model (SI "" False)
     , Cmd.none
     )
 
@@ -44,6 +48,7 @@ init _ =
 
 type Msg
     = NoOp
+    | OnSIFocusChange Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -51,6 +56,13 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        OnSIFocusChange isFocused ->
+            ( case model of
+                Model (SI v _) ->
+                    Model (SI v isFocused)
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
