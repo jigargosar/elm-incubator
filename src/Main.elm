@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (autofocus, class, style, value)
-import Html.Events exposing (onFocus)
+import Html.Events exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
 
@@ -52,20 +52,24 @@ init _ =
 type Msg
     = NoOp
     | ShowResults Bool
+    | QueryChanged String
     | SIUp
     | SIDown
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
+update message ((Model (SI qs sr)) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
-        ShowResults showResults ->
-            ( case model of
-                Model (SI v _) ->
-                    Model (SI v showResults)
+        ShowResults nsr ->
+            ( Model (SI qs nsr)
+            , Cmd.none
+            )
+
+        QueryChanged nqs ->
+            ( Model (SI nqs sr)
             , Cmd.none
             )
 
@@ -140,9 +144,10 @@ viewSIP v =
     input
         [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
-        , value v
-        , onFocus (ShowResults True)
         , autofocus True
+        , onFocus (ShowResults True)
+        , onInput QueryChanged
+        , value v
         , Html.Events.preventDefaultOn "keydown"
             (JD.andThen sipKeyDownDispatcher keyDecoder)
         ]
