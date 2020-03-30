@@ -175,8 +175,7 @@ viewRI t =
 viewSearchInput : Query -> HM
 viewSearchInput qs =
     input
-        [ A.id "si-dom-id"
-        , class "bg-transparent bn outline-0"
+        [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus QFocused
