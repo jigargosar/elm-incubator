@@ -189,6 +189,7 @@ viewSearchInput qs =
         []
 
 
+onBlurNotActive : msg -> Html.Attribute msg
 onBlurNotActive =
     onBlurActiveElementBody
 
