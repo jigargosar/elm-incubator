@@ -150,7 +150,7 @@ viewSearchWithResults qs =
         , class "flex flex-column"
         ]
         [ viewSearchInput qs
-        , div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
+        , div [] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
         ]
 
 
@@ -168,7 +168,7 @@ viewSearchSimple qs =
         ]
 
 
-viewRI t =
+viewResultItem t =
     div [ class "f5 lh-title ttc" ] [ text t ]
 
 
