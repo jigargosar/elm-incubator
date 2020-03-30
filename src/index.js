@@ -70,10 +70,3 @@ function parseTruthyOrNull(str) {
   }
 }
 
-function fromKeys(kfn) {
-  return fromKeysC1
-
-  function fromKeysC1(ks) {
-    return zipObj(ks, ks.map(kfn))
-  }
-}
