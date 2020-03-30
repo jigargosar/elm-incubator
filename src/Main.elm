@@ -178,9 +178,22 @@ viewSearchSimple qs =
 
 
 searchContainerAttrs =
-    [ E.on "focusout" (JD.at [ "relatedTarget", "id" ] JD.string |> JD.andThen logFail)
-    , E.on "focusout" (JD.at [ "relatedTarget" ] elDecoder |> JD.andThen logFail)
+    [ E.on "focusout" (JD.at [ "relatedTarget" ] elDecoder |> JD.andThen logFail)
     ]
+
+
+isElOutside : String -> El -> Bool
+isElOutside domId (El id mel) =
+    if id == domId then
+        False
+
+    else
+        case mel of
+            Nothing ->
+                True
+
+            Just el ->
+                isElOutside domId el
 
 
 type El
