@@ -181,12 +181,16 @@ viewSearchInput qs =
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
-        , onBlurActiveElementBody HideResults
+        , onFocusLost HideResults
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
         ]
         []
+
+
+onFocusLost =
+    onBlurActiveElementBody
 
 
 onBlurActiveElementBody : msg -> Html.Attribute msg
