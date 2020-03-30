@@ -51,7 +51,8 @@ init _ =
 
 type Msg
     = NoOp
-    | ShowResults Bool
+    | ShowResults
+    | HideResults
     | QChanged String
     | QCursorUp
     | QCursorDown
@@ -63,10 +64,11 @@ update message ((Model (SI qs sr)) as model) =
         NoOp ->
             ( model, Cmd.none )
 
-        ShowResults nsr ->
-            ( Model (SI qs nsr)
-            , Cmd.none
-            )
+        ShowResults ->
+            ( Model (SI qs True), Cmd.none )
+
+        HideResults ->
+            ( Model (SI qs False), Cmd.none )
 
         QChanged nqs ->
             ( Model (SI nqs sr)
@@ -83,7 +85,7 @@ update message ((Model (SI qs sr)) as model) =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ onClickOutside siDomId (ShowResults False)
+        [ onClickOutside siDomId HideResults
         ]
 
 
@@ -115,8 +117,8 @@ viewSearchWithResults qs =
         [ Html.Attributes.id siDomId
         , class "pv2 ph3"
         , class "ba b--transparent shadow-1"
-        , class "flex flex-column"
         , style "border-radius" "1.25rem"
+        , class "flex flex-column"
         ]
         [ viewSearchInput qs
         , div [] (List.map viewRI [ "result 1", "result 1", "result 1", "result 1" ])
@@ -129,8 +131,8 @@ viewSearchSimple qs =
         , class "pv2 ph3"
         , class "ba b--moon-gray "
         , class "fw-b--transparent fw-shadow-1"
-        , class "flex flex-column"
         , class "br-pill"
+        , class "flex flex-column"
         ]
         [ viewSearchInput qs
         ]
@@ -145,7 +147,7 @@ viewSearchInput qs =
         [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , autofocus True
-        , onFocus (ShowResults True)
+        , onFocus ShowResults
         , onInput QChanged
         , value qs
         , Html.Events.preventDefaultOn "keydown"
@@ -158,10 +160,10 @@ keyDownDispatcher : String -> Decoder ( Msg, Bool )
 keyDownDispatcher key =
     case key of
         "Escape" ->
-            JD.succeed ( ShowResults False, False )
+            JD.succeed ( HideResults, False )
 
         "Tab" ->
-            JD.succeed ( ShowResults False, False )
+            JD.succeed ( HideResults, False )
 
         "ArrowUp" ->
             JD.succeed ( QCursorUp, True )
