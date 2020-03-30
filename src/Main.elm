@@ -185,7 +185,6 @@ viewSearchInput qs =
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
-        , onBlurNotActive HideResults
         , onBlurActiveElementId
             (\aeId ->
                 if aeId == domId then
@@ -206,26 +205,6 @@ onBlurActiveElementId msg =
     E.on "blur"
         (JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
             |> JD.andThen msg
-        )
-
-
-onBlurNotActive : msg -> Html.Attribute msg
-onBlurNotActive =
-    onBlurActiveElementBody
-
-
-onBlurActiveElementBody : msg -> Html.Attribute msg
-onBlurActiveElementBody msg =
-    E.on "blur"
-        (JD.at [ "target", "ownerDocument", "activeElement", "tagName" ] JD.string
-            |> JD.andThen
-                (\aeTagName ->
-                    if aeTagName == "BODY" then
-                        JD.succeed msg
-
-                    else
-                        JD.fail "on blur not body, i.e. ae didn't change"
-                )
         )
 
 
