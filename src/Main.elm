@@ -181,7 +181,7 @@ viewSearchInput qs =
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
-        , E.on "blur" foo
+        , onBlurActiveElementBody HideResults
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
@@ -189,15 +189,31 @@ viewSearchInput qs =
         []
 
 
+onBlurActiveElementBody msg =
+    E.on "blur"
+        (JD.at [ "target", "ownerDocument", "activeElement", "tagName" ] JD.string
+            |> JD.andThen
+                (\aeTagName ->
+                    if aeTagName == "BODY" then
+                        JD.succeed msg
+
+                    else
+                        JD.fail "on blur not body, i.e. ae didn't change"
+                )
+        )
+
+
 foo =
-    JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
+    JD.map2 Tuple.pair
+        (JD.at [ "target", "tagName" ] JD.string)
+        (JD.at [ "target", "ownerDocument", "activeElement", "tagName" ] JD.string)
         |> JD.andThen logFail
 
 
-logFail v =
+logFail ( tid, aid ) =
     let
         _ =
-            Debug.log "v" v
+            Debug.log "v" ( tid, aid )
     in
     JD.fail ""
 
