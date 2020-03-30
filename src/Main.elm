@@ -180,10 +180,20 @@ viewSearchSimple qs =
 searchContainerAttrs =
     [ E.on "focusout"
         (JD.at [ "relatedTarget" ] elDecoder
-            |> JD.map (isElOutside siContainerDomId)
-            |> JD.andThen logFail
+            |> JD.andThen
+                (isElOutside siContainerDomId
+                    >> succeedWhenTrue HideResults
+                )
         )
     ]
+
+
+succeedWhenTrue msg bool =
+    if bool then
+        JD.succeed msg
+
+    else
+        JD.fail "not true"
 
 
 isElOutside : String -> El -> Bool
