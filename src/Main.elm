@@ -178,7 +178,11 @@ viewSearchSimple qs =
 
 
 searchContainerAttrs =
-    [ E.on "focusout" (JD.at [ "relatedTarget" ] elDecoder |> JD.andThen logFail)
+    [ E.on "focusout"
+        (JD.at [ "relatedTarget" ] elDecoder
+            |> JD.map (isElOutside siContainerDomId)
+            |> JD.andThen logFail
+        )
     ]
 
 
