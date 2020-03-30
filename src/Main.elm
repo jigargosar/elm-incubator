@@ -142,14 +142,17 @@ type alias HM =
 
 viewSearchWithResults : Query -> HM
 viewSearchWithResults qs =
+    let
+        attrs =
+            [ A.id siContainerDomId
+            , class "pv2 ph3"
+            , class "ba b--transparent shadow-1"
+            , style "border-radius" "1.25rem"
+            , class "flex flex-column"
+            ]
+    in
     div
-        [ A.id siContainerDomId
-        , class "pv2 ph3"
-        , class "ba b--transparent shadow-1"
-        , style "border-radius" "1.25rem"
-        , class "flex flex-column"
-        , searchContainerOnFocusOutside
-        ]
+        (attrs ++ searchContainerAttrs)
         [ viewSearchInput qs
         , div [] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
         ]
@@ -157,21 +160,25 @@ viewSearchWithResults qs =
 
 viewSearchSimple : Query -> HM
 viewSearchSimple qs =
+    let
+        attrs =
+            [ A.id siContainerDomId
+            , class "pv2 ph3"
+            , class "ba b--moon-gray "
+            , class "fw-b--transparent fw-shadow-1"
+            , class "br-pill"
+            , class "flex flex-column"
+            ]
+    in
     div
-        [ A.id siContainerDomId
-        , class "pv2 ph3"
-        , class "ba b--moon-gray "
-        , class "fw-b--transparent fw-shadow-1"
-        , class "br-pill"
-        , class "flex flex-column"
-        , searchContainerOnFocusOutside
-        ]
+        (attrs ++ searchContainerAttrs)
         [ viewSearchInput qs
         ]
 
 
-searchContainerOnFocusOutside =
-    E.on "focusout" (JD.at [ "relatedTarget", "id" ] JD.string |> JD.andThen logFail)
+searchContainerAttrs =
+    [ E.on "focusout" (JD.at [ "relatedTarget", "id" ] JD.string |> JD.andThen logFail)
+    ]
 
 
 logFail v =
