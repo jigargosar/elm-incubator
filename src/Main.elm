@@ -53,7 +53,7 @@ type Msg
     = NoOp
     | ShowResults
     | HideResults
-    | QChanged String
+    | QInputChanged String
     | QCursorUp
     | QCursorDown
 
@@ -70,7 +70,7 @@ update message ((Model (SI qs sr)) as model) =
         HideResults ->
             ( Model (SI qs False), Cmd.none )
 
-        QChanged nqs ->
+        QInputChanged nqs ->
             ( Model (SI nqs sr)
             , Cmd.none
             )
@@ -148,7 +148,7 @@ viewSearchInput qs =
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus ShowResults
-        , onInput QChanged
+        , onInput QInputChanged
         , value qs
         , Html.Events.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
