@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Html exposing (Html, div, input, text)
 import Html.Attributes as A exposing (autofocus, class, style, tabindex, value)
-import Html.Events exposing (onFocus, onInput)
+import Html.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
 
@@ -108,7 +108,7 @@ update message ((Model (SI q sr)) as model) =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ onClickOutside siDomId HideResults
+        [ onClickOutside siContainerDomId HideResults
         ]
 
 
@@ -132,8 +132,8 @@ viewSearch (SI qs showResults) =
         viewSearchSimple qs
 
 
-siDomId =
-    "si-dom-id"
+siContainerDomId =
+    "si-container-dom-id"
 
 
 type alias HM =
@@ -143,7 +143,7 @@ type alias HM =
 viewSearchWithResults : Query -> HM
 viewSearchWithResults qs =
     div
-        [ A.id siDomId
+        [ A.id siContainerDomId
         , class "pv2 ph3"
         , class "ba b--transparent shadow-1"
         , style "border-radius" "1.25rem"
@@ -157,7 +157,7 @@ viewSearchWithResults qs =
 viewSearchSimple : Query -> HM
 viewSearchSimple qs =
     div
-        [ A.id siDomId
+        [ A.id siContainerDomId
         , class "pv2 ph3"
         , class "ba b--moon-gray "
         , class "fw-b--transparent fw-shadow-1"
@@ -175,19 +175,30 @@ viewRI t =
 viewSearchInput : Query -> HM
 viewSearchInput qs =
     input
-        [ class "bg-transparent bn outline-0"
+        [ A.id "si-dom-id"
+        , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
+        , E.on "blur" foo
         , queryInputValue qs
-        , Html.Events.preventDefaultOn "keydown"
+        , E.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
         ]
         []
 
 
 foo =
+    JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
+        |> JD.andThen logFail
+
+
+logFail v =
+    let
+        _ =
+            Debug.log "v" v
+    in
     JD.fail ""
 
 
