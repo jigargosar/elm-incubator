@@ -174,18 +174,39 @@ viewResultItem t =
 
 viewSearchInput : Query -> HM
 viewSearchInput qs =
+    let
+        domId =
+            "si-dom-id"
+    in
     input
-        [ class "bg-transparent bn outline-0"
+        [ A.id domId
+        , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
         , onBlurNotActive HideResults
+        , onBlurActiveElementId
+            (\aeId ->
+                if aeId == domId then
+                    JD.fail "fake blur"
+
+                else
+                    JD.succeed HideResults
+            )
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
         ]
         []
+
+
+onBlurActiveElementId : (String -> Decoder msg) -> Html.Attribute msg
+onBlurActiveElementId msg =
+    E.on "blur"
+        (JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
+            |> JD.andThen msg
+        )
 
 
 onBlurNotActive : msg -> Html.Attribute msg
