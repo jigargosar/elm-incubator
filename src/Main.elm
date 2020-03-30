@@ -185,14 +185,6 @@ viewSearchInput qs =
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
-        , onBlurActiveElementId
-            (\aeId ->
-                if aeId == domId then
-                    JD.fail "fake blur"
-
-                else
-                    JD.succeed HideResults
-            )
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
@@ -200,18 +192,13 @@ viewSearchInput qs =
         []
 
 
-onBlurActiveElementId : (String -> Decoder msg) -> Html.Attribute msg
-onBlurActiveElementId msg =
-    E.on "blur"
-        (JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
-            |> JD.andThen msg
-        )
-
-
 keyDownDispatcher : String -> Decoder ( Msg, Bool )
 keyDownDispatcher key =
     case key of
         "Escape" ->
+            JD.succeed ( HideResults, False )
+
+        "Tab" ->
             JD.succeed ( HideResults, False )
 
         "ArrowUp" ->
