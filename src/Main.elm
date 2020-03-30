@@ -203,28 +203,10 @@ onBlurActiveElementBody msg =
         )
 
 
-foo =
-    JD.map2 Tuple.pair
-        (JD.at [ "target", "tagName" ] JD.string)
-        (JD.at [ "target", "ownerDocument", "activeElement", "tagName" ] JD.string)
-        |> JD.andThen logFail
-
-
-logFail ( tid, aid ) =
-    let
-        _ =
-            Debug.log "v" ( tid, aid )
-    in
-    JD.fail ""
-
-
 keyDownDispatcher : String -> Decoder ( Msg, Bool )
 keyDownDispatcher key =
     case key of
         "Escape" ->
-            JD.succeed ( HideResults, False )
-
-        "Tab" ->
             JD.succeed ( HideResults, False )
 
         "ArrowUp" ->
