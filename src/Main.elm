@@ -148,6 +148,7 @@ viewSearchWithResults qs =
         , class "ba b--transparent shadow-1"
         , style "border-radius" "1.25rem"
         , class "flex flex-column"
+        , searchContainerOnFocusOutside
         ]
         [ viewSearchInput qs
         , div [] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
@@ -163,13 +164,30 @@ viewSearchSimple qs =
         , class "fw-b--transparent fw-shadow-1"
         , class "br-pill"
         , class "flex flex-column"
+        , searchContainerOnFocusOutside
         ]
         [ viewSearchInput qs
         ]
 
 
+searchContainerOnFocusOutside =
+    E.on "focusout" (JD.at [ "relatedTarget", "id" ] JD.string |> JD.andThen logFail)
+
+
+logFail v =
+    let
+        _ =
+            Debug.log "v" v
+    in
+    JD.fail ""
+
+
 viewResultItem t =
-    div [ class "f5 lh-title ttc" ] [ text t ]
+    div
+        [ class "f5 lh-title ttc"
+        , tabindex 0
+        ]
+        [ text t ]
 
 
 viewSearchInput : Query -> HM
@@ -198,9 +216,8 @@ keyDownDispatcher key =
         "Escape" ->
             JD.succeed ( HideResults, False )
 
-        "Tab" ->
-            JD.succeed ( HideResults, False )
-
+        --"Tab" ->
+        --    JD.succeed ( HideResults, False )
         "ArrowUp" ->
             JD.succeed ( QCursorUp, True )
 
