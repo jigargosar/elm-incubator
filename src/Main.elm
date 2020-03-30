@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Events
 import Html exposing (Html, div, input, text)
-import Html.Attributes exposing (autofocus, class, style, value)
+import Html.Attributes as A exposing (autofocus, class, style, tabindex, value)
 import Html.Events exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
@@ -97,6 +97,7 @@ view : Model -> Html Msg
 view (Model si) =
     div [ class "pt4 measure-wide center" ]
         [ viewSearch si
+        , div [ A.id "rel-tar", tabindex 0 ] [ text "rel target div tabindex 0" ]
         ]
 
 
@@ -114,7 +115,7 @@ siDomId =
 
 viewSearchWithResults qs =
     div
-        [ Html.Attributes.id siDomId
+        [ A.id siDomId
         , class "pv2 ph3"
         , class "ba b--transparent shadow-1"
         , style "border-radius" "1.25rem"
@@ -127,7 +128,7 @@ viewSearchWithResults qs =
 
 viewSearchSimple qs =
     div
-        [ Html.Attributes.id siDomId
+        [ A.id siDomId
         , class "pv2 ph3"
         , class "ba b--moon-gray "
         , class "fw-b--transparent fw-shadow-1"
@@ -148,12 +149,17 @@ viewSearchInput qs =
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus ShowResults
+        , Html.Events.on "focus" (foo |> JD.andThen (\_ -> JD.succeed NoOp))
         , onInput QInputChanged
         , value qs
         , Html.Events.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
         ]
         []
+
+
+foo =
+    JD.fail ""
 
 
 keyDownDispatcher : String -> Decoder ( Msg, Bool )
