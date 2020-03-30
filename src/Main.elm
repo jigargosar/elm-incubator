@@ -49,6 +49,14 @@ queryInputValue (Query _ c) =
     value c
 
 
+hasQueryChanged (Query o c) =
+    o /= c
+
+
+isQueryOriginal (Query o c) =
+    o == c
+
+
 type SearchInput
     = SI Query Bool
 
@@ -70,7 +78,7 @@ init _ =
 
 type Msg
     = NoOp
-    | ShowResults
+    | QFocused
     | HideResults
     | QInputChanged String
     | QCursorUp
@@ -83,14 +91,14 @@ update message ((Model (SI q sr)) as model) =
         NoOp ->
             ( model, Cmd.none )
 
-        ShowResults ->
-            ( Model (SI q True), Cmd.none )
+        QFocused ->
+            ( Model (SI q (isQueryOriginal q || sr)), Cmd.none )
 
         HideResults ->
             ( Model (SI q False), Cmd.none )
 
         QInputChanged changed ->
-            ( Model (SI (queryInputChange changed q) sr)
+            ( Model (SI (queryInputChange changed q) True)
             , Cmd.none
             )
 
@@ -174,8 +182,7 @@ viewSearchInput qs =
         [ class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , autofocus True
-        , onFocus ShowResults
-        , Html.Events.on "focus" (foo |> JD.andThen (\_ -> JD.succeed NoOp))
+        , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
         , Html.Events.preventDefaultOn "keydown"
