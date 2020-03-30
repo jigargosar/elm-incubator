@@ -49,10 +49,6 @@ queryInputValue (Query _ c) =
     value c
 
 
-hasQueryChanged (Query o c) =
-    o /= c
-
-
 isQueryOriginal (Query o c) =
     o == c
 
@@ -103,10 +99,10 @@ update message ((Model (SI q sr)) as model) =
             )
 
         QCursorUp ->
-            ( model, Cmd.none )
+            ( Model (SI q True), Cmd.none )
 
         QCursorDown ->
-            ( model, Cmd.none )
+            ( Model (SI q True), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
