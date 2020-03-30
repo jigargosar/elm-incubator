@@ -6,6 +6,7 @@ import Html exposing (Html, div, input, text)
 import Html.Attributes as A exposing (autofocus, class, style, tabindex, value)
 import Html.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
+import Json.Encode exposing (Value)
 
 
 
@@ -145,7 +146,7 @@ viewSearchWithResults qs =
     let
         attrs =
             [ A.id siContainerDomId
-            , class "pv2 ph3"
+            , class "pt2 ph3"
             , class "ba b--transparent shadow-1"
             , style "border-radius" "1.25rem"
             , class "flex flex-column"
@@ -154,7 +155,7 @@ viewSearchWithResults qs =
     div
         (attrs ++ searchContainerAttrs)
         [ viewSearchInput qs
-        , div [] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
+        , div [ class "pb2 ph2" ] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
         ]
 
 
@@ -178,7 +179,19 @@ viewSearchSimple qs =
 
 searchContainerAttrs =
     [ E.on "focusout" (JD.at [ "relatedTarget", "id" ] JD.string |> JD.andThen logFail)
+    , E.on "focusout" (JD.at [ "relatedTarget" ] elDecoder |> JD.andThen logFail)
     ]
+
+
+type El
+    = El String (Maybe El)
+
+
+elDecoder : Decoder El
+elDecoder =
+    JD.map2 El
+        (JD.field "id" JD.string)
+        (JD.field "parentElement" (JD.nullable (JD.lazy (\_ -> elDecoder))))
 
 
 logFail v =
