@@ -30,8 +30,27 @@ type Model
     = Model SearchInput
 
 
+type Query
+    = Query String String
+
+
+initQuery : String -> Query
+initQuery string =
+    Query string string
+
+
+queryInputChange : String -> Query -> Query
+queryInputChange to (Query o _) =
+    Query o to
+
+
+queryInputValue : Query -> Html.Attribute msg
+queryInputValue (Query _ c) =
+    value c
+
+
 type SearchInput
-    = SI String Bool
+    = SI Query Bool
 
 
 type alias Flags =
@@ -40,7 +59,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( Model (SI "foo bar" False)
+    ( Model (SI (initQuery "foo bar") False)
     , Cmd.none
     )
 
@@ -59,19 +78,19 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model (SI qs sr)) as model) =
+update message ((Model (SI q sr)) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
         ShowResults ->
-            ( Model (SI qs True), Cmd.none )
+            ( Model (SI q True), Cmd.none )
 
         HideResults ->
-            ( Model (SI qs False), Cmd.none )
+            ( Model (SI q False), Cmd.none )
 
-        QInputChanged nqs ->
-            ( Model (SI nqs sr)
+        QInputChanged changed ->
+            ( Model (SI (queryInputChange changed q) sr)
             , Cmd.none
             )
 
@@ -113,6 +132,11 @@ siDomId =
     "si-dom-id"
 
 
+type alias HM =
+    Html Msg
+
+
+viewSearchWithResults : Query -> HM
 viewSearchWithResults qs =
     div
         [ A.id siDomId
@@ -126,6 +150,7 @@ viewSearchWithResults qs =
         ]
 
 
+viewSearchSimple : Query -> HM
 viewSearchSimple qs =
     div
         [ A.id siDomId
@@ -143,6 +168,7 @@ viewRI t =
     div [ class "f5 lh-title ttc" ] [ text t ]
 
 
+viewSearchInput : Query -> HM
 viewSearchInput qs =
     input
         [ class "bg-transparent bn outline-0"
@@ -151,7 +177,7 @@ viewSearchInput qs =
         , onFocus ShowResults
         , Html.Events.on "focus" (foo |> JD.andThen (\_ -> JD.succeed NoOp))
         , onInput QInputChanged
-        , value qs
+        , queryInputValue qs
         , Html.Events.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
         ]
