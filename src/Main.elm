@@ -181,7 +181,7 @@ viewSearchInput qs =
         , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
-        , onFocusLost HideResults
+        , onBlurNotActive HideResults
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
             (JD.andThen keyDownDispatcher keyDecoder)
@@ -189,7 +189,7 @@ viewSearchInput qs =
         []
 
 
-onFocusLost =
+onBlurNotActive =
     onBlurActiveElementBody
 
 
