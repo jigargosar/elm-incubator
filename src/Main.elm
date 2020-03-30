@@ -189,6 +189,7 @@ viewSearchInput qs =
         []
 
 
+onBlurActiveElementBody : msg -> Html.Attribute msg
 onBlurActiveElementBody msg =
     E.on "blur"
         (JD.at [ "target", "ownerDocument", "activeElement", "tagName" ] JD.string
