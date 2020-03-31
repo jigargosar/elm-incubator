@@ -130,7 +130,7 @@ selectPrevSuggestion ss =
                 |> VisibleSelected
 
         VisibleNoneSelected nel ->
-            VisibleSelected (nelToLcr nel)
+            VisibleSelected (nelToLcr nel |> lcrLast)
 
         Hidden nel ->
             VisibleSelected (nelToLcr nel)
