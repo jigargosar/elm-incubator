@@ -327,16 +327,12 @@ viewSearchWidget (SI qs ss) =
                 (flex auto
                     :: padding2 sp2 sp3
                     :: displayFlex
-                    :: widgetBorder
+                    :: borderWidget
                     :: (if areSuggestionsVisible then
-                            [ shadowWidgetInput
-                            , borderTransparent
-                            , borderRadiusOnlyTop
-                            ]
+                            [ shadowWidgetInput, borderTransparent, borderRadiusOnlyTop ]
 
                         else
-                            [ hoverNFocusWithin [ shadowWidgetInput, borderTransparent ]
-                            ]
+                            [ hoverAndFocusWithin [ shadowWidgetInput, borderTransparent ] ]
                        )
                 )
                 []
@@ -371,7 +367,7 @@ viewSearchWidget (SI qs ss) =
         ]
 
 
-hoverNFocusWithin styles =
+hoverAndFocusWithin styles =
     batch [ hover styles, focusWithin styles ]
 
 
@@ -429,7 +425,7 @@ wbColor =
     hex "#dfe1e5"
 
 
-widgetBorder =
+borderWidget =
     batch
         [ border3 (px 1) solid wbColor
         , borderRadiusWidget
