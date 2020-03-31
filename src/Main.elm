@@ -146,8 +146,8 @@ subscriptions _ =
         , onFocusOutside
             (\domId ->
                 if domId == siContainerDomId then
-                    HideSuggestions
-                    --NoOp
+                    --HideSuggestions
+                    NoOp
 
                 else
                     NoOp
