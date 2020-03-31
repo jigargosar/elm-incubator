@@ -194,11 +194,8 @@ viewSearchWidget (SI qs showSuggestions) =
                 , backgroundColor white
                 ]
                 []
-                [ styled div
-                    [ padding2 sp2 zero ]
-                    []
-                    [ suggestionView
-                    ]
+                [ styled div [ margin2 zero sp3, borderTop3 (px 1) solid wbColor ] [] []
+                , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
                 ]
 
           else
@@ -211,14 +208,14 @@ widgetFocusOutDecoder =
         |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
 
 
+wbColor =
+    -- rgba 223 225 229 0
+    hex "#dfe1e5"
+
+
 widgetBorder =
-    let
-        colorWidgetBorder =
-            -- rgba 223 225 229 0
-            hex "#dfe1e5"
-    in
     batch
-        [ border3 (px 1) solid colorWidgetBorder
+        [ border3 (px 1) solid wbColor
         , borderRadius (rem 1.25)
         ]
 
