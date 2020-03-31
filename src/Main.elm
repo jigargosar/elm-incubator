@@ -87,6 +87,7 @@ lcrGoL ( l, c, r ) =
             Nothing
 
 
+lcrFirst : ( List a, a, List a ) -> ( List a, a, List a )
 lcrFirst (( l, c, r ) as lcr) =
     case List.reverse l of
         [] ->
