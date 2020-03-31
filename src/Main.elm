@@ -152,24 +152,33 @@ viewSearchWidget (SI qs showSuggestions) =
     in
     if showSuggestions then
         div
-            ([ class "pt2 ph3"
-             , class "ba b--transparent shadow-1"
-             , style "border-radius" "1.25rem"
+            ([ class "bt br bl b--white sw-shadow"
+             , style "border-radius" "1.25rem 1.25rem 0 0"
              , class "flex flex-column"
+             , class "relative"
              ]
                 ++ commonWidgetAttrs
             )
             [ viewSearchInput qs
-            , div [ class "pb2 ph2" ] viewSuggestionListItems
+            , div [ class "mh3 bt mv1 b--light-gray" ] []
+            , div
+                [ class "absolute w-100 br bl bb b--white"
+                , style "border-radius" "0 0 1.25rem 1.25rem"
+                , style "top" "100%"
+                , style "box-shadow" "0 4px 6px 0 rgba(32,33,36,0.28)"
+                , class "pb2 ph3"
+                , class "bg-white"
+                ]
+                viewSuggestionListItems
             ]
 
     else
         div
-            ([ class "pv2 ph3"
-             , class "ba b--moon-gray "
-             , class "fw-b--transparent fw-shadow-1"
+            ([ class "ba b--moon-gray "
+             , class "fw-b--transparent fw-sw-shadow"
              , class "br-pill"
              , class "flex flex-column"
+             , class "relative"
              ]
                 ++ commonWidgetAttrs
             )
@@ -262,18 +271,20 @@ viewSearchInput qs =
         domId =
             "si-dom-id"
     in
-    input
-        [ A.id domId
-        , class "bg-transparent bn outline-0"
-        , class "lh-title flex-auto"
-        , autofocus True
-        , onFocus QFocused
-        , onInput QInputChanged
-        , queryInputValue qs
-        , E.preventDefaultOn "keydown"
-            (JD.andThen widgetInputKeyDownDecoder keyDecoder)
+    div [ class "pv2 ph3 flex-auto flex " ]
+        [ input
+            [ A.id domId
+            , class "bg-transparent bn outline-0"
+            , class "lh-title flex-auto"
+            , autofocus True
+            , onFocus QFocused
+            , onInput QInputChanged
+            , queryInputValue qs
+            , E.preventDefaultOn "keydown"
+                (JD.andThen widgetInputKeyDownDecoder keyDecoder)
+            ]
+            []
         ]
-        []
 
 
 widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )

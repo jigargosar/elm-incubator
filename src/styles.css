@@ -4,15 +4,17 @@
   border-color: transparent;
 }
 
-.fw-shadow-1:focus-within {
-  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.2);
+.fw-sw-shadow:focus-within {
+  box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
+}
+
+.sw-shadow {
+  box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
 }
 
 .fw-br4:focus-within {
   border-radius: 1rem;
 }
-
-
 
 /* COMMON */
 .no-selection {
