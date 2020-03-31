@@ -159,10 +159,9 @@ viewSearchWidget (SI qs showSuggestions) =
                 ++ commonWidgetAttrs
             )
             [ div
-                [ class "bt br bl b--white"
-                , style "border-radius" "1.25rem 1.25rem 0 0"
+                [ style "border-radius" "1.25rem 1.25rem 0 0"
                 , class "pv2 ph3 flex-auto flex "
-                , css [ widgetShadow1 ]
+                , css [ widgetShadow1, widgetBorderTransparent ]
                 ]
                 [ viewSearchInput qs ]
 
@@ -170,9 +169,6 @@ viewSearchWidget (SI qs showSuggestions) =
             , styled div
                 [ widgetShadow2
                 , top (pct 100)
-
-                --, left <| px -1
-                --, right <| px -1
                 , width <| pct 100
                 , borderRadius4 zero zero (rem 1.25) (rem 1.25)
                 ]
@@ -185,19 +181,27 @@ viewSearchWidget (SI qs showSuggestions) =
 
     else
         div
-            ([ class "ba"
-             , class "br-pill"
+            ([ class "br-pill"
              , class "flex flex-column"
              , class "relative"
              , css
-                [ Css.borderColor colorWidgetBorder
-                , focusWithin [ widgetShadow1 ]
+                [ widgetBorder
+                , focusWithin [ widgetShadow1, widgetBorderTransparent ]
+                , hover [ widgetShadow1, widgetBorderTransparent ]
                 ]
              ]
                 ++ commonWidgetAttrs
             )
             [ div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
             ]
+
+
+widgetBorder =
+    border3 (px 1) solid colorWidgetBorder
+
+
+widgetBorderTransparent =
+    border3 (px 1) solid transparent
 
 
 colorWidgetBorder =
