@@ -5,7 +5,7 @@ import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
 import Html.Styled exposing (Html, div, input, styled, text)
-import Html.Styled.Attributes as A exposing (attribute, autofocus, class, tabindex, value)
+import Html.Styled.Attributes as A exposing (class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 import Task exposing (Task)
@@ -34,14 +34,60 @@ type Model
 
 
 type SearchInput
-    = SI Query Bool
+    = SI Query Suggestions
+
+
+type alias LCR =
+    ( List String, String, List String )
+
+
+type alias NEL =
+    ( String, List String )
 
 
 type Suggestions
-    = VisibleSelected ( List String, String, List String )
-    | VisibleNoneSelected ( String, List String )
-    | Hidden ( String, List String )
-    | None
+    = VisibleSelected LCR
+    | VisibleNoneSelected NEL
+    | Hidden NEL
+
+
+initialSuggestionNonEmptyList =
+    ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
+
+
+hideSuggestions : Suggestions -> Maybe Suggestions
+hideSuggestions ss =
+    case ss of
+        VisibleSelected lcr ->
+            Just (Hidden (lcrToNel lcr))
+
+        VisibleNoneSelected nel ->
+            Just (Hidden nel)
+
+        Hidden _ ->
+            Nothing
+
+
+showSuggestions : Suggestions -> Maybe Suggestions
+showSuggestions ss =
+    case ss of
+        VisibleSelected lcr ->
+            Nothing
+
+        VisibleNoneSelected nel ->
+            Nothing
+
+        Hidden nel ->
+            Just (VisibleNoneSelected nel)
+
+
+lcrToNel ( l, c, r ) =
+    case List.reverse l of
+        head :: tail ->
+            ( head, tail ++ c :: r )
+
+        [] ->
+            ( c, r )
 
 
 type Query
@@ -73,7 +119,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( Model (SI (initQuery "foo bar") False)
+    ( Model (SI (initQuery "foo bar") (Hidden initialSuggestionNonEmptyList))
     , focusSI
     )
 
@@ -109,8 +155,13 @@ type Msg
     | QInputDown
 
 
+setSuggestions : Suggestions -> Model -> Model
+setSuggestions ss (Model (SI q _)) =
+    Model (SI q ss)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model (SI q sr)) as model) =
+update message ((Model (SI q ss)) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -126,21 +177,35 @@ update message ((Model (SI q sr)) as model) =
             ( model, Cmd.none )
 
         QInputFocused ->
-            ( Model (SI q (isQueryOriginal q || sr)), Cmd.none )
+            ( case ( isQueryOriginal q, showSuggestions ss ) of
+                ( True, Just nss ) ->
+                    setSuggestions nss model
+
+                _ ->
+                    model
+            , Cmd.none
+            )
 
         HideSuggestions ->
-            ( Model (SI q False), Cmd.none )
+            ( case hideSuggestions ss of
+                Just nss ->
+                    setSuggestions nss model
+
+                Nothing ->
+                    model
+            , Cmd.none
+            )
 
         QInputChanged changed ->
-            ( Model (SI (queryInputChange changed q) True)
+            ( Model (SI (queryInputChange changed q) (showSuggestions ss |> Maybe.withDefault ss))
             , Cmd.none
             )
 
         QInputUp ->
-            ( Model (SI q True), Cmd.none )
+            ( Model (SI q (showSuggestions ss |> Maybe.withDefault ss)), Cmd.none )
 
         QInputDown ->
-            ( Model (SI q True), Cmd.none )
+            ( Model (SI q (showSuggestions ss |> Maybe.withDefault ss)), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -174,7 +239,7 @@ view (Model si) =
 
 
 viewSearchWidget : SearchInput -> HM
-viewSearchWidget (SI qs showSuggestions) =
+viewSearchWidget (SI qs ss) =
     let
         suggestions =
             [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ]
@@ -182,13 +247,24 @@ viewSearchWidget (SI qs showSuggestions) =
         suggestionView =
             div [] (List.map viewSuggestionItem suggestions)
 
+        areSuggestionsVisible =
+            case ss of
+                VisibleSelected lcr ->
+                    True
+
+                VisibleNoneSelected nel ->
+                    True
+
+                Hidden nel ->
+                    False
+
         inputView =
             styled div
                 (flex auto
                     :: padding2 sp2 sp3
                     :: displayFlex
                     :: widgetBorder
-                    :: (if showSuggestions then
+                    :: (if areSuggestionsVisible then
                             [ widgetShadow1
                             , bTransparent
                             , brTop
@@ -208,7 +284,7 @@ viewSearchWidget (SI qs showSuggestions) =
         [ A.id siContainerDomId
         ]
         [ inputView
-        , if showSuggestions then
+        , if areSuggestionsVisible then
             styled div
                 [ -- layout
                   absolute
