@@ -198,14 +198,16 @@ viewSearchWidget (SI qs showSuggestions) =
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
-        , E.on "focusout"
-            (JD.at [ "relatedTarget" ] elDecoder
-                |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
-            )
+        , E.on "focusout" widgetFocusOutDecoder
         ]
         [ inputView
         , suggestionsView
         ]
+
+
+widgetFocusOutDecoder =
+    JD.at [ "relatedTarget" ] elDecoder
+        |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
 
 
 widgetBorder =
