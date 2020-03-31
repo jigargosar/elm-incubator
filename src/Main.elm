@@ -166,6 +166,7 @@ view (Model si) =
         ]
 
 
+viewSearchWidget : SearchInput -> HM
 viewSearchWidget (SI qs showSuggestions) =
     let
         suggestions =
