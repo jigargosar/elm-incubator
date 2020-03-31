@@ -81,6 +81,40 @@ showSuggestions ss =
             Just (VisibleNoneSelected nel)
 
 
+lcrNext : ( List b, b, List b ) -> Maybe ( List b, b, List b )
+lcrNext ( l, c, r ) =
+    case r of
+        rh :: rt ->
+            Just ( c :: l, rh, rt )
+
+        [] ->
+            Nothing
+
+
+lcrFirst : ( List a, a, List a ) -> ( List a, a, List a )
+lcrFirst =
+    lcrToNel >> nelToLcr
+
+
+selectNextSuggestion : Suggestions -> Suggestions
+selectNextSuggestion ss =
+    case ss of
+        VisibleSelected lcr ->
+            lcrNext lcr
+                |> Maybe.withDefault (lcrFirst lcr)
+                |> VisibleSelected
+
+        VisibleNoneSelected nel ->
+            VisibleSelected (nelToLcr nel)
+
+        Hidden nel ->
+            VisibleSelected (nelToLcr nel)
+
+
+nelToLcr ( h, t ) =
+    ( [], h, t )
+
+
 lcrToNel ( l, c, r ) =
     case List.reverse l of
         head :: tail ->
@@ -205,7 +239,7 @@ update message ((Model (SI q ss)) as model) =
             ( Model (SI q (showSuggestions ss |> Maybe.withDefault ss)), Cmd.none )
 
         QInputDown ->
-            ( Model (SI q (showSuggestions ss |> Maybe.withDefault ss)), Cmd.none )
+            ( Model (SI q (selectNextSuggestion ss)), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
