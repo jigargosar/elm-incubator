@@ -166,7 +166,7 @@ viewSearchWithResults qs =
             ]
     in
     div
-        (attrs ++ searchContainerAttrs)
+        (attrs ++ commonWidgetAttrs)
         [ viewSearchInput qs
         , div [ class "pb2 ph2" ] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
         ]
@@ -184,7 +184,7 @@ viewSearchSimple qs =
             ]
     in
     div
-        (attrs ++ searchContainerAttrs)
+        (attrs ++ commonWidgetAttrs)
         [ viewSearchInput qs
         ]
 
@@ -193,7 +193,7 @@ viewSearchSimple qs =
 -- WIDGET ROOT COMMON ATTRS
 
 
-searchContainerAttrs =
+commonWidgetAttrs =
     [ A.id siContainerDomId
     , E.on "focusout"
         (JD.at [ "relatedTarget" ] elDecoder
