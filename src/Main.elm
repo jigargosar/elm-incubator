@@ -151,26 +151,33 @@ viewSearchWidget (SI qs showSuggestions) =
         viewSuggestionListItems =
             List.map viewSuggestionItem suggestions
 
+        borderAndShadowStyles =
+            if showSuggestions then
+                [ widgetBorder
+                , borderRadius wbr
+                , widgetShadow1
+                , borderTransparent
+                , brTop
+                ]
+
+            else
+                [ widgetBorder
+                , borderRadius wbr
+                , focusWithin [ widgetShadow1, borderTransparent ]
+                , hover [ widgetShadow1, borderTransparent ]
+                ]
+
         inputView =
             if showSuggestions then
                 styled div
-                    [ widgetBorder
-                    , borderRadius wbr
-                    , widgetShadow1
-                    , borderTransparent
-                    , brTop
-                    ]
+                    borderAndShadowStyles
                     [ class "pv2 ph3 flex-auto flex "
                     ]
                     [ viewSearchInput qs ]
 
             else
                 styled div
-                    [ widgetBorder
-                    , borderRadius wbr
-                    , focusWithin [ widgetShadow1, borderTransparent ]
-                    , hover [ widgetShadow1, borderTransparent ]
-                    ]
+                    borderAndShadowStyles
                     [ class "pv2 ph3 flex-auto flex " ]
                     [ viewSearchInput qs ]
     in
