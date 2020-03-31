@@ -177,7 +177,6 @@ viewSearchWidget (SI qs showSuggestions) =
     <|
         [ styled div
             (widgetBorder
-                :: borderRadius wbr
                 :: borderAndShadowStyles
             )
             [ class "pv2 ph3 flex-auto flex" ]
@@ -191,9 +190,10 @@ viewSearchWidget (SI qs showSuggestions) =
                 , position absolute
 
                 -- style
-                , widgetShadow2
-                , borderRadius wbr
+                , widgetBorder
+                , borderTransparent
                 , brBottom
+                , widgetShadow2
                 , backgroundColor white
                 ]
                 [ class "pv2" ]
@@ -222,14 +222,10 @@ brBottom =
         ]
 
 
-wbr =
-    rem 1.25
-
-
 widgetBorder =
     batch
         [ border3 (px 1) solid colorWidgetBorder
-        , borderRadius wbr
+        , borderRadius (rem 1.25)
         ]
 
 
