@@ -336,7 +336,7 @@ viewSearchWidget : SearchInput -> HM
 viewSearchWidget (SI qs ss) =
     let
         maybeSuggestionsView =
-            maybeViewSuggestions ss
+            viewSuggestionsMaybe ss
 
         areSuggestionsVisible =
             maybeSuggestionsView /= Nothing
@@ -401,8 +401,8 @@ viewMaybe func mb =
             text ""
 
 
-maybeViewSuggestions : Suggestions -> Maybe HM
-maybeViewSuggestions ss =
+viewSuggestionsMaybe : Suggestions -> Maybe HM
+viewSuggestionsMaybe ss =
     case ss of
         VisibleSelected lcr ->
             div
