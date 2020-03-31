@@ -148,8 +148,8 @@ viewSearchWidget (SI qs showSuggestions) =
         suggestions =
             [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ]
 
-        suggestionItemsView =
-            List.map viewSuggestionItem suggestions
+        suggestionView =
+            div [] (List.map viewSuggestionItem suggestions)
 
         inputView =
             styled div
@@ -171,29 +171,6 @@ viewSearchWidget (SI qs showSuggestions) =
                 )
                 []
                 [ viewSearchInput qs ]
-
-        suggestionsView =
-            if showSuggestions then
-                --, div [ class "mh3 bb " ] []
-                styled div
-                    [ -- layout
-                      position absolute
-                    , top (pct 100)
-                    , padding2 sp2 zero
-                    , width <| pct 100
-
-                    -- style
-                    , widgetBorder
-                    , bTransparent
-                    , brBottom
-                    , widgetShadow2
-                    , backgroundColor white
-                    ]
-                    []
-                    suggestionItemsView
-
-            else
-                text ""
     in
     styled div
         [ displayFlex, position relative ]
@@ -201,7 +178,31 @@ viewSearchWidget (SI qs showSuggestions) =
         , E.on "focusout" widgetFocusOutDecoder
         ]
         [ inputView
-        , suggestionsView
+        , if showSuggestions then
+            --, div [ class "mh3 bb " ] []
+            styled div
+                [ -- layout
+                  position absolute
+                , top (pct 100)
+                , width <| pct 100
+
+                -- style
+                , widgetBorder
+                , bTransparent
+                , brBottom
+                , widgetShadow2
+                , backgroundColor white
+                ]
+                []
+                [ styled div
+                    [ padding2 sp2 zero ]
+                    []
+                    [ suggestionView
+                    ]
+                ]
+
+          else
+            text ""
         ]
 
 
@@ -310,7 +311,7 @@ viewSearchInput qs =
         [ A.id domId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
-        , autofocus False
+        , autofocus True
         , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
