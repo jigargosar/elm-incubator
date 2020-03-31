@@ -331,7 +331,7 @@ viewSearchWidget (SI qs ss) =
                     :: (if areSuggestionsVisible then
                             [ widgetShadow1
                             , borderTransparent
-                            , brTop
+                            , borderRadiusOnlyTop
                             ]
 
                         else
@@ -358,7 +358,7 @@ viewSearchWidget (SI qs ss) =
 
                         -- style
                         , widgetBorderRadiusStyle
-                        , brBottom
+                        , borderRadiusOnlyBottom
                         , overflow hidden -- to ensure children don't overflow border radius
                         , widgetShadow2
                         , backgroundColor white
@@ -626,14 +626,14 @@ white =
     hex "#fff"
 
 
-brTop =
+borderRadiusOnlyTop =
     batch
         [ borderBottomLeftRadius zero
         , borderBottomRightRadius zero
         ]
 
 
-brBottom =
+borderRadiusOnlyBottom =
     batch
         [ borderTopLeftRadius zero
         , borderTopRightRadius zero
