@@ -166,8 +166,7 @@ viewSearchWidget (SI qs showSuggestions) =
 
                     --, borderRadius4 wbr wbr zero zero
                     , borderRadius wbr
-                    , borderBottomLeftRadius zero
-                    , borderBottomRightRadius zero
+                    , brTop
                     ]
                 ]
                 [ viewSearchInput qs ]
@@ -177,7 +176,8 @@ viewSearchWidget (SI qs showSuggestions) =
                 [ widgetShadow2
                 , top (pct 100)
                 , width <| pct 100
-                , borderRadius4 zero zero wbr wbr
+                , borderRadius wbr
+                , brBottom
                 ]
                 [ class "absolute"
                 , class "pv2"
