@@ -107,6 +107,7 @@ lcrLast (( l, c, r ) as lcr) =
             ( tail ++ c :: l, head, [] )
 
 
+lcrMapCS : (a -> b) -> (a -> b) -> LCR a -> LCR b
 lcrMapCS fc fs ( l, c, r ) =
     ( List.map fs l, fc c, List.map fs r )
 
