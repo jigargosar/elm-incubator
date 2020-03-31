@@ -399,6 +399,7 @@ viewMaybe func mb =
             text ""
 
 
+maybeViewSuggestions : Suggestions -> Maybe HM
 maybeViewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
