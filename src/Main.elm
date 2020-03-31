@@ -355,7 +355,8 @@ viewSearchInput qs =
         [ A.id domId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
-        , autofocus True
+
+        --, autofocus True
         , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
