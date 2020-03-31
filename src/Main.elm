@@ -151,21 +151,26 @@ viewSearchWidget (SI qs showSuggestions) =
         viewSuggestionListItems =
             List.map viewSuggestionItem suggestions
 
-        inputContainerStyles =
-            flex auto
-                :: displayFlex
-                :: widgetBorder
-                :: (if showSuggestions then
-                        [ widgetShadow1
-                        , borderTransparent
-                        , brTop
-                        ]
+        inputView =
+            styled div
+                (flex auto
+                    :: padding2 (rem 0.5) (rem 1)
+                    :: displayFlex
+                    :: widgetBorder
+                    :: (if showSuggestions then
+                            [ widgetShadow1
+                            , borderTransparent
+                            , brTop
+                            ]
 
-                    else
-                        [ focusWithin [ widgetShadow1, borderTransparent ]
-                        , hover [ widgetShadow1, borderTransparent ]
-                        ]
-                   )
+                        else
+                            [ focusWithin [ widgetShadow1, borderTransparent ]
+                            , hover [ widgetShadow1, borderTransparent ]
+                            ]
+                       )
+                )
+                []
+                [ viewSearchInput qs ]
     in
     styled div
         [ -- layout
@@ -179,10 +184,7 @@ viewSearchWidget (SI qs showSuggestions) =
             )
         ]
     <|
-        [ styled div
-            inputContainerStyles
-            [ class "pv2 ph3" ]
-            [ viewSearchInput qs ]
+        [ inputView
         , if showSuggestions then
             --, div [ class "mh3 bb " ] []
             styled div
