@@ -117,7 +117,11 @@ subscriptions _ =
 -- View
 
 
-view : Model -> Html Msg
+type alias HM =
+    Html Msg
+
+
+view : Model -> HM
 view (Model si) =
     div [ class "pt4 measure-wide center" ]
         [ viewSearch si
@@ -135,10 +139,6 @@ viewSearch (SI qs showResults) =
 
 siContainerDomId =
     "si-container-dom-id"
-
-
-type alias HM =
-    Html Msg
 
 
 viewSearchWithResults : Query -> HM
