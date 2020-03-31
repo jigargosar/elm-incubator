@@ -427,7 +427,7 @@ wbColor =
 widgetBorder =
     batch
         [ border3 (px 1) solid wbColor
-        , borderRadius (rem 1.25)
+        , borderRadius (rem 1)
         ]
 
 
