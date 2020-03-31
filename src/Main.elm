@@ -50,6 +50,23 @@ type alias LCR a =
     ( List a, a, List a )
 
 
+lcrFromNel ( h, t ) =
+    ( [], h, t )
+
+
+lcrToNel ( l, c, r ) =
+    case List.reverse l of
+        head :: tail ->
+            ( head, tail ++ c :: r )
+
+        [] ->
+            ( c, r )
+
+
+lcrToList ( l, c, r ) =
+    List.reverse l ++ c :: r
+
+
 lcrNext : ( List b, b, List a ) -> Maybe ( List b, a, List a )
 lcrNext ( l, c, r ) =
     case r of
@@ -89,25 +106,8 @@ lcrLast (( l, c, r ) as lcr) =
             ( tail ++ c :: l, head, [] )
 
 
-lcrFromNel ( h, t ) =
-    ( [], h, t )
-
-
-lcrToNel ( l, c, r ) =
-    case List.reverse l of
-        head :: tail ->
-            ( head, tail ++ c :: r )
-
-        [] ->
-            ( c, r )
-
-
 lcrMapCS fc fs ( l, c, r ) =
     ( List.map fs l, fc c, List.map fs r )
-
-
-lcrToList ( l, c, r ) =
-    List.reverse l ++ c :: r
 
 
 type Suggestions
