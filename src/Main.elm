@@ -534,6 +534,7 @@ logFail v =
 -- WIDGET SUGGESTIONS VIEW
 
 
+viewSelectedSuggestionItem : String -> HM
 viewSelectedSuggestionItem t =
     div
         [ class "ph3 pv1 f5 lh-copy ttc bg-light-gray"
@@ -542,6 +543,7 @@ viewSelectedSuggestionItem t =
         [ text t ]
 
 
+viewSuggestionItem : String -> HM
 viewSuggestionItem t =
     div
         [ class "ph3 pv1 f5 lh-copy ttc"
