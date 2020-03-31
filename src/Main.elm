@@ -225,18 +225,6 @@ viewSearchWidget (SI qs showSuggestions) =
         ]
 
 
-absolute =
-    position Css.absolute
-
-
-p100 =
-    pct 100
-
-
-w100 =
-    width (pct 100)
-
-
 widgetSeparator =
     styled div [ margin2 zero sp3, borderTop3 (px 1) solid wbColor ] [] []
 
@@ -410,6 +398,18 @@ keyDecoder =
 
 
 -- CSS HELPERS
+
+
+absolute =
+    position Css.absolute
+
+
+p100 =
+    pct 100
+
+
+w100 =
+    width (pct 100)
 
 
 sp2 =
