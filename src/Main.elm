@@ -322,7 +322,7 @@ maybeViewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
             div []
-                (mapCS viewSuggestionItem viewSuggestionItem lcr
+                (mapCS viewSelectedSuggestionItem viewSuggestionItem lcr
                     |> lcrToList
                 )
                 |> Just
@@ -445,6 +445,14 @@ logFail v =
 
 
 -- WIDGET SUGGESTIONS VIEW
+
+
+viewSelectedSuggestionItem t =
+    div
+        [ class "ph3 pv1 f5 lh-copy ttc bg-light-gray"
+        , tabindex -1
+        ]
+        [ text t ]
 
 
 viewSuggestionItem t =
