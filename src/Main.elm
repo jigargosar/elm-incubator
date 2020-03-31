@@ -1,12 +1,14 @@
 port module Main exposing (main)
 
 import Browser
+import Browser.Dom as Dom
 import Browser.Events
 import Css exposing (..)
 import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (attribute, autofocus, class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
+import Task exposing (Task)
 
 
 port onFocusOutside : (String -> msg) -> Sub msg
@@ -68,8 +70,12 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Model (SI (initQuery "foo bar") False)
-    , Cmd.none
+    , focusSI
     )
+
+
+focusSI =
+    Dom.focus siDomId |> Task.attempt OnFocusResult
 
 
 
@@ -91,6 +97,7 @@ init _ =
 
 type Msg
     = NoOp
+    | OnFocusResult (Result Dom.Error ())
     | QFocused
     | HideSuggestions
     | QInputChanged String
@@ -102,6 +109,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update message ((Model (SI q sr)) as model) =
     case message of
         NoOp ->
+            ( model, Cmd.none )
+
+        OnFocusResult (Err (Dom.NotFound domId)) ->
+            let
+                _ =
+                    Debug.log "FocusError" domId
+            in
+            ( model, Cmd.none )
+
+        OnFocusResult (Ok ()) ->
             ( model, Cmd.none )
 
         QFocused ->
