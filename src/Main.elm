@@ -166,28 +166,11 @@ viewSearchWidget (SI qs showSuggestions) =
                 , focusWithin [ widgetShadow1, borderTransparent ]
                 , hover [ widgetShadow1, borderTransparent ]
                 ]
-
-        inputView =
-            if showSuggestions then
-                styled div
-                    borderAndShadowStyles
-                    [ class "pv2 ph3 flex-auto flex "
-                    ]
-                    [ viewSearchInput qs ]
-
-            else
-                styled div
-                    borderAndShadowStyles
-                    [ class "pv2 ph3 flex-auto flex " ]
-                    [ viewSearchInput qs ]
     in
     styled div
         [ -- layout
           displayFlex
         , position relative
-
-        -- style
-        , backgroundColor white
         ]
         [ A.id siContainerDomId
         , E.on "focusout"
@@ -196,26 +179,33 @@ viewSearchWidget (SI qs showSuggestions) =
             )
         ]
     <|
-        if showSuggestions then
-            [ inputView
-
+        [ styled div
+            (widgetBorder
+                :: borderRadius wbr
+                :: borderAndShadowStyles
+            )
+            [ class "pv2 ph3 flex-auto flex" ]
+            [ viewSearchInput qs ]
+        , if showSuggestions then
             --, div [ class "mh3 bb " ] []
-            , styled div
-                [ widgetShadow2
-                , top (pct 100)
+            styled div
+                [ -- layout
+                  top (pct 100)
                 , width <| pct 100
+                , position absolute
+
+                -- style
+                , widgetShadow2
                 , borderRadius wbr
                 , brBottom
-                , backgroundColor inherit
+                , backgroundColor white
                 ]
-                [ class "absolute"
-                , class "pv2"
-                ]
+                [ class "pv2" ]
                 viewSuggestionListItems
-            ]
 
-        else
-            [ inputView ]
+          else
+            text ""
+        ]
 
 
 white =
