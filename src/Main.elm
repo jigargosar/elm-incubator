@@ -153,17 +153,13 @@ viewSearchWidget (SI qs showSuggestions) =
 
         borderAndShadowStyles =
             if showSuggestions then
-                [ widgetBorder
-                , borderRadius wbr
-                , widgetShadow1
+                [ widgetShadow1
                 , borderTransparent
                 , brTop
                 ]
 
             else
-                [ widgetBorder
-                , borderRadius wbr
-                , focusWithin [ widgetShadow1, borderTransparent ]
+                [ focusWithin [ widgetShadow1, borderTransparent ]
                 , hover [ widgetShadow1, borderTransparent ]
                 ]
     in
@@ -226,16 +222,15 @@ brBottom =
         ]
 
 
-brPill =
-    borderRadius <| px 9999
-
-
 wbr =
     rem 1.25
 
 
 widgetBorder =
-    border3 (px 1) solid colorWidgetBorder
+    batch
+        [ border3 (px 1) solid colorWidgetBorder
+        , borderRadius wbr
+        ]
 
 
 borderTransparent =
