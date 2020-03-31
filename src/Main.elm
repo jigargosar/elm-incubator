@@ -171,40 +171,39 @@ viewSearchWidget (SI qs showSuggestions) =
                 )
                 []
                 [ viewSearchInput qs ]
+
+        suggestionsView =
+            if showSuggestions then
+                --, div [ class "mh3 bb " ] []
+                styled div
+                    [ -- layout
+                      top (pct 100)
+                    , width <| pct 100
+                    , position absolute
+
+                    -- style
+                    , widgetBorder
+                    , borderTransparent
+                    , brBottom
+                    , widgetShadow2
+                    , backgroundColor white
+                    ]
+                    [ class "pv2" ]
+                    viewSuggestionListItems
+
+            else
+                text ""
     in
     styled div
-        [ -- layout
-          displayFlex
-        , position relative
-        ]
+        [ displayFlex, position relative ]
         [ A.id siContainerDomId
         , E.on "focusout"
             (JD.at [ "relatedTarget" ] elDecoder
                 |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
             )
         ]
-    <|
         [ inputView
-        , if showSuggestions then
-            --, div [ class "mh3 bb " ] []
-            styled div
-                [ -- layout
-                  top (pct 100)
-                , width <| pct 100
-                , position absolute
-
-                -- style
-                , widgetBorder
-                , borderTransparent
-                , brBottom
-                , widgetShadow2
-                , backgroundColor white
-                ]
-                [ class "pv2" ]
-                viewSuggestionListItems
-
-          else
-            text ""
+        , suggestionsView
         ]
 
 
