@@ -153,7 +153,6 @@ view (Model si) =
         , E.on "focusin"
             (activeElementDecoder
                 |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
-                |> andThenLogFail2 "focusin"
             )
         ]
         [ div [ A.id "above-si-dom-id", tabindex 0 ] [ text "above si" ]
@@ -333,7 +332,7 @@ logFail v =
 viewSuggestionItem t =
     div
         [ class "ph3 pv1 f5 lh-copy ttc"
-        , tabindex 0
+        , tabindex -1
         ]
         [ text t ]
 
