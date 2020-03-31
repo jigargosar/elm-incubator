@@ -356,13 +356,11 @@ viewSearchWidget (SI qs ss) =
                           absolute
                         , top p100
                         , w100
-                        , overflow hidden
 
                         -- style
-                        , widgetBorder
-                        , bTransparent
+                        , widgetBorderRadius
                         , brBottom
-                        , borderWidth zero
+                        , overflow hidden
                         , widgetShadow2
                         , backgroundColor white
                         ]
@@ -431,8 +429,12 @@ wbColor =
 widgetBorder =
     batch
         [ border3 (px 1) solid wbColor
-        , borderRadius (rem 1)
+        , widgetBorderRadius
         ]
+
+
+widgetBorderRadius =
+    borderRadius (rem 1.25)
 
 
 widgetShadow1 =
