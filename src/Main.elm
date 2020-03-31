@@ -329,7 +329,7 @@ update message ((Model (SW q ss)) as model) =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ onClickOutside siContainerDomId HideSuggestions
+        [ onClickOutside searchWidgetDomId HideSuggestions
         ]
 
 
@@ -347,13 +347,17 @@ view (Model si) =
         [ class "pt4 measure-wide center"
         , E.on "focusin"
             (activeElementDecoder
-                |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
+                |> JD.andThen (isElOutside searchWidgetDomId >> succeedWhenTrue HideSuggestions)
             )
         ]
         [ div [ A.id "above-si-dom-id", tabindex 0 ] [ text "above si" ]
         , viewSearchWidget si
         , div [ A.id "below-si-dom-id", tabindex 0 ] [ text "below si" ]
         ]
+
+
+searchWidgetDomId =
+    "search-widget-dom-id"
 
 
 viewSearchWidget : SearchWidget -> HM
@@ -383,7 +387,7 @@ viewSearchWidget (SW qs ss) =
     in
     styled div
         [ displayFlex, position relative ]
-        [ A.id siContainerDomId
+        [ A.id searchWidgetDomId
         ]
         [ inputView
         , maybeSuggestionsView
@@ -476,14 +480,6 @@ shadowWidgetInput =
 
 shadowWidgetSuggestions =
     boxShadowL [ "0 4px 6px 0 rgba(32, 33, 36, 0.28)" ]
-
-
-
--- WIDGET ROOT COMMON ATTRS
-
-
-siContainerDomId =
-    "si-container-dom-id"
 
 
 
