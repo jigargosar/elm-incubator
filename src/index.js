@@ -56,9 +56,12 @@ function publisher(portName, app) {
   document.addEventListener('focusin', function() {
     requestAnimationFrame(function() {
       const active = document.activeElement
-      const selector = '#si-container-dom-id'
-      if (active !== document.body && active.closest(selector) === null) {
-        onFocusOutside(selector)
+      const domId = 'si-container-dom-id'
+      const domIdSelector = '#' + domId
+      const element = active.closest(domIdSelector)
+      console.log(active, element)
+      if (active !== document.body && element === null) {
+        onFocusOutside(domId)
       }
     })
   })
