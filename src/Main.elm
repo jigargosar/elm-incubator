@@ -71,6 +71,10 @@ init _ =
 
 
 -- Update
+{-
+   when to show/hide search results?
+
+-}
 
 
 type Msg
