@@ -71,7 +71,7 @@ function publisher(portName, app) {
       document.querySelectorAll('[data-focus-outside]'),
     )
     // console.log('on focus in data-focus-out els', els)
-    console.log('onFocusIn: document.activeElement', document.activeElement)
+    console.debug('onFocusIn: document.activeElement', document.activeElement)
     els.forEach(function(el) {
       if (!el.contains(document.activeElement)) {
         const datasetElement = el.dataset['focusOutside']

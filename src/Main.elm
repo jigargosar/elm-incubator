@@ -148,7 +148,13 @@ type alias HM =
 
 view : Model -> HM
 view (Model si) =
-    div [ class "pt4 measure-wide center" ]
+    div
+        [ class "pt4 measure-wide center"
+        , E.on "focusin"
+            (JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
+                |> andThenLogFail2 "focusin"
+            )
+        ]
         [ div [ A.id "above-si-dom-id", tabindex 0 ] [ text "above si" ]
         , viewSearchWidget si
         , div [ A.id "below-si-dom-id", tabindex 0 ] [ text "below si" ]
@@ -289,6 +295,7 @@ elDecoder =
 --noinspection ElmUnusedSymbol
 
 
+andThenLogFail2 : String -> Decoder a -> Decoder b
 andThenLogFail2 msg =
     JD.andThen
         (\v ->
