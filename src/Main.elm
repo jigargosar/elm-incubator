@@ -189,7 +189,12 @@ viewSearchWidget (SI qs showSuggestions) =
         -- style
         , backgroundColor white
         ]
-        commonWidgetAttrs
+        [ A.id siContainerDomId
+        , E.on "focusout"
+            (JD.at [ "relatedTarget" ] elDecoder
+                |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
+            )
+        ]
     <|
         if showSuggestions then
             [ inputView
@@ -270,15 +275,6 @@ widgetShadow2 =
 
 siContainerDomId =
     "si-container-dom-id"
-
-
-commonWidgetAttrs =
-    [ A.id siContainerDomId
-    , E.on "focusout"
-        (JD.at [ "relatedTarget" ] elDecoder
-            |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
-        )
-    ]
 
 
 succeedWhenTrue msg bool =
