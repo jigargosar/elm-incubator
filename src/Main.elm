@@ -284,27 +284,47 @@ viewSearchWidget (SI qs ss) =
         [ A.id siContainerDomId
         ]
         [ inputView
-        , if areSuggestionsVisible then
-            styled div
-                [ -- layout
-                  absolute
-                , top p100
-                , w100
+        , case ss of
+            VisibleNoneSelected nel ->
+                styled div
+                    [ -- layout
+                      absolute
+                    , top p100
+                    , w100
 
-                -- style
-                , widgetBorder
-                , bTransparent
-                , brBottom
-                , widgetShadow2
-                , backgroundColor white
-                ]
-                []
-                [ widgetSeparator
-                , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
-                ]
+                    -- style
+                    , widgetBorder
+                    , bTransparent
+                    , brBottom
+                    , widgetShadow2
+                    , backgroundColor white
+                    ]
+                    []
+                    [ widgetSeparator
+                    , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
+                    ]
 
-          else
-            text ""
+            VisibleSelected lcr ->
+                styled div
+                    [ -- layout
+                      absolute
+                    , top p100
+                    , w100
+
+                    -- style
+                    , widgetBorder
+                    , bTransparent
+                    , brBottom
+                    , widgetShadow2
+                    , backgroundColor white
+                    ]
+                    []
+                    [ widgetSeparator
+                    , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
+                    ]
+
+            Hidden _ ->
+                text ""
         ]
 
 
