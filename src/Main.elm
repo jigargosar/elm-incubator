@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Css exposing (..)
 import Html.Styled exposing (Html, div, input, styled, text)
-import Html.Styled.Attributes as A exposing (autofocus, class, css, style, tabindex, value)
+import Html.Styled.Attributes as A exposing (autofocus, class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
@@ -208,6 +208,18 @@ viewSearchWidget (SI qs showSuggestions) =
         ]
 
 
+widgetBorder =
+    let
+        colorWidgetBorder =
+            -- rgba 223 225 229 0
+            hex "#dfe1e5"
+    in
+    batch
+        [ border3 (px 1) solid colorWidgetBorder
+        , borderRadius (rem 1.25)
+        ]
+
+
 sp2 =
     rem 0.5
 
@@ -234,20 +246,8 @@ brBottom =
         ]
 
 
-widgetBorder =
-    batch
-        [ border3 (px 1) solid colorWidgetBorder
-        , borderRadius (rem 1.25)
-        ]
-
-
 borderTransparent =
     borderColor transparent
-
-
-colorWidgetBorder =
-    -- rgba 223 225 229 0
-    hex "#dfe1e5"
 
 
 focusWithin =
