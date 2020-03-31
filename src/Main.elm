@@ -310,10 +310,21 @@ nelToList ( h, t ) =
     h :: t
 
 
+mapCS fc fs ( l, c, r ) =
+    ( List.map fs l, fc c, List.map fs r )
+
+
+lcrToList ( l, c, r ) =
+    List.reverse l ++ c :: r
+
+
 maybeViewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
-            div [] (List.map viewSuggestionItem (lcrToNel lcr |> nelToList))
+            div []
+                (mapCS viewSuggestionItem viewSuggestionItem lcr
+                    |> lcrToList
+                )
                 |> Just
 
         VisibleNoneSelected nel ->
