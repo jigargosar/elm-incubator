@@ -71,10 +71,10 @@ hideSuggestions ss =
 showSuggestions : Suggestions -> Maybe Suggestions
 showSuggestions ss =
     case ss of
-        VisibleSelected lcr ->
+        VisibleSelected _ ->
             Nothing
 
-        VisibleNoneSelected nel ->
+        VisibleNoneSelected _ ->
             Nothing
 
         Hidden nel ->
@@ -241,22 +241,11 @@ view (Model si) =
 viewSearchWidget : SearchInput -> HM
 viewSearchWidget (SI qs ss) =
     let
-        suggestions =
-            [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ]
-
-        suggestionView =
-            div [] (List.map viewSuggestionItem suggestions)
+        maybeSuggestionsView =
+            maybeViewSuggestions ss
 
         areSuggestionsVisible =
-            case ss of
-                VisibleSelected lcr ->
-                    True
-
-                VisibleNoneSelected nel ->
-                    True
-
-                Hidden nel ->
-                    False
+            maybeSuggestionsView /= Nothing
 
         inputView =
             styled div
@@ -284,8 +273,8 @@ viewSearchWidget (SI qs ss) =
         [ A.id siContainerDomId
         ]
         [ inputView
-        , case ss of
-            VisibleNoneSelected nel ->
+        , case maybeSuggestionsView of
+            Just suggestionsView ->
                 styled div
                     [ -- layout
                       absolute
@@ -301,31 +290,30 @@ viewSearchWidget (SI qs ss) =
                     ]
                     []
                     [ widgetSeparator
-                    , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
+                    , styled div [ padding2 sp2 zero ] [] [ suggestionsView ]
                     ]
 
-            VisibleSelected lcr ->
-                styled div
-                    [ -- layout
-                      absolute
-                    , top p100
-                    , w100
-
-                    -- style
-                    , widgetBorder
-                    , bTransparent
-                    , brBottom
-                    , widgetShadow2
-                    , backgroundColor white
-                    ]
-                    []
-                    [ widgetSeparator
-                    , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
-                    ]
-
-            Hidden _ ->
+            Nothing ->
                 text ""
         ]
+
+
+nelToList ( h, t ) =
+    h :: t
+
+
+maybeViewSuggestions ss =
+    case ss of
+        VisibleSelected lcr ->
+            div [] (List.map viewSuggestionItem (lcrToNel lcr |> nelToList))
+                |> Just
+
+        VisibleNoneSelected nel ->
+            div [] (List.map viewSuggestionItem (nelToList nel))
+                |> Just
+
+        Hidden _ ->
+            Nothing
 
 
 widgetSeparator =
