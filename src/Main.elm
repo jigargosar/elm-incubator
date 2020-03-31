@@ -6,7 +6,6 @@ import Html exposing (Html, div, input, text)
 import Html.Attributes as A exposing (autofocus, class, style, tabindex, value)
 import Html.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
-import Json.Encode exposing (Value)
 
 
 
@@ -72,16 +71,16 @@ init _ =
 
 -- Update
 {-
-   when to show/hide search results?
+   when to show/hide search suggestions?
 
-   MUST HideResults:
+   MUST HideSuggestions:
    * when any element outside widget receives focus.
    * on Escape key, when search widget input has focus.
    * on Click, outside widget.
 
-   MAYBE HideResults:
+   MAYBE HideSuggestions:
    * on Escape key, when focus in within widget.
-   * on Escape key, when focus is on any of search result.
+   * on Escape key, when focus is on any of search suggestion.
 
 -}
 
@@ -89,7 +88,7 @@ init _ =
 type Msg
     = NoOp
     | QFocused
-    | HideResults
+    | HideSuggestions
     | QInputChanged String
     | QCursorUp
     | QCursorDown
@@ -104,7 +103,7 @@ update message ((Model (SI q sr)) as model) =
         QFocused ->
             ( Model (SI q (isQueryOriginal q || sr)), Cmd.none )
 
-        HideResults ->
+        HideSuggestions ->
             ( Model (SI q False), Cmd.none )
 
         QInputChanged changed ->
@@ -122,7 +121,7 @@ update message ((Model (SI q sr)) as model) =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ onClickOutside siContainerDomId HideResults
+        [ onClickOutside siContainerDomId HideSuggestions
         ]
 
 
@@ -138,25 +137,25 @@ view : Model -> HM
 view (Model si) =
     div [ class "pt4 measure-wide center" ]
         [ div [ A.id "above-si-dom-id", tabindex 0 ] [ text "above si" ]
-        , viewSearch si
+        , viewSearchWidget si
         , div [ A.id "below-si-dom-id", tabindex 0 ] [ text "below si" ]
         ]
 
 
-viewSearch (SI qs showResults) =
-    if showResults then
-        viewSearchWithResults qs
+viewSearchWidget (SI qs showSuggestions) =
+    if showSuggestions then
+        viewWithSuggestions qs
 
     else
-        viewSearchSimple qs
+        viewOnlyInput qs
 
 
 siContainerDomId =
     "si-container-dom-id"
 
 
-viewSearchWithResults : Query -> HM
-viewSearchWithResults qs =
+viewWithSuggestions : Query -> HM
+viewWithSuggestions qs =
     let
         attrs =
             [ class "pt2 ph3"
@@ -168,12 +167,12 @@ viewSearchWithResults qs =
     div
         (attrs ++ commonWidgetAttrs)
         [ viewSearchInput qs
-        , div [ class "pb2 ph2" ] (List.map viewResultItem [ "result 1", "result 1", "result 1", "result 1" ])
+        , div [ class "pb2 ph2" ] (List.map viewSuggestionItem [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ])
         ]
 
 
-viewSearchSimple : Query -> HM
-viewSearchSimple qs =
+viewOnlyInput : Query -> HM
+viewOnlyInput qs =
     let
         attrs =
             [ class "pv2 ph3"
@@ -197,7 +196,7 @@ commonWidgetAttrs =
     [ A.id siContainerDomId
     , E.on "focusout"
         (JD.at [ "relatedTarget" ] elDecoder
-            |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideResults)
+            |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
         )
     ]
 
@@ -249,10 +248,10 @@ logFail v =
 
 
 
--- WIDGET RESULTS VIEW
+-- WIDGET SUGGESTIONS VIEW
 
 
-viewResultItem t =
+viewSuggestionItem t =
     div
         [ class "f5 lh-title ttc"
         , tabindex 0
@@ -288,10 +287,10 @@ widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )
 widgetInputKeyDownDecoder key =
     case key of
         "Escape" ->
-            JD.succeed ( HideResults, False )
+            JD.succeed ( HideSuggestions, False )
 
         --"Tab" ->
-        --    JD.succeed ( HideResults, False )
+        --    JD.succeed ( HideSuggestions, False )
         "ArrowUp" ->
             JD.succeed ( QCursorUp, True )
 
