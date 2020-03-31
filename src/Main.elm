@@ -155,6 +155,7 @@ viewSearchWidget (SI qs showSuggestions) =
         div
             ([ class "flex flex-column"
              , class "relative"
+             , css [ backgroundColor white ]
              ]
                 ++ commonWidgetAttrs
             )
@@ -178,10 +179,10 @@ viewSearchWidget (SI qs showSuggestions) =
                 , width <| pct 100
                 , borderRadius wbr
                 , brBottom
+                , backgroundColor inherit
                 ]
                 [ class "absolute"
                 , class "pv2"
-                , class "bg-white"
                 ]
                 viewSuggestionListItems
             ]
@@ -201,6 +202,10 @@ viewSearchWidget (SI qs showSuggestions) =
             )
             [ div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
             ]
+
+
+white =
+    hex "#fff"
 
 
 brTop =
