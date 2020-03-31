@@ -220,40 +220,6 @@ widgetBorder =
         ]
 
 
-sp2 =
-    rem 0.5
-
-
-sp3 =
-    rem 1
-
-
-white =
-    hex "#fff"
-
-
-brTop =
-    batch
-        [ borderBottomLeftRadius zero
-        , borderBottomRightRadius zero
-        ]
-
-
-brBottom =
-    batch
-        [ borderTopLeftRadius zero
-        , borderTopRightRadius zero
-        ]
-
-
-borderTransparent =
-    borderColor transparent
-
-
-focusWithin =
-    Css.pseudoClass "focus-within"
-
-
 widgetShadow1 =
     Css.property "box-shadow" "0 1px 6px 0 rgba(32, 33, 36, 0.28)"
 
@@ -373,6 +339,44 @@ widgetInputKeyDownDecoder key =
 keyDecoder : Decoder String
 keyDecoder =
     JD.field "key" JD.string
+
+
+
+-- CSS HELPERS
+
+
+sp2 =
+    rem 0.5
+
+
+sp3 =
+    rem 1
+
+
+white =
+    hex "#fff"
+
+
+brTop =
+    batch
+        [ borderBottomLeftRadius zero
+        , borderBottomRightRadius zero
+        ]
+
+
+brBottom =
+    batch
+        [ borderTopLeftRadius zero
+        , borderTopRightRadius zero
+        ]
+
+
+borderTransparent =
+    borderColor transparent
+
+
+focusWithin =
+    Css.pseudoClass "focus-within"
 
 
 
