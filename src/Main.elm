@@ -8,6 +8,7 @@ import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
+import List.Extra
 import Task exposing (Task)
 
 
@@ -81,7 +82,7 @@ showSuggestions ss =
             Just (VisibleNoneSelected nel)
 
 
-lcrNext : ( List b, b, List b ) -> Maybe ( List b, b, List b )
+lcrNext : ( List b, b, List a ) -> Maybe ( List b, a, List a )
 lcrNext ( l, c, r ) =
     case r of
         rh :: rt ->
@@ -91,9 +92,48 @@ lcrNext ( l, c, r ) =
             Nothing
 
 
-lcrFirst : ( List a, a, List a ) -> ( List a, a, List a )
-lcrFirst =
-    lcrToNel >> nelToLcr
+lcrPrev : ( List a, b, List b ) -> Maybe ( List a, a, List b )
+lcrPrev ( l, c, r ) =
+    case l of
+        head :: tail ->
+            Just ( tail, head, c :: r )
+
+        [] ->
+            Nothing
+
+
+lcrFirst (( l, c, r ) as lcr) =
+    case List.reverse l of
+        [] ->
+            lcr
+
+        head :: tail ->
+            ( [], head, tail ++ c :: r )
+
+
+lcrLast : ( List a, a, List a ) -> ( List a, a, List a )
+lcrLast (( l, c, r ) as lcr) =
+    case List.reverse r of
+        [] ->
+            lcr
+
+        head :: tail ->
+            ( tail ++ c :: l, head, [] )
+
+
+selectPrevSuggestion : Suggestions -> Suggestions
+selectPrevSuggestion ss =
+    case ss of
+        VisibleSelected lcr ->
+            lcrPrev lcr
+                |> Maybe.withDefault (lcrLast lcr)
+                |> VisibleSelected
+
+        VisibleNoneSelected nel ->
+            VisibleSelected (nelToLcr nel)
+
+        Hidden nel ->
+            VisibleSelected (nelToLcr nel)
 
 
 selectNextSuggestion : Suggestions -> Suggestions
