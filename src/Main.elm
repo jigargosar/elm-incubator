@@ -151,7 +151,8 @@ view (Model si) =
     div
         [ class "pt4 measure-wide center"
         , E.on "focusin"
-            (JD.at [ "target", "ownerDocument", "activeElement", "id" ] JD.string
+            (JD.at [ "target", "ownerDocument", "activeElement" ] elDecoder
+                |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
                 |> andThenLogFail2 "focusin"
             )
         ]
