@@ -330,13 +330,12 @@ viewSearchWidget (SI qs ss) =
                     :: widgetBorder
                     :: (if areSuggestionsVisible then
                             [ widgetShadow1
-                            , bTransparent
+                            , borderTransparent
                             , brTop
                             ]
 
                         else
-                            [ focusWithin [ widgetShadow1, bTransparent ]
-                            , hover [ widgetShadow1, bTransparent ]
+                            [ hoverNFocusWithin [ widgetShadow1, borderTransparent ]
                             ]
                        )
                 )
@@ -370,6 +369,10 @@ viewSearchWidget (SI qs ss) =
                         ]
                 )
         ]
+
+
+hoverNFocusWithin styles =
+    batch [ hover styles, focusWithin styles ]
 
 
 viewMaybe func mb =
@@ -637,7 +640,7 @@ brBottom =
         ]
 
 
-bTransparent =
+borderTransparent =
     borderColor transparent
 
 
