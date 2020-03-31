@@ -65,6 +65,20 @@ function publisher(portName, app) {
       }
     })
   })
+
+  document.addEventListener('focusin', function() {
+    const els = Array.from(
+      document.querySelectorAll('[data-focus-outside]'),
+    )
+    // console.log('on focus in data-focus-out els', els)
+    console.log('onFocusIn: document.activeElement', document.activeElement)
+    els.forEach(function(el) {
+      if (!el.contains(document.activeElement)) {
+        const datasetElement = el.dataset['focusOutside']
+        // console.log('onFocusOutside', datasetElement)
+      }
+    })
+  })
 }
 
 function initElmModule(initParams, module) {
