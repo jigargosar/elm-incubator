@@ -2,8 +2,9 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
+import Css
 import Html.Styled exposing (Html, div, input, text)
-import Html.Styled.Attributes as A exposing (autofocus, class, style, tabindex, value)
+import Html.Styled.Attributes as A exposing (autofocus, class, css, style, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
@@ -152,10 +153,11 @@ viewSearchWidget (SI qs showSuggestions) =
     in
     if showSuggestions then
         div
-            ([ class "bt br bl b--white sw-shadow"
+            ([ class "bt br bl b--white"
              , style "border-radius" "1.25rem 1.25rem 0 0"
              , class "flex flex-column"
              , class "relative"
+             , css [ widgetBS ]
              ]
                 ++ commonWidgetAttrs
             )
@@ -177,15 +179,24 @@ viewSearchWidget (SI qs showSuggestions) =
     else
         div
             ([ class "ba b--moon-gray "
-             , class "fw-b--transparent fw-sw-shadow"
+             , class "fw-b--transparent"
              , class "br-pill"
              , class "flex flex-column"
              , class "relative"
+             , css [ focusWithin [ widgetBS ] ]
              ]
                 ++ commonWidgetAttrs
             )
             [ viewSearchInput qs
             ]
+
+
+focusWithin =
+    Css.pseudoClass "focus-within"
+
+
+widgetBS =
+    Css.property "box-shadow" "0 1px 6px 0 rgba(32, 33, 36, 0.28)"
 
 
 
