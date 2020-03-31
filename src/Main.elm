@@ -163,7 +163,11 @@ viewSearchWidget (SI qs showSuggestions) =
                 , css
                     [ widgetShadow1
                     , widgetBorderTransparent
-                    , borderRadius4 wbr wbr zero zero
+
+                    --, borderRadius4 wbr wbr zero zero
+                    , borderRadius wbr
+                    , borderBottomLeftRadius zero
+                    , borderBottomRightRadius zero
                     ]
                 ]
                 [ viewSearchInput qs ]
@@ -197,6 +201,20 @@ viewSearchWidget (SI qs showSuggestions) =
             )
             [ div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
             ]
+
+
+brTop =
+    batch
+        [ borderBottomLeftRadius zero
+        , borderBottomRightRadius zero
+        ]
+
+
+brBottom =
+    batch
+        [ borderTopLeftRadius zero
+        , borderTopRightRadius zero
+        ]
 
 
 wbr =
