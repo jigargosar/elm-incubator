@@ -151,22 +151,6 @@ viewSearchWidget (SI qs showSuggestions) =
         viewSuggestionListItems =
             List.map viewSuggestionItem suggestions
 
-        rootStyles =
-            if showSuggestions then
-                [ -- layout
-                  displayFlex
-                , position relative
-
-                -- style
-                , backgroundColor white
-                ]
-
-            else
-                [ -- layout
-                  displayFlex
-                , position relative
-                ]
-
         inputView =
             if showSuggestions then
                 styled div
@@ -191,7 +175,16 @@ viewSearchWidget (SI qs showSuggestions) =
                     [ class "pv2 ph3 flex-auto flex " ]
                     [ viewSearchInput qs ]
     in
-    styled div rootStyles commonWidgetAttrs <|
+    styled div
+        [ -- layout
+          displayFlex
+        , position relative
+
+        -- style
+        , backgroundColor white
+        ]
+        commonWidgetAttrs
+    <|
         if showSuggestions then
             [ inputView
 
