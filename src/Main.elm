@@ -154,10 +154,10 @@ viewSearchWidget (SI qs showSuggestions) =
         inputView =
             if showSuggestions then
                 styled div
-                    [ widgetShadow1
-                    , widgetBorder
-                    , borderTransparent
+                    [ widgetBorder
                     , borderRadius wbr
+                    , widgetShadow1
+                    , borderTransparent
                     , brTop
                     ]
                     [ class "pv2 ph3 flex-auto flex "
@@ -166,10 +166,8 @@ viewSearchWidget (SI qs showSuggestions) =
 
             else
                 styled div
-                    [ brPill
-
-                    --, borderRadius wbr
-                    , widgetBorder
+                    [ widgetBorder
+                    , borderRadius wbr
                     , focusWithin [ widgetShadow1, borderTransparent ]
                     , hover [ widgetShadow1, borderTransparent ]
                     ]
