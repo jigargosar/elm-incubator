@@ -33,6 +33,10 @@ type Model
     = Model SearchInput
 
 
+type SearchInput
+    = SI Query Bool
+
+
 type Query
     = Query String String
 
@@ -54,10 +58,6 @@ queryInputValue (Query _ c) =
 
 isQueryOriginal (Query o c) =
     o == c
-
-
-type SearchInput
-    = SI Query Bool
 
 
 type alias Flags =
