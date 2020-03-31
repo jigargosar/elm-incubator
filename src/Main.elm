@@ -402,8 +402,7 @@ viewMaybe func mb =
 maybeViewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
-            styled div
-                []
+            div
                 []
                 (lcrMapCS viewSelectedSuggestionItem viewSuggestionItem lcr
                     |> lcrToList
