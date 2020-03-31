@@ -273,29 +273,37 @@ viewSearchWidget (SI qs ss) =
         [ A.id siContainerDomId
         ]
         [ inputView
-        , case maybeSuggestionsView of
-            Just suggestionsView ->
-                styled div
-                    [ -- layout
-                      absolute
-                    , top p100
-                    , w100
+        , maybeSuggestionsView
+            |> viewMaybe
+                (\suggestionsView ->
+                    styled div
+                        [ -- layout
+                          absolute
+                        , top p100
+                        , w100
 
-                    -- style
-                    , widgetBorder
-                    , bTransparent
-                    , brBottom
-                    , widgetShadow2
-                    , backgroundColor white
-                    ]
-                    []
-                    [ widgetSeparator
-                    , styled div [ padding2 sp2 zero ] [] [ suggestionsView ]
-                    ]
-
-            Nothing ->
-                text ""
+                        -- style
+                        , widgetBorder
+                        , bTransparent
+                        , brBottom
+                        , widgetShadow2
+                        , backgroundColor white
+                        ]
+                        []
+                        [ widgetSeparator
+                        , styled div [ padding2 sp2 zero ] [] [ suggestionsView ]
+                        ]
+                )
         ]
+
+
+viewMaybe func mb =
+    case mb of
+        Just v ->
+            func v
+
+        Nothing ->
+            text ""
 
 
 nelToList ( h, t ) =
