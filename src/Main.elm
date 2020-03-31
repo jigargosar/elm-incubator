@@ -329,13 +329,13 @@ viewSearchWidget (SI qs ss) =
                     :: displayFlex
                     :: widgetBorder
                     :: (if areSuggestionsVisible then
-                            [ widgetShadow1
+                            [ widgetInputShadow
                             , borderTransparent
                             , borderRadiusOnlyTop
                             ]
 
                         else
-                            [ hoverNFocusWithin [ widgetShadow1, borderTransparent ]
+                            [ hoverNFocusWithin [ widgetInputShadow, borderTransparent ]
                             ]
                        )
                 )
@@ -360,7 +360,7 @@ viewSearchWidget (SI qs ss) =
                         , widgetBorderRadiusStyle
                         , borderRadiusOnlyBottom
                         , overflow hidden -- to ensure children don't overflow border radius
-                        , widgetShadow2
+                        , widgetResultsShadow
                         , backgroundColor white
                         ]
                         []
@@ -440,11 +440,11 @@ widgetBorderRadiusStyle =
     borderRadius (rem 1.25)
 
 
-widgetShadow1 =
+widgetInputShadow =
     boxShadowL [ "0 1px 6px 0 rgba(32, 33, 36, 0.28)" ]
 
 
-widgetShadow2 =
+widgetResultsShadow =
     boxShadowL [ "0 4px 6px 0 rgba(32, 33, 36, 0.28)" ]
 
 
