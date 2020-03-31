@@ -278,18 +278,14 @@ viewSearchInput qs =
         , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
-        , onWidgetInputKeydown
+        , E.preventDefaultOn "keydown"
+            (JD.andThen widgetInputKeyDownDecoder keyDecoder)
         ]
         []
 
 
-onWidgetInputKeydown =
-    E.preventDefaultOn "keydown"
-        (JD.andThen keyDownDispatcher keyDecoder)
-
-
-keyDownDispatcher : String -> Decoder ( Msg, Bool )
-keyDownDispatcher key =
+widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )
+widgetInputKeyDownDecoder key =
     case key of
         "Escape" ->
             JD.succeed ( HideResults, False )
