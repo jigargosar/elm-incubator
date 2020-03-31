@@ -341,6 +341,10 @@ type alias HM =
     Html Msg
 
 
+searchWidgetDomId =
+    "search-widget-dom-id"
+
+
 view : Model -> HM
 view (Model si) =
     div
@@ -352,10 +356,6 @@ view (Model si) =
         , viewSearchWidget si
         , div [ A.id "below-si-dom-id", tabindex 0 ] [ text "below si" ]
         ]
-
-
-searchWidgetDomId =
-    "search-widget-dom-id"
 
 
 viewSearchWidget : SearchWidget -> HM
