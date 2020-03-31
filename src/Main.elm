@@ -67,7 +67,7 @@ lcrToList ( l, c, r ) =
     List.reverse l ++ c :: r
 
 
-lcrGoR : ( List b, b, List a ) -> Maybe ( List b, a, List a )
+lcrGoR : LCR a -> Maybe (LCR a)
 lcrGoR ( l, c, r ) =
     case r of
         rh :: rt ->
@@ -77,7 +77,7 @@ lcrGoR ( l, c, r ) =
             Nothing
 
 
-lcrGoL : ( List a, b, List b ) -> Maybe ( List a, a, List b )
+lcrGoL : LCR a -> Maybe (LCR a)
 lcrGoL ( l, c, r ) =
     case l of
         head :: tail ->
@@ -87,7 +87,7 @@ lcrGoL ( l, c, r ) =
             Nothing
 
 
-lcrFirst : ( List a, a, List a ) -> ( List a, a, List a )
+lcrFirst : LCR a -> LCR a
 lcrFirst (( l, c, r ) as lcr) =
     case List.reverse l of
         [] ->
@@ -97,7 +97,7 @@ lcrFirst (( l, c, r ) as lcr) =
             ( [], head, tail ++ c :: r )
 
 
-lcrLast : ( List a, a, List a ) -> ( List a, a, List a )
+lcrLast : LCR a -> LCR a
 lcrLast (( l, c, r ) as lcr) =
     case List.reverse r of
         [] ->
