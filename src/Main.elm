@@ -148,7 +148,7 @@ viewSearchWidget (SI qs showSuggestions) =
         suggestions =
             [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ]
 
-        viewSuggestionListItems =
+        suggestionItemsView =
             List.map viewSuggestionItem suggestions
 
         inputView =
@@ -177,9 +177,10 @@ viewSearchWidget (SI qs showSuggestions) =
                 --, div [ class "mh3 bb " ] []
                 styled div
                     [ -- layout
-                      top (pct 100)
+                      position absolute
+                    , top (pct 100)
+                    , padding2 (rem 0.5) zero
                     , width <| pct 100
-                    , position absolute
 
                     -- style
                     , widgetBorder
@@ -188,8 +189,8 @@ viewSearchWidget (SI qs showSuggestions) =
                     , widgetShadow2
                     , backgroundColor white
                     ]
-                    [ class "pv2" ]
-                    viewSuggestionListItems
+                    []
+                    suggestionItemsView
 
             else
                 text ""
