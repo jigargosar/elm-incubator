@@ -386,10 +386,12 @@ viewSearchWidget (SI qs ss) =
         ]
 
 
+hoverAndFocusWithin : List Style -> Style
 hoverAndFocusWithin styles =
     batch [ hover styles, focusWithin styles ]
 
 
+viewMaybe : (a -> Html msg) -> Maybe a -> Html msg
 viewMaybe func mb =
     case mb of
         Just v ->
@@ -418,6 +420,7 @@ maybeViewSuggestions ss =
             Nothing
 
 
+widgetSeparator : Html msg
 widgetSeparator =
     styled div [ margin2 zero sp3, borderTop3 (px 1) solid wbColor ] [] []
 
