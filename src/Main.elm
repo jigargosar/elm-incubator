@@ -128,8 +128,9 @@ type alias HM =
 view : Model -> HM
 view (Model si) =
     div [ class "pt4 measure-wide center" ]
-        [ viewSearch si
-        , div [ A.id "rel-tar", tabindex 0 ] [ text "rel target div tabindex 0" ]
+        [ div [ A.id "above-si-dom-id", tabindex 0 ] [ text "above si" ]
+        , viewSearch si
+        , div [ A.id "below-si-dom-id", tabindex 0 ] [ text "below si" ]
         ]
 
 
