@@ -145,7 +145,7 @@ selectNextSuggestion ss =
                 |> VisibleSelected
 
         VisibleNoneSelected nel ->
-            VisibleSelected (nelToLcr nel)
+            VisibleSelected (nelToLcr nel |> lcrFirst)
 
         Hidden nel ->
             VisibleNoneSelected nel
