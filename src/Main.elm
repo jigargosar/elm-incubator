@@ -95,11 +95,11 @@ focusSI =
 type Msg
     = NoOp
     | OnFocusResult (Result Dom.Error ())
-    | QFocused
+    | QInputFocused
     | HideSuggestions
     | QInputChanged String
-    | QCursorUp
-    | QCursorDown
+    | QInputUp
+    | QInputDown
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -118,7 +118,7 @@ update message ((Model (SI q sr)) as model) =
         OnFocusResult (Ok ()) ->
             ( model, Cmd.none )
 
-        QFocused ->
+        QInputFocused ->
             ( Model (SI q (isQueryOriginal q || sr)), Cmd.none )
 
         HideSuggestions ->
@@ -129,10 +129,10 @@ update message ((Model (SI q sr)) as model) =
             , Cmd.none
             )
 
-        QCursorUp ->
+        QInputUp ->
             ( Model (SI q True), Cmd.none )
 
-        QCursorDown ->
+        QInputDown ->
             ( Model (SI q True), Cmd.none )
 
 
@@ -370,7 +370,7 @@ viewSearchInput qs =
         [ A.id siDomId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
-        , onFocus QFocused
+        , onFocus QInputFocused
         , onInput QInputChanged
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
@@ -393,10 +393,10 @@ widgetInputKeyDownDecoder key =
         --"Tab" ->
         --    JD.succeed ( HideSuggestions, False )
         "ArrowUp" ->
-            JD.succeed ( QCursorUp, True )
+            JD.succeed ( QInputUp, True )
 
         "ArrowDown" ->
-            JD.succeed ( QCursorDown, True )
+            JD.succeed ( QInputDown, True )
 
         _ ->
             JD.fail "nah!"
