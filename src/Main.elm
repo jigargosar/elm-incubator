@@ -155,9 +155,8 @@ viewSearchWidget (SI qs showSuggestions) =
             if showSuggestions then
                 styled div
                     [ widgetShadow1
-                    , widgetBorderTransparent
-
-                    --, borderRadius4 wbr wbr zero zero
+                    , widgetBorder
+                    , borderTransparent
                     , borderRadius wbr
                     , brTop
                     ]
@@ -168,9 +167,11 @@ viewSearchWidget (SI qs showSuggestions) =
             else
                 styled div
                     [ brPill
+
+                    --, borderRadius wbr
                     , widgetBorder
-                    , focusWithin [ widgetShadow1, widgetBorderTransparent ]
-                    , hover [ widgetShadow1, widgetBorderTransparent ]
+                    , focusWithin [ widgetShadow1, borderTransparent ]
+                    , hover [ widgetShadow1, borderTransparent ]
                     ]
                     [ class "pv2 ph3 flex-auto flex " ]
                     [ viewSearchInput qs ]
@@ -237,8 +238,8 @@ widgetBorder =
     border3 (px 1) solid colorWidgetBorder
 
 
-widgetBorderTransparent =
-    border3 (px 1) solid transparent
+borderTransparent =
+    borderColor transparent
 
 
 colorWidgetBorder =
@@ -347,7 +348,7 @@ viewSearchInput qs =
         [ A.id domId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
-        , autofocus True
+        , autofocus False
         , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
