@@ -130,6 +130,7 @@ subscriptions _ =
             (\domId ->
                 if domId == siContainerDomId then
                     HideSuggestions
+                    --NoOp
 
                 else
                     NoOp
@@ -186,7 +187,6 @@ viewSearchWidget (SI qs showSuggestions) =
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
-        , E.on "focusout" widgetFocusOutDecoder
         ]
         [ inputView
         , if showSuggestions then
@@ -216,12 +216,6 @@ viewSearchWidget (SI qs showSuggestions) =
 
 widgetSeparator =
     styled div [ margin2 zero sp3, borderTop3 (px 1) solid wbColor ] [] []
-
-
-widgetFocusOutDecoder : Decoder Msg
-widgetFocusOutDecoder =
-    JD.at [ "relatedTarget" ] elDecoder
-        |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
 
 
 

@@ -59,7 +59,7 @@ function publisher(portName, app) {
       const domId = 'si-container-dom-id'
       const domIdSelector = '#' + domId
       const element = active.closest(domIdSelector)
-      console.log(active, element)
+      console.debug(active, element)
       if (active !== document.body && element === null) {
         onFocusOutside(domId)
       }
