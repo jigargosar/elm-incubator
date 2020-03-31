@@ -361,6 +361,7 @@ viewSearchWidget (SI qs ss) =
                         , widgetBorder
                         , bTransparent
                         , brBottom
+                        , borderWidth zero
                         , widgetShadow2
                         , backgroundColor white
                         ]
