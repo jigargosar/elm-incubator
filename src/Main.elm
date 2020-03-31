@@ -165,12 +165,6 @@ viewSearchWidget (SI qs showSuggestions) =
                 [ -- layout
                   displayFlex
                 , position relative
-
-                -- style
-                --, brPill
-                --, widgetBorder
-                --, focusWithin [ widgetShadow1, widgetBorderTransparent ]
-                --, hover [ widgetShadow1, widgetBorderTransparent ]
                 ]
 
         inputView =
