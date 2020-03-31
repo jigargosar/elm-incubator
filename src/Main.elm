@@ -345,14 +345,14 @@ viewSuggestionItem t =
 -- WIDGET INPUT VIEW
 
 
+siDomId =
+    "si-dom-id"
+
+
 viewSearchInput : Query -> HM
 viewSearchInput qs =
-    let
-        domId =
-            "si-dom-id"
-    in
     input
-        [ A.id domId
+        [ A.id siDomId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
 
