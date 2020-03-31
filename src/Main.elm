@@ -146,6 +146,9 @@ viewSearchWidget (SI qs showSuggestions) =
     let
         suggestions =
             [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ]
+
+        viewSuggestionListItems =
+            List.map viewSuggestionItem suggestions
     in
     if showSuggestions then
         div
@@ -157,7 +160,7 @@ viewSearchWidget (SI qs showSuggestions) =
                 ++ commonWidgetAttrs
             )
             [ viewSearchInput qs
-            , div [ class "pb2 ph2" ] (List.map viewSuggestionItem suggestions)
+            , div [ class "pb2 ph2" ] viewSuggestionListItems
             ]
 
     else
