@@ -153,11 +153,20 @@ viewSearchWidget (SI qs showSuggestions) =
 
         rootStyles =
             if showSuggestions then
-                [ displayFlex, position relative, backgroundColor white ]
+                [ -- layout
+                  displayFlex
+                , position relative
+
+                -- style
+                , backgroundColor white
+                ]
 
             else
-                [ displayFlex
+                [ -- layout
+                  displayFlex
                 , position relative
+
+                -- style
                 , widgetBorder
                 , focusWithin [ widgetShadow1, widgetBorderTransparent ]
                 , hover [ widgetShadow1, widgetBorderTransparent ]
