@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Css exposing (..)
 import Html.Styled exposing (Html, div, input, styled, text)
-import Html.Styled.Attributes as A exposing (autofocus, class, tabindex, value)
+import Html.Styled.Attributes as A exposing (attribute, autofocus, class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
@@ -187,6 +187,7 @@ viewSearchWidget (SI qs showSuggestions) =
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
+        , attribute "data-focus-outside" siContainerDomId
         ]
         [ inputView
         , if showSuggestions then
