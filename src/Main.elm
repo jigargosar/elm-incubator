@@ -171,14 +171,11 @@ viewSearchWidget (SI qs showSuggestions) =
                 )
                 []
                 [ viewSearchInput qs ]
-
-        foo =
-            JD.field "relatedTarget" (JD.null True)
     in
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
-        , E.on "focusout" (tapDecoder foo widgetFocusOutDecoder)
+        , E.on "focusout" widgetFocusOutDecoder
         ]
         [ inputView
         , if showSuggestions then
@@ -216,8 +213,9 @@ widgetFocusOutDecoder =
         |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
 
 
-tapDecoder tap decoder =
-    JD.oneOf [ tap |> JD.andThen logFail, decoder ]
+
+--tapDecoder msg tap decoder =
+--    JD.oneOf [ tap |> andThenLogFail2 msg, decoder ]
 
 
 wbColor =
@@ -337,10 +335,6 @@ viewSearchInput qs =
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus QFocused
-        , E.on "blur"
-            (JD.field "relatedTarget" isNullDecoder
-                |> andThenLogFail2 "input blur relT is null?"
-            )
         , onInput QInputChanged
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
@@ -349,8 +343,9 @@ viewSearchInput qs =
         []
 
 
-isNullDecoder =
-    JD.oneOf [ JD.null True, JD.succeed False ]
+
+--isNullDecoder =
+--    JD.oneOf [ JD.null True, JD.succeed False ]
 
 
 widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )
