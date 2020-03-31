@@ -153,23 +153,30 @@ viewSearchWidget (SI qs showSuggestions) =
 
         rootStyles =
             [ displayFlex, position relative, backgroundColor white ]
+
+        inputView =
+            if showSuggestions then
+                div
+                    [ class "pv2 ph3 flex-auto flex "
+                    , css
+                        [ widgetShadow1
+                        , widgetBorderTransparent
+
+                        --, borderRadius4 wbr wbr zero zero
+                        , borderRadius wbr
+                        , brTop
+                        ]
+                    ]
+                    [ viewSearchInput qs ]
+
+            else
+                div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
     in
     if showSuggestions then
         styled div
             rootStyles
             commonWidgetAttrs
-            [ div
-                [ class "pv2 ph3 flex-auto flex "
-                , css
-                    [ widgetShadow1
-                    , widgetBorderTransparent
-
-                    --, borderRadius4 wbr wbr zero zero
-                    , borderRadius wbr
-                    , brTop
-                    ]
-                ]
-                [ viewSearchInput qs ]
+            [ inputView
 
             --, div [ class "mh3 bb " ] []
             , styled div
@@ -199,7 +206,7 @@ viewSearchWidget (SI qs showSuggestions) =
              ]
                 ++ commonWidgetAttrs
             )
-            [ div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
+            [ inputView
             ]
 
 
