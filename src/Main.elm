@@ -159,8 +159,7 @@ viewSearchWithResults : Query -> HM
 viewSearchWithResults qs =
     let
         attrs =
-            [ A.id siContainerDomId
-            , class "pt2 ph3"
+            [ class "pt2 ph3"
             , class "ba b--transparent shadow-1"
             , style "border-radius" "1.25rem"
             , class "flex flex-column"
@@ -177,8 +176,7 @@ viewSearchSimple : Query -> HM
 viewSearchSimple qs =
     let
         attrs =
-            [ A.id siContainerDomId
-            , class "pv2 ph3"
+            [ class "pv2 ph3"
             , class "ba b--moon-gray "
             , class "fw-b--transparent fw-shadow-1"
             , class "br-pill"
@@ -191,8 +189,13 @@ viewSearchSimple qs =
         ]
 
 
+
+-- WIDGET ROOT COMMON ATTRS
+
+
 searchContainerAttrs =
-    [ E.on "focusout"
+    [ A.id siContainerDomId
+    , E.on "focusout"
         (JD.at [ "relatedTarget" ] elDecoder
             |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideResults)
         )
@@ -245,12 +248,20 @@ logFail v =
     JD.fail ""
 
 
+
+-- WIDGET RESULTS VIEW
+
+
 viewResultItem t =
     div
         [ class "f5 lh-title ttc"
         , tabindex 0
         ]
         [ text t ]
+
+
+
+-- WIDGET INPUT VIEW
 
 
 viewSearchInput : Query -> HM
