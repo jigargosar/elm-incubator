@@ -144,52 +144,38 @@ view (Model si) =
 
 viewSearchWidget (SI qs showSuggestions) =
     if showSuggestions then
-        viewWithSuggestions qs
+        div
+            ([ class "pt2 ph3"
+             , class "ba b--transparent shadow-1"
+             , style "border-radius" "1.25rem"
+             , class "flex flex-column"
+             ]
+                ++ commonWidgetAttrs
+            )
+            [ viewSearchInput qs
+            , div [ class "pb2 ph2" ] (List.map viewSuggestionItem [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ])
+            ]
 
     else
-        viewOnlyInput qs
-
-
-siContainerDomId =
-    "si-container-dom-id"
-
-
-viewWithSuggestions : Query -> HM
-viewWithSuggestions qs =
-    let
-        attrs =
-            [ class "pt2 ph3"
-            , class "ba b--transparent shadow-1"
-            , style "border-radius" "1.25rem"
-            , class "flex flex-column"
+        div
+            ([ class "pv2 ph3"
+             , class "ba b--moon-gray "
+             , class "fw-b--transparent fw-shadow-1"
+             , class "br-pill"
+             , class "flex flex-column"
+             ]
+                ++ commonWidgetAttrs
+            )
+            [ viewSearchInput qs
             ]
-    in
-    div
-        (attrs ++ commonWidgetAttrs)
-        [ viewSearchInput qs
-        , div [ class "pb2 ph2" ] (List.map viewSuggestionItem [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ])
-        ]
-
-
-viewOnlyInput : Query -> HM
-viewOnlyInput qs =
-    let
-        attrs =
-            [ class "pv2 ph3"
-            , class "ba b--moon-gray "
-            , class "fw-b--transparent fw-shadow-1"
-            , class "br-pill"
-            , class "flex flex-column"
-            ]
-    in
-    div
-        (attrs ++ commonWidgetAttrs)
-        [ viewSearchInput qs
-        ]
 
 
 
 -- WIDGET ROOT COMMON ATTRS
+
+
+siContainerDomId =
+    "si-container-dom-id"
 
 
 commonWidgetAttrs =
