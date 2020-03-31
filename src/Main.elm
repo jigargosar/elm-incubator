@@ -2,8 +2,8 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
-import Css
-import Html.Styled exposing (Html, div, input, text)
+import Css exposing (..)
+import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (autofocus, class, css, style, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
@@ -153,23 +153,30 @@ viewSearchWidget (SI qs showSuggestions) =
     in
     if showSuggestions then
         div
-            ([ class "bt br bl b--white"
-             , style "border-radius" "1.25rem 1.25rem 0 0"
-             , class "flex flex-column"
+            ([ class "flex flex-column"
              , class "relative"
-             , css [ widgetBS ]
              ]
                 ++ commonWidgetAttrs
             )
-            [ viewSearchInput qs
-            , div [ class "mh3 bb b--light-gray" ] []
-            , div
-                [ class "absolute br bl bb b--white"
-                , style "border-radius" "0 0 1.25rem 1.25rem"
-                , style "top" "100%"
-                , style "left" "-1px"
-                , style "right" "-1px"
-                , style "box-shadow" "0 4px 6px 0 rgba(32,33,36,0.28)"
+            [ div
+                [ class "bt br bl b--white"
+                , style "border-radius" "1.25rem 1.25rem 0 0"
+                , class "pv2 ph3 flex-auto flex "
+                , css [ widgetShadow1 ]
+                ]
+                [ viewSearchInput qs ]
+
+            --, div [ class "mh3 bb " ] []
+            , styled div
+                [ widgetShadow2
+                , top (pct 100)
+
+                --, left <| px -1
+                --, right <| px -1
+                , width <| pct 100
+                , borderRadius4 zero zero (rem 1.25) (rem 1.25)
+                ]
+                [ class "absolute"
                 , class "pv2"
                 , class "bg-white"
                 ]
@@ -178,25 +185,36 @@ viewSearchWidget (SI qs showSuggestions) =
 
     else
         div
-            ([ class "ba b--moon-gray "
-             , class "fw-b--transparent"
+            ([ class "ba"
              , class "br-pill"
              , class "flex flex-column"
              , class "relative"
-             , css [ focusWithin [ widgetBS ] ]
+             , css
+                [ Css.borderColor colorWidgetBorder
+                , focusWithin [ widgetShadow1 ]
+                ]
              ]
                 ++ commonWidgetAttrs
             )
-            [ viewSearchInput qs
+            [ div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
             ]
+
+
+colorWidgetBorder =
+    -- rgba 223 225 229 0
+    hex "#dfe1e5"
 
 
 focusWithin =
     Css.pseudoClass "focus-within"
 
 
-widgetBS =
+widgetShadow1 =
     Css.property "box-shadow" "0 1px 6px 0 rgba(32, 33, 36, 0.28)"
+
+
+widgetShadow2 =
+    Css.property "box-shadow" "0 4px 6px 0 rgba(32, 33, 36, 0.28)"
 
 
 
@@ -284,20 +302,18 @@ viewSearchInput qs =
         domId =
             "si-dom-id"
     in
-    div [ class "pv2 ph3 flex-auto flex " ]
-        [ input
-            [ A.id domId
-            , class "bg-transparent bn outline-0"
-            , class "lh-title flex-auto"
-            , autofocus True
-            , onFocus QFocused
-            , onInput QInputChanged
-            , queryInputValue qs
-            , E.preventDefaultOn "keydown"
-                (JD.andThen widgetInputKeyDownDecoder keyDecoder)
-            ]
-            []
+    input
+        [ A.id domId
+        , class "bg-transparent bn outline-0"
+        , class "lh-title flex-auto"
+        , autofocus True
+        , onFocus QFocused
+        , onInput QInputChanged
+        , queryInputValue qs
+        , E.preventDefaultOn "keydown"
+            (JD.andThen widgetInputKeyDownDecoder keyDecoder)
         ]
+        []
 
 
 widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )
