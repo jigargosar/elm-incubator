@@ -75,7 +75,7 @@ function publisher(portName, app) {
     els.forEach(function(el) {
       if (!el.contains(document.activeElement)) {
         const datasetElement = el.dataset['focusOutside']
-        // console.log('onFocusOutside', datasetElement)
+        console.debug('onFocusOutside', datasetElement)
       }
     })
   })
