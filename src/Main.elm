@@ -42,6 +42,10 @@ type alias NEL a =
     ( a, List a )
 
 
+nelToList ( h, t ) =
+    h :: t
+
+
 type alias LCR a =
     ( List a, a, List a )
 
@@ -96,6 +100,14 @@ lcrToNel ( l, c, r ) =
 
         [] ->
             ( c, r )
+
+
+lcrMapCS fc fs ( l, c, r ) =
+    ( List.map fs l, fc c, List.map fs r )
+
+
+lcrToList ( l, c, r ) =
+    List.reverse l ++ c :: r
 
 
 type Suggestions
@@ -356,7 +368,7 @@ viewSearchWidget (SI qs ss) =
                         , borderRadiusWidget
                         , borderRadiusOnlyBottom
                         , overflow hidden -- to ensure children don't overflow border radius
-                        , shadowWidgetResults
+                        , shadowWidgetSuggestions
                         , backgroundColor white
                         ]
                         []
@@ -380,25 +392,13 @@ viewMaybe func mb =
             text ""
 
 
-nelToList ( h, t ) =
-    h :: t
-
-
-mapCS fc fs ( l, c, r ) =
-    ( List.map fs l, fc c, List.map fs r )
-
-
-lcrToList ( l, c, r ) =
-    List.reverse l ++ c :: r
-
-
 maybeViewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
             styled div
                 []
                 []
-                (mapCS viewSelectedSuggestionItem viewSuggestionItem lcr
+                (lcrMapCS viewSelectedSuggestionItem viewSuggestionItem lcr
                     |> lcrToList
                 )
                 |> Just
@@ -440,7 +440,7 @@ shadowWidgetInput =
     boxShadowL [ "0 1px 6px 0 rgba(32, 33, 36, 0.28)" ]
 
 
-shadowWidgetResults =
+shadowWidgetSuggestions =
     boxShadowL [ "0 4px 6px 0 rgba(32, 33, 36, 0.28)" ]
 
 
