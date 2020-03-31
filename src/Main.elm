@@ -167,29 +167,35 @@ viewSearchWidget (SI qs showSuggestions) =
                 , position relative
 
                 -- style
-                , brPill
-                , widgetBorder
-                , focusWithin [ widgetShadow1, widgetBorderTransparent ]
-                , hover [ widgetShadow1, widgetBorderTransparent ]
+                --, brPill
+                --, widgetBorder
+                --, focusWithin [ widgetShadow1, widgetBorderTransparent ]
+                --, hover [ widgetShadow1, widgetBorderTransparent ]
                 ]
 
         inputView =
             if showSuggestions then
-                div
-                    [ class "pv2 ph3 flex-auto flex "
-                    , css
-                        [ widgetShadow1
-                        , widgetBorderTransparent
+                styled div
+                    [ widgetShadow1
+                    , widgetBorderTransparent
 
-                        --, borderRadius4 wbr wbr zero zero
-                        , borderRadius wbr
-                        , brTop
-                        ]
+                    --, borderRadius4 wbr wbr zero zero
+                    , borderRadius wbr
+                    , brTop
+                    ]
+                    [ class "pv2 ph3 flex-auto flex "
                     ]
                     [ viewSearchInput qs ]
 
             else
-                div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
+                styled div
+                    [ brPill
+                    , widgetBorder
+                    , focusWithin [ widgetShadow1, widgetBorderTransparent ]
+                    , hover [ widgetShadow1, widgetBorderTransparent ]
+                    ]
+                    [ class "pv2 ph3 flex-auto flex " ]
+                    [ viewSearchInput qs ]
     in
     styled div rootStyles commonWidgetAttrs <|
         if showSuggestions then
