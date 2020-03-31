@@ -346,9 +346,7 @@ view (Model si) =
     div
         [ class "pt4 measure-wide center"
         , E.on "focusin"
-            (activeElementDecoder
-                |> JD.andThen (isElOutside searchWidgetDomId >> succeedWhenTrue HideSuggestions)
-            )
+            (succeedWhen (activeElOutside searchWidgetDomId) HideSuggestions)
         ]
         [ div [ A.id "above-si-dom-id", tabindex 0 ] [ text "above si" ]
         , viewSearchWidget si
@@ -484,6 +482,14 @@ shadowWidgetSuggestions =
 
 
 -- ELEMENT DECODERS
+
+
+succeedWhen predDecoder tag =
+    predDecoder |> JD.andThen (succeedWhenTrue tag)
+
+
+activeElOutside domId =
+    activeElementDecoder |> JD.map (isElOutside domId)
 
 
 succeedWhenTrue msg bool =
