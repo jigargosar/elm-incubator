@@ -171,11 +171,14 @@ viewSearchWidget (SI qs showSuggestions) =
                 )
                 []
                 [ viewSearchInput qs ]
+
+        foo =
+            JD.field "relatedTarget" (JD.null True)
     in
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
-        , E.on "focusout" widgetFocusOutDecoder
+        , E.on "focusout" (tapDecoder foo widgetFocusOutDecoder)
         ]
         [ inputView
         , if showSuggestions then
@@ -194,7 +197,7 @@ viewSearchWidget (SI qs showSuggestions) =
                 , backgroundColor white
                 ]
                 []
-                [ styled div [ margin2 zero sp3, borderTop3 (px 1) solid wbColor ] [] []
+                [ widgetSeparator
                 , styled div [ padding2 sp2 zero ] [] [ suggestionView ]
                 ]
 
@@ -203,9 +206,18 @@ viewSearchWidget (SI qs showSuggestions) =
         ]
 
 
+widgetSeparator =
+    styled div [ margin2 zero sp3, borderTop3 (px 1) solid wbColor ] [] []
+
+
+widgetFocusOutDecoder : Decoder Msg
 widgetFocusOutDecoder =
     JD.at [ "relatedTarget" ] elDecoder
         |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideSuggestions)
+
+
+tapDecoder tap decoder =
+    JD.oneOf [ tap |> JD.andThen logFail, decoder ]
 
 
 wbColor =
@@ -273,6 +285,21 @@ elDecoder =
 --noinspection ElmUnusedSymbol
 
 
+andThenLogFail2 msg =
+    JD.andThen
+        (\v ->
+            let
+                _ =
+                    Debug.log msg v
+            in
+            JD.fail ""
+        )
+
+
+
+--noinspection ElmUnusedSymbol
+
+
 logFail : a -> Decoder b
 logFail v =
     let
@@ -310,12 +337,20 @@ viewSearchInput qs =
         , class "lh-title flex-auto"
         , autofocus True
         , onFocus QFocused
+        , E.on "blur"
+            (JD.field "relatedTarget" isNullDecoder
+                |> andThenLogFail2 "input blur relT is null?"
+            )
         , onInput QInputChanged
         , queryInputValue qs
         , E.preventDefaultOn "keydown"
             (JD.andThen widgetInputKeyDownDecoder keyDecoder)
         ]
         []
+
+
+isNullDecoder =
+    JD.oneOf [ JD.null True, JD.succeed False ]
 
 
 widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )
