@@ -276,7 +276,7 @@ update message ((Model (SI q ss)) as model) =
             )
 
         QInputUp ->
-            ( Model (SI q (showSuggestions ss |> Maybe.withDefault ss)), Cmd.none )
+            ( Model (SI q (selectPrevSuggestion ss)), Cmd.none )
 
         QInputDown ->
             ( Model (SI q (selectNextSuggestion ss)), Cmd.none )
