@@ -159,9 +159,12 @@ viewSearchWidget (SI qs showSuggestions) =
                 ++ commonWidgetAttrs
             )
             [ div
-                [ style "border-radius" "1.25rem 1.25rem 0 0"
-                , class "pv2 ph3 flex-auto flex "
-                , css [ widgetShadow1, widgetBorderTransparent ]
+                [ class "pv2 ph3 flex-auto flex "
+                , css
+                    [ widgetShadow1
+                    , widgetBorderTransparent
+                    , borderRadius4 wbr wbr zero zero
+                    ]
                 ]
                 [ viewSearchInput qs ]
 
@@ -170,7 +173,7 @@ viewSearchWidget (SI qs showSuggestions) =
                 [ widgetShadow2
                 , top (pct 100)
                 , width <| pct 100
-                , borderRadius4 zero zero (rem 1.25) (rem 1.25)
+                , borderRadius4 zero zero wbr wbr
                 ]
                 [ class "absolute"
                 , class "pv2"
@@ -194,6 +197,10 @@ viewSearchWidget (SI qs showSuggestions) =
             )
             [ div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
             ]
+
+
+wbr =
+    rem 1.25
 
 
 widgetBorder =
