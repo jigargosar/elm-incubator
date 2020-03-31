@@ -159,13 +159,13 @@ viewSearchWidget (SI qs showSuggestions) =
                     :: widgetBorder
                     :: (if showSuggestions then
                             [ widgetShadow1
-                            , borderTransparent
+                            , bTransparent
                             , brTop
                             ]
 
                         else
-                            [ focusWithin [ widgetShadow1, borderTransparent ]
-                            , hover [ widgetShadow1, borderTransparent ]
+                            [ focusWithin [ widgetShadow1, bTransparent ]
+                            , hover [ widgetShadow1, bTransparent ]
                             ]
                        )
                 )
@@ -184,7 +184,7 @@ viewSearchWidget (SI qs showSuggestions) =
 
                     -- style
                     , widgetBorder
-                    , borderTransparent
+                    , bTransparent
                     , brBottom
                     , widgetShadow2
                     , backgroundColor white
@@ -371,7 +371,7 @@ brBottom =
         ]
 
 
-borderTransparent =
+bTransparent =
     borderColor transparent
 
 
