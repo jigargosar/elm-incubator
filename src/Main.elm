@@ -31,11 +31,11 @@ main =
 
 
 type Model
-    = Model SearchInput
+    = Model SearchWidget
 
 
-type SearchInput
-    = SI Query Suggestions
+type SearchWidget
+    = SW Query Suggestions
 
 
 type alias NEL a =
@@ -213,7 +213,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( Model (SI (initQuery "foo bar") (Hidden initialSuggestionNonEmptyList))
+    ( Model (SW (initQuery "foo bar") (Hidden initialSuggestionNonEmptyList))
     , focusSI
     )
 
@@ -250,12 +250,12 @@ type Msg
 
 
 setSuggestions : Suggestions -> Model -> Model
-setSuggestions ss (Model (SI q _)) =
-    Model (SI q ss)
+setSuggestions ss (Model (SW q _)) =
+    Model (SW q ss)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model (SI q ss)) as model) =
+update message ((Model (SW q ss)) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -291,15 +291,15 @@ update message ((Model (SI q ss)) as model) =
             )
 
         QInputChanged changed ->
-            ( Model (SI (queryInputChange changed q) (showSuggestions ss |> Maybe.withDefault ss))
+            ( Model (SW (queryInputChange changed q) (showSuggestions ss |> Maybe.withDefault ss))
             , Cmd.none
             )
 
         QInputUp ->
-            ( Model (SI q (selectPrevSuggestion ss)), Cmd.none )
+            ( Model (SW q (selectPrevSuggestion ss)), Cmd.none )
 
         QInputDown ->
-            ( Model (SI q (selectNextSuggestion ss)), Cmd.none )
+            ( Model (SW q (selectNextSuggestion ss)), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -332,11 +332,11 @@ view (Model si) =
         ]
 
 
-viewSearchWidget : SearchInput -> HM
-viewSearchWidget (SI qs ss) =
+viewSearchWidget : SearchWidget -> HM
+viewSearchWidget (SW qs ss) =
     let
         maybeSuggestionsView =
-            viewSuggestionsMaybe ss
+            viewSuggestions ss
 
         areSuggestionsVisible =
             maybeSuggestionsView /= Nothing
@@ -401,8 +401,8 @@ viewMaybe func mb =
             text ""
 
 
-viewSuggestionsMaybe : Suggestions -> Maybe HM
-viewSuggestionsMaybe ss =
+viewSuggestions : Suggestions -> Maybe HM
+viewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
             div
