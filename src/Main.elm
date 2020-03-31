@@ -356,6 +356,7 @@ viewSearchWidget (SI qs ss) =
                           absolute
                         , top p100
                         , w100
+                        , overflow hidden
 
                         -- style
                         , widgetBorder
@@ -397,7 +398,9 @@ lcrToList ( l, c, r ) =
 maybeViewSuggestions ss =
     case ss of
         VisibleSelected lcr ->
-            div []
+            styled div
+                []
+                []
                 (mapCS viewSelectedSuggestionItem viewSuggestionItem lcr
                     |> lcrToList
                 )
