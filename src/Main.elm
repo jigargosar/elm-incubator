@@ -167,17 +167,10 @@ viewSearchWidget (SI qs showSuggestions) =
                 , position relative
 
                 -- style
+                , brPill
                 , widgetBorder
                 , focusWithin [ widgetShadow1, widgetBorderTransparent ]
                 , hover [ widgetShadow1, widgetBorderTransparent ]
-                ]
-
-        rootStyleAttrs =
-            if showSuggestions then
-                []
-
-            else
-                [ class "br-pill"
                 ]
 
         inputView =
@@ -198,10 +191,8 @@ viewSearchWidget (SI qs showSuggestions) =
             else
                 div [ class "pv2 ph3 flex-auto flex " ] [ viewSearchInput qs ]
     in
-    if showSuggestions then
-        styled div
-            rootStyles
-            commonWidgetAttrs
+    styled div rootStyles commonWidgetAttrs <|
+        if showSuggestions then
             [ inputView
 
             --, div [ class "mh3 bb " ] []
@@ -219,12 +210,8 @@ viewSearchWidget (SI qs showSuggestions) =
                 viewSuggestionListItems
             ]
 
-    else
-        styled div
-            rootStyles
-            (rootStyleAttrs ++ commonWidgetAttrs)
-            [ inputView
-            ]
+        else
+            [ inputView ]
 
 
 white =
@@ -243,6 +230,10 @@ brBottom =
         [ borderTopLeftRadius zero
         , borderTopRightRadius zero
         ]
+
+
+brPill =
+    borderRadius <| px 9999
 
 
 wbr =
