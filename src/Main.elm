@@ -154,7 +154,7 @@ viewSearchWidget (SI qs showSuggestions) =
         inputView =
             styled div
                 (flex auto
-                    :: padding2 (rem 0.5) (rem 1)
+                    :: padding2 sp2 sp3
                     :: displayFlex
                     :: widgetBorder
                     :: (if showSuggestions then
@@ -206,6 +206,18 @@ viewSearchWidget (SI qs showSuggestions) =
         [ inputView
         , suggestionsView
         ]
+
+
+pvh =
+    padding2
+
+
+sp2 =
+    rem 0.5
+
+
+sp3 =
+    rem 1
 
 
 white =
