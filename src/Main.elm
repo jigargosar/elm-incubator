@@ -221,11 +221,11 @@ widgetBorder =
 
 
 widgetShadow1 =
-    Css.property "box-shadow" "0 1px 6px 0 rgba(32, 33, 36, 0.28)"
+    boxShadowL [ "0 1px 6px 0 rgba(32, 33, 36, 0.28)" ]
 
 
 widgetShadow2 =
-    Css.property "box-shadow" "0 4px 6px 0 rgba(32, 33, 36, 0.28)"
+    boxShadowL [ "0 4px 6px 0 rgba(32, 33, 36, 0.28)" ]
 
 
 
@@ -377,6 +377,10 @@ bTransparent =
 
 focusWithin =
     Css.pseudoClass "focus-within"
+
+
+boxShadowL ls =
+    Css.property "box-shadow" (String.join ";" ls)
 
 
 
