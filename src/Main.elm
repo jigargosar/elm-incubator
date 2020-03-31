@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Browser.Events
@@ -7,6 +7,9 @@ import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (autofocus, class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
+
+
+port onFocusOutside : (String -> msg) -> Sub msg
 
 
 
@@ -123,6 +126,14 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ onClickOutside siContainerDomId HideSuggestions
+        , onFocusOutside
+            (\domId ->
+                if domId == siContainerDomId then
+                    HideSuggestions
+
+                else
+                    NoOp
+            )
         ]
 
 
