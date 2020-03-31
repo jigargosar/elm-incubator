@@ -152,7 +152,24 @@ viewSearchWidget (SI qs showSuggestions) =
             List.map viewSuggestionItem suggestions
 
         rootStyles =
-            [ displayFlex, position relative, backgroundColor white ]
+            if showSuggestions then
+                [ displayFlex, position relative, backgroundColor white ]
+
+            else
+                [ widgetBorder
+                , focusWithin [ widgetShadow1, widgetBorderTransparent ]
+                , hover [ widgetShadow1, widgetBorderTransparent ]
+                ]
+
+        rootStyleAttrs =
+            if showSuggestions then
+                []
+
+            else
+                [ class "br-pill"
+                , class "flex"
+                , class "relative"
+                ]
 
         inputView =
             if showSuggestions then
@@ -194,18 +211,9 @@ viewSearchWidget (SI qs showSuggestions) =
             ]
 
     else
-        div
-            ([ class "br-pill"
-             , class "flex"
-             , class "relative"
-             , css
-                [ widgetBorder
-                , focusWithin [ widgetShadow1, widgetBorderTransparent ]
-                , hover [ widgetShadow1, widgetBorderTransparent ]
-                ]
-             ]
-                ++ commonWidgetAttrs
-            )
+        styled div
+            rootStyles
+            (rootStyleAttrs ++ commonWidgetAttrs)
             [ inputView
             ]
 
