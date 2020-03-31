@@ -38,12 +38,12 @@ type SearchInput
     = SI Query Suggestions
 
 
-type alias NEL =
-    ( String, List String )
+type alias NEL a =
+    ( a, List a )
 
 
-type alias LCR =
-    ( List String, String, List String )
+type alias LCR a =
+    ( List a, a, List a )
 
 
 lcrNext : ( List b, b, List a ) -> Maybe ( List b, a, List a )
@@ -99,11 +99,12 @@ lcrToNel ( l, c, r ) =
 
 
 type Suggestions
-    = VisibleSelected LCR
-    | VisibleNoneSelected NEL
-    | Hidden NEL
+    = VisibleSelected (LCR String)
+    | VisibleNoneSelected (NEL String)
+    | Hidden (NEL String)
 
 
+initialSuggestionNonEmptyList : NEL String
 initialSuggestionNonEmptyList =
     ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
 
