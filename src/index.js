@@ -40,6 +40,19 @@ function Cache(keys) {
   if (hasPath(['ports', 'cacheKV', 'subscribe'], app)) {
     subscribe('cacheKV', cache.onCacheKV)
   }
+
+  document.addEventListener('focusin', function() {
+    requestAnimationFrame(function() {
+      const active = document.activeElement
+      const selector = '#si-container-dom-id'
+      if (active !== document.body && active.closest(selector) === null) {
+        const send = pathOr(null, ['ports', 'onFocusOutside', 'send'], app)
+        if (send !== null) {
+          send(selector)
+        }
+      }
+    })
+  })
 }
 
 function initElmModule(initParams, module) {
@@ -69,4 +82,3 @@ function parseTruthyOrNull(str) {
     return null
   }
 }
-
