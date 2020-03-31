@@ -42,6 +42,7 @@ type alias NEL a =
     ( a, List a )
 
 
+nelToList : NEL a -> List a
 nelToList ( h, t ) =
     h :: t
 
@@ -50,10 +51,12 @@ type alias LCR a =
     ( List a, a, List a )
 
 
+lcrFromNel : NEL a -> LCR a
 lcrFromNel ( h, t ) =
     ( [], h, t )
 
 
+lcrToNel : LCR a -> NEL a
 lcrToNel ( l, c, r ) =
     case List.reverse l of
         head :: tail ->
@@ -63,6 +66,7 @@ lcrToNel ( l, c, r ) =
             ( c, r )
 
 
+lcrToList : LCR a -> List a
 lcrToList ( l, c, r ) =
     List.reverse l ++ c :: r
 
