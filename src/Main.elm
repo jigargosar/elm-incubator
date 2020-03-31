@@ -153,7 +153,7 @@ viewSearchWidget (SI qs showSuggestions) =
     in
     if showSuggestions then
         div
-            ([ class "flex flex-column"
+            ([ class "flex"
              , class "relative"
              , css [ backgroundColor white ]
              ]
