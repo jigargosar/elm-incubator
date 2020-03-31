@@ -156,7 +156,9 @@ viewSearchWidget (SI qs showSuggestions) =
                 [ displayFlex, position relative, backgroundColor white ]
 
             else
-                [ widgetBorder
+                [ displayFlex
+                , position relative
+                , widgetBorder
                 , focusWithin [ widgetShadow1, widgetBorderTransparent ]
                 , hover [ widgetShadow1, widgetBorderTransparent ]
                 ]
@@ -167,8 +169,6 @@ viewSearchWidget (SI qs showSuggestions) =
 
             else
                 [ class "br-pill"
-                , class "flex"
-                , class "relative"
                 ]
 
         inputView =
