@@ -34,8 +34,120 @@ type Model
     = Model SearchWidget
 
 
+setSuggestions : Suggestions -> Model -> Model
+setSuggestions ss (Model (SW q _)) =
+    Model (SW q ss)
+
+
+
+-- SEARCH WIDGET MODEL
+
+
 type SearchWidget
     = SW Query Suggestions
+
+
+
+-- QUERY
+
+
+type Query
+    = Query String String
+
+
+initQuery : String -> Query
+initQuery string =
+    Query string string
+
+
+queryInputChange : String -> Query -> Query
+queryInputChange to (Query o _) =
+    Query o to
+
+
+queryInputValue : Query -> Html.Styled.Attribute msg
+queryInputValue (Query _ c) =
+    value c
+
+
+isQueryOriginal : Query -> Bool
+isQueryOriginal (Query o c) =
+    o == c
+
+
+
+-- SUGGESTIONS
+
+
+type Suggestions
+    = VisibleSelected (LCR String)
+    | VisibleNoneSelected (NEL String)
+    | Hidden (NEL String)
+
+
+initialSuggestionNonEmptyList : NEL String
+initialSuggestionNonEmptyList =
+    ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
+
+
+hideSuggestions : Suggestions -> Maybe Suggestions
+hideSuggestions ss =
+    case ss of
+        VisibleSelected lcr ->
+            Just (Hidden (lcrToNel lcr))
+
+        VisibleNoneSelected nel ->
+            Just (Hidden nel)
+
+        Hidden _ ->
+            Nothing
+
+
+showSuggestions : Suggestions -> Maybe Suggestions
+showSuggestions ss =
+    case ss of
+        VisibleSelected _ ->
+            Nothing
+
+        VisibleNoneSelected _ ->
+            Nothing
+
+        Hidden nel ->
+            Just (VisibleNoneSelected nel)
+
+
+selectPrevSuggestion : Suggestions -> Suggestions
+selectPrevSuggestion ss =
+    case ss of
+        VisibleSelected lcr ->
+            lcrGoL lcr
+                |> Maybe.withDefault (lcrLast lcr)
+                |> VisibleSelected
+
+        VisibleNoneSelected nel ->
+            VisibleSelected (lcrFromNel nel |> lcrLast)
+
+        Hidden nel ->
+            VisibleNoneSelected nel
+
+
+selectNextSuggestion : Suggestions -> Suggestions
+selectNextSuggestion ss =
+    case ss of
+        VisibleSelected lcr ->
+            lcrGoR lcr
+                |> Maybe.withDefault (lcrFirst lcr)
+                |> VisibleSelected
+
+        VisibleNoneSelected nel ->
+            VisibleSelected (lcrFromNel nel |> lcrFirst)
+
+        Hidden nel ->
+            VisibleNoneSelected nel
+
+
+
+-- NON EMPTY LIST
 
 
 type alias NEL a =
@@ -45,6 +157,10 @@ type alias NEL a =
 nelToList : NEL a -> List a
 nelToList ( h, t ) =
     h :: t
+
+
+
+-- LIST ZIPPER
 
 
 type alias LCR a =
@@ -116,95 +232,8 @@ lcrMapCS fc fs ( l, c, r ) =
     ( List.map fs l, fc c, List.map fs r )
 
 
-type Suggestions
-    = VisibleSelected (LCR String)
-    | VisibleNoneSelected (NEL String)
-    | Hidden (NEL String)
 
-
-initialSuggestionNonEmptyList : NEL String
-initialSuggestionNonEmptyList =
-    ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
-
-
-hideSuggestions : Suggestions -> Maybe Suggestions
-hideSuggestions ss =
-    case ss of
-        VisibleSelected lcr ->
-            Just (Hidden (lcrToNel lcr))
-
-        VisibleNoneSelected nel ->
-            Just (Hidden nel)
-
-        Hidden _ ->
-            Nothing
-
-
-showSuggestions : Suggestions -> Maybe Suggestions
-showSuggestions ss =
-    case ss of
-        VisibleSelected _ ->
-            Nothing
-
-        VisibleNoneSelected _ ->
-            Nothing
-
-        Hidden nel ->
-            Just (VisibleNoneSelected nel)
-
-
-selectPrevSuggestion : Suggestions -> Suggestions
-selectPrevSuggestion ss =
-    case ss of
-        VisibleSelected lcr ->
-            lcrGoL lcr
-                |> Maybe.withDefault (lcrLast lcr)
-                |> VisibleSelected
-
-        VisibleNoneSelected nel ->
-            VisibleSelected (lcrFromNel nel |> lcrLast)
-
-        Hidden nel ->
-            VisibleNoneSelected nel
-
-
-selectNextSuggestion : Suggestions -> Suggestions
-selectNextSuggestion ss =
-    case ss of
-        VisibleSelected lcr ->
-            lcrGoR lcr
-                |> Maybe.withDefault (lcrFirst lcr)
-                |> VisibleSelected
-
-        VisibleNoneSelected nel ->
-            VisibleSelected (lcrFromNel nel |> lcrFirst)
-
-        Hidden nel ->
-            VisibleNoneSelected nel
-
-
-type Query
-    = Query String String
-
-
-initQuery : String -> Query
-initQuery string =
-    Query string string
-
-
-queryInputChange : String -> Query -> Query
-queryInputChange to (Query o _) =
-    Query o to
-
-
-queryInputValue : Query -> Html.Styled.Attribute msg
-queryInputValue (Query _ c) =
-    value c
-
-
-isQueryOriginal : Query -> Bool
-isQueryOriginal (Query o c) =
-    o == c
+-- INIT
 
 
 type alias Flags =
@@ -247,11 +276,6 @@ type Msg
     | QInputChanged String
     | QInputUp
     | QInputDown
-
-
-setSuggestions : Suggestions -> Model -> Model
-setSuggestions ss (Model (SW q _)) =
-    Model (SW q ss)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
