@@ -80,7 +80,7 @@ init _ =
    MUST HideSuggestions:
    * when any element outside widget receives focus.
    * on Escape key, when search widget input has focus.
-   * on Click, outside widget.
+   * on Click outside widget.
 
    MAYBE HideSuggestions:
    * on Escape key, when focus in within widget.
