@@ -190,7 +190,7 @@ viewSearchWidget (SI qs showSuggestions) =
     else
         div
             ([ class "br-pill"
-             , class "flex flex-column"
+             , class "flex"
              , class "relative"
              , css
                 [ widgetBorder
