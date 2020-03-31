@@ -2,9 +2,9 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
-import Html exposing (Html, div, input, text)
-import Html.Attributes as A exposing (autofocus, class, style, tabindex, value)
-import Html.Events as E exposing (onFocus, onInput)
+import Html.Styled exposing (Html, div, input, text)
+import Html.Styled.Attributes as A exposing (autofocus, class, style, tabindex, value)
+import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 
 
@@ -16,7 +16,7 @@ main : Program Flags Model Msg
 main =
     Browser.element
         { init = init
-        , view = view
+        , view = view >> Html.Styled.toUnstyled
         , update = update
         , subscriptions = subscriptions
         }
@@ -44,7 +44,7 @@ queryInputChange to (Query o _) =
     Query o to
 
 
-queryInputValue : Query -> Html.Attribute msg
+queryInputValue : Query -> Html.Styled.Attribute msg
 queryInputValue (Query _ c) =
     value c
 
@@ -160,13 +160,15 @@ viewSearchWidget (SI qs showSuggestions) =
                 ++ commonWidgetAttrs
             )
             [ viewSearchInput qs
-            , div [ class "mh3 bt mv1 b--light-gray" ] []
+            , div [ class "mh3 bb b--light-gray" ] []
             , div
-                [ class "absolute w-100 br bl bb b--white"
+                [ class "absolute br bl bb b--white"
                 , style "border-radius" "0 0 1.25rem 1.25rem"
                 , style "top" "100%"
+                , style "left" "-1px"
+                , style "right" "-1px"
                 , style "box-shadow" "0 4px 6px 0 rgba(32,33,36,0.28)"
-                , class "pb2 ph3"
+                , class "pv2"
                 , class "bg-white"
                 ]
                 viewSuggestionListItems
@@ -255,7 +257,7 @@ logFail v =
 
 viewSuggestionItem t =
     div
-        [ class "f5 lh-title ttc"
+        [ class "ph3 pv1 f5 lh-copy ttc"
         , tabindex 0
         ]
         [ text t ]
