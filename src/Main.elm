@@ -179,9 +179,8 @@ viewSearchSimple qs =
 
 searchContainerAttrs =
     [ E.on "focusout"
-        (JD.at [ "relatedTarget" ] (elDecoder |> JD.map (isElOutside siContainerDomId))
-            |> JD.andThen
-                (succeedWhenTrue HideResults)
+        (JD.at [ "relatedTarget" ] elDecoder
+            |> JD.andThen (isElOutside siContainerDomId >> succeedWhenTrue HideResults)
         )
     ]
 
@@ -219,6 +218,11 @@ elDecoder =
         (JD.field "parentElement" (JD.nullable (JD.lazy (\_ -> elDecoder))))
 
 
+
+--noinspection ElmUnusedSymbol
+
+
+logFail : a -> Decoder b
 logFail v =
     let
         _ =
