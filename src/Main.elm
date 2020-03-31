@@ -37,6 +37,13 @@ type SearchInput
     = SI Query Bool
 
 
+type Suggestions
+    = VisibleSelected ( List String, String, List String )
+    | VisibleNoneSelected ( String, List String )
+    | Hidden ( String, List String )
+    | None
+
+
 type Query
     = Query String String
 
