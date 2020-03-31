@@ -74,6 +74,13 @@ init _ =
 {-
    when to show/hide search results?
 
+   MUST HideResults:
+   * when any dom element outside search widget receives focus.
+   * on Escape key, when search widget input has focus.
+
+   MAYBE HideResults:
+   * on Escape key, when search widget input has focus.
+
 -}
 
 
