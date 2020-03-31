@@ -67,8 +67,8 @@ lcrToList ( l, c, r ) =
     List.reverse l ++ c :: r
 
 
-lcrNext : ( List b, b, List a ) -> Maybe ( List b, a, List a )
-lcrNext ( l, c, r ) =
+lcrGoR : ( List b, b, List a ) -> Maybe ( List b, a, List a )
+lcrGoR ( l, c, r ) =
     case r of
         rh :: rt ->
             Just ( c :: l, rh, rt )
@@ -77,8 +77,8 @@ lcrNext ( l, c, r ) =
             Nothing
 
 
-lcrPrev : ( List a, b, List b ) -> Maybe ( List a, a, List b )
-lcrPrev ( l, c, r ) =
+lcrGoL : ( List a, b, List b ) -> Maybe ( List a, a, List b )
+lcrGoL ( l, c, r ) =
     case l of
         head :: tail ->
             Just ( tail, head, c :: r )
@@ -151,7 +151,7 @@ selectPrevSuggestion : Suggestions -> Suggestions
 selectPrevSuggestion ss =
     case ss of
         VisibleSelected lcr ->
-            lcrPrev lcr
+            lcrGoL lcr
                 |> Maybe.withDefault (lcrLast lcr)
                 |> VisibleSelected
 
@@ -166,7 +166,7 @@ selectNextSuggestion : Suggestions -> Suggestions
 selectNextSuggestion ss =
     case ss of
         VisibleSelected lcr ->
-            lcrNext lcr
+            lcrGoR lcr
                 |> Maybe.withDefault (lcrFirst lcr)
                 |> VisibleSelected
 
