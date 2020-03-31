@@ -38,48 +38,12 @@ type SearchInput
     = SI Query Suggestions
 
 
-type alias LCR =
-    ( List String, String, List String )
-
-
 type alias NEL =
     ( String, List String )
 
 
-type Suggestions
-    = VisibleSelected LCR
-    | VisibleNoneSelected NEL
-    | Hidden NEL
-
-
-initialSuggestionNonEmptyList =
-    ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
-
-
-hideSuggestions : Suggestions -> Maybe Suggestions
-hideSuggestions ss =
-    case ss of
-        VisibleSelected lcr ->
-            Just (Hidden (lcrToNel lcr))
-
-        VisibleNoneSelected nel ->
-            Just (Hidden nel)
-
-        Hidden _ ->
-            Nothing
-
-
-showSuggestions : Suggestions -> Maybe Suggestions
-showSuggestions ss =
-    case ss of
-        VisibleSelected _ ->
-            Nothing
-
-        VisibleNoneSelected _ ->
-            Nothing
-
-        Hidden nel ->
-            Just (VisibleNoneSelected nel)
+type alias LCR =
+    ( List String, String, List String )
 
 
 lcrNext : ( List b, b, List a ) -> Maybe ( List b, a, List a )
@@ -121,6 +85,55 @@ lcrLast (( l, c, r ) as lcr) =
             ( tail ++ c :: l, head, [] )
 
 
+lcrFromNel ( h, t ) =
+    ( [], h, t )
+
+
+lcrToNel ( l, c, r ) =
+    case List.reverse l of
+        head :: tail ->
+            ( head, tail ++ c :: r )
+
+        [] ->
+            ( c, r )
+
+
+type Suggestions
+    = VisibleSelected LCR
+    | VisibleNoneSelected NEL
+    | Hidden NEL
+
+
+initialSuggestionNonEmptyList =
+    ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
+
+
+hideSuggestions : Suggestions -> Maybe Suggestions
+hideSuggestions ss =
+    case ss of
+        VisibleSelected lcr ->
+            Just (Hidden (lcrToNel lcr))
+
+        VisibleNoneSelected nel ->
+            Just (Hidden nel)
+
+        Hidden _ ->
+            Nothing
+
+
+showSuggestions : Suggestions -> Maybe Suggestions
+showSuggestions ss =
+    case ss of
+        VisibleSelected _ ->
+            Nothing
+
+        VisibleNoneSelected _ ->
+            Nothing
+
+        Hidden nel ->
+            Just (VisibleNoneSelected nel)
+
+
 selectPrevSuggestion : Suggestions -> Suggestions
 selectPrevSuggestion ss =
     case ss of
@@ -130,7 +143,7 @@ selectPrevSuggestion ss =
                 |> VisibleSelected
 
         VisibleNoneSelected nel ->
-            VisibleSelected (nelToLcr nel |> lcrLast)
+            VisibleSelected (lcrFromNel nel |> lcrLast)
 
         Hidden nel ->
             VisibleNoneSelected nel
@@ -145,23 +158,10 @@ selectNextSuggestion ss =
                 |> VisibleSelected
 
         VisibleNoneSelected nel ->
-            VisibleSelected (nelToLcr nel |> lcrFirst)
+            VisibleSelected (lcrFromNel nel |> lcrFirst)
 
         Hidden nel ->
             VisibleNoneSelected nel
-
-
-nelToLcr ( h, t ) =
-    ( [], h, t )
-
-
-lcrToNel ( l, c, r ) =
-    case List.reverse l of
-        head :: tail ->
-            ( head, tail ++ c :: r )
-
-        [] ->
-            ( c, r )
 
 
 type Query
