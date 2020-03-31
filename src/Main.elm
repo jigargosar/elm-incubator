@@ -278,10 +278,14 @@ viewSearchInput qs =
         , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
-        , E.preventDefaultOn "keydown"
-            (JD.andThen keyDownDispatcher keyDecoder)
+        , onWidgetInputKeydown
         ]
         []
+
+
+onWidgetInputKeydown =
+    E.preventDefaultOn "keydown"
+        (JD.andThen keyDownDispatcher keyDecoder)
 
 
 keyDownDispatcher : String -> Decoder ( Msg, Bool )
