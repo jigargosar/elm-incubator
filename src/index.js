@@ -19,6 +19,16 @@ function Cache(keys) {
   }
 }
 
+function publisher(portName, app) {
+  return pathOr(
+    function() {
+      console.warn('Port Not Found', portName)
+    },
+    ['ports', portName, 'send'],
+    app,
+  )
+}
+
 {
   const cache = Cache([])
   const [app, subscribe] = initElmModuleWithPortHelpers(
@@ -41,15 +51,14 @@ function Cache(keys) {
     subscribe('cacheKV', cache.onCacheKV)
   }
 
+  const onFocusOutside = publisher('onFocusOutside', app)
+
   document.addEventListener('focusin', function() {
     requestAnimationFrame(function() {
       const active = document.activeElement
       const selector = '#si-container-dom-id'
       if (active !== document.body && active.closest(selector) === null) {
-        const send = pathOr(null, ['ports', 'onFocusOutside', 'send'], app)
-        if (send !== null) {
-          send(selector)
-        }
+        onFocusOutside(selector)
       }
     })
   })
