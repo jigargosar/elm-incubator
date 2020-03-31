@@ -19,15 +19,6 @@ function Cache(keys) {
   }
 }
 
-function publisher(portName, app) {
-  return pathOr(
-    function() {
-      console.warn('Port Not Found', portName)
-    },
-    ['ports', portName, 'send'],
-    app,
-  )
-}
 
 {
   const cache = Cache([])
@@ -50,35 +41,6 @@ function publisher(portName, app) {
   if (hasPath(['ports', 'cacheKV', 'subscribe'], app)) {
     subscribe('cacheKV', cache.onCacheKV)
   }
-
-  // const onFocusOutside = publisher('onFocusOutside', app)
-
-//   document.addEventListener('focusin', function() {
-//     requestAnimationFrame(function() {
-//       const active = document.activeElement
-//       const domId = 'si-container-dom-id'
-//       const domIdSelector = '#' + domId
-//       const element = active.closest(domIdSelector)
-//       console.debug(active, element)
-//       if (active !== document.body && element === null) {
-//         onFocusOutside(domId)
-//       }
-//     })
-//   })
-//
-//   document.addEventListener('focusin', function() {
-//     const els = Array.from(
-//       document.querySelectorAll('[data-focus-outside]'),
-//     )
-//     // console.log('on focus in data-focus-out els', els)
-//     console.debug('onFocusIn: document.activeElement', document.activeElement)
-//     els.forEach(function(el) {
-//       if (!el.contains(document.activeElement)) {
-//         const datasetElement = el.dataset['focusOutside']
-//         console.debug('onFocusOutside', datasetElement)
-//       }
-//     })
-//   })
 }
 
 function initElmModule(initParams, module) {
@@ -100,6 +62,18 @@ function initElmModuleWithPortHelpers(initParams, module) {
 
   return [app, subscribe]
 }
+
+// noinspection JSUnusedLocalSymbols
+function publisher(portName, app) {
+  return pathOr(
+    function() {
+      console.warn('Port Not Found', portName)
+    },
+    ['ports', portName, 'send'],
+    app,
+  )
+}
+
 
 function parseTruthyOrNull(str) {
   try {

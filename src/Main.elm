@@ -1,4 +1,4 @@
-port module Main exposing (main)
+module Main exposing (main)
 
 import Browser
 import Browser.Dom as Dom
@@ -9,9 +9,6 @@ import Html.Styled.Attributes as A exposing (attribute, autofocus, class, tabind
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
 import Task exposing (Task)
-
-
-port onFocusOutside : (String -> msg) -> Sub msg
 
 
 
@@ -143,15 +140,6 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ onClickOutside siContainerDomId HideSuggestions
-        , onFocusOutside
-            (\domId ->
-                if domId == siContainerDomId then
-                    --HideSuggestions
-                    NoOp
-
-                else
-                    NoOp
-            )
         ]
 
 
@@ -210,8 +198,6 @@ viewSearchWidget (SI qs showSuggestions) =
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
-
-        --, attribute "data-focus-outside" siContainerDomId
         ]
         [ inputView
         , if showSuggestions then
@@ -384,8 +370,6 @@ viewSearchInput qs =
         [ A.id siDomId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
-
-        --, autofocus True
         , onFocus QFocused
         , onInput QInputChanged
         , queryInputValue qs
