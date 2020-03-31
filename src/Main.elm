@@ -357,7 +357,7 @@ viewSearchWidget (SI qs ss) =
                         , w100
 
                         -- style
-                        , widgetBorderRadiusStyle
+                        , borderRadiusWidget
                         , borderRadiusOnlyBottom
                         , overflow hidden -- to ensure children don't overflow border radius
                         , widgetResultsShadow
@@ -432,11 +432,11 @@ wbColor =
 widgetBorder =
     batch
         [ border3 (px 1) solid wbColor
-        , widgetBorderRadiusStyle
+        , borderRadiusWidget
         ]
 
 
-widgetBorderRadiusStyle =
+borderRadiusWidget =
     borderRadius (rem 1.25)
 
 
