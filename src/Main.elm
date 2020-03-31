@@ -202,6 +202,7 @@ queryInputValue (Query _ c) =
     value c
 
 
+isQueryOriginal : Query -> Bool
 isQueryOriginal (Query o c) =
     o == c
 
