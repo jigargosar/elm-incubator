@@ -210,16 +210,16 @@ viewSearchWidget (SI qs showSuggestions) =
     styled div
         [ displayFlex, position relative ]
         [ A.id siContainerDomId
-        , attribute "data-focus-outside" siContainerDomId
+
+        --, attribute "data-focus-outside" siContainerDomId
         ]
         [ inputView
         , if showSuggestions then
-            --, div [ class "mh3 bb " ] []
             styled div
                 [ -- layout
-                  position absolute
-                , top (pct 100)
-                , width <| pct 100
+                  absolute
+                , top p100
+                , w100
 
                 -- style
                 , widgetBorder
@@ -236,6 +236,18 @@ viewSearchWidget (SI qs showSuggestions) =
           else
             text ""
         ]
+
+
+absolute =
+    position Css.absolute
+
+
+p100 =
+    pct 100
+
+
+w100 =
+    width (pct 100)
 
 
 widgetSeparator =
