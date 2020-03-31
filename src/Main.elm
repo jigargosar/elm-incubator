@@ -179,7 +179,7 @@ viewSearchWidget (SI qs showSuggestions) =
                     [ -- layout
                       position absolute
                     , top (pct 100)
-                    , padding2 (rem 0.5) zero
+                    , padding2 sp2 zero
                     , width <| pct 100
 
                     -- style
@@ -206,10 +206,6 @@ viewSearchWidget (SI qs showSuggestions) =
         [ inputView
         , suggestionsView
         ]
-
-
-pvh =
-    padding2
 
 
 sp2 =
