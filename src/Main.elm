@@ -491,7 +491,7 @@ viewSuggestions ss =
             Nothing
 
         Visible neSelection ->
-            selectionMapSelectedAndRest viewSelectedSuggestionItem viewSuggestionItem neSelection
+            selectionMapSelectedAndRest viewSelectedSuggestion viewSuggestion neSelection
                 |> selectionToList
                 |> div []
                 |> Just
@@ -614,8 +614,8 @@ logFail v =
 -- WIDGET SUGGESTIONS VIEW
 
 
-viewSelectedSuggestionItem : String -> HM
-viewSelectedSuggestionItem t =
+viewSelectedSuggestion : String -> HM
+viewSelectedSuggestion t =
     div
         [ class "ph3 pv1 f5 lh-copy ttc"
         , class "bg-light-gray"
@@ -624,8 +624,8 @@ viewSelectedSuggestionItem t =
         [ text t ]
 
 
-viewSuggestionItem : String -> HM
-viewSuggestionItem t =
+viewSuggestion : String -> HM
+viewSuggestion t =
     div
         [ class "ph3 pv1 f5 lh-copy ttc"
         , tabindex -1
