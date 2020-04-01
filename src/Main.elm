@@ -240,6 +240,21 @@ selectBackward neSelection =
                     Selected ( t, h, [] )
 
 
+selectForward : NeSelection a -> NeSelection a
+selectForward neSelection =
+    case neSelection of
+        NoneSelected ( h, t ) ->
+            Selected ( [], h, t )
+
+        Selected ( l, c, rh :: rt ) ->
+            Selected ( c :: l, rh, rt )
+
+        Selected ( l, c, [] ) ->
+            case nelReverse ( c, l ) of
+                ( h, t ) ->
+                    Selected ( [], h, t )
+
+
 
 -- NON EMPTY LIST
 
