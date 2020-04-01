@@ -207,6 +207,16 @@ type Suggestions
     | VisibleSelected (LCR String)
 
 
+type SS
+    = NotVisible (NEL String)
+    | Visible (NESelection String)
+
+
+type NESelection a
+    = NoSelection (NEL a)
+    | Selection (LCR a)
+
+
 
 -- NON EMPTY LIST
 
