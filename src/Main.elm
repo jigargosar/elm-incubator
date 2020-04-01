@@ -42,8 +42,8 @@ type SearchWidget
 
 
 updateQueryOnInput : String -> SearchWidget -> SearchWidget
-updateQueryOnInput changed (SW q ss) =
-    SW (setQueryInputTyped changed q) (showSuggestions ss |> Maybe.withDefault ss)
+updateQueryOnInput typed (SW (Query o _) ss) =
+    SW (Query o (Typed typed)) (showSuggestions ss |> Maybe.withDefault ss)
 
 
 selectPrev : SearchWidget -> SearchWidget
