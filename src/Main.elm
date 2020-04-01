@@ -239,14 +239,14 @@ fromV2 ss =
 
 type Suggestions2
     = NotVisible (NEL String)
-    | Visible (NESelection String)
+    | Visible (NeSelection String)
 
 
 
 -- NON EMPTY SELECTION LIST
 
 
-type NESelection a
+type NeSelection a
     = NoneSelected (NEL a)
     | Selected (LCR a)
 
