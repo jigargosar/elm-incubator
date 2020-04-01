@@ -92,6 +92,21 @@ showSuggestionsIfOriginalQuery ((SW q ss) as sw) =
             sw
 
 
+hideSuggestionsIfShown : SearchWidget -> SearchWidget
+hideSuggestionsIfShown (SW q ss) =
+    SW q
+        (case ss of
+            Hidden _ ->
+                ss
+
+            VisibleNoneSelected nel ->
+                Hidden nel
+
+            VisibleSelected lcr ->
+                Hidden (lcrToNel lcr)
+        )
+
+
 hideSuggestionsAndRevertInputOverride : SearchWidget -> SearchWidget
 hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
     let
@@ -189,8 +204,8 @@ initialSuggestionNEL =
     ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
 
 
-hideSuggestions : Suggestions -> Maybe Suggestions
-hideSuggestions ss =
+suggestionsHide : Suggestions -> Maybe Suggestions
+suggestionsHide ss =
     case ss of
         VisibleSelected lcr ->
             Just (Hidden (lcrToNel lcr))
@@ -336,12 +351,7 @@ update message ((Model ((SW q ss) as sw)) as model) =
             )
 
         HideSuggestions ->
-            ( case hideSuggestions ss of
-                Just nss ->
-                    setSuggestions nss model
-
-                Nothing ->
-                    model
+            ( Model (hideSuggestionsIfShown sw)
             , Cmd.none
             )
 
