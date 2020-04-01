@@ -205,37 +205,36 @@ swSelectNext (SW q ss) =
             SW q (VisibleNoneSelected nel)
 
 
-selectPrevSuggestion : Suggestions -> Suggestions
-selectPrevSuggestion ss =
-    case ss of
-        VisibleSelected lcr ->
-            lcrGoL lcr
-                |> Maybe.withDefault (lcrLast lcr)
-                |> VisibleSelected
 
-        VisibleNoneSelected nel ->
-            VisibleSelected (lcrFromNel nel |> lcrLast)
-
-        Hidden nel ->
-            VisibleNoneSelected nel
-
-
-selectNextSuggestion : Suggestions -> Suggestions
-selectNextSuggestion ss =
-    case ss of
-        VisibleSelected lcr ->
-            lcrGoR lcr
-                |> Maybe.withDefault (lcrFirst lcr)
-                |> VisibleSelected
-
-        VisibleNoneSelected nel ->
-            VisibleSelected (lcrFromNel nel |> lcrFirst)
-
-        Hidden nel ->
-            VisibleNoneSelected nel
-
-
-
+--selectPrevSuggestion : Suggestions -> Suggestions
+--selectPrevSuggestion ss =
+--    case ss of
+--        VisibleSelected lcr ->
+--            lcrGoL lcr
+--                |> Maybe.withDefault (lcrLast lcr)
+--                |> VisibleSelected
+--
+--        VisibleNoneSelected nel ->
+--            VisibleSelected (lcrFromNel nel |> lcrLast)
+--
+--        Hidden nel ->
+--            VisibleNoneSelected nel
+--
+--
+--selectNextSuggestion : Suggestions -> Suggestions
+--selectNextSuggestion ss =
+--    case ss of
+--        VisibleSelected lcr ->
+--            lcrGoR lcr
+--                |> Maybe.withDefault (lcrFirst lcr)
+--                |> VisibleSelected
+--
+--        VisibleNoneSelected nel ->
+--            VisibleSelected (lcrFromNel nel |> lcrFirst)
+--
+--        Hidden nel ->
+--            VisibleNoneSelected nel
+--
 -- NON EMPTY LIST
 
 
@@ -368,7 +367,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model (SW q ss)) as model) =
+update message ((Model ((SW q ss) as sw)) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -409,10 +408,10 @@ update message ((Model (SW q ss)) as model) =
             )
 
         QInputUp ->
-            ( Model (SW q (selectPrevSuggestion ss)), Cmd.none )
+            ( Model (swSelectPrev sw), Cmd.none )
 
         QInputDown ->
-            ( Model (SW q (selectNextSuggestion ss)), Cmd.none )
+            ( Model (swSelectNext sw), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
