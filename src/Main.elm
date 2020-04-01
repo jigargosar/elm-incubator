@@ -98,16 +98,6 @@ selectNext (SW o iv ss) =
             SW o iv (VisibleNoneSelected nel)
 
 
-overrideInputValue : String -> InputValue -> InputValue
-overrideInputValue to iv =
-    case iv of
-        Typed ty ->
-            Overridden ty to
-
-        Overridden ty _ ->
-            Overridden ty to
-
-
 showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
 showSuggestionsIfOriginalQuery ((SW o iv ss) as sw) =
     let
@@ -195,6 +185,16 @@ inputValueToString iv =
 
         Overridden _ string ->
             string
+
+
+overrideInputValue : String -> InputValue -> InputValue
+overrideInputValue to iv =
+    case iv of
+        Typed ty ->
+            Overridden ty to
+
+        Overridden ty _ ->
+            Overridden ty to
 
 
 
