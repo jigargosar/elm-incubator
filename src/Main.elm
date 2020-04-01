@@ -225,6 +225,21 @@ type NeSelection a
     | Selected (LCR a)
 
 
+selectBackward : NeSelection a -> NeSelection a
+selectBackward neSelection =
+    case neSelection of
+        NoneSelected ( h, t ) ->
+            selectBackward <| Selected ( [], h, t )
+
+        Selected ( lh :: lt, c, r ) ->
+            Selected ( lt, lh, c :: r )
+
+        Selected ( [], c, r ) ->
+            case nelReverse ( c, r ) of
+                ( h, t ) ->
+                    Selected ( t, h, [] )
+
+
 
 -- NON EMPTY LIST
 
