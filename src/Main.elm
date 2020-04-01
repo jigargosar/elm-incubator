@@ -8,6 +8,7 @@ import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
+import List.Extra
 import Task exposing (Task)
 
 
@@ -74,9 +75,23 @@ initQuery string =
     Query string (Typed string)
 
 
-queryInputChange : String -> Query -> Query
-queryInputChange to (Query o _) =
+setQueryInputTyped : String -> Query -> Query
+setQueryInputTyped to (Query o _) =
     Query o (Typed to)
+
+
+overrideQueryInput : String -> Query -> Query
+overrideQueryInput to (Query o iv) =
+    let
+        newIV =
+            case iv of
+                Typed ty ->
+                    Overridden ty to
+
+                Overridden ty _ ->
+                    Overridden ty to
+    in
+    Query o newIV
 
 
 queryInputValue : Query -> Html.Styled.Attribute msg
@@ -141,6 +156,45 @@ selectedSuggestion ss =
 
         Hidden _ ->
             Nothing
+
+
+nelReverse : ( a, List a ) -> ( a, List a )
+nelReverse (( h, t ) as nel) =
+    case List.reverse (h :: t) of
+        [] ->
+            -- Will never happen
+            nel
+
+        lst :: rest ->
+            ( lst, rest )
+
+
+swSelectPrev : SearchWidget -> SearchWidget
+swSelectPrev ((SW q ss) as sw) =
+    case ss of
+        VisibleSelected ( [], _, [] ) ->
+            sw
+
+        VisibleSelected ( [], c, h :: t ) ->
+            sw
+
+        _ ->
+            sw
+
+
+
+--VisibleSelected (h::t,c,r) ->
+--    SW (overrideQueryInput h q) (VisibleSelected (t,h,c::r))
+--
+--
+--
+--
+--
+--VisibleNoneSelected nel ->
+--    VisibleSelected (lcrFromNel nel |> lcrLast)
+--
+--Hidden nel ->
+--    VisibleNoneSelected nel
 
 
 selectPrevSuggestion : Suggestions -> Suggestions
@@ -342,7 +396,7 @@ update message ((Model (SW q ss)) as model) =
             )
 
         QInputChanged changed ->
-            ( Model (SW (queryInputChange changed q) (showSuggestions ss |> Maybe.withDefault ss))
+            ( Model (SW (setQueryInputTyped changed q) (showSuggestions ss |> Maybe.withDefault ss))
             , Cmd.none
             )
 
