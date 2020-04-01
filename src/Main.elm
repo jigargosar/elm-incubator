@@ -93,13 +93,27 @@ selectNext (SW q ss) =
 
 
 showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
-showSuggestionsIfOriginalQuery ((SW q ss) as sw) =
-    case ( isQueryOriginal q, showSuggestions ss ) of
-        ( True, Just nss ) ->
-            SW q nss
+showSuggestionsIfOriginalQuery ((SW ((Query o iv) as q) ss) as sw) =
+    let
+        isQueryOriginal =
+            o == inputValueToString iv
 
-        _ ->
-            sw
+        nss =
+            case ss of
+                VisibleSelected _ ->
+                    ss
+
+                VisibleNoneSelected _ ->
+                    ss
+
+                Hidden nel ->
+                    VisibleNoneSelected nel
+    in
+    if isQueryOriginal then
+        SW q nss
+
+    else
+        sw
 
 
 hideSuggestionsIfShown : SearchWidget -> SearchWidget
@@ -189,11 +203,6 @@ overrideQueryInput to (Query o iv) =
     Query o newIV
 
 
-isQueryOriginal : Query -> Bool
-isQueryOriginal (Query o c) =
-    o == inputValueToString c
-
-
 
 -- SUGGESTIONS
 
@@ -207,19 +216,6 @@ type Suggestions
 initialSuggestionNEL : NEL String
 initialSuggestionNEL =
     ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
-
-
-showSuggestions : Suggestions -> Maybe Suggestions
-showSuggestions ss =
-    case ss of
-        VisibleSelected _ ->
-            Nothing
-
-        VisibleNoneSelected _ ->
-            Nothing
-
-        Hidden nel ->
-            Just (VisibleNoneSelected nel)
 
 
 
