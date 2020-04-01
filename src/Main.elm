@@ -213,8 +213,8 @@ type SS
 
 
 type NESelection a
-    = NoSelection (NEL a)
-    | Selection (LCR a)
+    = NoneSelected (NEL a)
+    | Selected (LCR a)
 
 
 
