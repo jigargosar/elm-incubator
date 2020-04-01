@@ -43,7 +43,17 @@ type SearchWidget
 
 updateQueryOnInput : String -> SearchWidget -> SearchWidget
 updateQueryOnInput typed (SW (Query o _) ss) =
-    SW (Query o (Typed typed)) (showSuggestions ss |> Maybe.withDefault ss)
+    SW (Query o (Typed typed))
+        (case ss of
+            VisibleSelected _ ->
+                ss
+
+            VisibleNoneSelected _ ->
+                ss
+
+            Hidden nel ->
+                VisibleNoneSelected nel
+        )
 
 
 selectPrev : SearchWidget -> SearchWidget
@@ -158,11 +168,6 @@ inputValueToString iv =
 initQuery : String -> Query
 initQuery string =
     Query string (Typed string)
-
-
-setQueryInputTyped : String -> Query -> Query
-setQueryInputTyped to (Query o _) =
-    Query o (Typed to)
 
 
 overrideQueryInput : String -> Query -> Query
