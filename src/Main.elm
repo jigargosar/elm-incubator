@@ -290,11 +290,6 @@ lcrToList ( l, c, r ) =
     List.reverse l ++ c :: r
 
 
-lcrMapCS : (a -> b) -> (a -> b) -> LCR a -> LCR b
-lcrMapCS fc fs ( l, c, r ) =
-    ( List.map fs l, fc c, List.map fs r )
-
-
 
 -- INIT
 
