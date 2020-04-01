@@ -8,7 +8,6 @@ import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
-import List.Extra
 import Task exposing (Task)
 
 
@@ -114,8 +113,8 @@ type Suggestions
     | Hidden (NEL String)
 
 
-initialSuggestionNonEmptyList : NEL String
-initialSuggestionNonEmptyList =
+initialSuggestionNEL : NEL String
+initialSuggestionNEL =
     ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
 
 
@@ -143,30 +142,6 @@ showSuggestions ss =
 
         Hidden nel ->
             Just (VisibleNoneSelected nel)
-
-
-selectedSuggestion : Suggestions -> Maybe String
-selectedSuggestion ss =
-    case ss of
-        VisibleSelected ( _, c, _ ) ->
-            Just c
-
-        VisibleNoneSelected _ ->
-            Nothing
-
-        Hidden _ ->
-            Nothing
-
-
-nelReverse : ( a, List a ) -> ( a, List a )
-nelReverse (( h, t ) as nel) =
-    case List.reverse (h :: t) of
-        [] ->
-            -- Will never happen
-            nel
-
-        lst :: rest ->
-            ( lst, rest )
 
 
 swSelectPrev : SearchWidget -> SearchWidget
@@ -245,6 +220,17 @@ type alias NEL a =
 nelToList : NEL a -> List a
 nelToList ( h, t ) =
     h :: t
+
+
+nelReverse : ( a, List a ) -> ( a, List a )
+nelReverse (( h, t ) as nel) =
+    case List.reverse (h :: t) of
+        [] ->
+            -- Will never happen
+            nel
+
+        lst :: rest ->
+            ( lst, rest )
 
 
 
@@ -330,7 +316,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( Model (SW (initQuery "foo bar") (Hidden initialSuggestionNonEmptyList))
+    ( Model (SW (initQuery "foo bar") (Hidden initialSuggestionNEL))
     , focusSI
     )
 
@@ -362,8 +348,9 @@ type Msg
     | QInputFocused
     | HideSuggestions
     | QInputChanged String
-    | QInputUp
-    | QInputDown
+    | QInputSelectPrev
+    | QInputSelectNext
+    | OnQInputEsc
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -407,11 +394,14 @@ update message ((Model ((SW q ss) as sw)) as model) =
             , Cmd.none
             )
 
-        QInputUp ->
+        QInputSelectPrev ->
             ( Model (swSelectPrev sw), Cmd.none )
 
-        QInputDown ->
+        QInputSelectNext ->
             ( Model (swSelectNext sw), Cmd.none )
+
+        OnQInputEsc ->
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -707,10 +697,10 @@ widgetInputKeyDownDecoder key =
         --"Tab" ->
         --    JD.succeed ( HideSuggestions, False )
         "ArrowUp" ->
-            JD.succeed ( QInputUp, True )
+            JD.succeed ( QInputSelectPrev, True )
 
         "ArrowDown" ->
-            JD.succeed ( QInputDown, True )
+            JD.succeed ( QInputSelectNext, True )
 
         _ ->
             JD.fail "nah!"
