@@ -99,15 +99,6 @@ selectNext (SW q ss) =
 
 overrideQueryInput : String -> Query -> Query
 overrideQueryInput to (Query o iv) =
-    let
-        newIV =
-            case iv of
-                Typed ty ->
-                    Overridden ty to
-
-                Overridden ty _ ->
-                    Overridden ty to
-    in
     overrideInputValue to iv |> Query o
 
 
