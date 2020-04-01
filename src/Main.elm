@@ -566,7 +566,8 @@ logFail v =
 viewSelectedSuggestionItem : String -> HM
 viewSelectedSuggestionItem t =
     div
-        [ class "ph3 pv1 f5 lh-copy ttc bg-light-gray"
+        [ class "ph3 pv1 f5 lh-copy ttc"
+        , class "bg-light-gray"
         , tabindex -1
         ]
         [ text t ]
