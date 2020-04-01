@@ -178,6 +178,10 @@ searchInputString (SW _ iv _) =
     inputValueToString iv
 
 
+
+-- InputValue
+
+
 type InputValue
     = Typed String
     | Overridden String String
