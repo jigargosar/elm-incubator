@@ -216,6 +216,26 @@ type Suggestions2
     | Visible (NeSelection String)
 
 
+ensureVisible : Suggestions2 -> Suggestions2
+ensureVisible ss =
+    case ss of
+        NotVisible nel ->
+            Visible (selectionFromNel nel)
+
+        Visible _ ->
+            ss
+
+
+ensureHidden : Suggestions2 -> Suggestions2
+ensureHidden ss =
+    case ss of
+        NotVisible _ ->
+            ss
+
+        Visible neSelection ->
+            NotVisible (selectionToNel neSelection)
+
+
 
 -- NON EMPTY SELECTION LIST
 
@@ -223,6 +243,21 @@ type Suggestions2
 type NeSelection a
     = NoneSelected (NEL a)
     | Selected (LCR a)
+
+
+selectionFromNel : NEL a -> NeSelection a
+selectionFromNel nel =
+    NoneSelected nel
+
+
+selectionToNel : NeSelection a -> NEL a
+selectionToNel neSelection =
+    case neSelection of
+        NoneSelected nel ->
+            nel
+
+        Selected lcr ->
+            lcrToNel lcr
 
 
 selectBackward : NeSelection a -> NeSelection a
