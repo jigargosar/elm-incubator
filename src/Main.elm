@@ -189,11 +189,6 @@ overrideQueryInput to (Query o iv) =
     Query o newIV
 
 
-queryInputValue : Query -> Html.Styled.Attribute msg
-queryInputValue (Query _ c) =
-    value (inputValueToString c)
-
-
 isQueryOriginal : Query -> Bool
 isQueryOriginal (Query o c) =
     o == inputValueToString c
@@ -400,7 +395,7 @@ view (Model si) =
 
 
 viewSearchWidget : SearchWidget -> HM
-viewSearchWidget ((SW qs ss) as sw) =
+viewSearchWidget ((SW _ ss) as sw) =
     let
         maybeSuggestionsView =
             viewSuggestions ss
