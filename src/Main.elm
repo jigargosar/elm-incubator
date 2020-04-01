@@ -43,59 +43,40 @@ type SearchWidget
 
 initSW : String -> NEL String -> SearchWidget
 initSW qs suggestionsNel =
-    SW qs (Typed qs) (Hidden suggestionsNel)
+    SW qs (Typed qs) (NotVisible suggestionsNel)
 
 
 updateQueryOnInput : String -> SearchWidget -> SearchWidget
 updateQueryOnInput typed (SW o _ ss) =
-    SW o
-        (Typed typed)
-        (case ss of
-            VisibleSelected _ ->
-                ss
-
-            VisibleNoneSelected _ ->
-                ss
-
-            Hidden nel ->
-                VisibleNoneSelected nel
-        )
+    SW o (Typed typed) (ensureVisible ss)
 
 
 selectPrev : SearchWidget -> SearchWidget
 selectPrev (SW o iv ss) =
     case ss of
-        VisibleSelected ( lh :: lt, c, r ) ->
-            SW o (overrideInputValue lh iv) (VisibleSelected ( lt, lh, c :: r ))
+        NotVisible nel ->
+            SW o iv (Visible (selectionFromNel nel))
 
-        VisibleSelected ( [], c, r ) ->
-            case nelReverse ( c, r ) of
-                ( h, t ) ->
-                    SW o (overrideInputValue h iv) (VisibleSelected ( t, h, [] ))
-
-        VisibleNoneSelected ( c, r ) ->
-            selectPrev (SW o iv (VisibleSelected ( [], c, r )))
-
-        Hidden nel ->
-            SW o iv (VisibleNoneSelected nel)
+        Visible nes ->
+            let
+                ( suggestion, newNES ) =
+                    selectBackward nes
+            in
+            SW o (overrideInputValue suggestion iv) (Visible newNES)
 
 
 selectNext : SearchWidget -> SearchWidget
 selectNext (SW o iv ss) =
     case ss of
-        VisibleSelected ( l, c, rh :: rt ) ->
-            SW o (overrideInputValue rh iv) (VisibleSelected ( c :: l, rh, rt ))
+        NotVisible nel ->
+            SW o iv (Visible (selectionFromNel nel))
 
-        VisibleSelected ( l, c, [] ) ->
-            case nelReverse ( c, l ) of
-                ( h, t ) ->
-                    SW o (overrideInputValue h iv) (VisibleSelected ( [], h, t ))
-
-        VisibleNoneSelected ( c, r ) ->
-            SW o (overrideInputValue c iv) (VisibleSelected ( [], c, r ))
-
-        Hidden nel ->
-            SW o iv (VisibleNoneSelected nel)
+        Visible nes ->
+            let
+                ( suggestion, newNES ) =
+                    selectForward nes
+            in
+            SW o (overrideInputValue suggestion iv) (Visible newNES)
 
 
 showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
@@ -103,20 +84,9 @@ showSuggestionsIfOriginalQuery ((SW o iv ss) as sw) =
     let
         isQueryOriginal =
             o == inputValueToString iv
-
-        nss =
-            case ss of
-                VisibleSelected _ ->
-                    ss
-
-                VisibleNoneSelected _ ->
-                    ss
-
-                Hidden nel ->
-                    VisibleNoneSelected nel
     in
     if isQueryOriginal then
-        SW o iv nss
+        SW o iv (ensureVisible ss)
 
     else
         sw
@@ -124,18 +94,7 @@ showSuggestionsIfOriginalQuery ((SW o iv ss) as sw) =
 
 hideSuggestionsIfShown : SearchWidget -> SearchWidget
 hideSuggestionsIfShown (SW o iv ss) =
-    SW o
-        iv
-        (case ss of
-            Hidden _ ->
-                ss
-
-            VisibleNoneSelected nel ->
-                Hidden nel
-
-            VisibleSelected lcr ->
-                Hidden (lcrToNel lcr)
-        )
+    SW o iv (ensureHidden ss)
 
 
 hideSuggestionsAndRevertInputOverride : SearchWidget -> SearchWidget
@@ -148,19 +107,8 @@ hideSuggestionsAndRevertInputOverride (SW o iv ss) =
 
                 Overridden ty _ ->
                     Typed ty
-
-        nss =
-            case ss of
-                Hidden _ ->
-                    ss
-
-                VisibleNoneSelected nel ->
-                    Hidden nel
-
-                VisibleSelected lcr ->
-                    Hidden (lcrToNel lcr)
     in
-    SW o niv nss
+    SW o niv (ensureHidden ss)
 
 
 searchInputString : SearchWidget -> String
@@ -202,21 +150,11 @@ overrideInputValue to iv =
 
 
 type Suggestions
-    = Hidden (NEL String)
-    | VisibleNoneSelected (NEL String)
-    | VisibleSelected (LCR String)
-
-
-
--- SUGGESTIONS V2
-
-
-type Suggestions2
     = NotVisible (NEL String)
     | Visible (NeSelection String)
 
 
-ensureVisible : Suggestions2 -> Suggestions2
+ensureVisible : Suggestions -> Suggestions
 ensureVisible ss =
     case ss of
         NotVisible nel ->
@@ -226,7 +164,7 @@ ensureVisible ss =
             ss
 
 
-ensureHidden : Suggestions2 -> Suggestions2
+ensureHidden : Suggestions -> Suggestions
 ensureHidden ss =
     case ss of
         NotVisible _ ->
@@ -250,6 +188,16 @@ selectionFromNel nel =
     NoneSelected nel
 
 
+selectionToList : NeSelection a -> List a
+selectionToList neSelection =
+    case neSelection of
+        NoneSelected ( h, t ) ->
+            h :: t
+
+        Selected lcr ->
+            lcrToList lcr
+
+
 selectionToNel : NeSelection a -> NEL a
 selectionToNel neSelection =
     case neSelection of
@@ -260,34 +208,44 @@ selectionToNel neSelection =
             lcrToNel lcr
 
 
-selectBackward : NeSelection a -> NeSelection a
+selectBackward : NeSelection a -> ( a, NeSelection a )
 selectBackward neSelection =
     case neSelection of
         NoneSelected ( h, t ) ->
             selectBackward <| Selected ( [], h, t )
 
         Selected ( lh :: lt, c, r ) ->
-            Selected ( lt, lh, c :: r )
+            ( lh, Selected ( lt, lh, c :: r ) )
 
         Selected ( [], c, r ) ->
             case nelReverse ( c, r ) of
                 ( h, t ) ->
-                    Selected ( t, h, [] )
+                    ( h, Selected ( t, h, [] ) )
 
 
-selectForward : NeSelection a -> NeSelection a
+selectForward : NeSelection a -> ( a, NeSelection a )
 selectForward neSelection =
     case neSelection of
         NoneSelected ( h, t ) ->
-            Selected ( [], h, t )
+            ( h, Selected ( [], h, t ) )
 
         Selected ( l, c, rh :: rt ) ->
-            Selected ( c :: l, rh, rt )
+            ( rh, Selected ( c :: l, rh, rt ) )
 
         Selected ( l, c, [] ) ->
             case nelReverse ( c, l ) of
                 ( h, t ) ->
-                    Selected ( [], h, t )
+                    ( h, Selected ( [], h, t ) )
+
+
+selectionMapSelectedAndRest : (a -> b) -> (a -> b) -> NeSelection a -> NeSelection b
+selectionMapSelectedAndRest funcSelected funcOthers neSelection =
+    case neSelection of
+        NoneSelected ( h, t ) ->
+            NoneSelected ( funcOthers h, List.map funcOthers t )
+
+        Selected ( l, c, r ) ->
+            Selected ( List.map funcOthers l, funcSelected c, List.map funcOthers r )
 
 
 
@@ -296,11 +254,6 @@ selectForward neSelection =
 
 type alias NEL a =
     ( a, List a )
-
-
-nelToList : NEL a -> List a
-nelToList ( h, t ) =
-    h :: t
 
 
 nelReverse : ( a, List a ) -> ( a, List a )
@@ -539,20 +492,14 @@ viewMaybe func mb =
 viewSuggestions : Suggestions -> Maybe HM
 viewSuggestions ss =
     case ss of
-        VisibleSelected lcr ->
-            div
-                []
-                (lcrMapCS viewSelectedSuggestionItem viewSuggestionItem lcr
-                    |> lcrToList
-                )
-                |> Just
-
-        VisibleNoneSelected nel ->
-            div [] (List.map viewSuggestionItem (nelToList nel))
-                |> Just
-
-        Hidden _ ->
+        NotVisible _ ->
             Nothing
+
+        Visible neSelection ->
+            selectionMapSelectedAndRest viewSelectedSuggestionItem viewSuggestionItem neSelection
+                |> selectionToList
+                |> div []
+                |> Just
 
 
 widgetSeparator : Html msg
