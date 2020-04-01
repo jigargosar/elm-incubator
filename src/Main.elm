@@ -434,7 +434,7 @@ viewSearchWidget ((SW _ _ ss) as sw) =
                             [ shadowWidgetInput, borderTransparent, borderRadiusOnlyTop ]
 
                         else
-                            [ hoverAndFocusWithin [ shadowWidgetInput, borderTransparent ] ]
+                            [ hoverOrFocusWithin [ shadowWidgetInput, borderTransparent ] ]
                        )
                 )
                 []
@@ -469,8 +469,8 @@ viewSearchWidget ((SW _ _ ss) as sw) =
         ]
 
 
-hoverAndFocusWithin : List Style -> Style
-hoverAndFocusWithin styles =
+hoverOrFocusWithin : List Style -> Style
+hoverOrFocusWithin styles =
     batch [ hover styles, focusWithin styles ]
 
 
