@@ -170,21 +170,36 @@ nelReverse (( h, t ) as nel) =
 
 
 swSelectPrev : SearchWidget -> SearchWidget
-swSelectPrev ((SW q ss) as sw) =
+swSelectPrev (SW q ss) =
     case ss of
-        VisibleSelected ( [], _, [] ) ->
-            sw
+        VisibleSelected ( h :: t, c, r ) ->
+            SW (overrideQueryInput h q) (VisibleSelected ( t, h, c :: r ))
 
         VisibleSelected ( [], c, r ) ->
             case nelReverse ( c, r ) of
                 ( h, t ) ->
                     SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
 
+        VisibleNoneSelected ( c, r ) ->
+            swSelectPrev (SW q (VisibleSelected ( [], c, r )))
+
+        Hidden nel ->
+            SW q (VisibleNoneSelected nel)
+
+
+swSelectNext : SearchWidget -> SearchWidget
+swSelectNext (SW q ss) =
+    case ss of
         VisibleSelected ( h :: t, c, r ) ->
             SW (overrideQueryInput h q) (VisibleSelected ( t, h, c :: r ))
 
+        VisibleSelected ( [], c, r ) ->
+            case nelReverse ( c, r ) of
+                ( h, t ) ->
+                    SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
+
         VisibleNoneSelected ( c, r ) ->
-            swSelectPrev (SW q (VisibleSelected ( [], c, r )))
+            swSelectNext (SW q (VisibleSelected ( [], c, r )))
 
         Hidden nel ->
             SW q (VisibleNoneSelected nel)
