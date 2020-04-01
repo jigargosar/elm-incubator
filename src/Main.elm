@@ -207,9 +207,43 @@ type Suggestions
     | VisibleSelected (LCR String)
 
 
-type SS
+toV2 : Suggestions -> Suggestions2
+toV2 ss =
+    case ss of
+        Hidden nel ->
+            NotVisible nel
+
+        VisibleNoneSelected nel ->
+            Visible (NoneSelected nel)
+
+        VisibleSelected lcr ->
+            Visible (Selected lcr)
+
+
+fromV2 : Suggestions2 -> Suggestions
+fromV2 ss =
+    case ss of
+        NotVisible nel ->
+            Hidden nel
+
+        Visible (NoneSelected nel) ->
+            VisibleNoneSelected nel
+
+        Visible (Selected lcr) ->
+            VisibleSelected lcr
+
+
+
+-- SUGGESTIONS V2
+
+
+type Suggestions2
     = NotVisible (NEL String)
     | Visible (NESelection String)
+
+
+
+-- NON EMPTY SELECTION LIST
 
 
 type NESelection a
