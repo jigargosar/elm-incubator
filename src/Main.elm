@@ -130,6 +130,19 @@ showSuggestions ss =
             Just (VisibleNoneSelected nel)
 
 
+selectedSuggestion : Suggestions -> Maybe String
+selectedSuggestion ss =
+    case ss of
+        VisibleSelected ( _, c, _ ) ->
+            Just c
+
+        VisibleNoneSelected _ ->
+            Nothing
+
+        Hidden _ ->
+            Nothing
+
+
 selectPrevSuggestion : Suggestions -> Suggestions
 selectPrevSuggestion ss =
     case ss of
