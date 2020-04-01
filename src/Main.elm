@@ -33,11 +33,6 @@ type Model
     = Model SearchWidget
 
 
-setSuggestions : Suggestions -> Model -> Model
-setSuggestions ss (Model (SW q _)) =
-    Model (SW q ss)
-
-
 
 -- SEARCH WIDGET MODEL
 
@@ -322,7 +317,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model ((SW q ss) as sw)) as model) =
+update message ((Model sw) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
