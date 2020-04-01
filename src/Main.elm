@@ -142,6 +142,11 @@ hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
     SW (Query o niv) nss
 
 
+searchInputString : SearchWidget -> String
+searchInputString (SW (Query _ c) _) =
+    inputValueToString c
+
+
 
 -- QUERY
 
@@ -187,11 +192,6 @@ overrideQueryInput to (Query o iv) =
 queryInputValue : Query -> Html.Styled.Attribute msg
 queryInputValue (Query _ c) =
     value (inputValueToString c)
-
-
-searchInputString : SearchWidget -> String
-searchInputString (SW (Query _ c) _) =
-    inputValueToString c
 
 
 isQueryOriginal : Query -> Bool
@@ -400,7 +400,7 @@ view (Model si) =
 
 
 viewSearchWidget : SearchWidget -> HM
-viewSearchWidget (SW qs ss) =
+viewSearchWidget ((SW qs ss) as sw) =
     let
         maybeSuggestionsView =
             viewSuggestions ss
@@ -422,7 +422,7 @@ viewSearchWidget (SW qs ss) =
                        )
                 )
                 []
-                [ viewSearchInput qs ]
+                [ viewSearchInput (searchInputString sw) ]
     in
     styled div
         [ displayFlex, position relative ]
@@ -631,15 +631,15 @@ siDomId =
     "si-dom-id"
 
 
-viewSearchInput : Query -> HM
-viewSearchInput qs =
+viewSearchInput : String -> HM
+viewSearchInput valueString =
     input
         [ A.id siDomId
         , class "bg-transparent bn outline-0"
         , class "lh-title flex-auto"
         , onFocus QInputFocused
         , onInput QInputChanged
-        , queryInputValue qs
+        , value valueString
         , E.preventDefaultOn "keydown"
             (JD.andThen widgetInputKeyDownDecoder keyDecoder)
         ]
