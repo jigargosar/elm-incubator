@@ -181,35 +181,6 @@ showSuggestions ss =
 
 
 
---selectPrevSuggestion : Suggestions -> Suggestions
---selectPrevSuggestion ss =
---    case ss of
---        VisibleSelected lcr ->
---            lcrGoL lcr
---                |> Maybe.withDefault (lcrLast lcr)
---                |> VisibleSelected
---
---        VisibleNoneSelected nel ->
---            VisibleSelected (lcrFromNel nel |> lcrLast)
---
---        Hidden nel ->
---            VisibleNoneSelected nel
---
---
---selectNextSuggestion : Suggestions -> Suggestions
---selectNextSuggestion ss =
---    case ss of
---        VisibleSelected lcr ->
---            lcrGoR lcr
---                |> Maybe.withDefault (lcrFirst lcr)
---                |> VisibleSelected
---
---        VisibleNoneSelected nel ->
---            VisibleSelected (lcrFromNel nel |> lcrFirst)
---
---        Hidden nel ->
---            VisibleNoneSelected nel
---
 -- NON EMPTY LIST
 
 
