@@ -46,6 +46,42 @@ type SearchWidget
     = SW Query Suggestions
 
 
+swSelectPrev : SearchWidget -> SearchWidget
+swSelectPrev (SW q ss) =
+    case ss of
+        VisibleSelected ( lh :: lt, c, r ) ->
+            SW (overrideQueryInput lh q) (VisibleSelected ( lt, lh, c :: r ))
+
+        VisibleSelected ( [], c, r ) ->
+            case nelReverse ( c, r ) of
+                ( h, t ) ->
+                    SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
+
+        VisibleNoneSelected ( c, r ) ->
+            swSelectPrev (SW q (VisibleSelected ( [], c, r )))
+
+        Hidden nel ->
+            SW q (VisibleNoneSelected nel)
+
+
+swSelectNext : SearchWidget -> SearchWidget
+swSelectNext (SW q ss) =
+    case ss of
+        VisibleSelected ( l, c, rh :: rt ) ->
+            SW (overrideQueryInput rh q) (VisibleSelected ( c :: l, rh, rt ))
+
+        VisibleSelected ( l, c, [] ) ->
+            case nelReverse ( c, l ) of
+                ( h, t ) ->
+                    SW (overrideQueryInput h q) (VisibleSelected ( [], h, t ))
+
+        VisibleNoneSelected ( c, r ) ->
+            SW (overrideQueryInput c q) (VisibleSelected ( [], c, r ))
+
+        Hidden nel ->
+            SW q (VisibleNoneSelected nel)
+
+
 
 -- QUERY
 
@@ -142,42 +178,6 @@ showSuggestions ss =
 
         Hidden nel ->
             Just (VisibleNoneSelected nel)
-
-
-swSelectPrev : SearchWidget -> SearchWidget
-swSelectPrev (SW q ss) =
-    case ss of
-        VisibleSelected ( lh :: lt, c, r ) ->
-            SW (overrideQueryInput lh q) (VisibleSelected ( lt, lh, c :: r ))
-
-        VisibleSelected ( [], c, r ) ->
-            case nelReverse ( c, r ) of
-                ( h, t ) ->
-                    SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
-
-        VisibleNoneSelected ( c, r ) ->
-            swSelectPrev (SW q (VisibleSelected ( [], c, r )))
-
-        Hidden nel ->
-            SW q (VisibleNoneSelected nel)
-
-
-swSelectNext : SearchWidget -> SearchWidget
-swSelectNext (SW q ss) =
-    case ss of
-        VisibleSelected ( l, c, rh :: rt ) ->
-            SW (overrideQueryInput rh q) (VisibleSelected ( c :: l, rh, rt ))
-
-        VisibleSelected ( l, c, [] ) ->
-            case nelReverse ( c, l ) of
-                ( h, t ) ->
-                    SW (overrideQueryInput h q) (VisibleSelected ( [], h, t ))
-
-        VisibleNoneSelected ( c, r ) ->
-            SW (overrideQueryInput c q) (VisibleSelected ( [], c, r ))
-
-        Hidden nel ->
-            SW q (VisibleNoneSelected nel)
 
 
 
