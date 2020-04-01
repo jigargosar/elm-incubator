@@ -83,16 +83,28 @@ selectNext (SW q ss) =
 
 
 hideSuggestionsAndRevertInputOverride : SearchWidget -> SearchWidget
-hideSuggestionsAndRevertInputOverride ((SW (Query o iv) ss) as sw) =
-    case ( iv, ss ) of
-        ( Overridden ty _, VisibleSelected lcr ) ->
-            SW (Query o (Typed ty)) (Hidden (lcrToNel lcr))
+hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
+    let
+        niv =
+            case iv of
+                Typed _ ->
+                    iv
 
-        ( Overridden ty _, VisibleNoneSelected nel ) ->
-            SW (Query o (Typed ty)) (Hidden nel)
+                Overridden ty _ ->
+                    Typed ty
 
-        _ ->
-            sw
+        nss =
+            case ss of
+                Hidden _ ->
+                    ss
+
+                VisibleNoneSelected nel ->
+                    Hidden nel
+
+                VisibleSelected lcr ->
+                    Hidden (lcrToNel lcr)
+    in
+    SW (Query o niv) nss
 
 
 
@@ -157,9 +169,9 @@ isQueryOriginal (Query o c) =
 
 
 type Suggestions
-    = VisibleSelected (LCR String)
+    = Hidden (NEL String)
     | VisibleNoneSelected (NEL String)
-    | Hidden (NEL String)
+    | VisibleSelected (LCR String)
 
 
 initialSuggestionNEL : NEL String
