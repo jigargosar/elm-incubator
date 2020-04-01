@@ -178,14 +178,6 @@ searchInputString (SW _ iv _) =
     inputValueToString iv
 
 
-
--- QUERY
-
-
-type Query
-    = Query String InputValue
-
-
 type InputValue
     = Typed String
     | Overridden String String
@@ -209,11 +201,6 @@ type Suggestions
     = Hidden (NEL String)
     | VisibleNoneSelected (NEL String)
     | VisibleSelected (LCR String)
-
-
-initialSuggestionNEL : NEL String
-initialSuggestionNEL =
-    ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
 
 
 
@@ -278,6 +265,11 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
+    let
+        initialSuggestionNEL : NEL String
+        initialSuggestionNEL =
+            ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
+    in
     ( Model (initSW "foo bar" initialSuggestionNEL)
     , focusSI
     )
