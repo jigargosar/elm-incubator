@@ -108,7 +108,17 @@ overrideQueryInput to (Query o iv) =
                 Overridden ty _ ->
                     Overridden ty to
     in
-    Query o newIV
+    overrideInputValue to iv |> Query o
+
+
+overrideInputValue : String -> InputValue -> InputValue
+overrideInputValue to iv =
+    case iv of
+        Typed ty ->
+            Overridden ty to
+
+        Overridden ty _ ->
+            Overridden ty to
 
 
 showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
@@ -201,16 +211,6 @@ inputValueToString iv =
 
         Overridden _ string ->
             string
-
-
-overrideInputValue : String -> InputValue -> InputValue
-overrideInputValue val iv =
-    case iv of
-        Typed ty ->
-            Overridden ty val
-
-        Overridden ty _ ->
-            Overridden ty val
 
 
 
