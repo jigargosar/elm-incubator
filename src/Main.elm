@@ -38,17 +38,18 @@ type Model
 
 
 type SearchWidget
-    = SW Query Suggestions
+    = SW String InputValue Suggestions
 
 
 initSW : String -> NEL String -> SearchWidget
 initSW qs suggestionsNel =
-    SW (Query qs (Typed qs)) (Hidden suggestionsNel)
+    SW qs (Typed qs) (Hidden suggestionsNel)
 
 
 updateQueryOnInput : String -> SearchWidget -> SearchWidget
-updateQueryOnInput typed (SW (Query o _) ss) =
-    SW (Query o (Typed typed))
+updateQueryOnInput typed (SW o _ ss) =
+    SW o
+        (Typed typed)
         (case ss of
             VisibleSelected _ ->
                 ss
@@ -62,44 +63,39 @@ updateQueryOnInput typed (SW (Query o _) ss) =
 
 
 selectPrev : SearchWidget -> SearchWidget
-selectPrev (SW q ss) =
+selectPrev (SW o iv ss) =
     case ss of
         VisibleSelected ( lh :: lt, c, r ) ->
-            SW (overrideQueryInput lh q) (VisibleSelected ( lt, lh, c :: r ))
+            SW o (overrideInputValue lh iv) (VisibleSelected ( lt, lh, c :: r ))
 
         VisibleSelected ( [], c, r ) ->
             case nelReverse ( c, r ) of
                 ( h, t ) ->
-                    SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
+                    SW o (overrideInputValue h iv) (VisibleSelected ( t, h, [] ))
 
         VisibleNoneSelected ( c, r ) ->
-            selectPrev (SW q (VisibleSelected ( [], c, r )))
+            selectPrev (SW o iv (VisibleSelected ( [], c, r )))
 
         Hidden nel ->
-            SW q (VisibleNoneSelected nel)
+            SW o iv (VisibleNoneSelected nel)
 
 
 selectNext : SearchWidget -> SearchWidget
-selectNext (SW q ss) =
+selectNext (SW o iv ss) =
     case ss of
         VisibleSelected ( l, c, rh :: rt ) ->
-            SW (overrideQueryInput rh q) (VisibleSelected ( c :: l, rh, rt ))
+            SW o (overrideInputValue rh iv) (VisibleSelected ( c :: l, rh, rt ))
 
         VisibleSelected ( l, c, [] ) ->
             case nelReverse ( c, l ) of
                 ( h, t ) ->
-                    SW (overrideQueryInput h q) (VisibleSelected ( [], h, t ))
+                    SW o (overrideInputValue h iv) (VisibleSelected ( [], h, t ))
 
         VisibleNoneSelected ( c, r ) ->
-            SW (overrideQueryInput c q) (VisibleSelected ( [], c, r ))
+            SW o (overrideInputValue c iv) (VisibleSelected ( [], c, r ))
 
         Hidden nel ->
-            SW q (VisibleNoneSelected nel)
-
-
-overrideQueryInput : String -> Query -> Query
-overrideQueryInput to (Query o iv) =
-    overrideInputValue to iv |> Query o
+            SW o iv (VisibleNoneSelected nel)
 
 
 overrideInputValue : String -> InputValue -> InputValue
@@ -113,7 +109,7 @@ overrideInputValue to iv =
 
 
 showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
-showSuggestionsIfOriginalQuery ((SW ((Query o iv) as q) ss) as sw) =
+showSuggestionsIfOriginalQuery ((SW o iv ss) as sw) =
     let
         isQueryOriginal =
             o == inputValueToString iv
@@ -130,15 +126,16 @@ showSuggestionsIfOriginalQuery ((SW ((Query o iv) as q) ss) as sw) =
                     VisibleNoneSelected nel
     in
     if isQueryOriginal then
-        SW q nss
+        SW o iv nss
 
     else
         sw
 
 
 hideSuggestionsIfShown : SearchWidget -> SearchWidget
-hideSuggestionsIfShown (SW q ss) =
-    SW q
+hideSuggestionsIfShown (SW o iv ss) =
+    SW o
+        iv
         (case ss of
             Hidden _ ->
                 ss
@@ -152,7 +149,7 @@ hideSuggestionsIfShown (SW q ss) =
 
 
 hideSuggestionsAndRevertInputOverride : SearchWidget -> SearchWidget
-hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
+hideSuggestionsAndRevertInputOverride (SW o iv ss) =
     let
         niv =
             case iv of
@@ -173,11 +170,11 @@ hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
                 VisibleSelected lcr ->
                     Hidden (lcrToNel lcr)
     in
-    SW (Query o niv) nss
+    SW o niv nss
 
 
 searchInputString : SearchWidget -> String
-searchInputString (SW (Query _ iv) _) =
+searchInputString (SW _ iv _) =
     inputValueToString iv
 
 
@@ -392,7 +389,7 @@ view (Model si) =
 
 
 viewSearchWidget : SearchWidget -> HM
-viewSearchWidget ((SW _ ss) as sw) =
+viewSearchWidget ((SW _ _ ss) as sw) =
     let
         maybeSuggestionsView =
             viewSuggestions ss
