@@ -618,7 +618,7 @@ widgetInputKeyDownDecoder : String -> Decoder ( Msg, Bool )
 widgetInputKeyDownDecoder key =
     case key of
         "Escape" ->
-            JD.succeed ( HideSuggestions, False )
+            JD.succeed ( OnQInputEsc, False )
 
         --"Tab" ->
         --    JD.succeed ( HideSuggestions, False )
