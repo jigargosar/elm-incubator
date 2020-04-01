@@ -41,6 +41,11 @@ type SearchWidget
     = SW Query Suggestions
 
 
+initSW : String -> NEL String -> SearchWidget
+initSW qs suggestionsNel =
+    SW (Query qs (Typed qs)) (Hidden suggestionsNel)
+
+
 updateQueryOnInput : String -> SearchWidget -> SearchWidget
 updateQueryOnInput typed (SW (Query o _) ss) =
     SW (Query o (Typed typed))
@@ -184,11 +189,6 @@ inputValueToString iv =
             string
 
 
-initQuery : String -> Query
-initQuery string =
-    Query string (Typed string)
-
-
 overrideQueryInput : String -> Query -> Query
 overrideQueryInput to (Query o iv) =
     let
@@ -280,7 +280,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( Model (SW (initQuery "foo bar") (Hidden initialSuggestionNEL))
+    ( Model (initSW "foo bar" initialSuggestionNEL)
     , focusSI
     )
 
