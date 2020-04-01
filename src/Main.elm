@@ -212,11 +212,6 @@ type alias LCR a =
     ( List a, a, List a )
 
 
-lcrFromNel : NEL a -> LCR a
-lcrFromNel ( h, t ) =
-    ( [], h, t )
-
-
 lcrToNel : LCR a -> NEL a
 lcrToNel ( l, c, r ) =
     case List.reverse l of
@@ -230,46 +225,6 @@ lcrToNel ( l, c, r ) =
 lcrToList : LCR a -> List a
 lcrToList ( l, c, r ) =
     List.reverse l ++ c :: r
-
-
-lcrGoR : LCR a -> Maybe (LCR a)
-lcrGoR ( l, c, r ) =
-    case r of
-        rh :: rt ->
-            Just ( c :: l, rh, rt )
-
-        [] ->
-            Nothing
-
-
-lcrGoL : LCR a -> Maybe (LCR a)
-lcrGoL ( l, c, r ) =
-    case l of
-        head :: tail ->
-            Just ( tail, head, c :: r )
-
-        [] ->
-            Nothing
-
-
-lcrFirst : LCR a -> LCR a
-lcrFirst (( l, c, r ) as lcr) =
-    case List.reverse l of
-        [] ->
-            lcr
-
-        head :: tail ->
-            ( [], head, tail ++ c :: r )
-
-
-lcrLast : LCR a -> LCR a
-lcrLast (( l, c, r ) as lcr) =
-    case List.reverse r of
-        [] ->
-            lcr
-
-        head :: tail ->
-            ( tail ++ c :: l, head, [] )
 
 
 lcrMapCS : (a -> b) -> (a -> b) -> LCR a -> LCR b
