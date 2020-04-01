@@ -82,6 +82,19 @@ selectNext (SW q ss) =
             SW q (VisibleNoneSelected nel)
 
 
+hideSuggestionsAndRevertInputOverride : SearchWidget -> SearchWidget
+hideSuggestionsAndRevertInputOverride ((SW (Query o iv) ss) as sw) =
+    case ( iv, ss ) of
+        ( Overridden ty _, VisibleSelected lcr ) ->
+            SW (Query o (Typed ty)) (Hidden (lcrToNel lcr))
+
+        ( Overridden ty _, VisibleNoneSelected nel ) ->
+            SW (Query o (Typed ty)) (Hidden nel)
+
+        _ ->
+            sw
+
+
 
 -- QUERY
 
@@ -327,7 +340,7 @@ update message ((Model ((SW q ss) as sw)) as model) =
             ( Model (selectNext sw), Cmd.none )
 
         OnQInputEsc ->
-            ( model, Cmd.none )
+            ( Model (hideSuggestionsAndRevertInputOverride sw), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
