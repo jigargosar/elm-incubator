@@ -189,6 +189,11 @@ queryInputValue (Query _ c) =
     value (inputValueToString c)
 
 
+searchInputString : SearchWidget -> String
+searchInputString (SW (Query _ c) _) =
+    inputValueToString c
+
+
 isQueryOriginal : Query -> Bool
 isQueryOriginal (Query o c) =
     o == inputValueToString c
