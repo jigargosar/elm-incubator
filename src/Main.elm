@@ -82,6 +82,16 @@ selectNext (SW q ss) =
             SW q (VisibleNoneSelected nel)
 
 
+showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
+showSuggestionsIfOriginalQuery ((SW q ss) as sw) =
+    case ( isQueryOriginal q, showSuggestions ss ) of
+        ( True, Just nss ) ->
+            SW q nss
+
+        _ ->
+            sw
+
+
 hideSuggestionsAndRevertInputOverride : SearchWidget -> SearchWidget
 hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
     let
@@ -321,12 +331,7 @@ update message ((Model ((SW q ss) as sw)) as model) =
             ( model, Cmd.none )
 
         QInputFocused ->
-            ( case ( isQueryOriginal q, showSuggestions ss ) of
-                ( True, Just nss ) ->
-                    setSuggestions nss model
-
-                _ ->
-                    model
+            ( Model (showSuggestionsIfOriginalQuery sw)
             , Cmd.none
             )
 
