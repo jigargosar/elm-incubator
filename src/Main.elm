@@ -8,7 +8,6 @@ import Html.Styled exposing (Html, div, input, styled, text)
 import Html.Styled.Attributes as A exposing (class, tabindex, value)
 import Html.Styled.Events as E exposing (onFocus, onInput)
 import Json.Decode as JD exposing (Decoder)
-import List.Extra
 import Task exposing (Task)
 
 
@@ -52,27 +51,42 @@ type SearchWidget
 
 
 type Query
-    = Query String String
+    = Query String InputValue
+
+
+type InputValue
+    = Typed String
+    | Overridden String String
+
+
+inputValueToString : InputValue -> String
+inputValueToString iv =
+    case iv of
+        Typed string ->
+            string
+
+        Overridden _ string ->
+            string
 
 
 initQuery : String -> Query
 initQuery string =
-    Query string string
+    Query string (Typed string)
 
 
 queryInputChange : String -> Query -> Query
 queryInputChange to (Query o _) =
-    Query o to
+    Query o (Typed to)
 
 
 queryInputValue : Query -> Html.Styled.Attribute msg
 queryInputValue (Query _ c) =
-    value c
+    value (inputValueToString c)
 
 
 isQueryOriginal : Query -> Bool
 isQueryOriginal (Query o c) =
-    o == c
+    o == inputValueToString c
 
 
 
