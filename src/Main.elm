@@ -46,6 +46,11 @@ type SearchWidget
     = SW Query Suggestions
 
 
+updateQueryOnInput : String -> SearchWidget -> SearchWidget
+updateQueryOnInput changed (SW q ss) =
+    SW (setQueryInputTyped changed q) (showSuggestions ss |> Maybe.withDefault ss)
+
+
 selectPrev : SearchWidget -> SearchWidget
 selectPrev (SW q ss) =
     case ss of
@@ -204,19 +209,6 @@ initialSuggestionNEL =
     ( "Suggestion 0 ", [ "suggestion 1", "suggestion 1", "suggestion 1", "suggestion 1" ] )
 
 
-suggestionsHide : Suggestions -> Maybe Suggestions
-suggestionsHide ss =
-    case ss of
-        VisibleSelected lcr ->
-            Just (Hidden (lcrToNel lcr))
-
-        VisibleNoneSelected nel ->
-            Just (Hidden nel)
-
-        Hidden _ ->
-            Nothing
-
-
 showSuggestions : Suggestions -> Maybe Suggestions
 showSuggestions ss =
     case ss of
@@ -356,7 +348,7 @@ update message ((Model ((SW q ss) as sw)) as model) =
             )
 
         QInputChanged changed ->
-            ( Model (SW (setQueryInputTyped changed q) (showSuggestions ss |> Maybe.withDefault ss))
+            ( Model (updateQueryOnInput changed sw)
             , Cmd.none
             )
 
