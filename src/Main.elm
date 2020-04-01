@@ -51,8 +51,8 @@ updateQueryOnInput typed (SW o _ ss) =
     SW o (Typed typed) (ensureVisible ss)
 
 
-selectPrev : SearchWidget -> SearchWidget
-selectPrev (SW o iv ss) =
+selectPreviousSuggestion : SearchWidget -> SearchWidget
+selectPreviousSuggestion (SW o iv ss) =
     case ss of
         NotVisible nel ->
             SW o iv (Visible (selectionFromNel nel))
@@ -65,8 +65,8 @@ selectPrev (SW o iv ss) =
             SW o (overrideInputValue suggestion iv) (Visible newNES)
 
 
-selectNext : SearchWidget -> SearchWidget
-selectNext (SW o iv ss) =
+selectNextSuggestion : SearchWidget -> SearchWidget
+selectNextSuggestion (SW o iv ss) =
     case ss of
         NotVisible nel ->
             SW o iv (Visible (selectionFromNel nel))
@@ -374,10 +374,10 @@ update message ((Model sw) as model) =
             )
 
         QInputSelectPrev ->
-            ( Model (selectPrev sw), Cmd.none )
+            ( Model (selectPreviousSuggestion sw), Cmd.none )
 
         QInputSelectNext ->
-            ( Model (selectNext sw), Cmd.none )
+            ( Model (selectNextSuggestion sw), Cmd.none )
 
         OnQInputEsc ->
             ( Model (hideSuggestionsAndRevertInputOverride sw), Cmd.none )
