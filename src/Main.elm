@@ -46,8 +46,8 @@ type SearchWidget
     = SW Query Suggestions
 
 
-swSelectPrev : SearchWidget -> SearchWidget
-swSelectPrev (SW q ss) =
+selectPrev : SearchWidget -> SearchWidget
+selectPrev (SW q ss) =
     case ss of
         VisibleSelected ( lh :: lt, c, r ) ->
             SW (overrideQueryInput lh q) (VisibleSelected ( lt, lh, c :: r ))
@@ -58,14 +58,14 @@ swSelectPrev (SW q ss) =
                     SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
 
         VisibleNoneSelected ( c, r ) ->
-            swSelectPrev (SW q (VisibleSelected ( [], c, r )))
+            selectPrev (SW q (VisibleSelected ( [], c, r )))
 
         Hidden nel ->
             SW q (VisibleNoneSelected nel)
 
 
-swSelectNext : SearchWidget -> SearchWidget
-swSelectNext (SW q ss) =
+selectNext : SearchWidget -> SearchWidget
+selectNext (SW q ss) =
     case ss of
         VisibleSelected ( l, c, rh :: rt ) ->
             SW (overrideQueryInput rh q) (VisibleSelected ( c :: l, rh, rt ))
@@ -395,10 +395,10 @@ update message ((Model ((SW q ss) as sw)) as model) =
             )
 
         QInputSelectPrev ->
-            ( Model (swSelectPrev sw), Cmd.none )
+            ( Model (selectPrev sw), Cmd.none )
 
         QInputSelectNext ->
-            ( Model (swSelectNext sw), Cmd.none )
+            ( Model (selectNext sw), Cmd.none )
 
         OnQInputEsc ->
             ( model, Cmd.none )
