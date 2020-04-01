@@ -97,6 +97,20 @@ selectNext (SW q ss) =
             SW q (VisibleNoneSelected nel)
 
 
+overrideQueryInput : String -> Query -> Query
+overrideQueryInput to (Query o iv) =
+    let
+        newIV =
+            case iv of
+                Typed ty ->
+                    Overridden ty to
+
+                Overridden ty _ ->
+                    Overridden ty to
+    in
+    Query o newIV
+
+
 showSuggestionsIfOriginalQuery : SearchWidget -> SearchWidget
 showSuggestionsIfOriginalQuery ((SW ((Query o iv) as q) ss) as sw) =
     let
@@ -162,8 +176,8 @@ hideSuggestionsAndRevertInputOverride (SW (Query o iv) ss) =
 
 
 searchInputString : SearchWidget -> String
-searchInputString (SW (Query _ c) _) =
-    inputValueToString c
+searchInputString (SW (Query _ iv) _) =
+    inputValueToString iv
 
 
 
@@ -189,18 +203,14 @@ inputValueToString iv =
             string
 
 
-overrideQueryInput : String -> Query -> Query
-overrideQueryInput to (Query o iv) =
-    let
-        newIV =
-            case iv of
-                Typed ty ->
-                    Overridden ty to
+overrideInputValue : String -> InputValue -> InputValue
+overrideInputValue val iv =
+    case iv of
+        Typed ty ->
+            Overridden ty val
 
-                Overridden ty _ ->
-                    Overridden ty to
-    in
-    Query o newIV
+        Overridden ty _ ->
+            Overridden ty val
 
 
 
