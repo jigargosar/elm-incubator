@@ -175,26 +175,19 @@ swSelectPrev ((SW q ss) as sw) =
         VisibleSelected ( [], _, [] ) ->
             sw
 
-        VisibleSelected ( [], c, h :: t ) ->
-            sw
+        VisibleSelected ( [], c, r ) ->
+            case nelReverse ( c, r ) of
+                ( h, t ) ->
+                    SW (overrideQueryInput h q) (VisibleSelected ( t, h, [] ))
 
-        _ ->
-            sw
+        VisibleSelected ( h :: t, c, r ) ->
+            SW (overrideQueryInput h q) (VisibleSelected ( t, h, c :: r ))
 
+        VisibleNoneSelected ( c, r ) ->
+            swSelectPrev (SW q (VisibleSelected ( [], c, r )))
 
-
---VisibleSelected (h::t,c,r) ->
---    SW (overrideQueryInput h q) (VisibleSelected (t,h,c::r))
---
---
---
---
---
---VisibleNoneSelected nel ->
---    VisibleSelected (lcrFromNel nel |> lcrLast)
---
---Hidden nel ->
---    VisibleNoneSelected nel
+        Hidden nel ->
+            SW q (VisibleNoneSelected nel)
 
 
 selectPrevSuggestion : Suggestions -> Suggestions
