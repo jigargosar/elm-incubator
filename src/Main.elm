@@ -175,7 +175,7 @@ ensureHidden ss =
 
 
 
--- NON EMPTY SELECTION LIST
+-- NON EMPTY LIST SELECTION
 
 
 type NeSelection a
