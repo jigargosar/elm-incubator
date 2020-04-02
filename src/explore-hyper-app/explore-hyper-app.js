@@ -26,21 +26,17 @@ function SubClicked(state) {
 // VIEW
 
 function view(state) {
+  const btnCls =
+    'bn ' +
+    //
+    'pv2 ph3 ma1 ' +
+    'bg-blue white ' +
+    'shadow-hover '
+
   return div({ class: 'measure center' }, [
     div({ class: 'pv2 f2' }, [text(state.ct)]),
-    button(
-      {
-        class: 'pv1 ph2 m0 bg-blue white bn',
-        onclick: SubClicked,
-      },
-      ['subtract'],
-    ),
-    button(
-      {
-        onclick: AddClicked,
-      },
-      ['add'],
-    ),
+    button({ class: btnCls, onclick: SubClicked }, ['subtract']),
+    button({ class: btnCls, onclick: AddClicked }, ['add']),
   ])
 }
 
