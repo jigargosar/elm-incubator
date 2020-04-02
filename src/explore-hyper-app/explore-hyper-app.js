@@ -29,8 +29,8 @@ function text(string) {
     view: state => {
       return h('div', {}, [
         h('h1', {}, text(state.ct)),
-        h('button', { onclick: SubClicked }, 'subtract'),
-        h('button', { onclick: AddClicked }, 'add'),
+        h('button', { onclick: SubClicked }, text('subtract')),
+        h('button', { onclick: AddClicked }, text('add')),
       ])
     },
     node: document.getElementById('app'),
