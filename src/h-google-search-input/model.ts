@@ -10,7 +10,12 @@ export function initSW(
   q: string,
   suggestionsNEL: NEL<string>,
 ): SearchWidget {
-  return ['SW', q, ['TYPED', q], ['HIDDEN', suggestionsNEL]]
+  return [
+    'SW',
+    q,
+    ['TYPED', q],
+    ['VISIBLE', ['NONE_SELECTED', suggestionsNEL]],
+  ]
 }
 
 export function getInputValue([, , iv]: SearchWidget): string {
