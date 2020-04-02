@@ -30,7 +30,7 @@ function view(state) {
     div({ class: 'pv2 f2' }, [text(state.ct)]),
     button(
       {
-        class: '',
+        class: 'pv1 ph2 m0 bg-blue white bn ',
         onclick: SubClicked,
       },
       ['subtract'],
