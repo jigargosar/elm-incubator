@@ -14,18 +14,17 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({ class: 'relative' }, [
-      //
-      viewInput('foo bar', true),
-      viewSuggestions(),
-    ]),
+    viewSearchWidget(),
     div({ tabindex: 0 }, ['after input']),
   ])
 }
 
-const brTopStyles = {
-  borderBottomRightRadius: 0,
-  borderBottomLeftRadius: 0,
+function viewSearchWidget() {
+  return div({ class: 'relative' }, [
+    //
+    viewInput('foo bar', true),
+    viewSuggestions(),
+  ])
 }
 
 function viewInput(value, isShowingSuggestions) {
@@ -47,6 +46,10 @@ function viewInput(value, isShowingSuggestions) {
       }),
     ],
   )
+}
+const brTopStyles = {
+  borderBottomRightRadius: 0,
+  borderBottomLeftRadius: 0,
 }
 
 function viewSuggestions() {
