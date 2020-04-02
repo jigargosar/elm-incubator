@@ -32,7 +32,7 @@ export function areSuggestionsVisible([, , , ss]: SearchWidget) {
   }
 }
 
-export function mapVisibleSuggestion<a, b>(
+export function mapVisibleSuggestionsToList<a, b>(
   funcC: F1<string, b>,
   funcS: F1<string, b>,
   [, , , ss]: SearchWidget,

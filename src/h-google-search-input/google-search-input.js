@@ -5,6 +5,7 @@ import {
   initNEL,
   initSW,
   getInputValue,
+  mapVisibleSuggestionsToList,
 } from './model'
 
 // MODEL
@@ -67,34 +68,34 @@ const brTopStyles = {
 }
 
 function viewSuggestions(sw) {
-  const sl = [
-    'suggestion 1',
-    'suggestion 2',
-    'suggestion 2',
-    'suggestion 2',
-    'suggestion 2',
-  ]
-
-
-
-  return div(
-    {
-      class: 'absolute w-100 bg-white br4 br--bottom overflow-hidden',
-      style: {
-        top: '100%',
-        boxShadow: '0 4px 6px 0 rgba(32, 33, 36, 0.28)',
-      },
-    },
-    [
-      div({ class: 'mh3 bt b--light-gray' }),
-      div(
-        { class: 'pv2' },
-        sl.map(s =>
-          div({ class: ['ph3 pv1', { 'bg-light-gray': false }] }, text(s)),
-        ),
-      ),
-    ],
+  const maybeSuggestionsItemsView = mapVisibleSuggestionsToList(
+    s => viewSuggestion(true, s),
+    s => viewSuggestion(false, s),
+    sw,
   )
+
+  function viewSuggestion(isSelected, s) {
+    return div(
+      { class: ['ph3 pv1', { 'bg-light-gray': isSelected }] },
+      text(s),
+    )
+  }
+
+  return maybeSuggestionsItemsView
+    ? div(
+        {
+          class: 'absolute w-100 bg-white br4 br--bottom overflow-hidden',
+          style: {
+            top: '100%',
+            boxShadow: '0 4px 6px 0 rgba(32, 33, 36, 0.28)',
+          },
+        },
+        [
+          div({ class: 'mh3 bt b--light-gray' }),
+          div({ class: 'pv2' }, maybeSuggestionsItemsView),
+        ],
+      )
+    : maybeSuggestionsItemsView
 }
 
 function text(string) {
