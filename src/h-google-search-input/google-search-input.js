@@ -3,12 +3,26 @@ import 'tachyons'
 
 // SEARCH WIDGET
 
-
+function swInit([originalQS, suggestionsNEL]) {
+  // assertString(originalQS)
+  // assertNEL(assertString, suggestionsNEL)
+  return [originalQS, ['TYPED', originalQS], ['HIDDEN', suggestionsNEL]]
+}
 
 // MODEL
 
 function initState() {
-  return { ct: 0 }
+  const suggestionsNEL = [
+    'suggestion 0',
+    [
+      'suggestion 1',
+      'suggestion 2',
+      'suggestion 2',
+      'suggestion 2',
+      'suggestion 2',
+    ],
+  ]
+  return ['Model', swInit(['foo bar', suggestionsNEL])]
 }
 
 // UPDATE
