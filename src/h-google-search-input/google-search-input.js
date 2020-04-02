@@ -4,7 +4,7 @@ import {
   areSuggestionsVisible,
   initNEL,
   initSW,
-  ivToString,
+  getInputValue,
 } from './model'
 
 // MODEL
@@ -32,10 +32,10 @@ function view({ sw }) {
   ])
 }
 
-function viewSearchWidget([, , iv, ss]) {
+function viewSearchWidget(sw) {
   return div({ class: 'relative' }, [
     //
-    viewInput(ivToString(iv), areSuggestionsVisible(ss)),
+    viewInput(getInputValue(sw), areSuggestionsVisible(sw)),
     viewSuggestions(),
   ])
 }

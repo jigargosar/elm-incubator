@@ -7,9 +7,9 @@ export function initSW(
   return ['SW', q, ['TYPED', q], ['HIDDEN', suggestionsNEL]]
 }
 
-export type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
+type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
 
-export function ivToString(iv: InputValue): string {
+export function getInputValue([, , iv]: SearchWidget): string {
   switch (iv[0]) {
     case 'TYPED':
       return iv[1]
