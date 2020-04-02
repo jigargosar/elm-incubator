@@ -14,7 +14,7 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({ class: 'relative' }, [
+    div({ class: 'relative overflow' }, [
       //
       viewInput('foo bar', true),
       viewSuggestions(),
@@ -33,12 +33,17 @@ function viewSuggestions() {
   ]
 
   return div(
-    { class: 'absolute bg-white shadow-1 br4 br--bottom w-100' },
+    {
+      class:
+        'absolute bg-white shadow-1 br4 br--bottom overflow-hidden w-100',
+    },
     [
       div({ class: 'mh3 bt' }),
       div(
-        {class:'pv2'},
-        sl.map(s => div({ class: 'ph3 pv1' }, text(s))),
+        { class: 'pv2' },
+        sl.map(s =>
+          div({ class: ['ph3 pv1', { 'bg-light-gray': false }] }, text(s)),
+        ),
       ),
     ],
   )
