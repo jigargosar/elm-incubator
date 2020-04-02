@@ -1,48 +1,33 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
+// import {tagged} from 'daggy'
+//
+// const Model = tagged('Model',['ct'])
+//
+// console.log(Model(0))
 
-function tagData(tagName, dataObject) {
-  return { t: tagName, d: dataObject }
-}
+function Model({ ct = 0 }) {
+  function inc() {
+    return Model({ ct: ct + 1 })
+  }
+  function dec() {
+    return Model({ ct: ct - 1 })
+  }
 
-function mapTagData(func, td) {
-  return { t: td.t, d: func(td.d) }
-}
+  function ctAsString() {
+    return `${ct}`
+  }
 
-function init() {
-  return tagData('model', { ct: 0 })
-}
-
-function onSubtractClicked(model) {
-  return mapTagData(function({ ct }) {
-    return { ct: ct - 1 }
-  }, model)
+  return Object.freeze({ inc, dec, ctAsString })
 }
 
 app({
-  init: init(),
-  view: state => {
+  init: Model({ ct: 0 }),
+  view: model => {
     return h('div', {}, [
-      h('h1', {}, state.d.ct),
-      h(
-        'button',
-        {
-          onclick: onSubtractClicked,
-        },
-        'subtract',
-      ),
-      h(
-        'button',
-        {
-          onclick: function(model) {
-            const {
-              d: { ct },
-            } = model
-            return { ...model, d: { ct: ct + 1 } }
-          },
-        },
-        'add',
-      ),
+      h('h1', {}, model.ctAsString()),
+      h('button', { onclick: model.dec }, 'subtract'),
+      h('button', { onclick: model.inc }, 'add'),
     ])
   },
   node: document.getElementById('app'),

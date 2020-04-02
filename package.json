@@ -10,8 +10,11 @@
   "author": "Jigar Gosar <jigar.gosar@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "daggy": "^1.4.0",
     "hyperapp": "^2.0.4",
     "ramda": "^0.27.0",
+    "sanctuary-type-classes": "^12.1.0",
+    "sanctuary-type-identifiers": "^3.0.0",
     "tachyons": "^4.11.1"
   },
   "devDependencies": {
