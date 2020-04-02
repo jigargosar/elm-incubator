@@ -20,7 +20,7 @@ function initState() {
     'suggestion 2',
     'suggestion 2',
   ])
-  return ['Model', swInit(['foo bar', suggestionsNEL])]
+  return {sw: swInit(['foo bar', suggestionsNEL])}
 }
 
 // UPDATE
