@@ -1,28 +1,30 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
 
-
-function tagged(tagName, dataObject) {
-  return {t: tagName, d: dataObject}
+function tagData(tagName, dataObject) {
+  return { t: tagName, d: dataObject }
 }
 
-function init(){
-  return tagged('model', {ct:0})
+function mapTagData(func, td) {
+  return { t: td.t, d: func(td.d) }
+}
+
+function init() {
+  return tagData('model', { ct: 0 })
 }
 
 app({
   init: init(),
   view: state => {
     return h('div', {}, [
-      h('h1', {}, state),
+      h('h1', {}, state.d.ct),
       h(
         'button',
         {
           onclick: model => {
-            return {
-              ...model,
-              d: { ...model.d, ct: model.d.ct - 1 },
-            }
+            return mapTagData(function({ ct }) {
+              return { ct: ct - 1 }
+            }, model)
           },
         },
         'subtract',
