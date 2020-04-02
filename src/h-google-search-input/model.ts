@@ -32,33 +32,37 @@ export function areSuggestionsVisible([, , , ss]: SearchWidget) {
   }
 }
 
-export function mapVisibleSuggestion(f1, f2, [, , , ss]: SearchWidget) {
+export function mapVisibleSuggestion<a, b>(
+  funcC: F1<string, b>,
+  funcS: F1<string, b>,
+  [, , , ss]: SearchWidget,
+): NeSelection<b> | undefined {
   switch (ss[0]) {
     case 'HIDDEN':
       break
     case 'VISIBLE':
-      return selectionMapCS(f1, f2, ss[1])
+      return selectionMapCS(funcC, funcS, ss[1])
   }
 }
 
 type F1<a, b> = (a: a) => b
 
+type NeSelection<a> = ['NONE_SELECTED', NEL<a>] | ['SELECTED', LCR<a>]
+
 function selectionMapCS<a, b>(
-  f1: F1<a, b>,
-  f2: F1<a, b>,
+  funcC: F1<a, b>,
+  funcS: F1<a, b>,
   nes: NeSelection<a>,
 ): NeSelection<b> {
   switch (nes[0]) {
     case 'NONE_SELECTED': {
-      return ['NONE_SELECTED', mapNEL(f2, nes[1])]
+      return ['NONE_SELECTED', mapNEL(funcS, nes[1])]
     }
     case 'SELECTED': {
-      return ['SELECTED', mapCS(f1, f2, nes[1])]
+      return ['SELECTED', mapCS(funcC, funcS, nes[1])]
     }
   }
 }
-
-type NeSelection<a> = ['NONE_SELECTED', NEL<a>] | ['SELECTED', LCR<a>]
 
 type LCR<a> = ['LCR', a[], a, a[]]
 
