@@ -24,7 +24,9 @@ function view(state) {
 }
 
 function viewInput(value, isShowingSuggestions) {
-  const cls = isShowingSuggestions ? 'br4 br--top b--transparent shadow-1' : 'br4'
+  const cls = isShowingSuggestions
+    ? 'br4 br--top b--transparent shadow-1'
+    : 'br4'
   return div({ class: ['flex-auto flex ba b--moon-gray', cls] }, [
     input({
       class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
@@ -45,9 +47,11 @@ function viewSuggestions() {
 
   return div(
     {
-      class:
-        'absolute w-100 bg-white shadow-1 br4 br--bottom overflow-hidden',
-      // style: { top: '100%' },
+      class: 'absolute w-100 bg-white br4 br--bottom overflow-hidden',
+      style: {
+        top: '100%',
+        boxShadow: '0 4px 6px 0 rgba(32, 33, 36, 0.28)',
+      },
     },
     [
       div({ class: 'mh3 bt' }),
