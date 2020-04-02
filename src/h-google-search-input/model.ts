@@ -41,12 +41,13 @@ export function mapVisibleSuggestionsToList<a, b>(
   funcC: F1<string, b>,
   funcS: F1<string, b>,
   [, , , ss]: SearchWidget,
-): NeSelection<b> | undefined {
+): b[] | undefined {
   switch (ss[0]) {
     case 'HIDDEN':
       break
     case 'VISIBLE':
-      return selectionMapCS(funcC, funcS, ss[1])
+      const newSel = selectionMapCS(funcC, funcS, ss[1])
+      return selectionToList(newSel)
   }
 }
 
@@ -69,7 +70,22 @@ function selectionMapCS<a, b>(
   }
 }
 
+function selectionToList<a, b>(nes: NeSelection<a>): a[] {
+  switch (nes[0]) {
+    case 'NONE_SELECTED': {
+      return nelToList(nes[1])
+    }
+    case 'SELECTED': {
+      return lcrToList(nes[1])
+    }
+  }
+}
+
 type LCR<a> = ['LCR', a[], a, a[]]
+
+function lcrToList<a>([]: LCR<a>): a[] {
+  return []
+}
 
 function mapCS<a, b>(
   funcC: F1<a, b>,
@@ -87,4 +103,8 @@ function mapNEL<a, b>(f1: F1<a, b>, [, h, t]: NEL<a>): NEL<b> {
 
 export function initNEL<a>(h: a, t: a[]): NEL<a> {
   return ['NEL', h, t]
+}
+
+function nelToList<a>([_, h, t]: NEL<a>): a[] {
+  return [h, ...t]
 }
