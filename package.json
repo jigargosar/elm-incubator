@@ -10,6 +10,7 @@
   "author": "Jigar Gosar <jigar.gosar@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "hyperapp": "^2.0.4",
     "ramda": "^0.27.0",
     "tachyons": "^4.11.1"
   },
