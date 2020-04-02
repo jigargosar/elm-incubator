@@ -53,23 +53,25 @@ export function mapVisibleSuggestionsToList<a, b>(
 
 type F1<a, b> = (a: a) => b
 
-type NeSelection<a> = ['NONE_SELECTED', NEL<a>] | ['SELECTED', LCR<a>]
+type NeSelection<a> =
+  | { tag: 'NONE_SELECTED'; nel: NEL<a> }
+  | { tag: 'SELECTED'; lcr: LCR<a> }
 
-function selectionFromNEL<a>(suggestionsNEL: NEL<a>): NeSelection<a> {
-  return ['NONE_SELECTED', suggestionsNEL]
+function selectionFromNEL<a>(nel: NEL<a>): NeSelection<a> {
+  return { tag: 'NONE_SELECTED', nel }
 }
 
 function selectionMapCS<a, b>(
   funcC: F1<a, b>,
   funcS: F1<a, b>,
-  nes: NeSelection<a>,
+  sel: NeSelection<a>,
 ): NeSelection<b> {
-  switch (nes[0]) {
+  switch (sel.tag) {
     case 'NONE_SELECTED': {
-      return ['NONE_SELECTED', mapNEL(funcS, nes[1])]
+      return { tag: 'NONE_SELECTED', nel: mapNEL(funcS, sel.nel) }
     }
     case 'SELECTED': {
-      return ['SELECTED', mapCS(funcC, funcS, nes[1])]
+      return { tag: 'SELECTED', lcr: mapCS(funcC, funcS, sel.lcr) }
     }
   }
 }
