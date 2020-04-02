@@ -9,12 +9,16 @@ function initState() {
   return { ct: 0 }
 }
 
+function text(string) {
+  return `${string}`
+}
+
 {
   app({
     init: initState(),
     view: state => {
       return h('div', {}, [
-        h('h1', {}, state.ct),
+        h('h1', {}, text(state.ct)),
         h('button', { onclick: SubClicked }, 'subtract'),
         h('button', { onclick: AddClicked }, 'add'),
       ])
