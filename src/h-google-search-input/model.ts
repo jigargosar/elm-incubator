@@ -23,6 +23,15 @@ type Suggestions =
   | ['HIDDEN', NEL<string>]
   | ['VISIBLE', NeSelection<string>]
 
+export function areSuggestionsVisible([, , , ss]: SearchWidget) {
+  switch (ss[0]) {
+    case 'HIDDEN':
+      return false
+    case 'VISIBLE':
+      return true
+  }
+}
+
 type NeSelection<a> = ['NONE_SELECTED', NEL<a>] | ['SELECTED', LCR<a>]
 
 type LCR<a> = ['LCR', a[], a, a[]]

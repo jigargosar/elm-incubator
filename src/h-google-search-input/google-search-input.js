@@ -1,6 +1,11 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
-import { initNEL, initSW, ivToString } from './model'
+import {
+  areSuggestionsVisible,
+  initNEL,
+  initSW,
+  ivToString,
+} from './model'
 
 // MODEL
 
@@ -27,10 +32,10 @@ function view({ sw }) {
   ])
 }
 
-function viewSearchWidget([, , iv]) {
+function viewSearchWidget([, , iv, ss]) {
   return div({ class: 'relative' }, [
     //
-    viewInput(ivToString(iv), true),
+    viewInput(ivToString(iv), areSuggestionsVisible(ss)),
     viewSuggestions(),
   ])
 }
