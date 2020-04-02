@@ -36,7 +36,7 @@ function viewSearchWidget(sw) {
   return div({ class: 'relative' }, [
     //
     viewInput(getInputValue(sw), areSuggestionsVisible(sw)),
-    viewSuggestions(),
+    viewSuggestions(sw),
   ])
 }
 
@@ -66,7 +66,7 @@ const brTopStyles = {
   borderBottomLeftRadius: 0,
 }
 
-function viewSuggestions() {
+function viewSuggestions(sw) {
   const sl = [
     'suggestion 1',
     'suggestion 2',
@@ -74,6 +74,8 @@ function viewSuggestions() {
     'suggestion 2',
     'suggestion 2',
   ]
+
+
 
   return div(
     {
