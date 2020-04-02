@@ -14,7 +14,7 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    (viewInput2('foo bar')),
+    viewInput2('foo bar'),
     div({ tabindex: 0 }, ['after input']),
   ])
 }
