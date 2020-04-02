@@ -34,7 +34,13 @@ function viewSuggestions() {
 
   return div(
     { class: 'absolute bg-white shadow-1 br4 br--bottom w-100' },
-    sl.map(s => div({ class: 'ph3 pv1' }, text(s))),
+    [
+      div({ class: 'mh3 bt' }),
+      div(
+        {class:'pv2'},
+        sl.map(s => div({ class: 'ph3 pv1' }, text(s))),
+      ),
+    ],
   )
 }
 
