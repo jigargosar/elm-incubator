@@ -8,12 +8,12 @@ export type SearchWidget = {
 type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
 
 type Suggestions =
-  | { tag: 'HIDDEN'; nonEmptyList: NEL<string> }
+  | { tag: 'HIDDEN'; nonEmptyList: NEList<string> }
   | { tag: 'VISIBLE'; selection: NeSelection<string> }
 
 export function initSW(
   q: string,
-  suggestionsNEL: NEL<string>,
+  suggestionsNEL: NEList<string>,
 ): SearchWidget {
   return {
     tag: 'SW',
@@ -59,11 +59,11 @@ export function mapVisibleSuggestionsToList<a, b>(
 type F1<a, b> = (a: a) => b
 
 type NeSelection<a> =
-  | { tag: 'NONE_SELECTED'; nel: NEL<a> }
+  | { tag: 'NONE_SELECTED'; neList: NEList<a> }
   | { tag: 'SELECTED'; lcr: LCR<a> }
 
-function selectionFromNEL<a>(nel: NEL<a>): NeSelection<a> {
-  return { tag: 'NONE_SELECTED', nel }
+function selectionFromNEL<a>(neList: NEList<a>): NeSelection<a> {
+  return { tag: 'NONE_SELECTED', neList: neList }
 }
 
 function selectionMapCS<a, b>(
@@ -73,7 +73,7 @@ function selectionMapCS<a, b>(
 ): NeSelection<b> {
   switch (sel.tag) {
     case 'NONE_SELECTED': {
-      return { ...sel, nel: mapNEL(funcS, sel.nel) }
+      return { ...sel, neList: mapNEL(funcS, sel.neList) }
     }
     case 'SELECTED': {
       return { ...sel, lcr: mapCS(funcC, funcS, sel.lcr) }
@@ -84,7 +84,7 @@ function selectionMapCS<a, b>(
 function selectionToList<a, b>(selection: NeSelection<a>): a[] {
   switch (selection.tag) {
     case 'NONE_SELECTED': {
-      return nelToList(selection.nel)
+      return nelToList(selection.neList)
     }
     case 'SELECTED': {
       return lcrToList(selection.lcr)
@@ -106,16 +106,16 @@ function mapCS<a, b>(
   return [l.map(funcS), funcC(c), r.map(funcS)]
 }
 
-type NEL<a> = [a, a[]]
+type NEList<a> = [a, a[]]
 
-function mapNEL<a, b>(f1: F1<a, b>, [h, t]: NEL<a>): NEL<b> {
+function mapNEL<a, b>(f1: F1<a, b>, [h, t]: NEList<a>): NEList<b> {
   return [f1(h), t.map(f1)]
 }
 
-export function initNEL<a>(h: a, t: a[]): NEL<a> {
+export function initNEL<a>(h: a, t: a[]): NEList<a> {
   return [h, t]
 }
 
-function nelToList<a>([h, t]: NEL<a>): a[] {
+function nelToList<a>([h, t]: NEList<a>): a[] {
   return [h, ...t]
 }
