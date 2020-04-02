@@ -81,30 +81,30 @@ function selectionToList<a, b>(nes: NeSelection<a>): a[] {
   }
 }
 
-type LCR<a> = ['LCR', a[], a, a[]]
+type LCR<a> = [a[], a, a[]]
 
-function lcrToList<a>([]: LCR<a>): a[] {
-  return []
+function lcrToList<a>([l, c, r]: LCR<a>): a[] {
+  return [...l.reverse(), c, ...r]
 }
 
 function mapCS<a, b>(
   funcC: F1<a, b>,
   funcS: F1<a, b>,
-  [, l, c, r]: LCR<a>,
+  [l, c, r]: LCR<a>,
 ): LCR<b> {
-  return ['LCR', l.map(funcS), funcC(c), r.map(funcS)]
+  return [l.map(funcS), funcC(c), r.map(funcS)]
 }
 
-type NEL<a> = ['NEL', a, a[]]
+type NEL<a> = [a, a[]]
 
-function mapNEL<a, b>(f1: F1<a, b>, [, h, t]: NEL<a>): NEL<b> {
-  return ['NEL', f1(h), t.map(f1)]
+function mapNEL<a, b>(f1: F1<a, b>, [h, t]: NEL<a>): NEL<b> {
+  return [f1(h), t.map(f1)]
 }
 
 export function initNEL<a>(h: a, t: a[]): NEL<a> {
-  return ['NEL', h, t]
+  return [h, t]
 }
 
-function nelToList<a>([_, h, t]: NEL<a>): a[] {
+function nelToList<a>([h, t]: NEL<a>): a[] {
   return [h, ...t]
 }
