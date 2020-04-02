@@ -1,8 +1,8 @@
 export type SearchWidget = {
   tag: 'SW'
-  o: string
-  iv: InputValue
-  ss: Suggestions
+  originalQuery: string
+  inputValue: InputValue
+  suggestions: Suggestions
 }
 
 type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
@@ -17,24 +17,24 @@ export function initSW(
 ): SearchWidget {
   return {
     tag: 'SW',
-    o: q,
-    iv: ['TYPED', q],
-    ss: { tag: 'VISIBLE', selection: selectionFromNEL(suggestionsNEL) },
+    originalQuery: q,
+    inputValue: ['TYPED', q],
+    suggestions: { tag: 'VISIBLE', selection: selectionFromNEL(suggestionsNEL) },
   }
 }
 
-export function getInputValue({ iv }: SearchWidget): string {
-  switch (iv[0]) {
+export function getInputValue({ inputValue }: SearchWidget): string {
+  switch (inputValue[0]) {
     case 'TYPED':
-      return iv[1]
+      return inputValue[1]
 
     case 'OVERRIDDEN':
-      return iv[2]
+      return inputValue[2]
   }
 }
 
-export function areSuggestionsVisible({ ss }: SearchWidget) {
-  switch (ss.tag) {
+export function areSuggestionsVisible({ suggestions }: SearchWidget) {
+  switch (suggestions.tag) {
     case 'HIDDEN':
       return false
     case 'VISIBLE':
@@ -45,13 +45,13 @@ export function areSuggestionsVisible({ ss }: SearchWidget) {
 export function mapVisibleSuggestionsToList<a, b>(
   funcC: F1<string, b>,
   funcS: F1<string, b>,
-  { ss }: SearchWidget,
+  { suggestions }: SearchWidget,
 ): b[] | undefined {
-  switch (ss.tag) {
+  switch (suggestions.tag) {
     case 'HIDDEN':
       break
     case 'VISIBLE':
-      const newSel = selectionMapCS(funcC, funcS, ss.selection)
+      const newSel = selectionMapCS(funcC, funcS, suggestions.selection)
       return selectionToList(newSel)
   }
 }
