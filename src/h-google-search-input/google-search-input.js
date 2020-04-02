@@ -14,7 +14,7 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({ class: 'relative' }, [
+    div({ class: 'relative flex' }, [
       //
       viewInput('foo bar', true),
       viewSuggestions(),
@@ -24,8 +24,8 @@ function view(state) {
 }
 
 function viewInput(value, isShowingSuggestions) {
-  const cls = isShowingSuggestions ? 'br4 br--top shadow-1' : 'br4'
-  return div({ class: ['flex ba b--moon-gray', cls] }, [
+  const cls = isShowingSuggestions ? 'br4 br--top b--transparent shadow-1' : 'br4'
+  return div({ class: ['flex-auto flex ba b--moon-gray', cls] }, [
     input({
       class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
       value: value,
@@ -46,7 +46,8 @@ function viewSuggestions() {
   return div(
     {
       class:
-        'absolute bg-white shadow-1 br4 br--bottom overflow-hidden w-100',
+        'absolute w-100 bg-white shadow-1 br4 br--bottom overflow-hidden',
+      style: { top: '100%' },
     },
     [
       div({ class: 'mh3 bt' }),
