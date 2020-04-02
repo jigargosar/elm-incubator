@@ -1,17 +1,6 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
-import { initNEL } from './model'
-
-// SEARCH WIDGET
-
-function swInit(originalQS, suggestionsNEL) {
-  return [
-    'SW',
-    originalQS,
-    ['TYPED', originalQS],
-    ['HIDDEN', suggestionsNEL],
-  ]
-}
+import { initNEL, initSW } from './model'
 
 // MODEL
 
@@ -23,7 +12,7 @@ function initState() {
     'suggestion 2',
     'suggestion 2',
   ])
-  return { sw: swInit('foo bar', suggestionsNEL) }
+  return { sw: initSW('foo bar', suggestionsNEL) }
 }
 
 // UPDATE
