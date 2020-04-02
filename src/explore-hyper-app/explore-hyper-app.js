@@ -30,13 +30,13 @@ function view(state) {
     'bn ' +
     //
     'pv2 ph3 ma1 ' +
-    'bg-blue white ' +
-    'shadow-hover '
+    'bg-blue white '
+
 
   return div({ class: 'measure center f4 lh-title' }, [
-    div({ class: 'pv2 f2' }, [text(state.ct)]),
-    button({ class: btnCls, onclick: SubClicked }, ['subtract']),
-    button({ class: btnCls, onclick: AddClicked }, ['add']),
+    div({ class: 'pv2 f1' }, [text(state.ct)]),
+    button({ class: btnCls, onclick: SubClicked }, ['Subtract']),
+    button({ class: btnCls, onclick: AddClicked }, ['Add']),
   ])
 }
 
