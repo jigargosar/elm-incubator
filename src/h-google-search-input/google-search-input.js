@@ -11,6 +11,14 @@ function initState() {
 
 // VIEW
 
+function view(state) {
+  return div({ class: 'pv3 measure center f4 lh-title' }, [
+    div({ tabindex: 0 }, ['before input']),
+    viewInput2(),
+    div({ tabindex: 0 }, ['after input']),
+  ])
+}
+
 function viewInput2() {
   return div({ class: 'flex ba br4 b--moon-gray br--top shadow-1' }, [
     input({
@@ -18,14 +26,6 @@ function viewInput2() {
       value: 'foo bar',
       autofocus: true,
     }),
-  ])
-}
-
-function view(state) {
-  return div({ class: 'pv3 measure center f4 lh-title' }, [
-    div({ tabindex: 0 }, ['before input']),
-    viewInput2(),
-    div({ tabindex: 0 }, ['after input']),
   ])
 }
 
