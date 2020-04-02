@@ -14,7 +14,7 @@ export function initSW(
     'SW',
     q,
     ['TYPED', q],
-    ['VISIBLE', ['NONE_SELECTED', suggestionsNEL]],
+    ['VISIBLE', selectionFromNEL(suggestionsNEL)],
   ]
 }
 
@@ -54,6 +54,10 @@ export function mapVisibleSuggestionsToList<a, b>(
 type F1<a, b> = (a: a) => b
 
 type NeSelection<a> = ['NONE_SELECTED', NEL<a>] | ['SELECTED', LCR<a>]
+
+function selectionFromNEL<a>(suggestionsNEL: NEL<a>): NeSelection<a> {
+  return ['NONE_SELECTED', suggestionsNEL]
+}
 
 function selectionMapCS<a, b>(
   funcC: F1<a, b>,
