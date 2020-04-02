@@ -26,10 +26,21 @@ function SubClicked(state) {
 // VIEW
 
 function view(state) {
-  return div({}, [
-    h('h1', {}, text(state.ct)),
-    button({ onclick: SubClicked }, text('subtract')),
-    button({ onclick: AddClicked }, text('add')),
+  return div({ class: 'measure center' }, [
+    div({ class: 'pv2 f2' }, [text(state.ct)]),
+    button(
+      {
+        class: '',
+        onclick: SubClicked,
+      },
+      ['subtract'],
+    ),
+    button(
+      {
+        onclick: AddClicked,
+      },
+      ['add'],
+    ),
   ])
 }
 
