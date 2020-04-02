@@ -1,8 +1,17 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
 
+
+function tagged(tagName, dataObject) {
+  return {t: tagName, d: dataObject}
+}
+
+function init(){
+  return tagged('model', {ct:0})
+}
+
 app({
-  init: { t: 'model', d: { ct: 0 } },
+  init: init(),
   view: state => {
     return h('div', {}, [
       h('h1', {}, state),
