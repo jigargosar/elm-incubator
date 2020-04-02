@@ -5,8 +5,6 @@ import { initNEL } from './model'
 // SEARCH WIDGET
 
 function swInit(originalQS, suggestionsNEL) {
-  // assertString(originalQS)
-  // assertNEL(assertString, suggestionsNEL)
   return [
     'SW',
     originalQS,
