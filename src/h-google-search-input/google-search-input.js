@@ -4,7 +4,7 @@ import { initNEL } from './model'
 
 // SEARCH WIDGET
 
-function swInit([originalQS, suggestionsNEL]) {
+function swInit(originalQS, suggestionsNEL) {
   // assertString(originalQS)
   // assertNEL(assertString, suggestionsNEL)
   return [
@@ -25,7 +25,7 @@ function initState() {
     'suggestion 2',
     'suggestion 2',
   ])
-  return { sw: swInit(['foo bar', suggestionsNEL]) }
+  return { sw: swInit('foo bar', suggestionsNEL) }
 }
 
 // UPDATE
