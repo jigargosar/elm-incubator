@@ -13,6 +13,12 @@ function init() {
   return tagData('model', { ct: 0 })
 }
 
+function onSubtractClicked(model) {
+  return mapTagData(function({ ct }) {
+    return { ct: ct - 1 }
+  }, model)
+}
+
 app({
   init: init(),
   view: state => {
@@ -21,11 +27,7 @@ app({
       h(
         'button',
         {
-          onclick: model => {
-            return mapTagData(function({ ct }) {
-              return { ct: ct - 1 }
-            }, model)
-          },
+          onclick: onSubtractClicked,
         },
         'subtract',
       ),
