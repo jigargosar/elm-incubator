@@ -26,15 +26,23 @@ function SubClicked(state) {
 // VIEW
 
 function view(state) {
-  return h('div', {}, [
+  return div({}, [
     h('h1', {}, text(state.ct)),
-    h('button', { onclick: SubClicked }, text('subtract')),
-    h('button', { onclick: AddClicked }, text('add')),
+    button({ onclick: SubClicked }, text('subtract')),
+    button({ onclick: AddClicked }, text('add')),
   ])
 }
 
 function text(string) {
   return `${string}`
+}
+
+function div(...args) {
+  return h('div', ...args)
+}
+
+function button(...args) {
+  return h('button', ...args)
 }
 
 // MAIN
