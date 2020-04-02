@@ -47,6 +47,7 @@ function viewInput(value, isShowingSuggestions) {
     ],
   )
 }
+
 const brTopStyles = {
   borderBottomRightRadius: 0,
   borderBottomLeftRadius: 0,
@@ -92,6 +93,7 @@ function div(...args) {
 function button(...args) {
   return h('button', ...args)
 }
+
 function input(options) {
   return h('input', options)
 }
