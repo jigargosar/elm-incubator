@@ -3,7 +3,7 @@ export type SearchWidget = ['SW', string, InputValue, Suggestions]
 type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
 
 type Suggestions =
-  | { tag: 'HIDDEN'; nel: NEL<string> }
+  | { tag: 'HIDDEN'; nonEmptyList: NEL<string> }
   | { tag: 'VISIBLE'; selection: NeSelection<string> }
 
 export function initSW(
