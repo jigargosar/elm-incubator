@@ -1,5 +1,5 @@
 import { h, app } from 'hyperapp'
-import "tachyons"
+import 'tachyons'
 
 app({
   init: 0,
