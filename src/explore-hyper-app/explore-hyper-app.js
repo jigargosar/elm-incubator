@@ -1,10 +1,5 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
-// import {tagged} from 'daggy'
-//
-// const Model = tagged('Model',['ct'])
-//
-// console.log(Model(0))
 
 function Model({ ct = 0 }) {
   function inc() {
