@@ -14,7 +14,7 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({ class: 'relative flex' }, [
+    div({ class: 'relative' }, [
       //
       viewInput('foo bar', true),
       viewSuggestions(),
@@ -47,7 +47,7 @@ function viewSuggestions() {
     {
       class:
         'absolute w-100 bg-white shadow-1 br4 br--bottom overflow-hidden',
-      style: { top: '100%' },
+      // style: { top: '100%' },
     },
     [
       div({ class: 'mh3 bt' }),
