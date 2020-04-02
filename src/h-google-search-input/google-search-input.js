@@ -23,17 +23,17 @@ function view(state) {
   ])
 }
 
+const brTopStyles = { borderBottomRightRadius: 0, borderBottomLeftRadius: 0 }
+
 function viewInput(value, isShowingSuggestions) {
-  const cls = isShowingSuggestions
-    ? 'br4 br--top b--transparent shadow-1'
-    : 'br4'
+  const cls = isShowingSuggestions ? 'b--transparent shadow-1' : ''
   const style = isShowingSuggestions
-    ? { boxShadow: '0 1px 6px 0 rgba(32, 33, 36, 0.28)' }
+    ? { boxShadow: '0 1px 6px 0 rgba(32, 33, 36, 0.28)', ...brTopStyles }
     : {}
   return div(
     {
       class: ['flex-auto flex ba b--moon-gray', cls],
-      style: { ...style, borderRadius: '1.25rem' },
+      style: { borderRadius: '1.25rem', ...style },
     },
     [
       input({
