@@ -29,7 +29,6 @@ function view(state) {
   const btnCls =
     'bn ' +
     //
-    'f4 ' +
     'pv2 ph3 ma1 ' +
     'bg-blue white ' +
     'shadow-hover '
