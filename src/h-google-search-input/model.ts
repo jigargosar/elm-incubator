@@ -9,7 +9,7 @@ type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
 
 type Suggestions =
   | { tag: 'HIDDEN'; nonEmptyList: NEList<string> }
-  | { tag: 'VISIBLE'; selection: NeSelection<string> }
+  | { tag: 'VISIBLE'; selection: NESelection<string> }
 
 export function initSW(
   q: string,
@@ -61,30 +61,30 @@ export function mapVisibleSuggestionsToList<a, b>(
 
 type F1<a, b> = (a: a) => b
 
-type NeSelection<a> =
+type NESelection<a> =
   | { tag: 'NONE_SELECTED'; neList: NEList<a> }
   | { tag: 'SELECTED'; lcr: LCR<a> }
 
-function selectionFromNEL<a>(neList: NEList<a>): NeSelection<a> {
+function selectionFromNEL<a>(neList: NEList<a>): NESelection<a> {
   return { tag: 'NONE_SELECTED', neList: neList }
 }
 
 function selectionMapCS<a, b>(
   funcC: F1<a, b>,
   funcS: F1<a, b>,
-  sel: NeSelection<a>,
-): NeSelection<b> {
-  switch (sel.tag) {
+  selection: NESelection<a>,
+): NESelection<b> {
+  switch (selection.tag) {
     case 'NONE_SELECTED': {
-      return { ...sel, neList: mapNEL(funcS, sel.neList) }
+      return { ...selection, neList: mapNEL(funcS, selection.neList) }
     }
     case 'SELECTED': {
-      return { ...sel, lcr: mapCS(funcC, funcS, sel.lcr) }
+      return { ...selection, lcr: mapCS(funcC, funcS, selection.lcr) }
     }
   }
 }
 
-function selectionToList<a, b>(selection: NeSelection<a>): a[] {
+function selectionToList<a, b>(selection: NESelection<a>): a[] {
   switch (selection.tag) {
     case 'NONE_SELECTED': {
       return nelToList(selection.neList)
