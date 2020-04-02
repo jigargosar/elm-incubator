@@ -14,12 +14,23 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({ class: 'relative overflow' }, [
+    div({ class: 'relative' }, [
       //
       viewInput('foo bar', true),
       viewSuggestions(),
     ]),
     div({ tabindex: 0 }, ['after input']),
+  ])
+}
+
+function viewInput(value, isShowingSuggestions) {
+  const cls = isShowingSuggestions ? 'br4 br--top shadow-1' : 'br4'
+  return div({ class: ['flex ba b--moon-gray', cls] }, [
+    input({
+      class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
+      value: value,
+      autofocus: true,
+    }),
   ])
 }
 
@@ -47,17 +58,6 @@ function viewSuggestions() {
       ),
     ],
   )
-}
-
-function viewInput(value, isShowingSuggestions) {
-  const cls = isShowingSuggestions ? 'br4 br--top shadow-1' : 'br4'
-  return div({ class: ['flex ba b--moon-gray', cls] }, [
-    input({
-      class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
-      value: value,
-      autofocus: true,
-    }),
-  ])
 }
 
 function text(string) {
