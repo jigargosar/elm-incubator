@@ -76,10 +76,10 @@ function selectionMapCS<a, b>(
 ): NESelection<b> {
   switch (selection.tag) {
     case 'NONE_SELECTED': {
-      return { ...selection, neList: mapNEL(funcS, selection.neList) }
+      return { ...selection, neList: mapNEList(funcS, selection.neList) }
     }
     case 'SELECTED': {
-      return { ...selection, lcr: mapCS(funcC, funcS, selection.lcr) }
+      return { ...selection, lcr: lcrMapCS(funcC, funcS, selection.lcr) }
     }
   }
 }
@@ -87,7 +87,7 @@ function selectionMapCS<a, b>(
 function selectionToList<a, b>(selection: NESelection<a>): a[] {
   switch (selection.tag) {
     case 'NONE_SELECTED': {
-      return nelToList(selection.neList)
+      return neListToList(selection.neList)
     }
     case 'SELECTED': {
       return lcrToList(selection.lcr)
@@ -101,7 +101,7 @@ function lcrToList<a>([l, c, r]: LCR<a>): a[] {
   return [...l.reverse(), c, ...r]
 }
 
-function mapCS<a, b>(
+function lcrMapCS<a, b>(
   funcC: F1<a, b>,
   funcS: F1<a, b>,
   [l, c, r]: LCR<a>,
@@ -111,14 +111,14 @@ function mapCS<a, b>(
 
 type NEList<a> = [a, a[]]
 
-function mapNEL<a, b>(f1: F1<a, b>, [h, t]: NEList<a>): NEList<b> {
+function mapNEList<a, b>(f1: F1<a, b>, [h, t]: NEList<a>): NEList<b> {
   return [f1(h), t.map(f1)]
 }
 
-export function initNEL<a>(h: a, t: a[]): NEList<a> {
+export function initNEList<a>(h: a, t: a[]): NEList<a> {
   return [h, t]
 }
 
-function nelToList<a>([h, t]: NEList<a>): a[] {
+function neListToList<a>([h, t]: NEList<a>): a[] {
   return [h, ...t]
 }

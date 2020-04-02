@@ -3,7 +3,7 @@ import 'tachyons'
 import {
   areSuggestionsVisible,
   getInputValue,
-  initNEL,
+  initNEList,
   initSW,
   mapVisibleSuggestionsToList,
 } from './model'
@@ -11,7 +11,7 @@ import {
 // MODEL
 
 function initState() {
-  const suggestionsNEL = initNEL('suggestion 0', [
+  const suggestionsNEL = initNEList('suggestion 0', [
     'suggestion 1',
     'suggestion 2',
     'suggestion 2',
