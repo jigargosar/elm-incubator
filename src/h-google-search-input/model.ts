@@ -19,7 +19,10 @@ export function initSW(
     tag: 'SW',
     originalQuery: q,
     inputValue: ['TYPED', q],
-    suggestions: { tag: 'VISIBLE', selection: selectionFromNEL(suggestionsNEL) },
+    suggestions: {
+      tag: 'VISIBLE',
+      selection: selectionFromNEL(suggestionsNEL),
+    },
   }
 }
 
