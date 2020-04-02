@@ -1,9 +1,19 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
 
-const AddClicked = state => [{ ...state, ct: state.ct + 1 }]
+const AddClicked = function(state) {
+  return {
+    ...state,
+    ct: state.ct + 1,
+  }
+}
 
-const SubClicked = state => [{ ...state, ct: state.ct - 1 }]
+function SubClicked(state) {
+  return {
+    ...state,
+    ct: state.ct - 1,
+  }
+}
 
 function initState() {
   return { ct: 0 }
