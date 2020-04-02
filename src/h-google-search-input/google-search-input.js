@@ -67,7 +67,7 @@ function viewSuggestions() {
       },
     },
     [
-      div({ class: 'mh3 bt' }),
+      div({ class: 'mh3 bt b--light-gray' }),
       div(
         { class: 'pv2' },
         sl.map(s =>
