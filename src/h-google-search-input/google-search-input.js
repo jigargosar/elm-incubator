@@ -14,12 +14,12 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    viewInput2('foo bar'),
+    viewInput('foo bar'),
     div({ tabindex: 0 }, ['after input']),
   ])
 }
 
-function viewInput2(value) {
+function viewInput(value) {
   return div({ class: 'flex ba br4 b--moon-gray br--top shadow-1' }, [
     input({
       class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
