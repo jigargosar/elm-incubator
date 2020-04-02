@@ -14,17 +14,28 @@ function initState() {
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({}, [
+    div({ class: 'relative' }, [
       //
       viewInput('foo bar', true),
-      viewSuggestions()
+      viewSuggestions(),
     ]),
     div({ tabindex: 0 }, ['after input']),
   ])
 }
 
 function viewSuggestions() {
-  return false
+  const sl = [
+    'suggestion 1',
+    'suggestion 2',
+    'suggestion 2',
+    'suggestion 2',
+    'suggestion 2',
+  ]
+
+  return div(
+    { class: 'pa3 absolute bg-white shadow-1 br4 br--bottom w-100' },
+    sl.map(s => div({}, text(s))),
+  )
 }
 
 function viewInput(value, isShowingSuggestions) {
