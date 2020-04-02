@@ -11,16 +11,20 @@ function initState() {
 
 // VIEW
 
+function viewInput2() {
+  return div({ class: 'flex ba br4 b--moon-gray br--top shadow-1' }, [
+    input({
+      class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
+      value: 'foo bar',
+      autofocus: true,
+    }),
+  ])
+}
+
 function view(state) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    div({ class: 'flex ba br4 b--moon-gray br--top shadow-1' }, [
-      input({
-        class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
-        value: 'foo bar',
-        autofocus: true,
-      }),
-    ]),
+    viewInput2(),
     div({ tabindex: 0 }, ['after input']),
   ])
 }
