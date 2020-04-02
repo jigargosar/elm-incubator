@@ -27,13 +27,22 @@ function viewInput(value, isShowingSuggestions) {
   const cls = isShowingSuggestions
     ? 'br4 br--top b--transparent shadow-1'
     : 'br4'
-  return div({ class: ['flex-auto flex ba b--moon-gray', cls] }, [
-    input({
-      class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
-      value: value,
-      autofocus: true,
-    }),
-  ])
+  const style = isShowingSuggestions
+    ? { boxShadow: '0 1px 6px 0 rgba(32, 33, 36, 0.28)' }
+    : {}
+  return div(
+    {
+      class: ['flex-auto flex ba b--moon-gray', cls],
+      style: { ...style, borderRadius: '1.25rem' },
+    },
+    [
+      input({
+        class: 'ph3 pv2 flex-auto bn bg-transparent outline-0',
+        value: value,
+        autofocus: true,
+      }),
+    ],
+  )
 }
 
 function viewSuggestions() {
