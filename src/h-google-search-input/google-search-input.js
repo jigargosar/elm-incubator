@@ -28,7 +28,7 @@ const brTopStyles = { borderBottomRightRadius: 0, borderBottomLeftRadius: 0 }
 function viewInput(value, isShowingSuggestions) {
   const cls = isShowingSuggestions ? 'b--transparent shadow-1' : ''
   const style = isShowingSuggestions
-    ? { boxShadow: '0 1px 6px 0 rgba(32, 33, 36, 0.28)', ...brTopStyles }
+    ? { ...brTopStyles, boxShadow: '0 1px 6px 0 rgba(32, 33, 36, 0.28)' }
     : {}
   return div(
     {
