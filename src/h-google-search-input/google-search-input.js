@@ -1,12 +1,6 @@
-import { h, app } from 'hyperapp'
+import { app, h } from 'hyperapp'
 import 'tachyons'
-import {
-  areSuggestionsVisible,
-  initNEL,
-  initSW,
-  getInputValue,
-  mapVisibleSuggestionsToList,
-} from './model'
+import { areSuggestionsVisible, getInputValue, initNEL, initSW, mapVisibleSuggestionsToList } from './model'
 
 // MODEL
 
