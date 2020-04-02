@@ -1,6 +1,6 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
-import { initNEL, initSW } from './model'
+import { initNEL, initSW, ivToString } from './model'
 
 // MODEL
 
@@ -19,18 +19,18 @@ function initState() {
 
 // VIEW
 
-function view(state) {
+function view({ sw }) {
   return div({ class: 'pv3 measure center f4 lh-title' }, [
     div({ tabindex: 0 }, ['before input']),
-    viewSearchWidget(),
+    viewSearchWidget(sw),
     div({ tabindex: 0 }, ['after input']),
   ])
 }
 
-function viewSearchWidget() {
+function viewSearchWidget([, , iv]) {
   return div({ class: 'relative' }, [
     //
-    viewInput('foo bar', true),
+    viewInput(ivToString(iv), true),
     viewSuggestions(),
   ])
 }

@@ -9,6 +9,16 @@ export function initSW(
 
 type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
 
+export function ivToString(iv: InputValue): string {
+  switch (iv[0]) {
+    case 'TYPED':
+      return iv[1]
+
+    case 'OVERRIDDEN':
+      return iv[2]
+  }
+}
+
 type Suggestions =
   | ['HIDDEN', NEL<string>]
   | ['VISIBLE', NeSelection<string>]
