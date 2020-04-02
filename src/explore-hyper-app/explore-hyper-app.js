@@ -30,7 +30,7 @@ function view(state) {
     'bn ' +
     //
     'pv2 ph3 ma1 ' +
-    'bg-blue white '
+    'bg-blue white hover-bg-dark-gray'
 
 
   return div({ class: 'measure center f4 lh-title' }, [
