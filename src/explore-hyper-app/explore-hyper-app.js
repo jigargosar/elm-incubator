@@ -2,6 +2,7 @@ import { h, app } from 'hyperapp'
 import 'tachyons'
 
 // MODEL
+
 function initState() {
   return { ct: 0 }
 }
