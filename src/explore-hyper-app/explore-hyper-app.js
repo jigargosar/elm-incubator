@@ -1,12 +1,12 @@
 import { h, app } from 'hyperapp'
 import 'tachyons'
 
-// STATE
+// MODEL
 function initState() {
   return { ct: 0 }
 }
 
-// ACTIONS
+// UPDATE
 
 const AddClicked = function(state) {
   return {
