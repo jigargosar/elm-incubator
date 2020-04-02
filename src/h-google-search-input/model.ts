@@ -68,21 +68,21 @@ function selectionMapCS<a, b>(
 ): NeSelection<b> {
   switch (sel.tag) {
     case 'NONE_SELECTED': {
-      return { tag: 'NONE_SELECTED', nel: mapNEL(funcS, sel.nel) }
+      return { ...sel, nel: mapNEL(funcS, sel.nel) }
     }
     case 'SELECTED': {
-      return { tag: 'SELECTED', lcr: mapCS(funcC, funcS, sel.lcr) }
+      return { ...sel, lcr: mapCS(funcC, funcS, sel.lcr) }
     }
   }
 }
 
 function selectionToList<a, b>(nes: NeSelection<a>): a[] {
-  switch (nes[0]) {
+  switch (nes.tag) {
     case 'NONE_SELECTED': {
-      return nelToList(nes[1])
+      return nelToList(nes.nel)
     }
     case 'SELECTED': {
-      return lcrToList(nes[1])
+      return lcrToList(nes.lcr)
     }
   }
 }
