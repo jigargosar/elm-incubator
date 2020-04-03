@@ -80,31 +80,31 @@ view _ =
 
 rectangle : String -> Float -> Float -> S
 rectangle c w h =
-    R c w h |> S (TX 0 0)
+    R w h |> S c (TX 0 0)
 
 
 ellipse c w h =
-    E c w h |> S (TX 0 0)
+    E w h |> S c (TX 0 0)
 
 
 group : List S -> S
 group ss =
-    G ss |> S (TX 0 0)
+    G ss |> S "none" (TX 0 0)
 
 
 move : Float -> Float -> S -> S
-move dx dy (S (TX x y) f) =
-    S (TX (x + dx) (y + dy)) f
+move dx dy (S c (TX x y) f) =
+    S c (TX (x + dx) (y + dy)) f
 
 
 type F
-    = R String Float Float
-    | E String Float Float
+    = R Float Float
+    | E Float Float
     | G (List S)
 
 
 type S
-    = S TX F
+    = S String TX F
 
 
 type TX
@@ -112,9 +112,9 @@ type TX
 
 
 draw : S -> HM
-draw (S (TX dx dy) s) =
+draw (S c (TX dx dy) s) =
     case s of
-        R c w h ->
+        R w h ->
             Svg.rect
                 [ Px.width w
                 , Px.height h
@@ -126,7 +126,7 @@ draw (S (TX dx dy) s) =
                 ]
                 []
 
-        E c w h ->
+        E w h ->
             Svg.ellipse
                 [ Px.rx w
                 , Px.ry h
@@ -138,6 +138,7 @@ draw (S (TX dx dy) s) =
         G ss ->
             Svg.g
                 [ TA.transform [ TT.Translate dx dy ]
+                , SA.fill c
                 ]
                 (List.map draw ss)
 
