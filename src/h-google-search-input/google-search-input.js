@@ -4,11 +4,11 @@ import 'tachyons'
 // MAYBE
 
 function Just(value) {
-  return { tag: 'JUST', value }
+  return { tag: 'MAYBE:JUST', value }
 }
 
 function Nothing() {
-  return { tag: 'NOTHING' }
+  return { tag: 'MAYBE:NOTHING' }
 }
 
 // NON EMPTY LIST
