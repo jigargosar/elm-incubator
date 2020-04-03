@@ -72,13 +72,19 @@ view _ =
             group
                 [ rectangle "dodgerblue" 200 200
                     |> move -100 -100
+                , ellipse "red" 100 100
+                    |> move -100 -100
                 ]
         ]
 
 
-move : Float -> Float -> S -> S
-move dx dy (S (TX x y) f) =
-    S (TX (x + dx) (y + dy)) f
+rectangle : String -> Float -> Float -> S
+rectangle c w h =
+    R c w h |> S (TX 0 0)
+
+
+ellipse c w h =
+    E c w h |> S (TX 0 0)
 
 
 group : List S -> S
@@ -86,9 +92,9 @@ group ss =
     G ss |> S (TX 0 0)
 
 
-rectangle : String -> Float -> Float -> S
-rectangle c w h =
-    R c w h |> S (TX 0 0)
+move : Float -> Float -> S -> S
+move dx dy (S (TX x y) f) =
+    S (TX (x + dx) (y + dy)) f
 
 
 type F
@@ -122,8 +128,8 @@ draw (S (TX dx dy) s) =
 
         E c w h ->
             Svg.ellipse
-                [ Px.width w
-                , Px.height h
+                [ Px.rx w
+                , Px.ry h
                 , TA.transform [ TT.Translate dx dy ]
                 , SA.fill c
                 ]
