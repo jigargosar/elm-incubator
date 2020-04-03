@@ -26,6 +26,36 @@ function lcrToList([l, c, r]) {
   return [...l, c, ...r]
 }
 
+// NON EMPTY SELECTION
+
+function initSelection(neList) {
+  return { tag: 'NONE_SELECTED', neList }
+}
+
+function selectionMapCS(funcCenter, funcOther, selection) {
+  switch (selection.tag) {
+    case 'NONE_SELECTED': {
+      return {
+        ...selection,
+        neList: mapNEList(funcOther, selection.neList),
+      }
+    }
+    case 'SELECTED': {
+      return { ...selection, lcr: lcrMapCS(funcCenter, funcOther) }
+    }
+  }
+}
+function selectionToList(selection) {
+  switch (selection.tag) {
+    case 'NONE_SELECTED': {
+      return nelToList(selection.neList)
+    }
+    case 'SELECTED': {
+      return lcrToList(selection.lcr)
+    }
+  }
+}
+
 // SEARCH WIDGET
 
 function getInputValue(sw) {
@@ -119,30 +149,6 @@ const brTopStyles = {
   borderBottomLeftRadius: 0,
 }
 
-function selectionMapCS(funcCenter, funcOther, selection) {
-  switch (selection.tag) {
-    case 'NONE_SELECTED': {
-      return {
-        ...selection,
-        neList: mapNEList(funcOther, selection.neList),
-      }
-    }
-    case 'SELECTED': {
-      return { ...selection, lcr: lcrMapCS(funcCenter, funcOther) }
-    }
-  }
-}
-function selectionToList(selection) {
-  switch (selection.tag) {
-    case 'NONE_SELECTED': {
-      return nelToList(selection.neList)
-    }
-    case 'SELECTED': {
-      return lcrToList(selection.lcr)
-    }
-  }
-}
-
 function viewSuggestions(sw, suggestionSelection) {
   const viewHighlightedSuggestion = s => viewSuggestion(true, s)
   const viewOtherSuggestion = s => viewSuggestion(false, s)
@@ -153,7 +159,6 @@ function viewSuggestions(sw, suggestionSelection) {
       suggestionSelection,
     ),
   )
-
 
   function viewSuggestion(isSelected, s) {
     return div(
