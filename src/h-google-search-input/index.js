@@ -1,6 +1,7 @@
 import { app, h } from 'hyperapp'
 import 'tachyons'
 import S from 'sanctuary'
+import $ from 'sanctuary-def'
 
 const Maybe = (function() {
   function Just(value) {
@@ -23,7 +24,12 @@ const Maybe = (function() {
   })
 })()
 
-console.log(Maybe.map)
+
+const def = $.create({ checkTypes: true, env: $.env })
+
+const add = def('add')({})([$.Number, $.Number, $.Number])(x => y => x + y)
+
+console.log(add, add(1), add(1)(2), add(1)( 2))
 
 // NON EMPTY LIST
 

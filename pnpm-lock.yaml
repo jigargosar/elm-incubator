@@ -2,6 +2,7 @@ dependencies:
   hyperapp: 2.0.4
   ramda: 0.27.0
   sanctuary: 3.0.0
+  sanctuary-def: 0.21.1
   tachyons: 4.11.1
 devDependencies:
   '@types/ramda': 0.27.3
@@ -4767,6 +4768,7 @@ specifiers:
   node-elm-compiler: ^5.0.4
   ramda: ^0.27.0
   sanctuary: ^3.0.0
+  sanctuary-def: ^0.21.1
   style-loader: ^1.1.3
   tachyons: ^4.11.1
   webpack: ^4.42.1
