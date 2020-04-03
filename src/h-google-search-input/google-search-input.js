@@ -3,10 +3,15 @@ import 'tachyons'
 import {
   areSuggestionsVisible,
   getInputValue,
-  initNEList,
   initSW,
   mapVisibleSuggestionsToList,
 } from './model'
+
+// NON EMPTY LIST
+
+function initNEList(h, t) {
+  return [h, t]
+}
 
 // MODEL
 
