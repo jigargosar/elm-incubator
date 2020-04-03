@@ -68,8 +68,21 @@ view _ =
             600
     in
     Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
-        [ draw (S (TX 0 0) (G [ S (TX 0 0) (R "dodgerblue" 200 200) ]))
+        [ draw <|
+            group
+                [ rectangle "dodgerblue" 200 200
+                ]
         ]
+
+
+group : List S -> S
+group ss =
+    G ss |> S (TX 0 0)
+
+
+rectangle : String -> Float -> Float -> S
+rectangle c w h =
+    R c w h |> S (TX 0 0)
 
 
 type F
