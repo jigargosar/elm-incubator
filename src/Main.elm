@@ -1,50 +1,73 @@
 module Main exposing (main)
 
-import Playground exposing (..)
+-- Browser.Element Scaffold
+
+import Browser
+import Html exposing (Html)
 
 
-type Mem
-    = Mem Int Int
+
+-- Model
 
 
-init : Mem
-init =
-    Mem 8 10
+type alias Model =
+    {}
 
 
-update : Computer -> Mem -> Mem
-update computer mem =
-    mem
+type alias Flags =
+    ()
 
 
-view : Computer -> Mem -> List Shape
-view computer (Mem w h) =
-    let
-        sqW =
-            50
-
-        bw =
-            toFloat w * sqW
-
-        bh =
-            toFloat h * sqW
-
-        dCell x y =
-            group
-                [ square lightGreen sqW |> fade 0
-                , circle blue (sqW * 0.2) |> fade 1
-                ]
-                |> move (toFloat x * sqW) (toFloat y * sqW)
-
-        dBoardCells =
-            List.range 0 (w - 1)
-                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (dCell x))
-    in
-    [ rectangle yellow (bw + sqW) (bh + sqW) |> fade 0.2
-    , group dBoardCells
-        |> move ((sqW - bw) * 0.5) ((sqW - bh) * 0.5)
-    ]
+init : Flags -> ( Model, Cmd Msg )
+init _ =
+    ( {}
+    , Cmd.none
+    )
 
 
+
+-- Update
+
+
+type Msg
+    = NoOp
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message model =
+    case message of
+        NoOp ->
+            ( model, Cmd.none )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.batch []
+
+
+
+-- View
+
+
+view : Model -> Html Msg
+view _ =
+    empty
+
+
+empty : Html msg
+empty =
+    Html.text ""
+
+
+
+-- Main
+
+
+main : Program Flags Model Msg
 main =
-    game view update init
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
