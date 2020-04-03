@@ -30,7 +30,7 @@ view computer (Mem w h) =
             toFloat h * sqW
 
         dCell x y =
-            circle blue (sqW * 0.5 * 0.9)
+            circle blue (sqW * 0.3)
                 |> move (toFloat x * sqW) (toFloat y * sqW)
 
         dBoardCells =
