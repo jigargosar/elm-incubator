@@ -13,6 +13,12 @@ function Nothing() {
 
 // NON EMPTY LIST
 
+/**
+ * @typedef a : any
+ * @param h : a
+ * @param t : a[]
+ * @returns NEList<a>
+ */
 function initNEList(h, t) {
   return [h, t]
 }
