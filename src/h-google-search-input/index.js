@@ -142,13 +142,14 @@ function view({ sw }) {
 }
 
 function viewSearchWidget(sw) {
+  const emptyView = ''
   const suggestionsView = S.pipe([
     getVisibleSuggestionSelection,
     Maybe.map(viewSuggestions),
-    Maybe.withDefault(''),
+    Maybe.withDefault(emptyView),
   ])(sw)
 
-  const areSuggestionsVisible = suggestionsView !== ''
+  const areSuggestionsVisible = suggestionsView !== emptyView
 
   return div({ class: 'relative' }, [
     //
