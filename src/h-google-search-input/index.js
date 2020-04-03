@@ -14,17 +14,13 @@ const Maybe = (function() {
   return Object.freeze({
     Just,
     Nothing,
-    map,
-    withDefault,
+    map: S.curry2(function map(f, mb) {
+      return mb === Nothing ? mb : Just(f(mb.value))
+    }),
+    withDefault: S.curry2(function withDefault(defVal, mb) {
+      return mb === Nothing ? defVal : mb.value
+    }),
   })
-
-  function withDefault(defVal, mb) {
-    return mb === Nothing ? defVal : mb.value
-  }
-
-  function map(f, mb) {
-    return mb === Nothing ? mb : Just(f(mb.value))
-  }
 })()
 
 // NON EMPTY LIST
@@ -149,12 +145,12 @@ function viewSearchWidget(sw) {
   const mbSS = getVisibleSuggestionSelection(sw)
   console.log(mbSS)
   const showingSuggestions = mbSS.tag === Maybe.Just
-  const mbSuggestionsView = Maybe.map(ss => viewSuggestions(ss), mbSS)
+  const mbSuggestionsView = Maybe.map(ss => viewSuggestions(ss))(mbSS)
 
   return div({ class: 'relative' }, [
     //
     viewInput(getInputString(sw), showingSuggestions),
-    Maybe.withDefault('', mbSuggestionsView),
+    Maybe.withDefault('')(mbSuggestionsView),
   ])
 }
 
