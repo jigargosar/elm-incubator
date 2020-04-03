@@ -92,10 +92,6 @@ group ss =
     G ss |> S "none" itx
 
 
-itx =
-    TX 0 0
-
-
 move : Float -> Float -> S -> S
 move dx dy =
     mapTX <| \(TX x y) -> TX (x + dx) (y + dy)
@@ -118,6 +114,16 @@ type S
 
 type TX
     = TX Float Float
+
+
+itx : TX
+itx =
+    TX 0 0
+
+
+moveTX : Float -> Float -> TX -> TX
+moveTX dx dy (TX x y) =
+    TX (x + dx) (y + dy)
 
 
 draw : S -> HM
