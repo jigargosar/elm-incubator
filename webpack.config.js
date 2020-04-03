@@ -27,8 +27,9 @@ git commit -m "Initial Commit"
 module.exports = (_, config) => {
   const isProd = config.mode === 'production'
   const isElmDebuggerDisabled = false
+
   return {
-    entry: './src/ElmGoogleSearch/index.js',
+    entry: './src/index.js',
     output: {
       publicPath: '/',
     },
@@ -38,7 +39,7 @@ module.exports = (_, config) => {
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
-        template: './src/ElmGoogleSearch/index.html',
+        template: './src/index.html',
       }),
     ],
 
