@@ -1,4 +1,4 @@
-module Main exposing (main)
+module ElmGoogleSearch.Main exposing (main)
 
 import Browser
 import Browser.Dom as Dom
