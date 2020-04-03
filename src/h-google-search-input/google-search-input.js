@@ -6,9 +6,11 @@ const Maybe = (function() {
     return { tag: Just, value }
   }
 
-  const Nothing = function Nothing() {
+  function Nothing() {
     return { tag: Nothing }
   }
+
+  console.log(Nothing)
 
   return Object.freeze({
     Just,
