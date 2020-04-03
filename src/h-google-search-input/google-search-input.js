@@ -70,7 +70,7 @@ function selectionToList(selection) {
 // SEARCH WIDGET
 
 function getInputString(sw) {
-  const { inputValue: iv } = sw
+  const iv = sw.inputValue
   switch (iv.tag) {
     case 'TYPED': {
       return iv.typed
