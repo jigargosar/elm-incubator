@@ -3,13 +3,13 @@ module Main exposing (main)
 import Playground exposing (..)
 
 
-type alias Mem =
-    {}
+type Mem
+    = Mem
 
 
 init : Mem
 init =
-    {}
+    Mem
 
 
 update : Computer -> Mem -> Mem
