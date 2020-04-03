@@ -31,7 +31,7 @@ view computer (Mem w h) =
 
         dCell x y =
             group
-                [ square lightGreen sqW |> fade 0.2
+                [ square lightGreen sqW |> fade 0
                 , circle blue (sqW * 0.2) |> fade 0.8
                 ]
                 |> move (toFloat x * sqW) (toFloat y * sqW)
@@ -40,7 +40,8 @@ view computer (Mem w h) =
             List.range 0 (w - 1)
                 |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (dCell x))
     in
-    [ group dBoardCells
+    [ rectangle lightGreen (bw + sqW) (bh + sqW) |> fade 0.2
+    , group dBoardCells
         |> move ((sqW - bw) * 0.5) ((sqW - bh) * 0.5)
     ]
 
