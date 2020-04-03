@@ -68,7 +68,7 @@ view _ =
             600
     in
     Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
-        [ draw (S "dodgerblue" (TX 0 0) (R 200 200))
+        [ draw (S "" (TX 0 0) (G [ S "dodgerblue" (TX 0 0) (R 200 200) ]))
         ]
 
 
