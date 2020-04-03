@@ -54,12 +54,8 @@ subscriptions _ =
 -- View
 
 
-type F
-    = R Float Float
-
-
-type S
-    = S String F
+type alias HM =
+    Html Msg
 
 
 view : Model -> Html Msg
@@ -76,8 +72,12 @@ view _ =
         ]
 
 
-type alias HM =
-    Html Msg
+type F
+    = R Float Float
+
+
+type S
+    = S String F
 
 
 draw : S -> HM
