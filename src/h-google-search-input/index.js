@@ -23,6 +23,8 @@ const Maybe = (function() {
   })
 })()
 
+console.log(Maybe.map)
+
 // NON EMPTY LIST
 
 function initNEList(h, t) {
