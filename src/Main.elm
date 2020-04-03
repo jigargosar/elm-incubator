@@ -5,6 +5,7 @@ module Main exposing (main)
 import Browser
 import Html exposing (Html)
 import Svg
+import Svg.Attributes as SA
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
@@ -57,6 +58,10 @@ type F
     = R Float Float
 
 
+type S
+    = S String F
+
+
 view : Model -> Html Msg
 view _ =
     let
@@ -67,7 +72,7 @@ view _ =
             600
     in
     Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
-        [ draw (R 400 400)
+        [ draw (S "dodgerblue" (R 400 400))
         ]
 
 
@@ -75,16 +80,17 @@ type alias HM =
     Html Msg
 
 
-draw : F -> HM
-draw s =
+draw : S -> HM
+draw (S c s) =
     case s of
         R w h ->
-            Svg.rect [ Px.width w, Px.height h, TA.transform [ TT.Translate (w * -0.5) (h * -0.5) ] ] []
-
-
-empty : Html msg
-empty =
-    Html.text ""
+            Svg.rect
+                [ Px.width w
+                , Px.height h
+                , TA.transform [ TT.Translate (w * -0.5) (h * -0.5) ]
+                , SA.fill c
+                ]
+                []
 
 
 
