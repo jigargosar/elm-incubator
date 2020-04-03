@@ -75,6 +75,11 @@ view _ =
         ]
 
 
+move : Float -> Float -> S -> S
+move dx dy (S (TX x y) f) =
+    S (TX (x + dx) (y + dy)) f
+
+
 group : List S -> S
 group ss =
     G ss |> S (TX 0 0)
