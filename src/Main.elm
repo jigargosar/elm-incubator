@@ -83,6 +83,7 @@ rectangle c w h =
     R w h |> S c initialTransform
 
 
+ellipse : String -> Float -> Float -> S
 ellipse c w h =
     E w h |> S c initialTransform
 
