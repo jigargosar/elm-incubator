@@ -2,11 +2,6 @@ import { app, h } from 'hyperapp'
 import 'tachyons'
 import S from 'sanctuary'
 
-const f3 = S.curry3(function() {
-  console.log(arguments)
-})
-console.log(f3(1))
-
 const Maybe = (function() {
   function Just(value) {
     return { tag: Just, value }
@@ -19,13 +14,17 @@ const Maybe = (function() {
   return Object.freeze({
     Just,
     Nothing,
-    map: function(f, mb) {
-      return mb === Nothing ? mb : Just(f(mb.value))
-    },
-    withDefault: function(defVal, mb) {
-      return mb === Nothing ? defVal : mb.value
-    },
+    map,
+    withDefault,
   })
+
+  function withDefault(defVal, mb) {
+    return mb === Nothing ? defVal : mb.value
+  }
+
+  function map(f, mb) {
+    return mb === Nothing ? mb : Just(f(mb.value))
+  }
 })()
 
 // NON EMPTY LIST
