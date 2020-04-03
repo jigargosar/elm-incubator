@@ -3,10 +3,6 @@ module Main exposing (main)
 import Playground exposing (..)
 
 
-
--- Game Scaffold
-
-
 type alias Mem =
     {}
 
