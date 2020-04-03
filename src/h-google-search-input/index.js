@@ -23,7 +23,6 @@ const Maybe = (function() {
   })
 })()
 
-
 // NON EMPTY LIST
 
 function initNEList(h, t) {
