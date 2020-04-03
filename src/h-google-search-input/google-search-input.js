@@ -2,7 +2,6 @@ import { app, h } from 'hyperapp'
 import 'tachyons'
 import {
   areSuggestionsVisible,
-  getInputValue,
   initSW,
   mapVisibleSuggestionsToList,
 } from './model'
@@ -11,6 +10,20 @@ import {
 
 function initNEList(h, t) {
   return [h, t]
+}
+
+// SEARCH WIDGET
+
+function getInputValue(sw) {
+  const { inputValue: iv } = sw
+  switch (iv.tag) {
+    case 'TYPED': {
+      return iv.typed
+    }
+    case 'OVERRIDDEN': {
+      return iv.overridden
+    }
+  }
 }
 
 // MODEL

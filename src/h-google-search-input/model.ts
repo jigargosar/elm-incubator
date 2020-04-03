@@ -5,7 +5,9 @@ export type SearchWidget = {
   suggestions: Suggestions
 }
 
-type InputValue = ['TYPED', string] | ['OVERRIDDEN', string, string]
+type InputValue =
+  | { tag: 'TYPED'; typed: string }
+  | { tag: 'OVERRIDDEN'; typed: string; overridden: string }
 
 type Suggestions =
   | { tag: 'HIDDEN'; nonEmptyList: NEList<string> }
@@ -18,7 +20,7 @@ export function initSW(
   return {
     tag: 'SW',
     originalQuery: q,
-    inputValue: ['TYPED', q],
+    inputValue: { tag: 'TYPED', typed: q },
     suggestions: {
       tag: 'VISIBLE',
       selection: selectionFromNEL(suggestionsNEL),
@@ -26,15 +28,15 @@ export function initSW(
   }
 }
 
-export function getInputValue({ inputValue }: SearchWidget): string {
-  switch (inputValue[0]) {
-    case 'TYPED':
-      return inputValue[1]
-
-    case 'OVERRIDDEN':
-      return inputValue[2]
-  }
-}
+// export function getInputValue({ inputValue }: SearchWidget): string {
+//   switch (inputValue.tag) {
+//     case 'TYPED':
+//       return inputValue.typed
+//
+//     case 'OVERRIDDEN':
+//       return inputValue.overridden
+//   }
+// }
 
 export function areSuggestionsVisible({ suggestions }: SearchWidget) {
   switch (suggestions.tag) {
@@ -115,9 +117,9 @@ function mapNEList<a, b>(f1: F1<a, b>, [h, t]: NEList<a>): NEList<b> {
   return [f1(h), t.map(f1)]
 }
 
-export function initNEList<a>(h: a, t: a[]): NEList<a> {
-  return [h, t]
-}
+// export function initNEList<a>(h: a, t: a[]): NEList<a> {
+//   return [h, t]
+// }
 
 function neListToList<a>([h, t]: NEList<a>): a[] {
   return [h, ...t]
