@@ -7,6 +7,7 @@ import Html exposing (Html)
 import Svg
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
+import TypedSvg.Types as TT
 
 
 
@@ -52,6 +53,10 @@ subscriptions _ =
 -- View
 
 
+type F
+    = R Float Float
+
+
 view : Model -> Html Msg
 view _ =
     let
@@ -62,8 +67,19 @@ view _ =
             600
     in
     Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
-        [ Svg.rect [ Px.width 100, Px.height 100 ] []
+        [ draw (R 400 400)
         ]
+
+
+type alias HM =
+    Html Msg
+
+
+draw : F -> HM
+draw s =
+    case s of
+        R w h ->
+            Svg.rect [ Px.width w, Px.height h, TA.transform [ TT.Translate (w * -0.5) (h * -0.5) ] ] []
 
 
 empty : Html msg
