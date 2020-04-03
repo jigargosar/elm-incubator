@@ -80,25 +80,25 @@ view _ =
 
 rectangle : String -> Float -> Float -> S
 rectangle c w h =
-    R w h |> S c itx
+    R w h |> S c initialTransform
 
 
 ellipse c w h =
-    E w h |> S c itx
+    E w h |> S c initialTransform
 
 
 group : List S -> S
 group ss =
-    G ss |> S "none" itx
+    G ss |> S "none" initialTransform
 
 
 move : Float -> Float -> S -> S
 move dx dy =
-    mapTX <| \(TX x y) -> TX (x + dx) (y + dy)
+    mapTransform <| translateBy dx dy
 
 
-mapTX : (TX -> TX) -> S -> S
-mapTX fn (S c tx f) =
+mapTransform : (TF -> TF) -> S -> S
+mapTransform fn (S c tx f) =
     S c (fn tx) f
 
 
@@ -109,25 +109,25 @@ type F
 
 
 type S
-    = S String TX F
+    = S String TF F
 
 
-type TX
-    = TX Float Float
+type TF
+    = TF Float Float
 
 
-itx : TX
-itx =
-    TX 0 0
+initialTransform : TF
+initialTransform =
+    TF 0 0
 
 
-moveTX : Float -> Float -> TX -> TX
-moveTX dx dy (TX x y) =
-    TX (x + dx) (y + dy)
+translateBy : Float -> Float -> TF -> TF
+translateBy dx dy (TF x y) =
+    TF (x + dx) (y + dy)
 
 
 draw : S -> HM
-draw (S c (TX dx dy) s) =
+draw (S c (TF dx dy) s) =
     case s of
         R w h ->
             Svg.rect
