@@ -1,5 +1,8 @@
 import { app, h } from 'hyperapp'
 import 'tachyons'
+import S from 'sanctuary'
+
+console.log(S)
 
 const Maybe = (function() {
   function Just(value) {

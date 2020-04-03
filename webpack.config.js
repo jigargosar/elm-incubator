@@ -28,7 +28,7 @@ module.exports = (_, config) => {
   const isProd = config.mode === 'production'
   const isElmDebuggerDisabled = false
   return {
-    entry: './src/index.js',
+    entry: './src/h-google-search-input/index.js',
     output: {
       publicPath: '/',
     },
@@ -37,7 +37,9 @@ module.exports = (_, config) => {
     },
     plugins: [
       new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin({ template: './src/index.html' }),
+      new HtmlWebpackPlugin({
+        template: './src/h-google-search-input/index.html',
+      }),
     ],
 
     module: {
