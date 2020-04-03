@@ -68,12 +68,12 @@ function selectionToList(selection) {
 
 // SEARCH WIDGET
 
-function initSearchWidget(queryString, suggestionNEList) {
+function initSearchWidget(queryString, neSuggestions) {
   return {
     tag: 'SearchWidget',
     originalQuery: queryString,
     inputValue: { tag: 'TYPED', typed: queryString },
-    suggestions: initSuggestions(suggestionNEList),
+    suggestions: initSuggestions(neSuggestions),
   }
 }
 
