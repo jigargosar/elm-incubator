@@ -19,6 +19,7 @@
     "tachyons": "^4.11.1"
   },
   "devDependencies": {
+    "@types/ramda": "^0.27.3",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.4.2",
     "elm-hot": "^1.1.4",

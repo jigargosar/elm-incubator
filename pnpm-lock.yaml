@@ -6,6 +6,7 @@ dependencies:
   sanctuary-type-identifiers: 3.0.0
   tachyons: 4.11.1
 devDependencies:
+  '@types/ramda': 0.27.3
   clean-webpack-plugin: 3.0.0_webpack@4.42.1
   css-loader: 3.4.2_webpack@4.42.1
   elm-hot: 1.1.4
@@ -47,6 +48,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-uM4mnmsIIPK/yeO+42F2RQhGUIs39K2RFmugcJANppXe6J1nvH87PvzPZYpza7Xhhs8Yn9yIAVdLZ84z61+0xQ==
+  /@types/ramda/0.27.3:
+    dependencies:
+      ts-toolbelt: 6.3.11
+    dev: true
+    resolution:
+      integrity: sha512-fUUQsx88sJksuZXh6p11Bl4m1IHwXCez1mgIcbZ7Z4PvUdOqx8rGsqP1zDkixrnMPvupXXrwV1/1/vJEGjSehA==
   /@types/source-list-map/0.1.2:
     dev: true
     resolution:
@@ -4250,6 +4257,10 @@ packages:
       node: '>=0.6'
     resolution:
       integrity: sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
+  /ts-toolbelt/6.3.11:
+    dev: true
+    resolution:
+      integrity: sha512-J9Cz5wLPay4OEkiDR6BEy4hh112Jhq2AMCbmtHqw9Ch1Y+Go5bwl+CTCmF7xUN4a/67ikd0gNW70u4hEOgacsA==
   /tslib/1.11.1:
     dev: true
     resolution:
@@ -4721,6 +4732,7 @@ packages:
     resolution:
       integrity: sha1-eC7CHvQDNF+DCoCMo9UTr1YGUgg=
 specifiers:
+  '@types/ramda': ^0.27.3
   clean-webpack-plugin: ^3.0.0
   css-loader: ^3.4.2
   daggy: ^1.4.0
