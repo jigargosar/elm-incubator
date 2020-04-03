@@ -54,8 +54,15 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view _ =
-    Svg.svg [ TA.viewBox 0 0 600 600 ]
-        [ Svg.rect [ Px.x 0, Px.y 0, Px.width 100, Px.height 100 ] []
+    let
+        sw =
+            600
+
+        sh =
+            600
+    in
+    Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
+        [ Svg.rect [ Px.width 100, Px.height 100 ] []
         ]
 
 
