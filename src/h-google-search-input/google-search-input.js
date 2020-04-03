@@ -1,24 +1,29 @@
 import { app, h } from 'hyperapp'
 import 'tachyons'
 
-// MAYBE
+const Maybe = (function() {
+  function Just(value) {
+    return { tag: Just, value }
+  }
 
-function Just(value) {
-  return { tag: ':MAYBE:JUST', value }
-}
+  const Nothing = function Nothing() {
+    return { tag: Nothing }
+  }
 
-function Nothing() {
-  return { tag: ':MAYBE:NOTHING' }
-}
+  return Object.freeze({
+    Just,
+    Nothing,
+    map: function(f, mb) {
+      return mb === Nothing ? mb : Just(f(mb.value))
+    },
+    withDefault: function(defVal, mb) {
+      return mb === Nothing ? defVal : mb.value
+    },
+  })
+})()
 
 // NON EMPTY LIST
 
-/**
- * @typedef a : any
- * @param h : a
- * @param t : a[]
- * @returns NEList<a>
- */
 function initNEList(h, t) {
   return [h, t]
 }
@@ -98,9 +103,9 @@ function getInputString(sw) {
 function getVisibleSuggestionSelection(sw) {
   const ss = sw.suggestions
   if (ss.tag === 'VISIBLE') {
-    return Just(ss.selection)
+    return Maybe.Just(ss.selection)
   } else {
-    return Nothing()
+    return Maybe.Nothing
   }
 }
 
@@ -138,11 +143,13 @@ function view({ sw }) {
 function viewSearchWidget(sw) {
   const mbSS = getVisibleSuggestionSelection(sw)
   console.log(mbSS)
-  const showingSuggestions = mbSS.tag === 'JUST'
+  const showingSuggestions = mbSS.tag === Maybe.Just
+  const mbSuggestionsView = Maybe.map(ss => viewSuggestions(ss), mbSS)
+
   return div({ class: 'relative' }, [
     //
     viewInput(getInputString(sw), showingSuggestions),
-    showingSuggestions ? viewSuggestions(sw, mbSS.value) : '',
+    Maybe.withDefault('', mbSuggestionsView),
   ])
 }
 
@@ -172,7 +179,7 @@ const brTopStyles = {
   borderBottomLeftRadius: 0,
 }
 
-function viewSuggestions(sw, suggestionSelection) {
+function viewSuggestions(suggestionSelection) {
   const viewHighlightedSuggestion = s => viewSuggestion(true, s)
   const viewOtherSuggestion = s => viewSuggestion(false, s)
   const selectionViewItems = selectionToList(
