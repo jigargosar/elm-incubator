@@ -24,12 +24,11 @@ const Maybe = (function() {
   })
 })()
 
-
 const def = $.create({ checkTypes: true, env: $.env })
 
 const add = def('add')({})([$.Number, $.Number, $.Number])(x => y => x + y)
 
-console.log(add, add(1), add(1)(2), add(1)( 2))
+console.log(add, add(1), add(1)(2), add(1)(2))
 
 // NON EMPTY LIST
 
