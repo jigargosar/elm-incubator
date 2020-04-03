@@ -1,7 +1,6 @@
 import { app, h } from 'hyperapp'
 import 'tachyons'
 import S from 'sanctuary'
-import $ from 'sanctuary-def'
 
 const Maybe = (function() {
   function Just(value) {
@@ -24,20 +23,6 @@ const Maybe = (function() {
   })
 })()
 
-const def = $.create({ checkTypes: true, env: $.env })
-
-const add = def('add')({})([$.Number, $.Number, $.Number])(x => y => x + y)
-
-const a = $.TypeVariable('a')
-const b = $.TypeVariable('b')
-
-const inel = def('inel')({})([
-  a,
-  $.Array(a),
-  $.NonEmpty($.Array(a)),
-])(h => t => [h, ...t])
-
-console.log(inel(1)([2]))
 
 // NON EMPTY LIST
 
