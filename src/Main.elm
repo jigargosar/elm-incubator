@@ -68,7 +68,7 @@ view _ =
             600
     in
     Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
-        [ draw (S "dodgerblue" (R 400 400))
+        [ draw (S "dodgerblue" (TX 0 0) (R 200 200))
         ]
 
 
@@ -77,17 +77,24 @@ type F
 
 
 type S
-    = S String F
+    = S String TX F
+
+
+type TX
+    = TX Float Float
 
 
 draw : S -> HM
-draw (S c s) =
+draw (S c (TX dx dy) s) =
     case s of
         R w h ->
             Svg.rect
                 [ Px.width w
                 , Px.height h
-                , TA.transform [ TT.Translate (w * -0.5) (h * -0.5) ]
+                , TA.transform
+                    [ TT.Translate (w * -0.5) (h * -0.5)
+                    , TT.Translate dx dy
+                    ]
                 , SA.fill c
                 ]
                 []
