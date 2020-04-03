@@ -74,6 +74,7 @@ view _ =
 
 type F
     = R Float Float
+    | E Float Float
 
 
 type S
@@ -94,6 +95,17 @@ draw (S c (TX dx dy) s) =
                 , TA.transform
                     [ TT.Translate (w * -0.5) (h * -0.5)
                     , TT.Translate dx dy
+                    ]
+                , SA.fill c
+                ]
+                []
+
+        E w h ->
+            Svg.ellipse
+                [ Px.width w
+                , Px.height h
+                , TA.transform
+                    [ TT.Translate dx dy
                     ]
                 , SA.fill c
                 ]
