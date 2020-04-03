@@ -4,6 +4,9 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (Html)
+import Svg
+import TypedSvg.Attributes as TA
+import TypedSvg.Attributes.InPx as Px
 
 
 
@@ -51,7 +54,9 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view _ =
-    empty
+    Svg.svg [ TA.viewBox 0 0 600 600 ]
+        [ Svg.rect [ Px.x 0, Px.y 0, Px.width 100, Px.height 100 ] []
+        ]
 
 
 empty : Html msg
