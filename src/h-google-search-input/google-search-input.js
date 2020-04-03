@@ -1,15 +1,29 @@
 import { app, h } from 'hyperapp'
 import 'tachyons'
-import {
-  areSuggestionsVisible,
-  initSW,
-  mapVisibleSuggestionsToList,
-} from './model'
+import { initSW } from './model'
 
 // NON EMPTY LIST
 
 function initNEList(h, t) {
   return [h, t]
+}
+
+function mapNEList(func, [h, t]) {
+  return [func(h), t.map(func)]
+}
+
+function nelToList([h, t]) {
+  return [h, ...t]
+}
+
+// LCR
+
+function lcrMapCS(fc, fs, [l, c, r]) {
+  return [l.map(fs), fc(c), r.map(fs)]
+}
+
+function lcrToList([l, c, r]) {
+  return [...l, c, ...r]
 }
 
 // SEARCH WIDGET
@@ -26,12 +40,20 @@ function getInputValue(sw) {
   }
 }
 
+function Just(value) {
+  return { tag: 'JUST', value }
+}
+
+function Nothing() {
+  return { tag: 'NOTHING' }
+}
+
 function getVisibleSuggestionSelection(sw) {
   const ss = sw.suggestions
   if (ss.tag === 'VISIBLE') {
-    return ss.selection
+    return Just(ss.selection)
   } else {
-    return null
+    return Nothing()
   }
 }
 
@@ -61,10 +83,13 @@ function view({ sw }) {
 }
 
 function viewSearchWidget(sw) {
+  const mbSS = getVisibleSuggestionSelection(sw)
+  console.log(mbSS)
+  const showingSuggestions = mbSS.tag === 'JUST'
   return div({ class: 'relative' }, [
     //
-    viewInput(getInputValue(sw), areSuggestionsVisible(sw)),
-    viewSuggestions(sw),
+    viewInput(getInputValue(sw), showingSuggestions),
+    showingSuggestions ? viewSuggestions(sw, mbSS.value) : '',
   ])
 }
 
@@ -94,12 +119,41 @@ const brTopStyles = {
   borderBottomLeftRadius: 0,
 }
 
-function viewSuggestions(sw) {
-  const maybeSuggestionsItemsView = mapVisibleSuggestionsToList(
-    s => viewSuggestion(true, s),
-    s => viewSuggestion(false, s),
-    sw,
+function selectionMapCS(funcCenter, funcOther, selection) {
+  switch (selection.tag) {
+    case 'NONE_SELECTED': {
+      return {
+        ...selection,
+        neList: mapNEList(funcOther, selection.neList),
+      }
+    }
+    case 'SELECTED': {
+      return { ...selection, lcr: lcrMapCS(funcCenter, funcOther) }
+    }
+  }
+}
+function selectionToList(selection) {
+  switch (selection.tag) {
+    case 'NONE_SELECTED': {
+      return nelToList(selection.neList)
+    }
+    case 'SELECTED': {
+      return lcrToList(selection.lcr)
+    }
+  }
+}
+
+function viewSuggestions(sw, suggestionSelection) {
+  const viewHighlightedSuggestion = s => viewSuggestion(true, s)
+  const viewOtherSuggestion = s => viewSuggestion(false, s)
+  const selectionViewItems = selectionToList(
+    selectionMapCS(
+      viewHighlightedSuggestion,
+      viewOtherSuggestion,
+      suggestionSelection,
+    ),
   )
+
 
   function viewSuggestion(isSelected, s) {
     return div(
@@ -108,21 +162,19 @@ function viewSuggestions(sw) {
     )
   }
 
-  return maybeSuggestionsItemsView
-    ? div(
-        {
-          class: 'absolute w-100 bg-white br4 br--bottom overflow-hidden',
-          style: {
-            top: '100%',
-            boxShadow: '0 4px 6px 0 rgba(32, 33, 36, 0.28)',
-          },
-        },
-        [
-          div({ class: 'mh3 bt b--light-gray' }),
-          div({ class: 'pv2' }, maybeSuggestionsItemsView),
-        ],
-      )
-    : maybeSuggestionsItemsView
+  return div(
+    {
+      class: 'absolute w-100 bg-white br4 br--bottom overflow-hidden',
+      style: {
+        top: '100%',
+        boxShadow: '0 4px 6px 0 rgba(32, 33, 36, 0.28)',
+      },
+    },
+    [
+      div({ class: 'mh3 bt b--light-gray' }),
+      div({ class: 'pv2' }, selectionViewItems),
+    ],
+  )
 }
 
 function text(string) {
