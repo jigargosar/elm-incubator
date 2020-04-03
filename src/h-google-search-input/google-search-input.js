@@ -7,7 +7,7 @@ const Maybe = (function() {
   }
 
   function Nothing() {
-    return { tag: Nothing }
+    throw 'Nothing is not a constructor function'
   }
 
   console.log(Nothing)
