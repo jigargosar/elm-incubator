@@ -23,12 +23,29 @@ view computer (Mem w h) =
         sqW =
             40
 
-        dr x y =
-            square blue (sqW * 0.9)
+        bw =
+            toFloat w * sqW
+
+        bh =
+            toFloat h * sqW
+
+        bdx =
+            (sqW - bw) * 0.5
+
+        bdy =
+            (sqW - bh) * 0.5
+
+        drc x y =
+            circle blue (sqW * 0.5 * 0.9)
                 |> move (toFloat x * sqW) (toFloat y * sqW)
+
+        drb =
+            List.range 0 (w - 1)
+                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (drc x))
     in
-    List.range 0 (w - 1)
-        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (dr x))
+    [ group drb
+        |> move bdx bdy
+    ]
 
 
 main =
