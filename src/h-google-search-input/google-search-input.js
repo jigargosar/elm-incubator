@@ -45,6 +45,7 @@ function selectionMapCS(funcCenter, funcOther, selection) {
     }
   }
 }
+
 function selectionToList(selection) {
   switch (selection.tag) {
     case 'NONE_SELECTED': {
