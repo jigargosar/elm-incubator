@@ -90,6 +90,12 @@ function getVisibleSuggestionSelection(sw) {
   }
 }
 
+// SUGGESTIONS
+
+function initSuggestions(neList) {
+  return { tag: 'VISIBLE', selection: initSelection(neList) }
+}
+
 // MODEL
 
 function initState() {
