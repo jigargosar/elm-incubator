@@ -26,7 +26,7 @@ git commit -m "Initial Commit"
 // https://webpack.js.org/configuration/
 module.exports = (_, config) => {
   const isProd = config.mode === 'production'
-  const isElmDebuggerDisabled = false
+  const isElmDebuggerDisabled = true
 
   return {
     entry: './src/index.js',
