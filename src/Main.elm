@@ -29,22 +29,16 @@ view computer (Mem w h) =
         bh =
             toFloat h * sqW
 
-        bdx =
-            (sqW - bw) * 0.5
-
-        bdy =
-            (sqW - bh) * 0.5
-
-        drc x y =
+        dCell x y =
             circle blue (sqW * 0.5 * 0.9)
                 |> move (toFloat x * sqW) (toFloat y * sqW)
 
-        drb =
+        dBoardCells =
             List.range 0 (w - 1)
-                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (drc x))
+                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (dCell x))
     in
-    [ group drb
-        |> move bdx bdy
+    [ group dBoardCells
+        |> move ((sqW - bw) * 0.5) ((sqW - bh) * 0.5)
     ]
 
 
