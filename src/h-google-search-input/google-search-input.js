@@ -10,8 +10,6 @@ const Maybe = (function() {
     throw 'Nothing is not a constructor function'
   }
 
-  console.log(Nothing)
-
   return Object.freeze({
     Just,
     Nothing,
