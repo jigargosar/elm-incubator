@@ -71,6 +71,7 @@ view _ =
         [ draw <|
             group
                 [ rectangle "dodgerblue" 200 200
+                    |> move -100 -100
                 ]
         ]
 
