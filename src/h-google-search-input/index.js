@@ -2,7 +2,10 @@ import { app, h } from 'hyperapp'
 import 'tachyons'
 import S from 'sanctuary'
 
-console.log(S)
+const f3 = S.curry3(function() {
+  console.log(arguments)
+})
+console.log(f3(1))
 
 const Maybe = (function() {
   function Just(value) {

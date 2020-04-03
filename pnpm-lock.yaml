@@ -5,6 +5,7 @@ dependencies:
   tachyons: 4.11.1
 devDependencies:
   '@types/ramda': 0.27.3
+  '@types/sanctuary': 0.14.2
   clean-webpack-plugin: 3.0.0_webpack@4.42.1
   css-loader: 3.4.2_webpack@4.42.1
   elm-hot: 1.1.4
@@ -51,6 +52,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-fUUQsx88sJksuZXh6p11Bl4m1IHwXCez1mgIcbZ7Z4PvUdOqx8rGsqP1zDkixrnMPvupXXrwV1/1/vJEGjSehA==
+  /@types/sanctuary/0.14.2:
+    dev: true
+    resolution:
+      integrity: sha512-FvgVY2yXGAYj5PqfVxND7deTAYymj8rnImfo/LClB/1dILpjhiCA4WRFGq1B4wUxvYzYmVWio2rLN/CL4uBEgQ==
   /@types/source-list-map/0.1.2:
     dev: true
     resolution:
@@ -4752,6 +4757,7 @@ packages:
       integrity: sha1-eC7CHvQDNF+DCoCMo9UTr1YGUgg=
 specifiers:
   '@types/ramda': ^0.27.3
+  '@types/sanctuary': ^0.14.2
   clean-webpack-plugin: ^3.0.0
   css-loader: ^3.4.2
   elm-hot: ^1.1.4
