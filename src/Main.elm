@@ -80,21 +80,30 @@ view _ =
 
 rectangle : String -> Float -> Float -> S
 rectangle c w h =
-    R w h |> S c (TX 0 0)
+    R w h |> S c itx
 
 
 ellipse c w h =
-    E w h |> S c (TX 0 0)
+    E w h |> S c itx
 
 
 group : List S -> S
 group ss =
-    G ss |> S "none" (TX 0 0)
+    G ss |> S "none" itx
+
+
+itx =
+    TX 0 0
 
 
 move : Float -> Float -> S -> S
-move dx dy (S c (TX x y) f) =
-    S c (TX (x + dx) (y + dy)) f
+move dx dy =
+    mapTX <| \(TX x y) -> TX (x + dx) (y + dy)
+
+
+mapTX : (TX -> TX) -> S -> S
+mapTX fn (S c tx f) =
+    S c (fn tx) f
 
 
 type F
