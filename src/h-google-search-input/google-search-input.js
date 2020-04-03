@@ -2,6 +2,16 @@ import { app, h } from 'hyperapp'
 import 'tachyons'
 import { initSW } from './model'
 
+// MAYBE
+
+function Just(value) {
+  return { tag: 'JUST', value }
+}
+
+function Nothing() {
+  return { tag: 'NOTHING' }
+}
+
 // NON EMPTY LIST
 
 function initNEList(h, t) {
@@ -59,7 +69,7 @@ function selectionToList(selection) {
 
 // SEARCH WIDGET
 
-function getInputValue(sw) {
+function getInputString(sw) {
   const { inputValue: iv } = sw
   switch (iv.tag) {
     case 'TYPED': {
@@ -69,14 +79,6 @@ function getInputValue(sw) {
       return iv.overridden
     }
   }
-}
-
-function Just(value) {
-  return { tag: 'JUST', value }
-}
-
-function Nothing() {
-  return { tag: 'NOTHING' }
 }
 
 function getVisibleSuggestionSelection(sw) {
@@ -119,7 +121,7 @@ function viewSearchWidget(sw) {
   const showingSuggestions = mbSS.tag === 'JUST'
   return div({ class: 'relative' }, [
     //
-    viewInput(getInputValue(sw), showingSuggestions),
+    viewInput(getInputString(sw), showingSuggestions),
     showingSuggestions ? viewSuggestions(sw, mbSS.value) : '',
   ])
 }
