@@ -75,6 +75,7 @@ view _ =
 type F
     = R Float Float
     | E Float Float
+    | G (List S)
 
 
 type S
@@ -104,12 +105,17 @@ draw (S c (TX dx dy) s) =
             Svg.ellipse
                 [ Px.width w
                 , Px.height h
-                , TA.transform
-                    [ TT.Translate dx dy
-                    ]
+                , TA.transform [ TT.Translate dx dy ]
                 , SA.fill c
                 ]
                 []
+
+        G ss ->
+            Svg.g
+                [ SA.fill c
+                , TA.transform [ TT.Translate dx dy ]
+                ]
+                (List.map draw ss)
 
 
 
