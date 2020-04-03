@@ -1,6 +1,5 @@
 import { app, h } from 'hyperapp'
 import 'tachyons'
-import { initSW } from './model'
 
 // MAYBE
 
@@ -69,6 +68,15 @@ function selectionToList(selection) {
 
 // SEARCH WIDGET
 
+function initSearchWidget(queryString, suggestionNEList) {
+  return {
+    tag: 'SearchWidget',
+    originalQuery: queryString,
+    inputValue: { tag: 'TYPED', typed: queryString },
+    suggestions: initSuggestions(suggestionNEList),
+  }
+}
+
 function getInputString(sw) {
   const iv = sw.inputValue
   switch (iv.tag) {
@@ -106,7 +114,7 @@ function initState() {
     'suggestion 2',
     'suggestion 2',
   ])
-  return { sw: initSW('foo bar', suggestionsNEL) }
+  return { sw: initSearchWidget('foo bar', suggestionsNEL) }
 }
 
 // UPDATE
