@@ -68,18 +68,18 @@ view _ =
             600
     in
     Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
-        [ draw (S "" (TX 0 0) (G [ S "dodgerblue" (TX 0 0) (R 200 200) ]))
+        [ draw (S (TX 0 0) (G [ S (TX 0 0) (R "dodgerblue" 200 200) ]))
         ]
 
 
 type F
-    = R Float Float
-    | E Float Float
+    = R String Float Float
+    | E String Float Float
     | G (List S)
 
 
 type S
-    = S String TX F
+    = S TX F
 
 
 type TX
@@ -87,9 +87,9 @@ type TX
 
 
 draw : S -> HM
-draw (S c (TX dx dy) s) =
+draw (S (TX dx dy) s) =
     case s of
-        R w h ->
+        R c w h ->
             Svg.rect
                 [ Px.width w
                 , Px.height h
@@ -101,7 +101,7 @@ draw (S c (TX dx dy) s) =
                 ]
                 []
 
-        E w h ->
+        E c w h ->
             Svg.ellipse
                 [ Px.width w
                 , Px.height h
@@ -112,8 +112,7 @@ draw (S c (TX dx dy) s) =
 
         G ss ->
             Svg.g
-                [ SA.fill c
-                , TA.transform [ TT.Translate dx dy ]
+                [ TA.transform [ TT.Translate dx dy ]
                 ]
                 (List.map draw ss)
 
