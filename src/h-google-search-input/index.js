@@ -148,11 +148,11 @@ function viewSearchWidget(sw) {
     Maybe.withDefault(''),
   ])(sw)
 
-  const showingSuggestions = suggestionsView !== ''
+  const areSuggestionsVisible = suggestionsView !== ''
 
   return div({ class: 'relative' }, [
     //
-    viewInput(getInputString(sw), showingSuggestions),
+    viewInput(getInputString(sw), areSuggestionsVisible),
     suggestionsView,
   ])
 }
