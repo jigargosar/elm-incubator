@@ -9,7 +9,7 @@ type Mem
 
 init : Mem
 init =
-    Mem 13 12
+    Mem 8 10
 
 
 update : Computer -> Mem -> Mem
@@ -21,7 +21,7 @@ view : Computer -> Mem -> List Shape
 view computer (Mem w h) =
     let
         sqW =
-            40
+            50
 
         bw =
             toFloat w * sqW
@@ -30,7 +30,10 @@ view computer (Mem w h) =
             toFloat h * sqW
 
         dCell x y =
-            circle blue (sqW * 0.3)
+            group
+                [ square lightGreen sqW |> fade 0.2
+                , circle blue (sqW * 0.2) |> fade 0.8
+                ]
                 |> move (toFloat x * sqW) (toFloat y * sqW)
 
         dBoardCells =
