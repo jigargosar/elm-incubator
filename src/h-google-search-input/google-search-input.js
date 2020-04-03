@@ -44,18 +44,18 @@ function lcrToList([l, c, r]) {
 // NON EMPTY SELECTION
 
 function initSelection(neList) {
-  return { tag: 'NONE_SELECTED', neList }
+  return { tag: 'SELECTION:NONE_SELECTED', neList }
 }
 
 function selectionMapCS(funcCenter, funcOther, selection) {
   switch (selection.tag) {
-    case 'NONE_SELECTED': {
+    case 'SELECTION:NONE_SELECTED': {
       return {
         ...selection,
         neList: mapNEList(funcOther, selection.neList),
       }
     }
-    case 'SELECTED': {
+    case 'SELECTION:SELECTED': {
       return { ...selection, lcr: lcrMapCS(funcCenter, funcOther) }
     }
   }
@@ -63,10 +63,10 @@ function selectionMapCS(funcCenter, funcOther, selection) {
 
 function selectionToList(selection) {
   switch (selection.tag) {
-    case 'NONE_SELECTED': {
+    case 'SELECTION:NONE_SELECTED': {
       return nelToList(selection.neList)
     }
-    case 'SELECTED': {
+    case 'SELECTION:SELECTED': {
       return lcrToList(selection.lcr)
     }
   }
