@@ -1,16 +1,13 @@
 import { pathOr } from 'ramda'
+const Module = require('./Main.elm')
 
 require('./styles.css')
 require('tachyons')
 
 {
-  initElmModuleWithPortHelpers(
-    {
-      node: document.getElementById('root'),
-      flags: { now: Date.now() },
-    },
-    require('./Main.elm')['Elm']['ElmGoogleSearch']['Main'],
-  )
+  Module['Elm']['ElmGoogleSearch']['Main'].init({
+    node: document.getElementById('root'),
+  })
 }
 
 function initElmModuleWithPortHelpers(initParams, main) {
