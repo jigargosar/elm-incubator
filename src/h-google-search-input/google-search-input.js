@@ -26,6 +26,15 @@ function getInputValue(sw) {
   }
 }
 
+function getVisibleSuggestionSelection(sw) {
+  const ss = sw.suggestions
+  if (ss.tag === 'VISIBLE') {
+    return ss.selection
+  } else {
+    return null
+  }
+}
+
 // MODEL
 
 function initState() {
