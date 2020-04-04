@@ -26,7 +26,7 @@ type Model
 
 
 type Grid
-    = G Int Int (Dict ( Int, Int ) Cell)
+    = G Int Int (Dict ( Int, Int ) Cell) (List ( Int, Int ))
 
 
 type Cell
@@ -47,11 +47,14 @@ type alias Flags =
 
 fillG : Cell -> Int -> Int -> Grid
 fillG c w h =
-    List.range 0 (w - 1)
-        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
-        |> List.map (flip Tuple.pair c)
-        |> Dict.fromList
-        |> G w h
+    let
+        gd =
+            List.range 0 (w - 1)
+                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
+                |> List.map (flip Tuple.pair c)
+                |> Dict.fromList
+    in
+    G w h gd []
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -128,14 +131,27 @@ view (M ((Cwh cw ch) as cwh) mxy g) =
         ]
 
 
+getGwh : Grid -> Gwh
+getGwh (G gw gh _ _) =
+    Gwh gw gh
+
+
+type Gwh
+    = Gwh Int Int
+
+
 getGcs : Cwh -> Grid -> Float
-getGcs (Cwh cw ch) (G gw gh _) =
+getGcs (Cwh cw ch) g =
+    let
+        (Gwh gw gh) =
+            getGwh g
+    in
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
         * 0.8
 
 
 placeGridShapesGroup : Float -> Grid -> Shape -> Shape
-placeGridShapesGroup gcs (G gw gh _) =
+placeGridShapesGroup gcs (G gw gh _ _) =
     move (((toFloat gw * gcs) - gcs) * -0.5)
         (((toFloat gh * gcs) - gcs) * -0.5)
 
@@ -146,7 +162,7 @@ placeGridShapes gcs g =
 
 
 renderGrid : Cwh -> Mxy -> Grid -> List Shape
-renderGrid cwh (Mxy mx my) ((G gw gh gd) as g) =
+renderGrid cwh (Mxy mx my) ((G gw gh gd _) as g) =
     let
         gcs =
             getGcs cwh g
