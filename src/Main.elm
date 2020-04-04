@@ -168,25 +168,9 @@ renderGrid cwh (Mxy mx my) g =
         gcs =
             getGcs cwh (getGwh g)
 
-        drawCell : ( ( Int, Int ), Maybe Cell ) -> Shape
-        drawCell ( ( x, y ), mbc ) =
-            case mbc of
-                Just Cell ->
-                    group
-                        [ let
-                            r =
-                                gcs * 0.2
-                          in
-                          ellipse "dodgerblue" r r
-                            |> move (toFloat x * gcs) (toFloat y * gcs)
-                        ]
-
-                Nothing ->
-                    group []
-
         gridCellsGroup =
             gToList g
-                |> List.map drawCell
+                |> List.map (\( ( x, y ), mbc ) -> drawCell gcs x y mbc)
                 |> group
                 |> placeGridShape gcs (getGwh g)
     in
@@ -194,6 +178,22 @@ renderGrid cwh (Mxy mx my) g =
     , gridCellsGroup
     , renderPointer (gcs * 0.25) mx my
     ]
+
+
+drawCell gcs x y mbc =
+    case mbc of
+        Just Cell ->
+            group
+                [ let
+                    r =
+                        gcs * 0.2
+                  in
+                  ellipse "dodgerblue" r r
+                    |> move (toFloat x * gcs) (toFloat y * gcs)
+                ]
+
+        Nothing ->
+            group []
 
 
 renderPointer : Float -> Float -> Float -> Shape
