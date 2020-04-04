@@ -22,17 +22,15 @@ import TypedSvg.Types as TT
 
 
 type Model
-    = M CX COM
+    = M CX MXY
 
 
 type CX
     = CX Float Float Float Float
 
 
-type
-    COM
-    -- canvas offset mouse x y
-    = COM Float Float
+type MXY
+    = MXY Float Float
 
 
 type alias Flags =
@@ -41,7 +39,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( M (CX 0 0 600 600) (COM 0 0)
+    ( M (CX 0 0 600 600) (MXY 0 0)
     , getAll
     )
 
@@ -95,7 +93,7 @@ update message ((M cx com) as model) =
             ( model, getAll )
 
         OnCMM x y ->
-            ( M cx (COM x y), Cmd.none )
+            ( M cx (MXY x y), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -111,24 +109,21 @@ type alias HM =
     Html Msg
 
 
-toMXY : CX -> COM -> ( Float, Float )
-toMXY (CX ox oy w h) (COM x y) =
-    ( (x - ox) / w * swPx - (swPx / 2), (y - oy) / h * shPx - (shPx / 2) )
-
-
-swPx =
-    800
-
-
-shPx =
-    600
-
-
 view : Model -> Html Msg
 view (M cx com) =
     let
         ( mx, my ) =
             toMXY cx com
+
+        toMXY : CX -> MXY -> ( Float, Float )
+        toMXY (CX ox oy w h) (MXY x y) =
+            ( (x - ox) / w * swPx - (swPx / 2), (y - oy) / h * shPx - (shPx / 2) )
+
+        swPx =
+            800
+
+        shPx =
+            600
     in
     div
         [ class "fixed absolute--fill flex"
@@ -141,13 +136,13 @@ view (M cx com) =
             , style "background-color" "rgba(183, 169, 255)"
             ]
             [ Svg.g [ SA.id "canvas" ]
-                (List.map draw (rectangle "none" swPx shPx :: drawBoard mx my))
+                (List.map draw (rectangle "none" swPx shPx :: drawBoard swPx shPx mx my))
             ]
         ]
 
 
-drawBoard : Float -> Float -> List S
-drawBoard mx my =
+drawBoard : Float -> Float -> Float -> Float -> List S
+drawBoard swPx shPx mx my =
     let
         gw =
             10
