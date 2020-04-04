@@ -61,19 +61,46 @@ type alias HM =
 view : Model -> Html Msg
 view _ =
     let
-        sw =
+        swPx =
             600
 
-        sh =
+        shPx =
             600
+
+        gw =
+            10
+
+        gh =
+            8
+
+        gcwPx =
+            50
+
+        dc x y =
+            group
+                [ let
+                    r =
+                        gcwPx * 0.2
+                  in
+                  ellipse "dodgerblue" r r
+                    |> move (toFloat x * gcwPx) (toFloat y * gcwPx)
+                ]
+
+        gridCellsView =
+            List.range 0 (gw - 1)
+                |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (dc x))
     in
-    Svg.svg [ TA.viewBox (sw * -0.5) (sh * -0.5) sw sh ]
+    Svg.svg [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx ]
         [ draw <|
             group
-                [ rectangle "dodgerblue" 200 200
-                    |> move -100 -100
-                , ellipse "red" 100 100
-                    |> move -100 -100
+                [ group
+                    [ rectangle "dodgerblue" 200 200
+                        |> move -100 -100
+                    , ellipse "red" 100 100
+                        |> move -100 -100
+                    ]
+                , group gridCellsView
+                    |> move (((toFloat gw * gcwPx) - gcwPx) * -0.5) (((toFloat gh * gcwPx) - gcwPx) * -0.5)
                 ]
         ]
 
