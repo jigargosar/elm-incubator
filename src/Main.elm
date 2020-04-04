@@ -86,8 +86,11 @@ type alias HM =
 view : Model -> Html Msg
 view (M (Cwh canvasW canvasH) (MXY screenMX screenMY)) =
     let
-        ( mx, my ) =
-            ( screenMX - canvasW * 0.5, screenMY - canvasH * 0.5 )
+        mx =
+            screenMX - canvasW * 0.5
+
+        my =
+            screenMY - canvasH * 0.5
     in
     div
         [ class "fixed absolute--fill"
