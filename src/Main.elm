@@ -191,14 +191,14 @@ view (M cx com) =
     in
     div
         [ class "absolute absolute--fill flex"
-        , SE.on "mousemove" canvasMouseMoveDecoder
+        , SE.on "mousemove" pageMouseMoveDecoder
         ]
         [ svgView
         ]
 
 
-canvasMouseMoveDecoder : Decoder Msg
-canvasMouseMoveDecoder =
+pageMouseMoveDecoder : Decoder Msg
+pageMouseMoveDecoder =
     JD.map2 OnCMM
         (JD.field "pageX" JD.float)
         (JD.field "pageY" JD.float)
