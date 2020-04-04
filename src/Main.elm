@@ -131,21 +131,12 @@ view (M ((Cwh cw ch) as cwh) mxy g) =
         ]
 
 
-getGwh : Grid -> Gwh
-getGwh (G gw gh _ _) =
-    Gwh gw gh
-
-
 type Gwh
     = Gwh Int Int
 
 
-getGcs : Cwh -> Grid -> Float
-getGcs (Cwh cw ch) g =
-    let
-        (Gwh gw gh) =
-            getGwh g
-    in
+getGcs : Cwh -> Gwh -> Float
+getGcs (Cwh cw ch) (Gwh gw gh) =
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
         * 0.8
 
@@ -165,7 +156,7 @@ renderGrid : Cwh -> Mxy -> Grid -> List Shape
 renderGrid cwh (Mxy mx my) ((G gw gh gd _) as g) =
     let
         gcs =
-            getGcs cwh g
+            getGcs cwh (Gwh gw gh)
 
         drawCell : Int -> Int -> Shape
         drawCell x y =
