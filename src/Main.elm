@@ -178,13 +178,13 @@ renderGrid cwh (Mxy mx my) g =
 renderGridCells : Float -> Grid -> Shape
 renderGridCells gcs g =
     gToList g
-        |> List.map (\( ( x, y ), mbc ) -> drawCell gcs x y mbc)
+        |> List.map (\( ( x, y ), mbc ) -> drawMaybeCell gcs x y mbc)
         |> group
         |> placeGridShape gcs (getGwh g)
 
 
-drawCell : Float -> Int -> Int -> Maybe Cell -> Shape
-drawCell gcs x y mbc =
+drawMaybeCell : Float -> Int -> Int -> Maybe Cell -> Shape
+drawMaybeCell gcs x y mbc =
     case mbc of
         Just cell ->
             case cell of
