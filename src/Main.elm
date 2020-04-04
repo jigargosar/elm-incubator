@@ -43,8 +43,7 @@ fillG c w h =
         gd =
             List.range 0 (w - 1)
                 |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
-                |> List.map (flip Tuple.pair c)
-                |> Dict.fromList
+                |> List.foldl (flip Dict.insert c) Dict.empty
     in
     G (Gwh w h) gd []
 
