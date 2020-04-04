@@ -4,6 +4,7 @@ module Main exposing (main)
 
 import Browser
 import Browser.Dom as Dom
+import Browser.Events
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Html.Events as E
@@ -51,6 +52,7 @@ getCanvasEl =
 type Msg
     = NoOp
     | GotCanvasEl (Result Dom.Error Dom.Element)
+    | GotBS Int Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -73,10 +75,17 @@ update message model =
             in
             ( model, Cmd.none )
 
+        GotBS w h ->
+            let
+                _ =
+                    Debug.log "GotBS" ( w, h )
+            in
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch [ Browser.Events.onResize GotBS ]
 
 
 
