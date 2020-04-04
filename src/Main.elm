@@ -3,12 +3,14 @@ module Main exposing (main)
 -- Browser.Element Scaffold
 
 import Browser
+import Browser.Dom as Dom
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Html.Events as E
 import Json.Decode as JD exposing (Decoder)
 import Svg
 import Svg.Attributes as SA
+import Task
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
@@ -18,8 +20,8 @@ import TypedSvg.Types as TT
 -- Model
 
 
-type alias Model =
-    {}
+type Model
+    = M Float Float
 
 
 type alias Flags =
@@ -28,9 +30,18 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( {}
-    , Cmd.none
+    ( M 600 600
+    , getCanvasEl
     )
+
+
+type alias CM =
+    Cmd Msg
+
+
+getCanvasEl : CM
+getCanvasEl =
+    Dom.getElement "canvas" |> Task.attempt GotCanvasEl
 
 
 
@@ -39,12 +50,27 @@ init _ =
 
 type Msg
     = NoOp
+    | GotCanvasEl (Result Dom.Error Dom.Element)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         NoOp ->
+            ( model, Cmd.none )
+
+        GotCanvasEl (Err (Dom.NotFound domId)) ->
+            let
+                _ =
+                    Debug.log "canvas element not found" domId
+            in
+            ( model, Cmd.none )
+
+        GotCanvasEl (Ok el) ->
+            let
+                _ =
+                    Debug.log "el.element" el.element
+            in
             ( model, Cmd.none )
 
 
