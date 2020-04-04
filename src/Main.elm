@@ -113,8 +113,8 @@ renderGCE gcs (GCE x y mbc) =
                                 gcs * 0.2
                           in
                           ellipse "dodgerblue" r r
-                            |> move (toFloat x * gcs) (toFloat y * gcs)
                         ]
+                        |> move (toFloat x * gcs) (toFloat y * gcs)
     in
     mbc |> Maybe.map rc |> Maybe.withDefault (group [])
 
