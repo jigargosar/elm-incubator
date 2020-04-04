@@ -22,11 +22,11 @@ import TypedSvg.Types as TT
 
 
 type Model
-    = M Cwh Mxy Gd
+    = M Cwh Mxy Grid
 
 
-type Gd
-    = Gd Float Float (Dict ( Int, Int ) Cell)
+type Grid
+    = G Float Float (Dict ( Int, Int ) Cell)
 
 
 type Cell
@@ -47,7 +47,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) (Gd 10 8 Dict.empty)
+    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) (G 10 8 Dict.empty)
     , Cmd.none
     )
 
@@ -110,7 +110,7 @@ view (M (Cwh cw ch) mxy g) =
         ]
 
 
-drawBoard : Float -> Float -> Mxy -> Gd -> List Shape
+drawBoard : Float -> Float -> Mxy -> Grid -> List Shape
 drawBoard cw ch (Mxy mx my) g =
     let
         gw =
