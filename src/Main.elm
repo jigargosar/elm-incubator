@@ -99,7 +99,8 @@ view _ =
                 , TA.class [ "flex-auto" ]
                 , E.on "mousemove" logOffset
                 ]
-                [ draw <|
+                [ Svg.rect [ SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
+                , draw <|
                     group
                         [ --group
                           --    [ rectangle "dodgerblue" 200 200
@@ -108,7 +109,8 @@ view _ =
                           --        |> move -100 -100
                           --    ]
                           --,
-                          rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
+                          rectangle "lightblue" swPx shPx
+                        , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
                         , group gridCellsView
                             |> move
                                 (((toFloat gw * gcwPx) - gcwPx) * -0.5)
@@ -124,7 +126,9 @@ view _ =
 
 logOffset : Decoder Msg
 logOffset =
-    JD.field "offsetY" JD.int
+    JD.map2 Tuple.pair
+        (JD.field "offsetX" JD.int)
+        (JD.field "offsetY" JD.int)
         |> JD.andThen
             (\v ->
                 let
