@@ -51,23 +51,20 @@ flagsDecoder =
 init : Value -> ( Model, Cmd Msg )
 init encodedFlags =
     let
-        maybeFlags =
+        flags =
             case JD.decodeValue flagsDecoder encodedFlags of
                 Err e ->
                     let
                         _ =
                             Debug.log "flags error" (JD.errorToString e)
                     in
-                    Nothing
+                    Debug.todo "impl flags error handling"
 
                 Ok ok ->
-                    Just ok
+                    ok
 
         _ =
-            Debug.log "maybeFlags" maybeFlags
-
-        flags =
-            maybeFlags |> Maybe.withDefault (Flags 0 (BS 600 600))
+            Debug.log "flags" flags
     in
     ( M flags.bs 600 600
     , getAll
