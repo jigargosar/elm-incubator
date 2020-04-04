@@ -133,21 +133,30 @@ placeGridShapes gcs g =
 
 
 renderGrid : Cwh -> Mxy -> Grid -> List Shape
-renderGrid cwh (Mxy mx my) ((G gw gh _) as g) =
+renderGrid cwh (Mxy mx my) ((G gw gh gd) as g) =
     let
         gcs =
             getGcs cwh g
 
         drawCell : Int -> Int -> Shape
         drawCell x y =
-            group
-                [ let
-                    r =
-                        gcs * 0.2
-                  in
-                  ellipse "dodgerblue" r r
-                    |> move (toFloat x * gcs) (toFloat y * gcs)
-                ]
+            let
+                cell =
+                    Dict.get ( x, y ) gd
+            in
+            case cell of
+                Just Cell ->
+                    group
+                        [ let
+                            r =
+                                gcs * 0.2
+                          in
+                          ellipse "dodgerblue" r r
+                            |> move (toFloat x * gcs) (toFloat y * gcs)
+                        ]
+
+                Nothing ->
+                    group []
 
         gridCellShapes =
             List.range 0 (gw - 1)
