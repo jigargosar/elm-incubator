@@ -127,6 +127,11 @@ placeGridShapesGroup gcs (G gw gh _) =
         (((toFloat gh * gcs) - gcs) * -0.5)
 
 
+placeGridShapes : Float -> Grid -> List Shape -> Shape
+placeGridShapes gcs g =
+    group >> placeGridShapesGroup gcs g
+
+
 render : Cwh -> Mxy -> Grid -> List Shape
 render cwh (Mxy mx my) ((G gw gh _) as g) =
     let
@@ -149,8 +154,7 @@ render cwh (Mxy mx my) ((G gw gh _) as g) =
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
     [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-    , group gridCellShapes
-        |> placeGridShapesGroup gcs g
+    , gridCellShapes |> placeGridShapes gcs g
     , group
         [ ellipse "black" 1 10
         , ellipse "black" 10 1
