@@ -2,7 +2,7 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Browser
 import Browser.Events
 import Dict exposing (Dict)
@@ -45,9 +45,23 @@ type alias Flags =
     { now : Int, bs : ( Float, Float ) }
 
 
+fillG : Cell -> Grid -> Grid
+fillG c (G w h _) =
+    List.range 0 (w - 1)
+        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
+        |> List.map (flip Tuple.pair c)
+        |> Dict.fromList
+        |> G w h
+
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) (G 10 8 Dict.empty)
+    let
+        grid =
+            G 10 8 Dict.empty
+                |> fillG Cell
+    in
+    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) grid
     , Cmd.none
     )
 
