@@ -93,12 +93,14 @@ view _ =
     Svg.svg [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx ]
         [ draw <|
             group
-                [ group
-                    [ rectangle "dodgerblue" 200 200
-                        |> move -100 -100
-                    , ellipse "red" 100 100
-                        |> move -100 -100
-                    ]
+                [ --group
+                  --    [ rectangle "dodgerblue" 200 200
+                  --        |> move -100 -100
+                  --    , ellipse "red" 100 100
+                  --        |> move -100 -100
+                  --    ]
+                  --,
+                  rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
                 , group gridCellsView
                     |> move
                         (((toFloat gw * gcwPx) - gcwPx) * -0.5)
