@@ -100,7 +100,9 @@ view _ =
                         |> move -100 -100
                     ]
                 , group gridCellsView
-                    |> move (((toFloat gw * gcwPx) - gcwPx) * -0.5) (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+                    |> move
+                        (((toFloat gw * gcwPx) - gcwPx) * -0.5)
+                        (((toFloat gh * gcwPx) - gcwPx) * -0.5)
                 ]
         ]
 
