@@ -109,7 +109,7 @@ view (M ((Cwh cw ch) as cwh) mxy g) =
             (List.map draw
                 (rectangle "rgba(153, 248, 255)" cw ch
                     :: rectangle "rgba(183, 169, 255)" cw ch
-                    :: render cwh mxy g
+                    :: renderGrid cwh mxy g
                 )
             )
         ]
@@ -132,8 +132,8 @@ placeGridShapes gcs g =
     group >> placeGridShapesGroup gcs g
 
 
-render : Cwh -> Mxy -> Grid -> List Shape
-render cwh (Mxy mx my) ((G gw gh _) as g) =
+renderGrid : Cwh -> Mxy -> Grid -> List Shape
+renderGrid cwh (Mxy mx my) ((G gw gh _) as g) =
     let
         gcs =
             getGcs cwh g
