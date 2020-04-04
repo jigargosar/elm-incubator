@@ -131,9 +131,6 @@ view (M cx com) =
         ( mx, my ) =
             toMXY cx com
 
-        _ =
-            Debug.log "(mx,my)" ( mx, my )
-
         gw =
             10
 
