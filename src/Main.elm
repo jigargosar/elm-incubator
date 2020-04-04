@@ -155,12 +155,17 @@ renderGrid cwh (Mxy mx my) ((G gw gh _) as g) =
     in
     [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
     , gridCellShapes |> placeGridShapes gcs g
-    , group
-        [ ellipse "black" 1 10
-        , ellipse "black" 10 1
-        ]
-        |> move mx my
+    , renderPointer (gcs * 0.25) mx my
     ]
+
+
+renderPointer : Float -> Float -> Float -> Shape
+renderPointer w x y =
+    group
+        [ ellipse "black" 1 w
+        , ellipse "black" w 1
+        ]
+        |> move x y
 
 
 pageMouseMoveDecoder : Decoder Msg
