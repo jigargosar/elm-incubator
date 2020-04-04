@@ -121,7 +121,7 @@ swPx =
 
 
 shPx =
-    600
+    800
 
 
 view : Model -> Html Msg
@@ -161,7 +161,7 @@ view (M cx com) =
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
                 , E.on "mousemove" canvasMouseMoveDecoder
                 , TA.id "canvas"
-                , TA.class [ "flex-auto" ]
+                , TA.class [ "w-100" ]
                 , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
                 ]
                 [ Svg.rect [ SA.x "-50%", SA.y "-50%", SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
@@ -181,7 +181,9 @@ view (M cx com) =
                         ]
                 ]
     in
-    div [ class "flex" ]
+    div
+        [ class "absolute absolute--fill flex"
+        ]
         [ svgView
         ]
 
