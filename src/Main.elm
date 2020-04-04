@@ -84,14 +84,10 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M (Cwh canvasW canvasH) com) =
+view (M (Cwh canvasW canvasH) (MXY screenMX screenMY)) =
     let
         ( mx, my ) =
-            toCanvasMXY com
-
-        toCanvasMXY : MXY -> ( Float, Float )
-        toCanvasMXY (MXY x y) =
-            ( x - canvasW * 0.5, y - canvasH * 0.5 )
+            ( screenMX - canvasW * 0.5, screenMY - canvasH * 0.5 )
     in
     div
         [ class "fixed absolute--fill"
