@@ -119,7 +119,7 @@ drawBoard swPx shPx mx my =
             8
 
         gcwPx =
-            (min swPx shPx * 0.8) / toFloat (max gw gh)
+            min (swPx / toFloat gw) (shPx / toFloat gh)
 
         drawCell x y =
             group
