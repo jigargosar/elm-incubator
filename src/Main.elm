@@ -190,6 +190,17 @@ view (M cx com) =
         ]
 
 
+svgContainer children =
+    Svg.svg
+        [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
+        , TA.class [ "flex-auto" ]
+        , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
+        , style "background-color" "rgba(183, 169, 255)"
+        ]
+        [ Svg.g [ SA.id "canvas" ] [ children ]
+        ]
+
+
 pageMouseMoveDecoder : Decoder Msg
 pageMouseMoveDecoder =
     JD.map2 OnCMM
