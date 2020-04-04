@@ -57,6 +57,13 @@ fillG c w h =
     G (Gwh w h) gd []
 
 
+gToList : Grid -> List ( ( Int, Int ), Maybe Cell )
+gToList (G (Gwh w h) gd _) =
+    List.range 0 (w - 1)
+        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
+        |> List.map (\gp -> ( gp, Dict.get gp gd ))
+
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
@@ -152,19 +159,23 @@ placeGridShapes gcs g =
     group >> placeGridShapesGroup gcs g
 
 
-renderGrid : Cwh -> Mxy -> Grid -> List Shape
-renderGrid cwh (Mxy mx my) ((G ((Gwh gw gh) as gwh) gd _) as g) =
-    let
-        gcs =
-            getGcs cwh gwh
+getGwh : Grid -> Gwh
+getGwh (G gwh _ _) =
+    gwh
 
-        drawCell : Int -> Int -> Shape
-        drawCell x y =
-            let
-                cell =
-                    Dict.get ( x, y ) gd
-            in
-            case cell of
+
+renderGrid : Cwh -> Mxy -> Grid -> List Shape
+renderGrid cwh (Mxy mx my) g =
+    let
+        (Gwh gw gh) =
+            getGwh g
+
+        gcs =
+            getGcs cwh (getGwh g)
+
+        drawCell : ( ( Int, Int ), Maybe Cell ) -> Shape
+        drawCell ( ( x, y ), mbc ) =
+            case mbc of
                 Just Cell ->
                     group
                         [ let
@@ -179,8 +190,8 @@ renderGrid cwh (Mxy mx my) ((G ((Gwh gw gh) as gwh) gd _) as g) =
                     group []
 
         gridCellShapes =
-            List.range 0 (gw - 1)
-                |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
+            gToList g
+                |> List.map drawCell
     in
     [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
     , gridCellShapes |> placeGridShapes gcs g
