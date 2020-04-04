@@ -190,6 +190,7 @@ view (M cx com) =
         ]
 
 
+svgContainer : List HM -> HM
 svgContainer children =
     Svg.svg
         [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
@@ -197,7 +198,8 @@ svgContainer children =
         , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
         , style "background-color" "rgba(183, 169, 255)"
         ]
-        [ Svg.g [ SA.id "canvas" ] [ children ]
+        [ Svg.g [ SA.id "canvas" ]
+            (draw (rectangle "none" swPx shPx) :: children)
         ]
 
 
