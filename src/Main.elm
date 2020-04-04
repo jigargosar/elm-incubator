@@ -147,7 +147,7 @@ view _ =
         svgView =
             Svg.svg
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
-                , TA.class [ "flex-auto pa5" ]
+                , TA.class [ "flex-auto" ]
                 , E.on "mousemove" logOffset
                 , TA.id "canvas"
                 ]
@@ -170,7 +170,7 @@ view _ =
                         ]
                 ]
     in
-    div [ class "flex" ]
+    div [ class "flex pa5" ]
         [ svgView
         ]
 
