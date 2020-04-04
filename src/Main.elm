@@ -89,14 +89,15 @@ renderGrid cwh (Mxy mx my) g =
     ]
 
 
+renderGridBg : Float -> Gwh -> Shape
 renderGridBg gcs (Gwh gw gh) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
 renderGCE : Float -> GCE -> Shape
 renderGCE gcs (GCE x y mbc) =
-    case mbc of
-        Just cell ->
+    let
+        rc cell =
             case cell of
                 Cell ->
                     group
@@ -107,9 +108,8 @@ renderGCE gcs (GCE x y mbc) =
                           ellipse "dodgerblue" r r
                             |> move (toFloat x * gcs) (toFloat y * gcs)
                         ]
-
-        Nothing ->
-            group []
+    in
+    mbc |> Maybe.map rc |> Maybe.withDefault (group [])
 
 
 renderPointer : Float -> Float -> Float -> Shape
