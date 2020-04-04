@@ -26,7 +26,7 @@ type Model
 
 
 type Grid
-    = G Int Int (Dict ( Int, Int ) Cell) (List ( Int, Int ))
+    = G Gwh (Dict ( Int, Int ) Cell) (List ( Int, Int ))
 
 
 type Cell
@@ -54,7 +54,7 @@ fillG c w h =
                 |> List.map (flip Tuple.pair c)
                 |> Dict.fromList
     in
-    G w h gd []
+    G (Gwh w h) gd []
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -142,7 +142,7 @@ getGcs (Cwh cw ch) (Gwh gw gh) =
 
 
 placeGridShapesGroup : Float -> Grid -> Shape -> Shape
-placeGridShapesGroup gcs (G gw gh _ _) =
+placeGridShapesGroup gcs (G (Gwh gw gh) _ _) =
     move (((toFloat gw * gcs) - gcs) * -0.5)
         (((toFloat gh * gcs) - gcs) * -0.5)
 
@@ -153,10 +153,10 @@ placeGridShapes gcs g =
 
 
 renderGrid : Cwh -> Mxy -> Grid -> List Shape
-renderGrid cwh (Mxy mx my) ((G gw gh gd _) as g) =
+renderGrid cwh (Mxy mx my) ((G ((Gwh gw gh) as gwh) gd _) as g) =
     let
         gcs =
-            getGcs cwh (Gwh gw gh)
+            getGcs cwh gwh
 
         drawCell : Int -> Int -> Shape
         drawCell x y =
