@@ -76,7 +76,7 @@ view _ =
         gcwPx =
             50
 
-        dc x y =
+        drawCell x y =
             group
                 [ let
                     r =
@@ -88,7 +88,7 @@ view _ =
 
         gridCellsView =
             List.range 0 (gw - 1)
-                |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (dc x))
+                |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
     Svg.svg [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx ]
         [ draw <|
