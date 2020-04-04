@@ -32,7 +32,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( M 600 600
-    , getCanvasEl
+    , Cmd.batch [ getCanvasEl ]
     )
 
 
@@ -52,6 +52,7 @@ getCanvasEl =
 type Msg
     = NoOp
     | GotCanvasEl (Result Dom.Error Dom.Element)
+    | GotVP Dom.Viewport
     | GotBS Int Int
 
 
@@ -80,7 +81,14 @@ update message model =
                 _ =
                     Debug.log "GotBS" ( w, h )
             in
-            ( model, Cmd.none )
+            ( model, getCanvasEl )
+
+        GotVP viewport ->
+            let
+                _ =
+                    Debug.log "GotVP" viewport
+            in
+            ( model, getCanvasEl )
 
 
 subscriptions : Model -> Sub Msg
@@ -131,7 +139,7 @@ view _ =
         svgView =
             Svg.svg
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
-                , TA.class [ "flex-auto" ]
+                , TA.class [ "flex-auto pa5" ]
                 , E.on "mousemove" logOffset
                 , TA.id "canvas"
                 ]
@@ -154,7 +162,7 @@ view _ =
                         ]
                 ]
     in
-    div [ class "flex pa5" ]
+    div [ class "flex" ]
         [ svgView
         ]
 
