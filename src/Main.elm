@@ -45,8 +45,8 @@ type alias Flags =
     { now : Int, bs : ( Float, Float ) }
 
 
-fillG : Cell -> Grid -> Grid
-fillG c (G w h _) =
+fillG : Cell -> Int -> Int -> Grid
+fillG c w h =
     List.range 0 (w - 1)
         |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
         |> List.map (flip Tuple.pair c)
@@ -58,8 +58,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         grid =
-            G 10 8 Dict.empty
-                |> fillG Cell
+            fillG Cell 10 8
     in
     ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) grid
     , Cmd.none
