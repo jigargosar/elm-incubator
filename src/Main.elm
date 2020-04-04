@@ -6,7 +6,7 @@ import Browser
 import Browser.Dom as Dom
 import Browser.Events
 import Html exposing (Html, div)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 import Html.Events as E
 import Json.Decode as JD exposing (Decoder)
 import Svg
@@ -159,11 +159,12 @@ view (M cx com) =
         svgView =
             Svg.svg
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
-                , TA.class [ "flex-auto" ]
                 , E.on "mousemove" canvasMouseMoveDecoder
                 , TA.id "canvas"
+                , TA.class [ "flex-auto" ]
+                , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
                 ]
-                [ Svg.rect [ SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
+                [ Svg.rect [ SA.x "-50%", SA.y "-50%", SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
                 , draw <|
                     group
                         [ rectangle "lightblue" swPx shPx
@@ -180,7 +181,7 @@ view (M cx com) =
                         ]
                 ]
     in
-    div [ class "flex pa5" ]
+    div [ class "flex" ]
         [ svgView
         ]
 
