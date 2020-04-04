@@ -162,9 +162,6 @@ getGwh (G gwh _ _) =
 renderGrid : Cwh -> Mxy -> Grid -> List Shape
 renderGrid cwh (Mxy mx my) g =
     let
-        (Gwh gw gh) =
-            getGwh g
-
         gcs =
             getGcs cwh (getGwh g)
 
@@ -174,7 +171,11 @@ renderGrid cwh (Mxy mx my) g =
                 |> group
                 |> placeGridShape gcs (getGwh g)
     in
-    [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
+    [ let
+        (Gwh gw gh) =
+            getGwh g
+      in
+      rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
     , gridCellsGroup
     , renderPointer (gcs * 0.25) mx my
     ]
