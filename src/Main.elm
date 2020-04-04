@@ -37,11 +37,6 @@ type Gwh
     = Gwh Int Int
 
 
-getGwh : Grid -> Gwh
-getGwh (G gwh _ _) =
-    gwh
-
-
 fillG : Cell -> Int -> Int -> Grid
 fillG c w h =
     let
@@ -79,25 +74,23 @@ placeGridShape gcs (Gwh gw gh) =
 renderGrid : Cwh -> Mxy -> Grid -> List Shape
 renderGrid cwh (Mxy mx my) g =
     let
+        (G gwh _ _) =
+            g
+
         gcs =
-            getGcs cwh (getGwh g)
+            getGcs cwh gwh
     in
-    [ renderGridBg gcs (getGwh g)
-    , renderGridCells gcs g
+    [ renderGridBg gcs gwh
+    , toGCEList g
+        |> List.map (renderGCE gcs)
+        |> group
+        |> placeGridShape gcs gwh
     , renderPointer (gcs * 0.25) mx my
     ]
 
 
 renderGridBg gcs (Gwh gw gh) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-
-
-renderGridCells : Float -> Grid -> Shape
-renderGridCells gcs g =
-    toGCEList g
-        |> List.map (renderGCE gcs)
-        |> group
-        |> placeGridShape gcs (getGwh g)
 
 
 renderGCE : Float -> GCE -> Shape
