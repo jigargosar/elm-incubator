@@ -84,29 +84,25 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M cx com) =
+view (M ((CX _ _ swPx shPx) as cx) com) =
     let
         ( mx, my ) =
             toMXY cx com
 
         toMXY : CX -> MXY -> ( Float, Float )
-        toMXY (CX ox oy w h) (MXY x y) =
-            ( (x - ox) / w * swPx - (swPx / 2), (y - oy) / h * shPx - (shPx / 2) )
-
-        swPx =
-            800
-
-        shPx =
-            600
+        toMXY _ (MXY x y) =
+            ( x - swPx * 0.5, y - shPx * 0.5 )
     in
     div
-        [ class "fixed absolute--fill flex"
+        [ class "fixed absolute--fill"
         , SE.on "mousemove" pageMouseMoveDecoder
         ]
         [ Svg.svg
             [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
-            , TA.class [ "flex-auto" ]
-            , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
+            , SA.width "100%"
+            , SA.height "100%"
+
+            --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
             (List.map draw (drawBoard swPx shPx mx my))
@@ -123,7 +119,7 @@ drawBoard swPx shPx mx my =
             8
 
         gcwPx =
-            50
+            (min swPx shPx * 0.8) / toFloat (max gw gh)
 
         drawCell x y =
             group
