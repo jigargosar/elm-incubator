@@ -166,7 +166,7 @@ view (M cx com) =
                 ]
                 [ draw <|
                     group
-                        [ rectangle "lightblue" swPx shPx
+                        [ rectangle "rgba(153, 248, 255)" swPx shPx
                         , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
                         , group gridCellsView
                             |> move
