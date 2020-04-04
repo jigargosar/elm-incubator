@@ -146,6 +146,7 @@ view (M cx com) =
         ]
 
 
+drawBoard : Float -> Float -> List S
 drawBoard mx my =
     let
         gw =
