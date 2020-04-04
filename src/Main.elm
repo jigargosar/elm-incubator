@@ -37,12 +37,17 @@ type Gwh
     = Gwh Int Int
 
 
+indices2d : Int -> Int -> List ( Int, Int )
+indices2d w h =
+    List.range 0 (w - 1)
+        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
+
+
 fillG : Cell -> Int -> Int -> Grid
 fillG c w h =
     let
         gd =
-            List.range 0 (w - 1)
-                |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
+            indices2d w h
                 |> List.foldl (flip Dict.insert c) Dict.empty
     in
     G (Gwh w h) gd []
