@@ -170,12 +170,12 @@ renderGrid cwh (Mxy mx my) g =
             getGwh g
       in
       rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-    , gridCellsGroup gcs g
+    , renderGridCells gcs g
     , renderPointer (gcs * 0.25) mx my
     ]
 
 
-gridCellsGroup gcs g =
+renderGridCells gcs g =
     gToList g
         |> List.map (\( ( x, y ), mbc ) -> drawCell gcs x y mbc)
         |> group
