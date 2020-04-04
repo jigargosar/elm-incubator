@@ -47,6 +47,15 @@ fillG c w h =
     G (Gwh w h) gd []
 
 
+toGCEList : Grid -> List GCE
+toGCEList (G (Gwh w h) gd _) =
+    let
+        toGCE x y =
+            GCE x y (Dict.get ( x, y ) gd)
+    in
+    rangeWh w h |> List.map (uncurry toGCE)
+
+
 rangeWh : Int -> Int -> List ( Int, Int )
 rangeWh w h =
     let
@@ -55,15 +64,6 @@ rangeWh w h =
             List.range 0 (h - 1) |> List.map (Tuple.pair x)
     in
     List.range 0 (w - 1) |> List.concatMap fn
-
-
-toGCEList : Grid -> List GCE
-toGCEList (G (Gwh w h) gd _) =
-    let
-        toGCE x y =
-            GCE x y (Dict.get ( x, y ) gd)
-    in
-    rangeWh w h |> List.map (uncurry toGCE)
 
 
 getGcs : Cwh -> Gwh -> Float
