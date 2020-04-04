@@ -2,7 +2,6 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
-import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
@@ -10,8 +9,6 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Html.Events as E
 import Json.Decode as JD exposing (Decoder)
-import Json.Decode.Extra
-import Json.Encode exposing (Value)
 import Svg
 import Svg.Attributes as SA
 import Task
@@ -24,12 +21,8 @@ import TypedSvg.Types as TT
 -- Model
 
 
-type BS
-    = BS Int Int
-
-
 type Model
-    = M BS CX
+    = M CX
 
 
 type CX
@@ -41,8 +34,8 @@ type alias Flags =
 
 
 init : Flags -> ( Model, Cmd Msg )
-init flags =
-    ( M (uncurry BS flags.bs) (CX 0 0 600 600)
+init _ =
+    ( M (CX 0 0 600 600)
     , getAll
     )
 
@@ -58,7 +51,7 @@ getAll =
         getCanvasEl =
             Dom.getElement "canvas" |> Task.attempt GotCanvasEl
     in
-    Cmd.batch [ getCanvasEl, Dom.getViewport |> Task.perform GotVP ]
+    Cmd.batch [ getCanvasEl ]
 
 
 
@@ -68,12 +61,12 @@ getAll =
 type Msg
     = NoOp
     | GotCanvasEl (Result Dom.Error Dom.Element)
-    | GotVP Dom.Viewport
     | GotBS Int Int
+    | OnCMM Float Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((M bs cx) as model) =
+update message ((M cx) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -90,12 +83,12 @@ update message ((M bs cx) as model) =
                 { x, y, width, height } =
                     el.element
             in
-            ( M bs (CX x y width height), Cmd.none )
+            ( M (CX x y width height), Cmd.none )
 
-        GotBS w h ->
-            ( M (BS w h) cx, getAll )
+        GotBS _ _ ->
+            ( M cx, getAll )
 
-        GotVP viewport ->
+        OnCMM x y ->
             ( model, Cmd.none )
 
 
@@ -148,7 +141,7 @@ view _ =
             Svg.svg
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
                 , TA.class [ "flex-auto" ]
-                , E.on "mousemove" logOffset
+                , E.on "mousemove" canvasMouseMoveDecoder
                 , TA.id "canvas"
                 ]
                 [ Svg.rect [ SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
@@ -175,19 +168,11 @@ view _ =
         ]
 
 
-logOffset : Decoder Msg
-logOffset =
-    JD.map2 Tuple.pair
-        (JD.field "offsetX" JD.int)
-        (JD.field "offsetY" JD.int)
-        |> JD.andThen
-            (\v ->
-                let
-                    _ =
-                        Debug.log "v" v
-                in
-                JD.fail ""
-            )
+canvasMouseMoveDecoder : Decoder Msg
+canvasMouseMoveDecoder =
+    JD.map2 OnCMM
+        (JD.field "offsetX" JD.float)
+        (JD.field "offsetY" JD.float)
 
 
 rectangle : String -> Float -> Float -> S
