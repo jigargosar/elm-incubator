@@ -164,21 +164,22 @@ renderGrid cwh (Mxy mx my) g =
     let
         gcs =
             getGcs cwh (getGwh g)
-
-        gridCellsGroup =
-            gToList g
-                |> List.map (\( ( x, y ), mbc ) -> drawCell gcs x y mbc)
-                |> group
-                |> placeGridShape gcs (getGwh g)
     in
     [ let
         (Gwh gw gh) =
             getGwh g
       in
       rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-    , gridCellsGroup
+    , gridCellsGroup gcs g
     , renderPointer (gcs * 0.25) mx my
     ]
+
+
+gridCellsGroup gcs g =
+    gToList g
+        |> List.map (\( ( x, y ), mbc ) -> drawCell gcs x y mbc)
+        |> group
+        |> placeGridShape gcs (getGwh g)
 
 
 drawCell gcs x y mbc =
