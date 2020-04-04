@@ -34,7 +34,7 @@ bsDecoder =
 
 
 type Model
-    = M Float Float
+    = M BS Float Float
 
 
 type alias Flags =
@@ -60,13 +60,16 @@ init encodedFlags =
                     in
                     Nothing
 
-                Ok flags ->
-                    Just flags
+                Ok ok ->
+                    Just ok
 
         _ =
             Debug.log "maybeFlags" maybeFlags
+
+        flags =
+            maybeFlags |> Maybe.withDefault (Flags 0 (BS 600 600))
     in
-    ( M 600 600
+    ( M flags.bs 600 600
     , getAll
     )
 
