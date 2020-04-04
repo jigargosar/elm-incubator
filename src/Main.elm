@@ -21,15 +21,15 @@ import TypedSvg.Types as TT
 
 
 type Model
-    = M Cwh MXY
+    = M Cwh Mxy
 
 
 type Cwh
     = Cwh Float Float
 
 
-type MXY
-    = MXY Float Float
+type Mxy
+    = Mxy Float Float
 
 
 type alias Flags =
@@ -38,7 +38,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( M (flags.bs |> uncurry Cwh) (MXY 0 0)
+    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0)
     , Cmd.none
     )
 
@@ -58,16 +58,16 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((M cx com) as model) =
+update message ((M ((Cwh cw ch) as cwh) mxy) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (Cwh (toFloat w) (toFloat h)) com, Cmd.none )
+            ( M (Cwh (toFloat w) (toFloat h)) mxy, Cmd.none )
 
         OnCMM x y ->
-            ( M cx (MXY x y), Cmd.none )
+            ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -84,32 +84,25 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M (Cwh canvasW canvasH) (MXY screenMX screenMY)) =
-    let
-        mx =
-            screenMX - canvasW * 0.5
-
-        my =
-            screenMY - canvasH * 0.5
-    in
+view (M (Cwh cw ch) (Mxy mx my)) =
     div
         [ class "fixed absolute--fill"
         , SE.on "mousemove" pageMouseMoveDecoder
         ]
         [ Svg.svg
-            [ TA.viewBox (canvasW * -0.5) (canvasH * -0.5) canvasW canvasH
+            [ TA.viewBox (cw * -0.5) (ch * -0.5) cw ch
             , SA.width "100%"
             , SA.height "100%"
 
             --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            (List.map draw (drawBoard canvasW canvasH mx my))
+            (List.map draw (drawBoard cw ch mx my))
         ]
 
 
 drawBoard : Float -> Float -> Float -> Float -> List S
-drawBoard swPx shPx mxPx myPx =
+drawBoard cw ch mx my =
     let
         gw =
             10
@@ -117,8 +110,8 @@ drawBoard swPx shPx mxPx myPx =
         gh =
             8
 
-        gcwPx =
-            min (swPx * (1 / toFloat (gw + 1))) (shPx * (1 / toFloat (gh + 1)))
+        gcw =
+            min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
                 * 0.8
 
         drawCell : Int -> Int -> S
@@ -126,28 +119,28 @@ drawBoard swPx shPx mxPx myPx =
             group
                 [ let
                     r =
-                        gcwPx * 0.2
+                        gcw * 0.2
                   in
                   ellipse "dodgerblue" r r
-                    |> move (toFloat x * gcwPx) (toFloat y * gcwPx)
+                    |> move (toFloat x * gcw) (toFloat y * gcw)
                 ]
 
         gridCellsView =
             List.range 0 (gw - 1)
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
-    [ rectangle "rgba(153, 248, 255)" swPx shPx
-    , rectangle "rgba(183, 169, 255)" swPx shPx
-    , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
+    [ rectangle "rgba(153, 248, 255)" cw ch
+    , rectangle "rgba(183, 169, 255)" cw ch
+    , rectangle "lightyellow" (toFloat (gw + 1) * gcw) (toFloat (gh + 1) * gcw)
     , group gridCellsView
         |> move
-            (((toFloat gw * gcwPx) - gcwPx) * -0.5)
-            (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+            (((toFloat gw * gcw) - gcw) * -0.5)
+            (((toFloat gh * gcw) - gcw) * -0.5)
     , group
         [ ellipse "black" 1 10
         , ellipse "black" 10 1
         ]
-        |> move mxPx myPx
+        |> move mx my
     ]
 
 
