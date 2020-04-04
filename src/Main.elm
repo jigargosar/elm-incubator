@@ -98,6 +98,7 @@ view _ =
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
                 , TA.class [ "flex-auto" ]
                 , E.on "mousemove" logOffset
+                , TA.id "canvas"
                 ]
                 [ Svg.rect [ SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
                 , draw <|
