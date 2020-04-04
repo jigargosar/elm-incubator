@@ -29,7 +29,11 @@ type BS
 
 
 type Model
-    = M BS Float Float
+    = M BS CX
+
+
+type CX
+    = CX Float Float Float Float
 
 
 type alias Flags =
@@ -38,7 +42,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( M (uncurry BS flags.bs) 600 600
+    ( M (uncurry BS flags.bs) (CX 0 0 600 600)
     , getAll
     )
 
@@ -69,7 +73,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
+update message ((M bs cx) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -85,8 +89,11 @@ update message model =
             let
                 _ =
                     Debug.log "el.element" el
+
+                { x, y, width, height } =
+                    el.element
             in
-            ( model, Cmd.none )
+            ( M bs (CX x y width height), Cmd.none )
 
         GotBS w h ->
             let
