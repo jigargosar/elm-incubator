@@ -18,11 +18,7 @@ import TypedSvg.Types as TT
 
 
 
--- Model
-
-
-type Model
-    = M Cwh Mxy Grid
+-- Grid
 
 
 type Grid
@@ -33,16 +29,17 @@ type Cell
     = Cell
 
 
-type Cwh
-    = Cwh Float Float
+type GCE
+    = GCE Int Int (Maybe Cell)
 
 
-type Mxy
-    = Mxy Float Float
+type Gwh
+    = Gwh Int Int
 
 
-type alias Flags =
-    { now : Int, bs : ( Float, Float ) }
+getGwh : Grid -> Gwh
+getGwh (G gwh _ _) =
+    gwh
 
 
 fillG : Cell -> Int -> Int -> Grid
@@ -57,10 +54,6 @@ fillG c w h =
     G (Gwh w h) gd []
 
 
-type GCE
-    = GCE Int Int (Maybe Cell)
-
-
 toGCEList : Grid -> List GCE
 toGCEList (G (Gwh w h) gd _) =
     let
@@ -69,6 +62,90 @@ toGCEList (G (Gwh w h) gd _) =
     in
     List.range 0 (w - 1)
         |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (toGCE x))
+
+
+getGcs : Cwh -> Gwh -> Float
+getGcs (Cwh cw ch) (Gwh gw gh) =
+    min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
+        * 0.8
+
+
+placeGridShape : Float -> Gwh -> Shape -> Shape
+placeGridShape gcs (Gwh gw gh) =
+    move (((toFloat gw * gcs) - gcs) * -0.5)
+        (((toFloat gh * gcs) - gcs) * -0.5)
+
+
+renderGrid : Cwh -> Mxy -> Grid -> List Shape
+renderGrid cwh (Mxy mx my) g =
+    let
+        gcs =
+            getGcs cwh (getGwh g)
+    in
+    [ renderGridBg gcs (getGwh g)
+    , renderGridCells gcs g
+    , renderPointer (gcs * 0.25) mx my
+    ]
+
+
+renderGridBg gcs (Gwh gw gh) =
+    rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
+
+
+renderGridCells : Float -> Grid -> Shape
+renderGridCells gcs g =
+    toGCEList g
+        |> List.map (renderGCE gcs)
+        |> group
+        |> placeGridShape gcs (getGwh g)
+
+
+renderGCE : Float -> GCE -> Shape
+renderGCE gcs (GCE x y mbc) =
+    case mbc of
+        Just cell ->
+            case cell of
+                Cell ->
+                    group
+                        [ let
+                            r =
+                                gcs * 0.2
+                          in
+                          ellipse "dodgerblue" r r
+                            |> move (toFloat x * gcs) (toFloat y * gcs)
+                        ]
+
+        Nothing ->
+            group []
+
+
+renderPointer : Float -> Float -> Float -> Shape
+renderPointer w x y =
+    group
+        [ ellipse "black" 1 w
+        , ellipse "black" w 1
+        ]
+        |> move x y
+
+
+
+-- Model
+
+
+type Model
+    = M Cwh Mxy Grid
+
+
+type Cwh
+    = Cwh Float Float
+
+
+type Mxy
+    = Mxy Float Float
+
+
+type alias Flags =
+    { now : Int, bs : ( Float, Float ) }
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -143,79 +220,6 @@ view (M ((Cwh cw ch) as cwh) mxy g) =
                 )
             )
         ]
-
-
-type Gwh
-    = Gwh Int Int
-
-
-getGcs : Cwh -> Gwh -> Float
-getGcs (Cwh cw ch) (Gwh gw gh) =
-    min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
-        * 0.8
-
-
-placeGridShape : Float -> Gwh -> Shape -> Shape
-placeGridShape gcs (Gwh gw gh) =
-    move (((toFloat gw * gcs) - gcs) * -0.5)
-        (((toFloat gh * gcs) - gcs) * -0.5)
-
-
-getGwh : Grid -> Gwh
-getGwh (G gwh _ _) =
-    gwh
-
-
-renderGrid : Cwh -> Mxy -> Grid -> List Shape
-renderGrid cwh (Mxy mx my) g =
-    let
-        gcs =
-            getGcs cwh (getGwh g)
-    in
-    [ renderGridBg gcs (getGwh g)
-    , renderGridCells gcs g
-    , renderPointer (gcs * 0.25) mx my
-    ]
-
-
-renderGridBg gcs (Gwh gw gh) =
-    rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-
-
-renderGridCells : Float -> Grid -> Shape
-renderGridCells gcs g =
-    toGCEList g
-        |> List.map (renderGCE gcs)
-        |> group
-        |> placeGridShape gcs (getGwh g)
-
-
-renderGCE : Float -> GCE -> Shape
-renderGCE gcs (GCE x y mbc) =
-    case mbc of
-        Just cell ->
-            case cell of
-                Cell ->
-                    group
-                        [ let
-                            r =
-                                gcs * 0.2
-                          in
-                          ellipse "dodgerblue" r r
-                            |> move (toFloat x * gcs) (toFloat y * gcs)
-                        ]
-
-        Nothing ->
-            group []
-
-
-renderPointer : Float -> Float -> Float -> Shape
-renderPointer w x y =
-    group
-        [ ellipse "black" 1 w
-        , ellipse "black" w 1
-        ]
-        |> move x y
 
 
 pageMouseMoveDecoder : Decoder Msg
