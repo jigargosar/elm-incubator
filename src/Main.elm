@@ -57,11 +57,18 @@ fillG c w h =
     G (Gwh w h) gd []
 
 
-gToList : Grid -> List ( ( Int, Int ), Maybe Cell )
-gToList (G (Gwh w h) gd _) =
+type GCE
+    = GCE Int Int (Maybe Cell)
+
+
+toGCEList : Grid -> List GCE
+toGCEList (G (Gwh w h) gd _) =
+    let
+        toGCE x y =
+            GCE x y (Dict.get ( x, y ) gd)
+    in
     List.range 0 (w - 1)
-        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (Tuple.pair x))
-        |> List.map (\gp -> ( gp, Dict.get gp gd ))
+        |> List.concatMap (\x -> List.range 0 (h - 1) |> List.map (toGCE x))
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -177,14 +184,14 @@ renderGridBg gcs (Gwh gw gh) =
 
 renderGridCells : Float -> Grid -> Shape
 renderGridCells gcs g =
-    gToList g
-        |> List.map (\( ( x, y ), mbc ) -> drawMaybeCell gcs x y mbc)
+    toGCEList g
+        |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs (getGwh g)
 
 
-drawMaybeCell : Float -> Int -> Int -> Maybe Cell -> Shape
-drawMaybeCell gcs x y mbc =
+renderGCE : Float -> GCE -> Shape
+renderGCE gcs (GCE x y mbc) =
     case mbc of
         Just cell ->
             case cell of
