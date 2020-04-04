@@ -32,7 +32,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( M 600 600
-    , Cmd.batch [ getCanvasEl ]
+    , getAll
     )
 
 
@@ -40,9 +40,14 @@ type alias CM =
     Cmd Msg
 
 
-getCanvasEl : CM
-getCanvasEl =
-    Dom.getElement "canvas" |> Task.attempt GotCanvasEl
+getAll : CM
+getAll =
+    let
+        getCanvasEl : CM
+        getCanvasEl =
+            Dom.getElement "canvas" |> Task.attempt GotCanvasEl
+    in
+    Cmd.batch [ getCanvasEl, Dom.getViewport |> Task.perform GotVP ]
 
 
 
@@ -81,14 +86,14 @@ update message model =
                 _ =
                     Debug.log "GotBS" ( w, h )
             in
-            ( model, getCanvasEl )
+            ( model, getAll )
 
         GotVP viewport ->
             let
                 _ =
                     Debug.log "GotVP" viewport
             in
-            ( model, getCanvasEl )
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
