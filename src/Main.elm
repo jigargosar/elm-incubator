@@ -113,8 +113,8 @@ type alias HM =
 
 
 toMXY : CX -> COM -> ( Float, Float )
-toMXY (CX _ _ w h) (COM x y) =
-    ( x / w * swPx - (swPx / 2), y / h * shPx - (shPx / 2) )
+toMXY (CX ox oy w h) (COM x y) =
+    ( (x - ox) / w * swPx - (swPx / 2), (y - oy) / h * shPx - (shPx / 2) )
 
 
 swPx =
@@ -162,7 +162,6 @@ view (M cx com) =
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
                 , TA.class [ "flex-auto" ]
                 , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
-                , SE.on "mousemove" canvasMouseMoveDecoder
                 ]
                 [ Svg.rect
                     [ TA.id "canvas"
@@ -190,7 +189,8 @@ view (M cx com) =
                 ]
     in
     div
-        [ class "absolute absolute--fill flex"
+        [ class "absolute absolute--fill flex pa5"
+        , SE.on "mousemove" canvasMouseMoveDecoder
         ]
         [ svgView
         ]
@@ -199,8 +199,8 @@ view (M cx com) =
 canvasMouseMoveDecoder : Decoder Msg
 canvasMouseMoveDecoder =
     JD.map2 OnCMM
-        (JD.field "offsetX" JD.float)
-        (JD.field "offsetY" JD.float)
+        (JD.field "pageX" JD.float)
+        (JD.field "pageY" JD.float)
 
 
 rectangle : String -> Float -> Float -> S
