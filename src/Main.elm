@@ -141,12 +141,12 @@ view (M cx com) =
             , style "background-color" "rgba(183, 169, 255)"
             ]
             [ Svg.g [ SA.id "canvas" ]
-                (List.map draw (rectangle "none" swPx shPx :: drawing mx my))
+                (List.map draw (rectangle "none" swPx shPx :: drawBoard mx my))
             ]
         ]
 
 
-drawing mx my =
+drawBoard mx my =
     let
         gw =
             10
