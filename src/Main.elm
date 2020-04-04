@@ -28,53 +28,17 @@ type BS
     = BS Int Int
 
 
-bsDecoder : Decoder BS
-bsDecoder =
-    tupleDecoder JD.int JD.int
-        |> JD.map (uncurry BS)
-
-
-tupleDecoder : Decoder a -> Decoder b -> Decoder ( a, b )
-tupleDecoder da db =
-    JD.map2 Tuple.pair
-        (JD.index 0 da)
-        (JD.index 1 db)
-
-
 type Model
     = M BS Float Float
 
 
 type alias Flags =
-    { now : Int, bs : BS }
+    { now : Int, bs : ( Int, Int ) }
 
 
-flagsDecoder : Decoder Flags
-flagsDecoder =
-    JD.map2 Flags
-        (JD.field "now" JD.int)
-        (JD.field "bs" bsDecoder)
-
-
-init : Value -> ( Model, Cmd Msg )
-init encodedFlags =
-    let
-        flags =
-            case JD.decodeValue flagsDecoder encodedFlags of
-                Err e ->
-                    let
-                        _ =
-                            Debug.log "flags error" (JD.errorToString e)
-                    in
-                    Debug.todo "impl flags error handling"
-
-                Ok ok ->
-                    ok
-
-        _ =
-            Debug.log "flags" flags
-    in
-    ( M flags.bs 600 600
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( M (uncurry BS flags.bs) 600 600
     , getAll
     )
 
@@ -315,7 +279,7 @@ draw (S c (TF dx dy) s) =
 -- Main
 
 
-main : Program Value Model Msg
+main : Program Flags Model Msg
 main =
     Browser.element
         { init = init
