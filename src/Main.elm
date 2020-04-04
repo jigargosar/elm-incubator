@@ -164,14 +164,7 @@ view (M cx com) =
                 [ Svg.rect [ SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
                 , draw <|
                     group
-                        [ --group
-                          --    [ rectangle "dodgerblue" 200 200
-                          --        |> move -100 -100
-                          --    , ellipse "red" 100 100
-                          --        |> move -100 -100
-                          --    ]
-                          --,
-                          rectangle "lightblue" swPx shPx
+                        [ rectangle "lightblue" swPx shPx
                         , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
                         , group gridCellsView
                             |> move
@@ -181,6 +174,7 @@ view (M cx com) =
                             [ ellipse "black" 1 10
                             , ellipse "black" 10 1
                             ]
+                            |> move mx my
                         ]
                 ]
     in
