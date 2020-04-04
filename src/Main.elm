@@ -5,6 +5,7 @@ module Main exposing (main)
 import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
+import Dict exposing (Dict)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Json.Decode as JD exposing (Decoder)
@@ -21,7 +22,15 @@ import TypedSvg.Types as TT
 
 
 type Model
-    = M Cwh Mxy
+    = M Cwh Mxy Gd
+
+
+type Gd
+    = Gd Float Float (Dict ( Int, Int ) Cell)
+
+
+type Cell
+    = Water
 
 
 type Cwh
@@ -38,7 +47,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0)
+    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) (Gd 10 8 Dict.empty)
     , Cmd.none
     )
 
@@ -58,16 +67,16 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((M ((Cwh cw ch) as cwh) mxy) as model) =
+update message ((M ((Cwh cw ch) as cwh) mxy g) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (Cwh (toFloat w) (toFloat h)) mxy, Cmd.none )
+            ( M (Cwh (toFloat w) (toFloat h)) mxy g, Cmd.none )
 
         OnCMM x y ->
-            ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)), Cmd.none )
+            ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)) g, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -84,7 +93,7 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M (Cwh cw ch) (Mxy mx my)) =
+view (M (Cwh cw ch) mxy g) =
     div
         [ class "fixed absolute--fill"
         , SE.on "mousemove" pageMouseMoveDecoder
@@ -97,12 +106,12 @@ view (M (Cwh cw ch) (Mxy mx my)) =
             --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            (List.map draw (drawBoard cw ch mx my))
+            (List.map draw (drawBoard cw ch mxy g))
         ]
 
 
-drawBoard : Float -> Float -> Float -> Float -> List S
-drawBoard cw ch mx my =
+drawBoard : Float -> Float -> Mxy -> Gd -> List Shape
+drawBoard cw ch (Mxy mx my) g =
     let
         gw =
             10
@@ -114,7 +123,7 @@ drawBoard cw ch mx my =
             min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
                 * 0.8
 
-        drawCell : Int -> Int -> S
+        drawCell : Int -> Int -> Shape
         drawCell x y =
             group
                 [ let
@@ -151,39 +160,39 @@ pageMouseMoveDecoder =
         (JD.field "pageY" JD.float)
 
 
-rectangle : String -> Float -> Float -> S
+rectangle : String -> Float -> Float -> Shape
 rectangle c w h =
-    R w h |> S c [] initialTransform
+    Rectangle w h |> S c [] initialTransform
 
 
-ellipse : String -> Float -> Float -> S
+ellipse : String -> Float -> Float -> Shape
 ellipse c w h =
-    E w h |> S c [] initialTransform
+    Ellipse w h |> S c [] initialTransform
 
 
-group : List S -> S
+group : List Shape -> Shape
 group ss =
-    G ss |> S "none" [] initialTransform
+    Group ss |> S "none" [] initialTransform
 
 
-move : Float -> Float -> S -> S
+move : Float -> Float -> Shape -> Shape
 move dx dy =
     mapTransform <| translateBy dx dy
 
 
-mapTransform : (TF -> TF) -> S -> S
+mapTransform : (TF -> TF) -> Shape -> Shape
 mapTransform fn (S c cs tx f) =
     S c cs (fn tx) f
 
 
-type F
-    = R Float Float
-    | E Float Float
-    | G (List S)
+type Form
+    = Rectangle Float Float
+    | Ellipse Float Float
+    | Group (List Shape)
 
 
-type S
-    = S String (List String) TF F
+type Shape
+    = S String (List String) TF Form
 
 
 type TF
@@ -200,10 +209,10 @@ translateBy dx dy (TF x y) =
     TF (x + dx) (y + dy)
 
 
-draw : S -> HM
+draw : Shape -> HM
 draw (S c cs (TF dx dy) s) =
     case s of
-        R w h ->
+        Rectangle w h ->
             Svg.rect
                 [ Px.width w
                 , Px.height h
@@ -216,7 +225,7 @@ draw (S c cs (TF dx dy) s) =
                 ]
                 []
 
-        E w h ->
+        Ellipse w h ->
             Svg.ellipse
                 [ Px.rx w
                 , Px.ry h
@@ -226,7 +235,7 @@ draw (S c cs (TF dx dy) s) =
                 ]
                 []
 
-        G ss ->
+        Group ss ->
             Svg.g
                 [ TA.transform [ TT.Translate dx dy ]
                 , SA.fill c
