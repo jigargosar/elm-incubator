@@ -164,20 +164,22 @@ view (M cx com) =
                 , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
                 , style "background-color" "rgba(183, 169, 255)"
                 ]
-                [ draw <|
-                    group
-                        [ rectangle "rgba(153, 248, 255)" swPx shPx
-                        , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
-                        , group gridCellsView
-                            |> move
-                                (((toFloat gw * gcwPx) - gcwPx) * -0.5)
-                                (((toFloat gh * gcwPx) - gcwPx) * -0.5)
-                        , group
-                            [ ellipse "black" 1 10
-                            , ellipse "black" 10 1
+                [ Svg.g [ SA.id "canvas" ]
+                    [ draw <|
+                        group
+                            [ rectangle "rgba(153, 248, 255)" swPx shPx
+                            , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
+                            , group gridCellsView
+                                |> move
+                                    (((toFloat gw * gcwPx) - gcwPx) * -0.5)
+                                    (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+                            , group
+                                [ ellipse "black" 1 10
+                                , ellipse "black" 10 1
+                                ]
+                                |> move mx my
                             ]
-                            |> move mx my
-                        ]
+                    ]
                 ]
     in
     div
