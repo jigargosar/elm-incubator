@@ -118,7 +118,7 @@ view (M ((Cwh cw ch) as cwh) mxy g) =
 render : Cwh -> Mxy -> Grid -> List Shape
 render (Cwh cw ch) (Mxy mx my) (G gw gh _) =
     let
-        gcw =
+        gcs =
             min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
                 * 0.8
 
@@ -127,21 +127,21 @@ render (Cwh cw ch) (Mxy mx my) (G gw gh _) =
             group
                 [ let
                     r =
-                        gcw * 0.2
+                        gcs * 0.2
                   in
                   ellipse "dodgerblue" r r
-                    |> move (toFloat x * gcw) (toFloat y * gcw)
+                    |> move (toFloat x * gcs) (toFloat y * gcs)
                 ]
 
         gridCellsView =
             List.range 0 (gw - 1)
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
-    [ rectangle "lightyellow" (toFloat (gw + 1) * gcw) (toFloat (gh + 1) * gcw)
+    [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
     , group gridCellsView
         |> move
-            (((toFloat gw * gcw) - gcw) * -0.5)
-            (((toFloat gh * gcw) - gcw) * -0.5)
+            (((toFloat gw * gcs) - gcs) * -0.5)
+            (((toFloat gh * gcs) - gcs) * -0.5)
     , group
         [ ellipse "black" 1 10
         , ellipse "black" 10 1
