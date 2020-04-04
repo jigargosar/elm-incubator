@@ -118,7 +118,7 @@ toMXY (CX ox oy w h) (COM x y) =
 
 
 swPx =
-    600
+    800
 
 
 shPx =
@@ -164,16 +164,7 @@ view (M cx com) =
                 , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
                 , style "background-color" "rgba(5, 0, 255, .2902)"
                 ]
-                [ Svg.rect
-                    [ TA.id "canvas"
-                    , SA.x "-50%"
-                    , SA.y "-50%"
-                    , SA.width "100%"
-                    , SA.height "100%"
-                    , SA.fill "lightblue"
-                    ]
-                    []
-                , draw <|
+                [ draw <|
                     group
                         [ rectangle "lightblue" swPx shPx
                         , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
