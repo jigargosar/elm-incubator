@@ -26,7 +26,7 @@ type Grid
 
 
 type Cell
-    = Cell
+    = Water
 
 
 type GCE
@@ -106,7 +106,7 @@ renderGCE gcs (GCE x y mbc) =
     let
         rc cell =
             case cell of
-                Cell ->
+                Water ->
                     group
                         [ let
                             r =
@@ -152,7 +152,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         grid =
-            fillG Cell 10 8
+            fillG Water 10 8
     in
     ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) grid
     , Cmd.none
