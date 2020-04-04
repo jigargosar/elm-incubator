@@ -11,6 +11,7 @@ import Html.Events as E
 import Json.Decode as JD exposing (Decoder)
 import Svg
 import Svg.Attributes as SA
+import Svg.Events as SE
 import Task
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
@@ -159,12 +160,19 @@ view (M cx com) =
         svgView =
             Svg.svg
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
-                , E.on "mousemove" canvasMouseMoveDecoder
-                , TA.id "canvas"
-                , TA.class [ "w-100" ]
+                , TA.class [ "flex-auto" ]
                 , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
+                , SE.on "mousemove" canvasMouseMoveDecoder
                 ]
-                [ Svg.rect [ SA.x "-50%", SA.y "-50%", SA.width "100%", SA.height "100%", SA.fill "lightblue" ] []
+                [ Svg.rect
+                    [ TA.id "canvas"
+                    , SA.x "-50%"
+                    , SA.y "-50%"
+                    , SA.width "100%"
+                    , SA.height "100%"
+                    , SA.fill "lightblue"
+                    ]
+                    []
                 , draw <|
                     group
                         [ rectangle "lightblue" swPx shPx
