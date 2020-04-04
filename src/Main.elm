@@ -178,12 +178,12 @@ view (M cx com) =
         [ class "fixed absolute--fill flex"
         , SE.on "mousemove" pageMouseMoveDecoder
         ]
-        [ svgContainer svgView
+        [ svgCanvas svgView
         ]
 
 
-svgContainer : List HM -> HM
-svgContainer children =
+svgCanvas : List HM -> HM
+svgCanvas children =
     Svg.svg
         [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
         , TA.class [ "flex-auto" ]
