@@ -110,7 +110,7 @@ view (M ((CX _ _ swPx shPx) as cx) com) =
 
 
 drawBoard : Float -> Float -> Float -> Float -> List S
-drawBoard swPx shPx mx my =
+drawBoard swPx shPx mxPx myPx =
     let
         gw =
             10
@@ -147,7 +147,7 @@ drawBoard swPx shPx mx my =
         [ ellipse "black" 1 10
         , ellipse "black" 10 1
         ]
-        |> move mx my
+        |> move mxPx myPx
     ]
 
 
