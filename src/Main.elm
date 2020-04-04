@@ -121,6 +121,12 @@ getGcs (Cwh cw ch) (G gw gh _) =
         * 0.8
 
 
+placeGridShapesGroup : Float -> Grid -> Shape -> Shape
+placeGridShapesGroup gcs (G gw gh _) =
+    move (((toFloat gw * gcs) - gcs) * -0.5)
+        (((toFloat gh * gcs) - gcs) * -0.5)
+
+
 render : Cwh -> Mxy -> Grid -> List Shape
 render cwh (Mxy mx my) ((G gw gh _) as g) =
     let
@@ -138,15 +144,13 @@ render cwh (Mxy mx my) ((G gw gh _) as g) =
                     |> move (toFloat x * gcs) (toFloat y * gcs)
                 ]
 
-        gridCellsView =
+        gridCellShapes =
             List.range 0 (gw - 1)
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
     [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-    , group gridCellsView
-        |> move
-            (((toFloat gw * gcs) - gcs) * -0.5)
-            (((toFloat gh * gcs) - gcs) * -0.5)
+    , group gridCellShapes
+        |> placeGridShapesGroup gcs g
     , group
         [ ellipse "black" 1 10
         , ellipse "black" 10 1
