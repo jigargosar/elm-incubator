@@ -175,6 +175,7 @@ renderGrid cwh (Mxy mx my) g =
     ]
 
 
+renderGridCells : Float -> Grid -> Shape
 renderGridCells gcs g =
     gToList g
         |> List.map (\( ( x, y ), mbc ) -> drawCell gcs x y mbc)
@@ -182,6 +183,7 @@ renderGridCells gcs g =
         |> placeGridShape gcs (getGwh g)
 
 
+drawCell : Float -> Int -> Int -> Maybe Cell -> Shape
 drawCell gcs x y mbc =
     case mbc of
         Just Cell ->
