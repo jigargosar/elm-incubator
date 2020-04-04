@@ -26,7 +26,7 @@ type Model
 
 
 type Grid
-    = G Float Float (Dict ( Int, Int ) Cell)
+    = G Int Int (Dict ( Int, Int ) Cell)
 
 
 type Cell
@@ -111,14 +111,8 @@ view (M (Cwh cw ch) mxy g) =
 
 
 drawBoard : Float -> Float -> Mxy -> Grid -> List Shape
-drawBoard cw ch (Mxy mx my) g =
+drawBoard cw ch (Mxy mx my) (G gw gh _) =
     let
-        gw =
-            10
-
-        gh =
-            8
-
         gcw =
             min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
                 * 0.8
