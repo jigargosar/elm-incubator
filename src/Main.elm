@@ -118,9 +118,8 @@ view _ =
                         ]
                 ]
     in
-    div [ class "flex" ]
-        [ div [] [ text "foo bar" ]
-        , svgView
+    div [ class "flex pa5" ]
+        [ svgView
         ]
 
 
