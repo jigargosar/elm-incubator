@@ -122,6 +122,7 @@ drawBoard swPx shPx mxPx myPx =
             min (swPx * (1 / toFloat (gw + 1))) (shPx * (1 / toFloat (gh + 1)))
                 * 0.8
 
+        drawCell : Int -> Int -> S
         drawCell x y =
             group
                 [ let
