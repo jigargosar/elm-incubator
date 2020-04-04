@@ -3,7 +3,10 @@ module Main exposing (main)
 -- Browser.Element Scaffold
 
 import Browser
-import Html exposing (Html)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
+import Html.Events as E
+import Json.Decode as JD exposing (Decoder)
 import Svg
 import Svg.Attributes as SA
 import TypedSvg.Attributes as TA
@@ -89,24 +92,47 @@ view _ =
         gridCellsView =
             List.range 0 (gw - 1)
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
-    in
-    Svg.svg [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx ]
-        [ draw <|
-            group
-                [ --group
-                  --    [ rectangle "dodgerblue" 200 200
-                  --        |> move -100 -100
-                  --    , ellipse "red" 100 100
-                  --        |> move -100 -100
-                  --    ]
-                  --,
-                  rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
-                , group gridCellsView
-                    |> move
-                        (((toFloat gw * gcwPx) - gcwPx) * -0.5)
-                        (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+
+        svgView =
+            Svg.svg
+                [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
+                , TA.class [ "flex-auto" ]
+                , E.on "mousemove" logOffset
                 ]
+                [ draw <|
+                    group
+                        [ --group
+                          --    [ rectangle "dodgerblue" 200 200
+                          --        |> move -100 -100
+                          --    , ellipse "red" 100 100
+                          --        |> move -100 -100
+                          --    ]
+                          --,
+                          rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
+                        , group gridCellsView
+                            |> move
+                                (((toFloat gw * gcwPx) - gcwPx) * -0.5)
+                                (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+                        ]
+                ]
+    in
+    div [ class "flex" ]
+        [ div [] [ text "foo bar" ]
+        , svgView
         ]
+
+
+logOffset : Decoder Msg
+logOffset =
+    JD.field "offsetY" JD.int
+        |> JD.andThen
+            (\v ->
+                let
+                    _ =
+                        Debug.log "v" v
+                in
+                JD.fail ""
+            )
 
 
 rectangle : String -> Float -> Float -> S
