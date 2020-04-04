@@ -137,6 +137,7 @@ drawBoard swPx shPx mx my =
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
     [ rectangle "rgba(153, 248, 255)" swPx shPx
+    , rectangle "rgba(183, 169, 255)" swPx shPx
     , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
     , group gridCellsView
         |> move
