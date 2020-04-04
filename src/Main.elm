@@ -185,8 +185,7 @@ renderGrid cwh (Mxy mx my) g =
                     group []
 
         gridCellShapes =
-            gToList g
-                |> List.map drawCell
+            gToList g |> List.map drawCell
     in
     [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
     , group gridCellShapes |> placeGridShape gcs (getGwh g)
