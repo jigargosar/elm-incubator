@@ -177,6 +177,10 @@ view (M cx com) =
                             |> move
                                 (((toFloat gw * gcwPx) - gcwPx) * -0.5)
                                 (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+                        , group
+                            [ ellipse "black" 1 10
+                            , ellipse "black" 10 1
+                            ]
                         ]
                 ]
     in
