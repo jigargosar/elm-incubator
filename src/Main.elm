@@ -2,8 +2,8 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
+import Basics.Extra exposing (uncurry)
 import Browser
-import Browser.Dom as Dom
 import Browser.Events
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
@@ -11,7 +11,6 @@ import Json.Decode as JD exposing (Decoder)
 import Svg
 import Svg.Attributes as SA
 import Svg.Events as SE
-import Task
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
@@ -34,28 +33,18 @@ type MXY
 
 
 type alias Flags =
-    { now : Int, bs : ( Int, Int ) }
+    { now : Int, bs : ( Float, Float ) }
 
 
 init : Flags -> ( Model, Cmd Msg )
-init _ =
-    ( M (CX 0 0 600 600) (MXY 0 0)
-    , getAll
+init flags =
+    ( M (flags.bs |> uncurry (CX 0 0)) (MXY 0 0)
+    , Cmd.none
     )
 
 
 type alias CM =
     Cmd Msg
-
-
-getAll : CM
-getAll =
-    let
-        getCanvasEl : CM
-        getCanvasEl =
-            Dom.getElement "canvas" |> Task.attempt GotCanvasEl
-    in
-    Cmd.batch [ getCanvasEl ]
 
 
 
@@ -64,7 +53,6 @@ getAll =
 
 type Msg
     = NoOp
-    | GotCanvasEl (Result Dom.Error Dom.Element)
     | GotBS Int Int
     | OnCMM Float Float
 
@@ -75,22 +63,8 @@ update message ((M cx com) as model) =
         NoOp ->
             ( model, Cmd.none )
 
-        GotCanvasEl (Err (Dom.NotFound domId)) ->
-            let
-                _ =
-                    Debug.log "canvas element not found" domId
-            in
-            ( model, Cmd.none )
-
-        GotCanvasEl (Ok el) ->
-            let
-                { x, y, width, height } =
-                    el.element
-            in
-            ( M (CX x y width height) com, Cmd.none )
-
-        GotBS _ _ ->
-            ( model, getAll )
+        GotBS w h ->
+            ( M (CX 0 0 (toFloat w) (toFloat h)) com, Cmd.none )
 
         OnCMM x y ->
             ( M cx (MXY x y), Cmd.none )
