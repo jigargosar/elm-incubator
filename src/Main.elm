@@ -87,26 +87,15 @@ update message ((M bs cx) as model) =
 
         GotCanvasEl (Ok el) ->
             let
-                _ =
-                    Debug.log "el.element" el
-
                 { x, y, width, height } =
                     el.element
             in
             ( M bs (CX x y width height), Cmd.none )
 
         GotBS w h ->
-            let
-                _ =
-                    Debug.log "GotBS" ( w, h )
-            in
-            ( model, getAll )
+            ( M (BS w h) cx, getAll )
 
         GotVP viewport ->
-            let
-                _ =
-                    Debug.log "GotVP" viewport
-            in
             ( model, Cmd.none )
 
 
