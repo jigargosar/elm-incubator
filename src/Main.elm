@@ -145,7 +145,7 @@ view _ =
                         ]
                 ]
     in
-    div [ class "flex" ]
+    div [ class "flex pa5" ]
         [ svgView
         ]
 
