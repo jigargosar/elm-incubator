@@ -5,10 +5,11 @@ module Main exposing (main)
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
-import Html exposing (Html, div, text)
+import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Html.Events as E
 import Json.Decode as JD exposing (Decoder)
+import Json.Encode exposing (Value)
 import Svg
 import Svg.Attributes as SA
 import Task
@@ -21,16 +22,42 @@ import TypedSvg.Types as TT
 -- Model
 
 
+type BS
+    = BS Int Int
+
+
 type Model
     = M Float Float
 
 
 type alias Flags =
-    ()
+    { now : Int }
 
 
-init : Flags -> ( Model, Cmd Msg )
-init _ =
+flagsDecoder : Decoder Flags
+flagsDecoder =
+    JD.map Flags
+        (JD.field "now" JD.int)
+
+
+init : Value -> ( Model, Cmd Msg )
+init encodedFlags =
+    let
+        maybeFlags =
+            case JD.decodeValue flagsDecoder encodedFlags of
+                Err e ->
+                    let
+                        _ =
+                            Debug.log "flags error" (JD.errorToString e)
+                    in
+                    Nothing
+
+                Ok flags ->
+                    Just flags
+
+        _ =
+            Debug.log "maybeFlags" maybeFlags
+    in
     ( M 600 600
     , getAll
     )
@@ -272,7 +299,7 @@ draw (S c (TF dx dy) s) =
 -- Main
 
 
-main : Program Flags Model Msg
+main : Program Value Model Msg
 main =
     Browser.element
         { init = init
