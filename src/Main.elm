@@ -37,8 +37,8 @@ bsDecoder =
 tupleDecoder : Decoder a -> Decoder b -> Decoder ( a, b )
 tupleDecoder da db =
     JD.map2 Tuple.pair
-        (JD.field "0" da)
-        (JD.field "1" db)
+        (JD.index 0 da)
+        (JD.index 1 db)
 
 
 type Model
