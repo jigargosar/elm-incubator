@@ -158,28 +158,27 @@ view (M cx com) =
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
 
         svgView =
-            svgContainer
-                [ draw <|
-                    group
-                        [ rectangle "rgba(153, 248, 255)" swPx shPx
-                        , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
-                        , group gridCellsView
-                            |> move
-                                (((toFloat gw * gcwPx) - gcwPx) * -0.5)
-                                (((toFloat gh * gcwPx) - gcwPx) * -0.5)
-                        , group
-                            [ ellipse "black" 1 10
-                            , ellipse "black" 10 1
-                            ]
-                            |> move mx my
+            [ draw <|
+                group
+                    [ rectangle "rgba(153, 248, 255)" swPx shPx
+                    , rectangle "lightyellow" (toFloat (gw + 1) * gcwPx) (toFloat (gh + 1) * gcwPx)
+                    , group gridCellsView
+                        |> move
+                            (((toFloat gw * gcwPx) - gcwPx) * -0.5)
+                            (((toFloat gh * gcwPx) - gcwPx) * -0.5)
+                    , group
+                        [ ellipse "black" 1 10
+                        , ellipse "black" 10 1
                         ]
-                ]
+                        |> move mx my
+                    ]
+            ]
     in
     div
         [ class "fixed absolute--fill flex"
         , SE.on "mousemove" pageMouseMoveDecoder
         ]
-        [ svgView
+        [ svgContainer svgView
         ]
 
 
