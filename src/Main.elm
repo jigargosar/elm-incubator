@@ -165,14 +165,14 @@ renderGrid cwh (Mxy mx my) g =
         gcs =
             getGcs cwh (getGwh g)
     in
-    [ let
-        (Gwh gw gh) =
-            getGwh g
-      in
-      rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
+    [ renderGridBg gcs (getGwh g)
     , renderGridCells gcs g
     , renderPointer (gcs * 0.25) mx my
     ]
+
+
+renderGridBg gcs (Gwh gw gh) =
+    rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
 renderGridCells : Float -> Grid -> Shape
