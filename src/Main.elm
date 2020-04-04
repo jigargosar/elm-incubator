@@ -21,11 +21,11 @@ import TypedSvg.Types as TT
 
 
 type Model
-    = M CWH MXY
+    = M Cwh MXY
 
 
-type CWH
-    = CWH Float Float
+type Cwh
+    = Cwh Float Float
 
 
 type MXY
@@ -38,7 +38,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( M (flags.bs |> uncurry CWH) (MXY 0 0)
+    ( M (flags.bs |> uncurry Cwh) (MXY 0 0)
     , Cmd.none
     )
 
@@ -64,7 +64,7 @@ update message ((M cx com) as model) =
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (CWH (toFloat w) (toFloat h)) com, Cmd.none )
+            ( M (Cwh (toFloat w) (toFloat h)) com, Cmd.none )
 
         OnCMM x y ->
             ( M cx (MXY x y), Cmd.none )
@@ -84,7 +84,7 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M (CWH canvasW canvasH) com) =
+view (M (Cwh canvasW canvasH) com) =
     let
         ( mx, my ) =
             toCanvasMXY com
