@@ -109,9 +109,7 @@ view (M cx com) =
             , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            [ Svg.g [ SA.id "canvas" ]
-                (List.map draw (rectangle "none" swPx shPx :: drawBoard swPx shPx mx my))
-            ]
+            (List.map draw (drawBoard swPx shPx mx my))
         ]
 
 
