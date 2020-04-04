@@ -2,6 +2,7 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
+import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Dom as Dom
 import Browser.Events
@@ -9,6 +10,7 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Html.Events as E
 import Json.Decode as JD exposing (Decoder)
+import Json.Decode.Extra
 import Json.Encode exposing (Value)
 import Svg
 import Svg.Attributes as SA
@@ -28,9 +30,15 @@ type BS
 
 bsDecoder : Decoder BS
 bsDecoder =
-    JD.map2 BS
-        (JD.field "0" JD.int)
-        (JD.field "1" JD.int)
+    tupleDecoder JD.int JD.int
+        |> JD.map (uncurry BS)
+
+
+tupleDecoder : Decoder a -> Decoder b -> Decoder ( a, b )
+tupleDecoder da db =
+    JD.map2 Tuple.pair
+        (JD.field "0" da)
+        (JD.field "1" db)
 
 
 type Model
