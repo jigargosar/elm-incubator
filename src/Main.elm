@@ -30,7 +30,7 @@ type Grid
 
 
 type Cell
-    = Water
+    = Cell
 
 
 type Cwh
