@@ -186,15 +186,17 @@ renderGridCells gcs g =
 drawCell : Float -> Int -> Int -> Maybe Cell -> Shape
 drawCell gcs x y mbc =
     case mbc of
-        Just Cell ->
-            group
-                [ let
-                    r =
-                        gcs * 0.2
-                  in
-                  ellipse "dodgerblue" r r
-                    |> move (toFloat x * gcs) (toFloat y * gcs)
-                ]
+        Just cell ->
+            case cell of
+                Cell ->
+                    group
+                        [ let
+                            r =
+                                gcs * 0.2
+                          in
+                          ellipse "dodgerblue" r r
+                            |> move (toFloat x * gcs) (toFloat y * gcs)
+                        ]
 
         Nothing ->
             group []
