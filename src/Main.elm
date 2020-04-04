@@ -26,18 +26,26 @@ type BS
     = BS Int Int
 
 
+bsDecoder : Decoder BS
+bsDecoder =
+    JD.map2 BS
+        (JD.field "0" JD.int)
+        (JD.field "1" JD.int)
+
+
 type Model
     = M Float Float
 
 
 type alias Flags =
-    { now : Int }
+    { now : Int, bs : BS }
 
 
 flagsDecoder : Decoder Flags
 flagsDecoder =
-    JD.map Flags
+    JD.map2 Flags
         (JD.field "now" JD.int)
+        (JD.field "bs" bsDecoder)
 
 
 init : Value -> ( Model, Cmd Msg )
