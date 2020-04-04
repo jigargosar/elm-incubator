@@ -148,15 +148,15 @@ getGcs (Cwh cw ch) (Gwh gw gh) =
         * 0.8
 
 
-placeGridShapesGroup : Float -> Grid -> Shape -> Shape
-placeGridShapesGroup gcs (G (Gwh gw gh) _ _) =
+placeGridShapesGroup : Float -> Gwh -> Shape -> Shape
+placeGridShapesGroup gcs (Gwh gw gh) =
     move (((toFloat gw * gcs) - gcs) * -0.5)
         (((toFloat gh * gcs) - gcs) * -0.5)
 
 
-placeGridShapes : Float -> Grid -> List Shape -> Shape
-placeGridShapes gcs g =
-    group >> placeGridShapesGroup gcs g
+placeGridShapes : Float -> Gwh -> List Shape -> Shape
+placeGridShapes gcs gwh =
+    group >> placeGridShapesGroup gcs gwh
 
 
 getGwh : Grid -> Gwh
@@ -194,7 +194,7 @@ renderGrid cwh (Mxy mx my) g =
                 |> List.map drawCell
     in
     [ rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-    , gridCellShapes |> placeGridShapes gcs g
+    , gridCellShapes |> placeGridShapes gcs (getGwh g)
     , renderPointer (gcs * 0.25) mx my
     ]
 
