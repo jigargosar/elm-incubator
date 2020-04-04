@@ -195,17 +195,17 @@ pageMouseMoveDecoder =
 
 rectangle : String -> Float -> Float -> S
 rectangle c w h =
-    R w h |> S c initialTransform
+    R w h |> S c [] initialTransform
 
 
 ellipse : String -> Float -> Float -> S
 ellipse c w h =
-    E w h |> S c initialTransform
+    E w h |> S c [] initialTransform
 
 
 group : List S -> S
 group ss =
-    G ss |> S "none" initialTransform
+    G ss |> S "none" [] initialTransform
 
 
 move : Float -> Float -> S -> S
@@ -214,8 +214,8 @@ move dx dy =
 
 
 mapTransform : (TF -> TF) -> S -> S
-mapTransform fn (S c tx f) =
-    S c (fn tx) f
+mapTransform fn (S c cs tx f) =
+    S c cs (fn tx) f
 
 
 type F
@@ -225,7 +225,7 @@ type F
 
 
 type S
-    = S String TF F
+    = S String (List String) TF F
 
 
 type TF
@@ -243,7 +243,7 @@ translateBy dx dy (TF x y) =
 
 
 draw : S -> HM
-draw (S c (TF dx dy) s) =
+draw (S c cs (TF dx dy) s) =
     case s of
         R w h ->
             Svg.rect
@@ -254,6 +254,7 @@ draw (S c (TF dx dy) s) =
                     , TT.Translate dx dy
                     ]
                 , SA.fill c
+                , TA.class cs
                 ]
                 []
 
@@ -263,6 +264,7 @@ draw (S c (TF dx dy) s) =
                 , Px.ry h
                 , TA.transform [ TT.Translate dx dy ]
                 , SA.fill c
+                , TA.class cs
                 ]
                 []
 
@@ -270,6 +272,7 @@ draw (S c (TF dx dy) s) =
             Svg.g
                 [ TA.transform [ TT.Translate dx dy ]
                 , SA.fill c
+                , TA.class cs
                 ]
                 (List.map draw ss)
 
