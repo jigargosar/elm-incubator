@@ -22,11 +22,17 @@ import TypedSvg.Types as TT
 
 
 type Model
-    = M CX
+    = M CX COM
 
 
 type CX
     = CX Float Float Float Float
+
+
+type
+    COM
+    -- canvas offset mouse x y
+    = COM Float Float
 
 
 type alias Flags =
@@ -35,7 +41,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( M (CX 0 0 600 600)
+    ( M (CX 0 0 600 600) (COM 0 0)
     , getAll
     )
 
@@ -66,7 +72,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((M cx) as model) =
+update message ((M cx com) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -83,13 +89,13 @@ update message ((M cx) as model) =
                 { x, y, width, height } =
                     el.element
             in
-            ( M (CX x y width height), Cmd.none )
+            ( M (CX x y width height) com, Cmd.none )
 
         GotBS _ _ ->
-            ( M cx, getAll )
+            ( model, getAll )
 
         OnCMM x y ->
-            ( model, Cmd.none )
+            ( M cx (COM x y), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
