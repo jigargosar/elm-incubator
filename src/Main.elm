@@ -162,7 +162,7 @@ view (M cx com) =
                 [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
                 , TA.class [ "flex-auto" ]
                 , TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
-                , style "background-color" "rgba(5, 0, 255, .2902)"
+                , style "background-color" "rgba(183, 169, 255)"
                 ]
                 [ draw <|
                     group
