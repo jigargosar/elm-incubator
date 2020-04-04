@@ -162,17 +162,17 @@ pageMouseMoveDecoder =
 
 rectangle : String -> Float -> Float -> Shape
 rectangle c w h =
-    Rectangle w h |> S c [] initialTransform
+    Rectangle w h |> Shape c [] initialTransform
 
 
 ellipse : String -> Float -> Float -> Shape
 ellipse c w h =
-    Ellipse w h |> S c [] initialTransform
+    Ellipse w h |> Shape c [] initialTransform
 
 
 group : List Shape -> Shape
 group ss =
-    Group ss |> S "none" [] initialTransform
+    Group ss |> Shape "none" [] initialTransform
 
 
 move : Float -> Float -> Shape -> Shape
@@ -181,8 +181,8 @@ move dx dy =
 
 
 mapTransform : (TF -> TF) -> Shape -> Shape
-mapTransform fn (S c cs tx f) =
-    S c cs (fn tx) f
+mapTransform fn (Shape c cs tx f) =
+    Shape c cs (fn tx) f
 
 
 type Form
@@ -192,7 +192,7 @@ type Form
 
 
 type Shape
-    = S String (List String) TF Form
+    = Shape String (List String) TF Form
 
 
 type TF
@@ -210,7 +210,7 @@ translateBy dx dy (TF x y) =
 
 
 draw : Shape -> HM
-draw (S c cs (TF dx dy) s) =
+draw (Shape c cs (TF dx dy) s) =
     case s of
         Rectangle w h ->
             Svg.rect
