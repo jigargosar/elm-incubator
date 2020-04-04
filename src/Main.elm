@@ -84,28 +84,28 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M (CWH swPx shPx) com) =
+view (M (CWH canvasW canvasH) com) =
     let
         ( mx, my ) =
-            toMXY com
+            toCanvasMXY com
 
-        toMXY : MXY -> ( Float, Float )
-        toMXY (MXY x y) =
-            ( x - swPx * 0.5, y - shPx * 0.5 )
+        toCanvasMXY : MXY -> ( Float, Float )
+        toCanvasMXY (MXY x y) =
+            ( x - canvasW * 0.5, y - canvasH * 0.5 )
     in
     div
         [ class "fixed absolute--fill"
         , SE.on "mousemove" pageMouseMoveDecoder
         ]
         [ Svg.svg
-            [ TA.viewBox (swPx * -0.5) (shPx * -0.5) swPx shPx
+            [ TA.viewBox (canvasW * -0.5) (canvasH * -0.5) canvasW canvasH
             , SA.width "100%"
             , SA.height "100%"
 
             --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            (List.map draw (drawBoard swPx shPx mx my))
+            (List.map draw (drawBoard canvasW canvasH mx my))
         ]
 
 
