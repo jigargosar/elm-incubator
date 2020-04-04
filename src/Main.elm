@@ -106,12 +106,17 @@ view (M (Cwh cw ch) mxy g) =
             --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            (List.map draw (drawBoard cw ch mxy g))
+            (List.map draw
+                (rectangle "rgba(153, 248, 255)" cw ch
+                    :: rectangle "rgba(183, 169, 255)" cw ch
+                    :: render cw ch mxy g
+                )
+            )
         ]
 
 
-drawBoard : Float -> Float -> Mxy -> Grid -> List Shape
-drawBoard cw ch (Mxy mx my) (G gw gh _) =
+render : Float -> Float -> Mxy -> Grid -> List Shape
+render cw ch (Mxy mx my) (G gw gh _) =
     let
         gcw =
             min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
@@ -132,9 +137,7 @@ drawBoard cw ch (Mxy mx my) (G gw gh _) =
             List.range 0 (gw - 1)
                 |> List.concatMap (\x -> List.range 0 (gh - 1) |> List.map (drawCell x))
     in
-    [ rectangle "rgba(153, 248, 255)" cw ch
-    , rectangle "rgba(183, 169, 255)" cw ch
-    , rectangle "lightyellow" (toFloat (gw + 1) * gcw) (toFloat (gh + 1) * gcw)
+    [ rectangle "lightyellow" (toFloat (gw + 1) * gcw) (toFloat (gh + 1) * gcw)
     , group gridCellsView
         |> move
             (((toFloat gw * gcw) - gcw) * -0.5)
