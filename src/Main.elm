@@ -190,7 +190,7 @@ view (M cx com) =
                 ]
     in
     div
-        [ class "absolute absolute--fill flex"
+        [ class "fixed absolute--fill flex"
         , SE.on "mousemove" pageMouseMoveDecoder
         ]
         [ svgView
