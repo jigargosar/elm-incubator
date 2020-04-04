@@ -111,25 +111,27 @@ type alias HM =
     Html Msg
 
 
-toMXY : Float -> Float -> CX -> COM -> ( Float, Float )
-toMXY sw sh (CX _ _ w h) (COM x y) =
-    ( x / w * sw - (sw / 2), y / h * sh - (sh / 2) )
+toMXY : CX -> COM -> ( Float, Float )
+toMXY (CX _ _ w h) (COM x y) =
+    ( x / w * swPx - (swPx / 2), y / h * shPx - (shPx / 2) )
+
+
+swPx =
+    600
+
+
+shPx =
+    600
 
 
 view : Model -> Html Msg
 view (M cx com) =
     let
         ( mx, my ) =
-            toMXY swPx shPx cx com
+            toMXY cx com
 
         _ =
             Debug.log "(mx,my)" ( mx, my )
-
-        swPx =
-            600
-
-        shPx =
-            600
 
         gw =
             10
