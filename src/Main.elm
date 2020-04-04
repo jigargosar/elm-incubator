@@ -93,7 +93,7 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M (Cwh cw ch) mxy g) =
+view (M ((Cwh cw ch) as cwh) mxy g) =
     div
         [ class "fixed absolute--fill"
         , SE.on "mousemove" pageMouseMoveDecoder
@@ -109,14 +109,14 @@ view (M (Cwh cw ch) mxy g) =
             (List.map draw
                 (rectangle "rgba(153, 248, 255)" cw ch
                     :: rectangle "rgba(183, 169, 255)" cw ch
-                    :: render cw ch mxy g
+                    :: render cwh mxy g
                 )
             )
         ]
 
 
-render : Float -> Float -> Mxy -> Grid -> List Shape
-render cw ch (Mxy mx my) (G gw gh _) =
+render : Cwh -> Mxy -> Grid -> List Shape
+render (Cwh cw ch) (Mxy mx my) (G gw gh _) =
     let
         gcw =
             min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
