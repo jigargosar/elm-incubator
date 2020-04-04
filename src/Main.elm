@@ -69,7 +69,7 @@ update message model =
         GotCanvasEl (Ok el) ->
             let
                 _ =
-                    Debug.log "el.element" el.element
+                    Debug.log "el.element" el
             in
             ( model, Cmd.none )
 
@@ -145,7 +145,7 @@ view _ =
                         ]
                 ]
     in
-    div [ class "flex pa5" ]
+    div [ class "flex" ]
         [ svgView
         ]
 
