@@ -30,8 +30,8 @@ ffFromTuple ( a, b ) =
     F2 a b
 
 
-ffFromIITuple : ( Int, Int ) -> F2
-ffFromIITuple ( a, b ) =
+ffFromII : I2 -> F2
+ffFromII (I2 a b) =
     F2 (toFloat a) (toFloat b)
 
 
@@ -280,7 +280,7 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (Cwh <| ffFromIITuple ( w, h )) mxy g, Cmd.none )
+            ( M (Cwh <| ffFromII (I2 w h)) mxy g, Cmd.none )
 
         OnCMM x y ->
             ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)) g, Cmd.none )
