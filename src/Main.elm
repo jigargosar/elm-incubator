@@ -9,7 +9,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Json.Decode as JD exposing (Decoder)
-import List.Extra
+import List.Extra exposing (scanl)
 import Svg
 import Svg.Attributes as SA
 import Svg.Events as SE
@@ -46,29 +46,19 @@ type Gwh
 fillG : Cell -> Int -> Int -> Grid
 fillG c w h =
     let
-        _ =
-            foo
-
         gd =
             rangeWh w h
                 |> List.foldl (flip Dict.insert c) Dict.empty
+
+        --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
+        l2 =
+            scanl (<|) ( 2, 2 ) [ rightOf, rightOf, downOf, downOf ]
     in
-    G (Gwh w h) gd [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
+    G (Gwh w h) gd l2
 
 
 type alias I2 =
     ( Int, Int )
-
-
-foo : ( I2, List I2 )
-foo =
-    let
-        func : I2 -> (I2 -> I2) -> ( I2, I2 )
-        func p fn =
-            ( fn p, p )
-    in
-    List.Extra.mapAccuml func ( 2, 2 ) [ rightOf, rightOf, rightOf, downOf, downOf ]
-        |> Debug.log "debug"
 
 
 rightOf : ( Int, Int ) -> ( Int, Int )
