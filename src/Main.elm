@@ -204,16 +204,18 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
             group
                 [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
                 ]
+
+        renderCellConnections =
+            let
+                idxToPt (I2 a b) =
+                    ( toFloat a * gcs, toFloat b * gcs )
+            in
+            group [ connectionPolyLine gcs (List.map idxToPt conIndices) ]
+                |> placeGridShape gcs gwh
     in
     group
         [ renderGridBg gcs gwh
-        , -- render cell connections
-          let
-            idxToPt (I2 a b) =
-                ( toFloat a * gcs, toFloat b * gcs )
-          in
-          group [ connectionPolyLine gcs (List.map idxToPt conIndices) ]
-            |> placeGridShape gcs gwh
+        , renderCellConnections
         , renderGridCellEntries gceList
         , -- render connection to mouse and last cell
           case mbLastGCE of
