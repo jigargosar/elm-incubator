@@ -149,22 +149,9 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
         * 0.8
 
 
-gIdxToCanvas : Float -> I2 -> Gwh -> F2
-gIdxToCanvas gcs xy (Gwh wh) =
-    let
-        (F2 x y) =
-            iiToFloat xy
-
-        (F2 w h) =
-            iiToFloat wh
-    in
-    F2 (((w * gcs) - gcs) * -0.5 + x * gcs) (((h * gcs) - gcs) * -0.5 + y * gcs)
-
-
-placeGridShape : Float -> Gwh -> Shape -> Shape
-placeGridShape gcs (Gwh (I2 gw gh)) =
-    move (((toFloat gw * gcs) - gcs) * -0.5)
-        (((toFloat gh * gcs) - gcs) * -0.5)
+renderGrid : Cwh -> Mxy -> Grid -> HM
+renderGrid cwh mxy g =
+    toGV g |> renderGV cwh mxy
 
 
 type GV
@@ -240,9 +227,22 @@ renderGV cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         |> draw
 
 
-renderGrid2 : Cwh -> Mxy -> Grid -> HM
-renderGrid2 cwh mxy g =
-    toGV g |> renderGV cwh mxy
+gIdxToCanvas : Float -> I2 -> Gwh -> F2
+gIdxToCanvas gcs xy (Gwh wh) =
+    let
+        (F2 x y) =
+            iiToFloat xy
+
+        (F2 w h) =
+            iiToFloat wh
+    in
+    F2 (((w * gcs) - gcs) * -0.5 + x * gcs) (((h * gcs) - gcs) * -0.5 + y * gcs)
+
+
+placeGridShape : Float -> Gwh -> Shape -> Shape
+placeGridShape gcs (Gwh (I2 gw gh)) =
+    move (((toFloat gw * gcs) - gcs) * -0.5)
+        (((toFloat gh * gcs) - gcs) * -0.5)
 
 
 connectionPolyLine : Float -> List ( Float, Float ) -> Shape
@@ -376,7 +376,7 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
             ]
             [ draw (rectangle "rgba(153, 248, 255)" cw ch)
             , draw (rectangle "rgba(183, 169, 255)" cw ch)
-            , renderGrid2 cwh mxy g
+            , renderGrid cwh mxy g
             ]
         ]
 
