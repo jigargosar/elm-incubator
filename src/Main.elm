@@ -200,7 +200,7 @@ renderGridConnections gcs (G _ d conPts) =
             ffFromII (I2 3 2)
 
         r1 =
-            rectangle "green" gcs (gcs * 0.01)
+            line "green" (x1 * gcs) (y1 * gcs) (x2 * gcs) (y2 * gcs)
                 |> move (x1 * gcs) (y1 * gcs)
     in
     group [ r1 ]
@@ -351,6 +351,11 @@ rectangle c w h =
     Rectangle w h |> Shape c [] initialTransform
 
 
+line : String -> Float -> Float -> Float -> Float -> Shape
+line c x1 y1 x2 y2 =
+    Line x1 y1 x2 y2 |> Shape c [] initialTransform
+
+
 ellipse : String -> Float -> Float -> Shape
 ellipse c w h =
     Ellipse w h |> Shape c [] initialTransform
@@ -407,6 +412,7 @@ draw (Shape c cs (TF dx dy) s) =
                 , Px.y2 y2
                 , SA.stroke c
                 , TA.class cs
+                , Px.strokeWidth 1
                 ]
                 []
 
