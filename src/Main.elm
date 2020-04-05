@@ -25,10 +25,12 @@ type F2
     = F2 Float Float
 
 
+ffFromTuple : ( Float, Float ) -> F2
 ffFromTuple ( a, b ) =
     F2 a b
 
 
+ffFromIITuple : ( Int, Int ) -> F2
 ffFromIITuple ( a, b ) =
     F2 (toFloat a) (toFloat b)
 
