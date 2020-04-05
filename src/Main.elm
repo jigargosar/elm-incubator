@@ -191,31 +191,34 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
 
         gcs =
             getGcs cwh gwh
+
+        gceList =
+            toGCEList g
     in
     [ renderGridBg gcs gwh
     , renderGridConnections gcs g
         |> placeGridShape gcs gwh
-    , toGCEList g
+    , gceList
         |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs gwh
     , renderConnectionToMouse mxy gcs g
-    , redrawLastShapeOverConnectionToMouse gcs g
+    , gceList
+        |> filterLastShape g
+        |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs gwh
     , renderPointer (gcs * 0.25) mx my
     ]
 
 
-redrawLastShapeOverConnectionToMouse : Float -> Grid -> List Shape
-redrawLastShapeOverConnectionToMouse gcs ((G _ _ conPts) as g) =
+filterLastShape : Grid -> List GCE -> List GCE
+filterLastShape (G _ _ conPts) =
     let
         maybeLastPt =
             List.Extra.last conPts
     in
-    toGCEList g
-        |> List.filter (\(GCE xy _) -> Just xy == maybeLastPt)
-        |> List.map (renderGCE gcs)
+    List.filter (\(GCE xy _) -> Just xy == maybeLastPt)
 
 
 renderConnectionToMouse : Mxy -> Float -> Grid -> Shape
