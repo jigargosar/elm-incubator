@@ -30,8 +30,8 @@ ffFromTuple ( a, b ) =
     F2 a b
 
 
-ffFromII : I2 -> F2
-ffFromII (I2 a b) =
+iiToFloat : I2 -> F2
+iiToFloat (I2 a b) =
     F2 (toFloat a) (toFloat b)
 
 
@@ -165,6 +165,18 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
         * 0.8
 
 
+giToC : Float -> I2 -> Gwh -> F2
+giToC gcs xy (Gwh wh) =
+    let
+        (F2 x y) =
+            iiToFloat xy
+
+        (F2 w h) =
+            iiToFloat wh
+    in
+    F2 (((w * gcs) - gcs) * -0.5 + x * gcs) (((h * gcs) - gcs) * -0.5 + y * gcs)
+
+
 placeGridShape : Float -> Gwh -> Shape -> Shape
 placeGridShape gcs (Gwh (I2 gw gh)) =
     move (((toFloat gw * gcs) - gcs) * -0.5)
@@ -172,7 +184,7 @@ placeGridShape gcs (Gwh (I2 gw gh)) =
 
 
 renderGrid : Cwh -> Mxy -> Grid -> List Shape
-renderGrid cwh (Mxy mx my) g =
+renderGrid cwh ((Mxy mx my) as mxy) g =
     let
         (G gwh _ _) =
             g
@@ -183,7 +195,7 @@ renderGrid cwh (Mxy mx my) g =
     [ renderGridBg gcs gwh
     , renderGridConnections gcs g
         |> placeGridShape gcs gwh
-    , renderConnectionToMouse mx my g
+    , renderConnectionToMouse mxy gcs g
     , toGCEList g
         |> List.map (renderGCE gcs)
         |> group
@@ -192,8 +204,23 @@ renderGrid cwh (Mxy mx my) g =
     ]
 
 
-renderConnectionToMouse mx my (G gwh _ conPts) =
-    group []
+renderConnectionToMouse : Mxy -> Float -> Grid -> Shape
+renderConnectionToMouse (Mxy mx my) gcs (G gwh _ conPts) =
+    case List.Extra.last conPts of
+        Just p1 ->
+            let
+                (F2 x1 y1) =
+                    giToC gcs p1 gwh
+            in
+            connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
+
+        Nothing ->
+            group []
+
+
+connectionPolyLine : Float -> List ( Float, Float ) -> Shape
+connectionPolyLine gcs =
+    polyLine "green" (gcs * 0.03)
 
 
 renderGridConnections : Float -> Grid -> Shape
@@ -203,7 +230,7 @@ renderGridConnections gcs (G _ _ conPts) =
             ( toFloat a * gcs, toFloat b * gcs )
 
         r1 =
-            polyLine "green" (gcs * 0.03) (List.map idxToPt conPts)
+            connectionPolyLine gcs (List.map idxToPt conPts)
     in
     group [ r1 ]
 
@@ -299,7 +326,7 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (I2 w h |> ffFromII |> Cwh) mxy g, Cmd.none )
+            ( M (I2 w h |> iiToFloat |> Cwh) mxy g, Cmd.none )
 
         OnCMM x y ->
             ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)) g, Cmd.none )
