@@ -212,6 +212,11 @@ renderGV cwh (GV gwh gceList) =
         |> draw
 
 
+renderGrid2 : Cwh -> Mxy -> Grid -> HM
+renderGrid2 cwh _ g =
+    toGV g |> renderGV cwh
+
+
 renderGrid : Cwh -> Mxy -> Grid -> List HM
 renderGrid cwh ((Mxy mx my) as mxy) g =
     let
@@ -404,10 +409,10 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
             --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            (draw (rectangle "rgba(153, 248, 255)" cw ch)
-                :: draw (rectangle "rgba(183, 169, 255)" cw ch)
-                :: renderGrid cwh mxy g
-            )
+            [ draw (rectangle "rgba(153, 248, 255)" cw ch)
+            , draw (rectangle "rgba(183, 169, 255)" cw ch)
+            , renderGrid2 cwh mxy g
+            ]
         ]
 
 
