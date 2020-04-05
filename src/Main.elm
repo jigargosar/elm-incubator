@@ -181,11 +181,11 @@ renderGrid cwh (Mxy mx my) g =
             getGcs cwh gwh
     in
     [ renderGridBg gcs gwh
+    , renderGridConnections gcs g
+        |> placeGridShape gcs gwh
     , toGCEList g
         |> List.map (renderGCE gcs)
         |> group
-        |> placeGridShape gcs gwh
-    , renderGridConnections gcs g
         |> placeGridShape gcs gwh
     , renderPointer (gcs * 0.25) mx my
     ]
