@@ -49,7 +49,7 @@ fillG c w h =
             rangeWh w h
                 |> List.foldl (flip Dict.insert c) Dict.empty
     in
-    G (Gwh w h) gd [ ( 4, 4 ) ]
+    G (Gwh w h) gd [ ( 2, 2 ) ]
 
 
 toGCEList : Grid -> List GCE
@@ -120,15 +120,23 @@ renderGCE gcs (GCE x y rc) =
         REmpty ->
             group []
 
-        RWater bool ->
+        RWater isDown ->
+            let
+                rFact =
+                    if isDown then
+                        0.1
+
+                    else
+                        0.2
+            in
             group
-                [ let
-                    r =
-                        gcs * 0.2
-                  in
-                  ellipse "dodgerblue" r r
+                [ ellipse1 "dodgerblue" (gcs * rFact)
                 ]
                 |> move (toFloat x * gcs) (toFloat y * gcs)
+
+
+ellipse1 a b =
+    ellipse a b b
 
 
 renderPointer : Float -> Float -> Float -> Shape
