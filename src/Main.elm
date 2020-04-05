@@ -143,22 +143,6 @@ fillG c w h =
     G (Gwh (I2 w h)) gd l2
 
 
-toGCEList : Grid -> List GCE
-toGCEList (G (Gwh wh) gd ds) =
-    let
-        toGCE xy =
-            GCE xy
-                (case iidGet xy gd of
-                    Nothing ->
-                        REmpty
-
-                    Just Water ->
-                        RWater (List.member xy ds)
-                )
-    in
-    iiRange wh |> List.map toGCE
-
-
 getGcs : Cwh -> Gwh -> Float
 getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
@@ -261,72 +245,9 @@ renderGrid2 cwh mxy g =
     toGV g |> renderGV cwh mxy
 
 
-renderGrid : Cwh -> Mxy -> Grid -> List HM
-renderGrid cwh ((Mxy mx my) as mxy) g =
-    let
-        (G gwh _ _) =
-            g
-
-        gcs =
-            getGcs cwh gwh
-
-        gceList =
-            toGCEList g
-
-        renderGridCellEntries : List GCE -> Shape
-        renderGridCellEntries l =
-            l
-                |> List.map (renderGCE gcs)
-                |> group
-                |> placeGridShape gcs gwh
-    in
-    [ renderGridBg gcs gwh
-    , renderGridConnections gcs g |> placeGridShape gcs gwh
-    , renderGridCellEntries gceList
-    , renderConnectionToMouse mxy gcs g
-    , renderGridCellEntries (filterLastShape g gceList)
-    , renderPointer (gcs * 0.25) mx my
-    ]
-        |> List.map draw
-
-
-filterLastShape : Grid -> List GCE -> List GCE
-filterLastShape (G _ _ conPts) =
-    let
-        maybeLastPt =
-            List.Extra.last conPts
-    in
-    List.filter (\(GCE xy _) -> Just xy == maybeLastPt)
-
-
-renderConnectionToMouse : Mxy -> Float -> Grid -> Shape
-renderConnectionToMouse (Mxy mx my) gcs (G gwh _ conPts) =
-    case List.Extra.last conPts of
-        Just p1 ->
-            let
-                (F2 x1 y1) =
-                    giToC gcs p1 gwh
-            in
-            group
-                [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
-                ]
-
-        Nothing ->
-            group []
-
-
 connectionPolyLine : Float -> List ( Float, Float ) -> Shape
 connectionPolyLine gcs =
     polyLine "green" (gcs * 0.03)
-
-
-renderGridConnections : Float -> Grid -> Shape
-renderGridConnections gcs (G _ _ conPts) =
-    let
-        idxToPt (I2 a b) =
-            ( toFloat a * gcs, toFloat b * gcs )
-    in
-    group [ connectionPolyLine gcs (List.map idxToPt conPts) ]
 
 
 renderGridBg : Float -> Gwh -> Shape
