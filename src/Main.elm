@@ -284,7 +284,7 @@ gIdxToCanvas gcs xy gwh =
         (F2 dx dy) =
             getGDxy gcs gwh
     in
-    F2 (dx + x * gcs) (dy + y * gcs)
+    F2 (x * gcs + dx) (y * gcs + dy)
 
 
 placeGridShape : Float -> Gwh -> Shape -> Shape
