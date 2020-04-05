@@ -95,7 +95,7 @@ type Cell
 
 
 type GCE
-    = GCE Int Int RCell
+    = GCE II RCell
 
 
 type RCell
@@ -125,9 +125,8 @@ fillG c w h =
 toGCEList : Grid -> List GCE
 toGCEList (G (Gwh w h) gd ds) =
     let
-        toGCE ((II x y) as xy) =
-            GCE x
-                y
+        toGCE xy =
+            GCE xy
                 (case iidGet xy gd of
                     Nothing ->
                         REmpty
@@ -175,7 +174,7 @@ renderGridBg gcs (Gwh gw gh) =
 
 
 renderGCE : Float -> GCE -> Shape
-renderGCE gcs (GCE x y rc) =
+renderGCE gcs (GCE (II x y) rc) =
     case rc of
         REmpty ->
             group []
