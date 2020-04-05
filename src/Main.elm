@@ -184,16 +184,16 @@ placeGridShape gcs (Gwh (I2 gw gh)) =
 
 
 type GV
-    = GV Gwh (List GCE) (List I2)
+    = GV Gwh (List GCE) (List I2) (Maybe GCE)
 
 
 toGV : Grid -> GV
 toGV ((G gwh _ conIndices) as g) =
-    GV gwh (toGCEList g) conIndices
+    GV gwh (toGCEList g) conIndices Nothing
 
 
 renderGV : Cwh -> GV -> HM
-renderGV cwh (GV gwh gceList conIndices) =
+renderGV cwh (GV gwh gceList conIndices mbLastGCE) =
     let
         gcs =
             getGcs cwh gwh
@@ -207,13 +207,15 @@ renderGV cwh (GV gwh gceList conIndices) =
     in
     group
         [ renderGridBg gcs gwh
-        , let
+        , -- render cell connections
+          let
             idxToPt (I2 a b) =
                 ( toFloat a * gcs, toFloat b * gcs )
           in
           group [ connectionPolyLine gcs (List.map idxToPt conIndices) ]
             |> placeGridShape gcs gwh
-        , renderGridCellEntries gceList
+        , -- render grid cells
+          renderGridCellEntries gceList
         ]
         |> draw
 
