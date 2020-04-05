@@ -19,11 +19,38 @@ import TypedSvg.Types as TT
 
 
 
+-- I2Dict
+
+
+type IIDict a
+    = IIDict (Dict ( Int, Int ) a)
+
+
+iidEmpty : IIDict a
+iidEmpty =
+    IIDict Dict.empty
+
+
+type II
+    = II Int Int
+
+
+rightOf : II -> II
+rightOf (II x y) =
+    II (x + 1) y
+
+
+downOf : II -> II
+downOf (II x y) =
+    II x (y + 1)
+
+
+
 -- Grid
 
 
 type Grid
-    = G Gwh (Dict ( Int, Int ) Cell) (List I2)
+    = G Gwh (Dict ( Int, Int ) Cell) (List II)
 
 
 type Cell
@@ -52,23 +79,9 @@ fillG c w h =
 
         --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
-            scanl (<|) (I2 2 2) [ rightOf, rightOf, downOf, downOf ]
+            scanl (<|) (II 2 2) [ rightOf, rightOf, downOf, downOf ]
     in
     G (Gwh w h) gd l2
-
-
-type I2
-    = I2 Int Int
-
-
-rightOf : I2 -> I2
-rightOf (I2 x y) =
-    I2 (x + 1) y
-
-
-downOf : I2 -> I2
-downOf (I2 x y) =
-    I2 x (y + 1)
 
 
 toGCEList : Grid -> List GCE
@@ -82,7 +95,7 @@ toGCEList (G (Gwh w h) gd ds) =
                         REmpty
 
                     Just Water ->
-                        RWater (List.member (I2 x y) ds)
+                        RWater (List.member (II x y) ds)
                 )
     in
     rangeWh w h |> List.map (uncurry toGCE)
