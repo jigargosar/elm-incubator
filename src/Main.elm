@@ -47,6 +47,11 @@ iiRange (II w h) =
     List.range 0 (w - 1) |> List.concatMap fn
 
 
+iiToPair : II -> ( Int, Int )
+iiToPair =
+    iiApply2 Tuple.pair
+
+
 
 -- I2Dict
 
@@ -62,17 +67,17 @@ iidEmpty =
 
 iidFromList : List ( II, a ) -> IIDict a
 iidFromList =
-    List.map (Tuple.mapFirst (iiApply2 Tuple.pair)) >> Dict.fromList >> IIDict
+    List.map (Tuple.mapFirst iiToPair) >> Dict.fromList >> IIDict
 
 
 iidInsert : II -> a -> IIDict a -> IIDict a
 iidInsert ii a (IIDict d) =
-    IIDict (Dict.insert (iiApply2 Tuple.pair ii) a d)
+    IIDict (Dict.insert (iiToPair ii) a d)
 
 
 iidGet : II -> IIDict a -> Maybe a
 iidGet ii (IIDict d) =
-    Dict.get (iiApply2 Tuple.pair ii) d
+    Dict.get (iiToPair ii) d
 
 
 
