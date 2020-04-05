@@ -356,7 +356,11 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             ( M (I2 w h |> iiToFloat |> Cwh) mxy g, Cmd.none )
 
         OnCMM x y ->
-            ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)) g, Cmd.none )
+            let
+                newMxy =
+                    Mxy (x - cw * 0.5) (y - ch * 0.5)
+            in
+            ( M cwh newMxy g, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
