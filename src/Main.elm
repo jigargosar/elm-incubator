@@ -2,7 +2,7 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
 import Dict exposing (Dict)
@@ -60,9 +60,10 @@ type IIDict a
     = IIDict (Dict ( Int, Int ) a)
 
 
-iidEmpty : IIDict a
-iidEmpty =
-    IIDict Dict.empty
+
+--iidEmpty : IIDict a
+--iidEmpty =
+--    IIDict Dict.empty
 
 
 iidFromList : List ( II, a ) -> IIDict a
@@ -70,9 +71,10 @@ iidFromList =
     List.map (Tuple.mapFirst iiToPair) >> Dict.fromList >> IIDict
 
 
-iidInsert : II -> a -> IIDict a -> IIDict a
-iidInsert ii a (IIDict d) =
-    IIDict (Dict.insert (iiToPair ii) a d)
+
+--iidInsert : II -> a -> IIDict a -> IIDict a
+--iidInsert ii a (IIDict d) =
+--    IIDict (Dict.insert (iiToPair ii) a d)
 
 
 iidGet : II -> IIDict a -> Maybe a
@@ -110,7 +112,8 @@ fillG c w h =
     let
         gd =
             iiRange (II w h)
-                |> List.foldl (flip iidInsert c) iidEmpty
+                |> List.map (\xy -> ( xy, c ))
+                |> iidFromList
 
         --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
