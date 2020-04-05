@@ -2,7 +2,6 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
-import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
 import Dict exposing (Dict)
@@ -18,36 +17,56 @@ import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
 
 
-type II
-    = II Int Int
+
+-- FF Float Float
 
 
-iiApply2 : (Int -> Int -> a) -> II -> a
-iiApply2 func (II a b) =
+type F2
+    = F2 Float Float
+
+
+ffFromTuple ( a, b ) =
+    F2 a b
+
+
+ffFromIITuple ( a, b ) =
+    F2 (toFloat a) (toFloat b)
+
+
+
+-- II Int Int
+
+
+type I2
+    = I2 Int Int
+
+
+iiApply2 : (Int -> Int -> a) -> I2 -> a
+iiApply2 func (I2 a b) =
     func a b
 
 
-iiRight : II -> II
-iiRight (II x y) =
-    II (x + 1) y
+iiRight : I2 -> I2
+iiRight (I2 x y) =
+    I2 (x + 1) y
 
 
-iiDown : II -> II
-iiDown (II x y) =
-    II x (y + 1)
+iiDown : I2 -> I2
+iiDown (I2 x y) =
+    I2 x (y + 1)
 
 
-iiRange : II -> List II
-iiRange (II w h) =
+iiRange : I2 -> List I2
+iiRange (I2 w h) =
     let
-        fn : Int -> List II
+        fn : Int -> List I2
         fn x =
-            List.range 0 (h - 1) |> List.map (II x)
+            List.range 0 (h - 1) |> List.map (I2 x)
     in
     List.range 0 (w - 1) |> List.concatMap fn
 
 
-iiToPair : II -> ( Int, Int )
+iiToPair : I2 -> ( Int, Int )
 iiToPair =
     iiApply2 Tuple.pair
 
@@ -66,7 +85,7 @@ type IIDict a
 --    IIDict Dict.empty
 
 
-iidFromList : List ( II, a ) -> IIDict a
+iidFromList : List ( I2, a ) -> IIDict a
 iidFromList =
     List.map (Tuple.mapFirst iiToPair) >> Dict.fromList >> IIDict
 
@@ -77,7 +96,7 @@ iidFromList =
 --    IIDict (Dict.insert (iiToPair ii) a d)
 
 
-iidGet : II -> IIDict a -> Maybe a
+iidGet : I2 -> IIDict a -> Maybe a
 iidGet ii (IIDict d) =
     Dict.get (iiToPair ii) d
 
@@ -87,7 +106,7 @@ iidGet ii (IIDict d) =
 
 
 type Grid
-    = G Gwh (IIDict Cell) (List II)
+    = G Gwh (IIDict Cell) (List I2)
 
 
 type Cell
@@ -95,7 +114,7 @@ type Cell
 
 
 type GCE
-    = GCE II RCell
+    = GCE I2 RCell
 
 
 type RCell
@@ -104,22 +123,22 @@ type RCell
 
 
 type Gwh
-    = Gwh II
+    = Gwh I2
 
 
 fillG : Cell -> Int -> Int -> Grid
 fillG c w h =
     let
         gd =
-            iiRange (II w h)
+            iiRange (I2 w h)
                 |> List.map (\xy -> ( xy, c ))
                 |> iidFromList
 
         --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
-            scanl (<|) (II 2 2) [ iiRight, iiRight, iiDown, iiDown ]
+            scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
     in
-    G (Gwh (II w h)) gd l2
+    G (Gwh (I2 w h)) gd l2
 
 
 toGCEList : Grid -> List GCE
@@ -139,13 +158,13 @@ toGCEList (G (Gwh wh) gd ds) =
 
 
 getGcs : Cwh -> Gwh -> Float
-getGcs (Cwh cw ch) (Gwh (II gw gh)) =
+getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
         * 0.8
 
 
 placeGridShape : Float -> Gwh -> Shape -> Shape
-placeGridShape gcs (Gwh (II gw gh)) =
+placeGridShape gcs (Gwh (I2 gw gh)) =
     move (((toFloat gw * gcs) - gcs) * -0.5)
         (((toFloat gh * gcs) - gcs) * -0.5)
 
@@ -169,12 +188,12 @@ renderGrid cwh (Mxy mx my) g =
 
 
 renderGridBg : Float -> Gwh -> Shape
-renderGridBg gcs (Gwh (II gw gh)) =
+renderGridBg gcs (Gwh (I2 gw gh)) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
 renderGCE : Float -> GCE -> Shape
-renderGCE gcs (GCE (II x y) rc) =
+renderGCE gcs (GCE (I2 x y) rc) =
     case rc of
         REmpty ->
             group []
@@ -216,7 +235,7 @@ type Model
 
 
 type Cwh
-    = Cwh Float Float
+    = Cwh F2
 
 
 type Mxy
@@ -233,7 +252,7 @@ init flags =
         grid =
             fillG Water 10 8
     in
-    ( M (flags.bs |> uncurry Cwh) (Mxy 0 0) grid
+    ( M (flags.bs |> ffFromTuple |> Cwh) (Mxy 0 0) grid
     , Cmd.none
     )
 
@@ -253,13 +272,13 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((M ((Cwh cw ch) as cwh) mxy g) as model) =
+update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (Cwh (toFloat w) (toFloat h)) mxy g, Cmd.none )
+            ( M (Cwh <| ffFromIITuple ( w, h )) mxy g, Cmd.none )
 
         OnCMM x y ->
             ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)) g, Cmd.none )
@@ -279,7 +298,7 @@ type alias HM =
 
 
 view : Model -> Html Msg
-view (M ((Cwh cw ch) as cwh) mxy g) =
+view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
     div
         [ class "fixed absolute--fill"
         , SE.on "mousemove" pageMouseMoveDecoder
