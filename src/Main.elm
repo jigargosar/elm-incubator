@@ -139,6 +139,21 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
         * 0.8
 
 
+getGDxy : Float -> Gwh -> F2
+getGDxy gcs (Gwh wh) =
+    let
+        (F2 w h) =
+            iiToFloat wh
+
+        dx =
+            ((w * gcs) - gcs) * -0.5
+
+        dy =
+            ((h * gcs) - gcs) * -0.5
+    in
+    F2 dx dy
+
+
 
 -- GRID UPDATE
 
@@ -261,19 +276,13 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
 
 
 gIdxToCanvas : Float -> I2 -> Gwh -> F2
-gIdxToCanvas gcs xy (Gwh wh) =
+gIdxToCanvas gcs xy gwh =
     let
         (F2 x y) =
             iiToFloat xy
 
-        (F2 w h) =
-            iiToFloat wh
-
-        dx =
-            ((w * gcs) - gcs) * -0.5
-
-        dy =
-            ((h * gcs) - gcs) * -0.5
+        (F2 dx dy) =
+            getGDxy gcs gwh
     in
     F2 (dx + x * gcs) (dy + y * gcs)
 
