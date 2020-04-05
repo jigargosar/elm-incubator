@@ -131,17 +131,6 @@ toGCEList (G (Gwh w h) gd ds) =
     iiRange (II w h) |> List.map toGCE
 
 
-
---rangeWh : Int -> Int -> List ( Int, Int )
---rangeWh w h =
---    let
---        fn : a -> List ( a, Int )
---        fn x =
---            List.range 0 (h - 1) |> List.map (Tuple.pair x)
---    in
---    List.range 0 (w - 1) |> List.concatMap fn
-
-
 getGcs : Cwh -> Gwh -> Float
 getGcs (Cwh cw ch) (Gwh gw gh) =
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
