@@ -154,11 +154,11 @@ renderGrid cwh mxy g =
     toGV g |> renderGV cwh mxy
 
 
-type GV
+type GridVM
     = GV Gwh (List GCE) (List I2) (Maybe GCE)
 
 
-toGV : Grid -> GV
+toGV : Grid -> GridVM
 toGV (G ((Gwh wh) as gwh) gd conIndices) =
     let
         toGCE xy =
@@ -182,7 +182,7 @@ toGV (G ((Gwh wh) as gwh) gd conIndices) =
     GV gwh gceList conIndices mbLastGCE
 
 
-renderGV : Cwh -> Mxy -> GV -> HM
+renderGV : Cwh -> Mxy -> GridVM -> HM
 renderGV cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
     let
         gcs =
