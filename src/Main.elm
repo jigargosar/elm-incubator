@@ -193,15 +193,11 @@ renderGrid cwh (Mxy mx my) g =
 
 renderGridConnections gcs (G _ d conPts) =
     let
-        (F2 x1 y1) =
-            ffFromII (I2 2 2)
-
-        (F2 x2 y2) =
-            ffFromII (I2 3 2)
+        idxToPt (I2 a b) =
+            ( toFloat a * gcs, toFloat b * gcs )
 
         r1 =
-            line "green" (gcs * 0.03) ( x1 * gcs, y1 * gcs ) ( x2 * gcs, y2 * gcs )
-                |> move (x1 * gcs) (y1 * gcs)
+            polyLine "green" (gcs * 0.03) (List.map idxToPt conPts)
     in
     group [ r1 ]
 
@@ -351,9 +347,9 @@ rectangle c w h =
     Rectangle w h |> Shape c [] initialTransform
 
 
-line : String -> Float -> ( Float, Float ) -> ( Float, Float ) -> Shape
-line c sw p1 p2 =
-    Line sw p1 p2 |> Shape c [] initialTransform
+polyLine : String -> Float -> List ( Float, Float ) -> Shape
+polyLine c sw pts =
+    PolyLine sw pts |> Shape c [] initialTransform
 
 
 ellipse : String -> Float -> Float -> Shape
@@ -380,7 +376,7 @@ type Form
     = Rectangle Float Float
     | Ellipse Float Float
     | Group (List Shape)
-    | Line Float ( Float, Float ) ( Float, Float )
+    | PolyLine Float (List ( Float, Float ))
 
 
 type Shape
@@ -404,15 +400,12 @@ translateBy dx dy (TF x y) =
 draw : Shape -> HM
 draw (Shape c cs (TF dx dy) s) =
     case s of
-        Line sw ( x1, y1 ) ( x2, y2 ) ->
-            Svg.line
-                [ Px.x1 x1
-                , Px.y1 y1
-                , Px.x2 x2
-                , Px.y2 y2
-                , SA.stroke c
+        PolyLine sw pts ->
+            Svg.polyline
+                [ SA.stroke c
                 , TA.class cs
                 , Px.strokeWidth sw
+                , TA.points pts
                 ]
                 []
 
