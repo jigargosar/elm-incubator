@@ -205,6 +205,7 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                 [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
                 ]
 
+        renderCellConnections : Shape
         renderCellConnections =
             let
                 idxToPt (I2 a b) =
