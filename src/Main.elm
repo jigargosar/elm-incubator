@@ -144,6 +144,10 @@ renderGrid cwh mxy g =
     toGridVM g |> renderGridVM cwh mxy
 
 
+
+-- GRID VM
+
+
 type GridVM
     = GV Gwh (List GCE) (List I2) (Maybe GCE)
 
@@ -179,6 +183,10 @@ toGridVM (G ((Gwh wh) as gwh) gd conIndices) =
                     ( Nothing, iiRange wh |> List.map toGCE )
     in
     GV gwh gceList conIndices mbLastGCE
+
+
+
+-- RENDER GRID VIEW MODEL
 
 
 renderGridVM : Cwh -> Mxy -> GridVM -> HM
