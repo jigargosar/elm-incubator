@@ -195,6 +195,7 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
         gceList =
             toGCEList g
 
+        renderGridCells : List GCE -> Shape
         renderGridCells l =
             l
                 |> List.map (renderGCE gcs)
