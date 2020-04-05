@@ -183,7 +183,7 @@ placeGridShape gcs (Gwh (I2 gw gh)) =
         (((toFloat gh * gcs) - gcs) * -0.5)
 
 
-renderGrid : Cwh -> Mxy -> Grid -> List Shape
+renderGrid : Cwh -> Mxy -> Grid -> List HM
 renderGrid cwh ((Mxy mx my) as mxy) g =
     let
         (G gwh _ _) =
@@ -209,6 +209,7 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
     , renderGridCellEntries (filterLastShape g gceList)
     , renderPointer (gcs * 0.25) mx my
     ]
+        |> List.map draw
 
 
 filterLastShape : Grid -> List GCE -> List GCE
@@ -221,7 +222,7 @@ filterLastShape (G _ _ conPts) =
 
 
 renderConnectionToMouse : Mxy -> Float -> Grid -> Shape
-renderConnectionToMouse (Mxy mx my) gcs ((G gwh _ conPts) as g) =
+renderConnectionToMouse (Mxy mx my) gcs (G gwh _ conPts) =
     case List.Extra.last conPts of
         Just p1 ->
             let
@@ -374,11 +375,9 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
             --, TA.preserveAspectRatio (TT.Align TT.ScaleMid TT.ScaleMid) TT.Meet
             , style "background-color" "rgba(183, 169, 255)"
             ]
-            (List.map draw
-                (rectangle "rgba(153, 248, 255)" cw ch
-                    :: rectangle "rgba(183, 169, 255)" cw ch
-                    :: renderGrid cwh mxy g
-                )
+            (draw (rectangle "rgba(153, 248, 255)" cw ch)
+                :: draw (rectangle "rgba(183, 169, 255)" cw ch)
+                :: renderGrid cwh mxy g
             )
         ]
 
