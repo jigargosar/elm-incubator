@@ -140,6 +140,19 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
 
 
 
+-- GRID UPDATE
+
+
+updateGridOnMouseMove : Cwh -> Mxy -> Grid -> Grid
+updateGridOnMouseMove cwh mxy ((G gwh _ _) as g) =
+    let
+        gcs =
+            getGcs cwh gwh
+    in
+    g
+
+
+
 -- GRID VIEW
 
 
