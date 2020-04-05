@@ -159,10 +159,14 @@ getGDxy gcs (Gwh wh) =
 
 
 updateGridOnMouseMove : Cwh -> Mxy -> Grid -> Grid
-updateGridOnMouseMove cwh mxy ((G gwh _ _) as g) =
+updateGridOnMouseMove cwh (Mxy mx my) ((G gwh _ _) as g) =
     let
         gcs =
             getGcs cwh gwh
+
+        _ =
+            canvasToGIdx (F2 mx my) gcs gwh
+                |> Debug.log "debug"
     in
     g
 
@@ -271,17 +275,17 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         |> draw
 
 
-canvasToGIdx : Float -> F2 -> Gwh -> I2
-canvasToGIdx gcs (F2 x y) gwh =
+canvasToGIdx : F2 -> Float -> Gwh -> I2
+canvasToGIdx (F2 x y) gcs ((Gwh wh) as gwh) =
     let
-        (F2 dx dy) =
-            getGDxy gcs gwh
+        (F2 w h) =
+            iiToFloat wh
 
         gx =
-            round (x - dx)
+            round ((x - (((w * gcs) - gcs) * -0.5)) / gcs)
 
         gy =
-            round (y - dy)
+            round ((y - (((h * gcs) - gcs) * -0.5)) / gcs)
     in
     I2 gx gy
 
