@@ -216,6 +216,13 @@ renderGV cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
             |> placeGridShape gcs gwh
         , -- render grid cells
           renderGridCellEntries gceList
+        , -- render connection to mouse and last cell
+          case mbLastGCE of
+            Nothing ->
+                group []
+
+            Just lastGCE ->
+                renderGridCellEntries [ lastGCE ]
         , renderPointer (gcs * 0.25) mx my
         ]
         |> draw
