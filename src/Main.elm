@@ -185,8 +185,25 @@ renderGrid cwh (Mxy mx my) g =
         |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs gwh
+    , renderGridConnections gcs g
+        |> placeGridShape gcs gwh
     , renderPointer (gcs * 0.25) mx my
     ]
+
+
+renderGridConnections gcs (G _ d conPts) =
+    let
+        (F2 x1 y1) =
+            ffFromII (I2 2 2)
+
+        (F2 x2 y2) =
+            ffFromII (I2 3 2)
+
+        r1 =
+            rectangle "green" gcs (gcs * 0.01)
+                |> move (x1 * gcs) (y1 * gcs)
+    in
+    group [ r1 ]
 
 
 renderGridBg : Float -> Gwh -> Shape
