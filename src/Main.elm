@@ -187,6 +187,11 @@ type GV
     = GV Gwh (List GCE)
 
 
+toGV : Grid -> GV
+toGV ((G gwh _ _) as g) =
+    GV gwh (toGCEList g)
+
+
 renderGV : Cwh -> GV -> HM
 renderGV cwh (GV gwh gceList) =
     let
