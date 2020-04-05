@@ -188,8 +188,27 @@ type GV
 
 
 toGV : Grid -> GV
-toGV ((G gwh _ conIndices) as g) =
-    GV gwh (toGCEList g) conIndices Nothing
+toGV (G ((Gwh wh) as gwh) gd conIndices) =
+    let
+        toGCE xy =
+            GCE xy
+                (case iidGet xy gd of
+                    Nothing ->
+                        REmpty
+
+                    Just Water ->
+                        RWater (List.member xy conIndices)
+                )
+
+        ( mbLastGCE, gceList ) =
+            case List.Extra.last conIndices of
+                Just idx ->
+                    ( Just (toGCE idx), iiRange wh |> List.Extra.remove idx |> List.map toGCE )
+
+                Nothing ->
+                    ( Nothing, iiRange wh |> List.map toGCE )
+    in
+    GV gwh gceList conIndices mbLastGCE
 
 
 renderGV : Cwh -> Mxy -> GV -> HM
