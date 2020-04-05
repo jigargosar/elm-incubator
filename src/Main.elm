@@ -136,7 +136,6 @@ fillG c w h =
                 |> List.map (\xy -> ( xy, c ))
                 |> iidFromList
 
-        --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
             scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
     in
