@@ -246,11 +246,8 @@ renderGridConnections gcs (G _ _ conPts) =
     let
         idxToPt (I2 a b) =
             ( toFloat a * gcs, toFloat b * gcs )
-
-        r1 =
-            connectionPolyLine gcs (List.map idxToPt conPts)
     in
-    group [ r1 ]
+    group [ connectionPolyLine gcs (List.map idxToPt conPts) ]
 
 
 renderGridBg : Float -> Gwh -> Shape
