@@ -201,7 +201,8 @@ renderGV cwh (GV gwh gceList) =
                 |> placeGridShape gcs gwh
     in
     group
-        [ renderGridCellEntries gceList
+        [ renderGridBg gcs gwh
+        , renderGridCellEntries gceList
         ]
         |> draw
 
