@@ -44,7 +44,7 @@ fillG c w h =
             rangeWh w h
                 |> List.foldl (flip Dict.insert c) Dict.empty
     in
-    G (Gwh w h) gd []
+    G (Gwh w h) gd [ ( 4, 4 ) ]
 
 
 toGCEList : Grid -> List GCE
