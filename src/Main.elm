@@ -35,6 +35,10 @@ iiToFloat (I2 a b) =
     F2 (toFloat a) (toFloat b)
 
 
+ffRound (F2 a b) =
+    I2 (round a) (round b)
+
+
 
 -- II Int Int
 
@@ -276,18 +280,12 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
 
 
 canvasToGIdx : F2 -> Float -> Gwh -> I2
-canvasToGIdx (F2 x y) gcs ((Gwh wh) as gwh) =
+canvasToGIdx (F2 x y) gcs gwh =
     let
-        (F2 w h) =
-            iiToFloat wh
-
-        gx =
-            round ((x - (((w * gcs) - gcs) * -0.5)) / gcs)
-
-        gy =
-            round ((y - (((h * gcs) - gcs) * -0.5)) / gcs)
+        (F2 dx dy) =
+            getGDxy gcs gwh
     in
-    I2 gx gy
+    F2 ((x - dx) / gcs) ((y - dy) / gcs) |> ffRound
 
 
 gIdxToCanvas : Float -> I2 -> Gwh -> F2
