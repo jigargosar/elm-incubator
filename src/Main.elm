@@ -195,7 +195,7 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
         gceList =
             toGCEList g
 
-        renderGCEList l =
+        renderGridCells l =
             l
                 |> List.map (renderGCE gcs)
                 |> group
@@ -203,9 +203,9 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
     in
     [ renderGridBg gcs gwh
     , renderGridConnections gcs g |> placeGridShape gcs gwh
-    , renderGCEList gceList
+    , renderGridCells gceList
     , renderConnectionToMouse mxy gcs g
-    , renderGCEList (filterLastShape g gceList)
+    , renderGridCells (filterLastShape g gceList)
     , renderPointer (gcs * 0.25) mx my
     ]
 
