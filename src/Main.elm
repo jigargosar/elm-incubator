@@ -200,8 +200,22 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
         |> group
         |> placeGridShape gcs gwh
     , renderConnectionToMouse mxy gcs g
+    , redrawLastShapeOverConnectionToMouse gcs g
+        |> group
+        |> placeGridShape gcs gwh
     , renderPointer (gcs * 0.25) mx my
     ]
+
+
+redrawLastShapeOverConnectionToMouse : Float -> Grid -> List Shape
+redrawLastShapeOverConnectionToMouse gcs ((G _ _ conPts) as g) =
+    let
+        maybeLastPt =
+            List.Extra.last conPts
+    in
+    toGCEList g
+        |> List.filter (\(GCE xy _) -> Just xy == maybeLastPt)
+        |> List.map (renderGCE gcs)
 
 
 renderConnectionToMouse : Mxy -> Float -> Grid -> Shape
@@ -211,17 +225,9 @@ renderConnectionToMouse (Mxy mx my) gcs ((G gwh _ conPts) as g) =
             let
                 (F2 x1 y1) =
                     giToC gcs p1 gwh
-
-                redrawLastShapeOverConnection =
-                    toGCEList g
-                        |> List.filter (\(GCE xy _) -> xy == p1)
-                        |> List.map (renderGCE gcs)
-                        |> group
-                        |> placeGridShape gcs gwh
             in
             group
                 [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
-                , redrawLastShapeOverConnection
                 ]
 
         Nothing ->
