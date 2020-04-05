@@ -104,7 +104,7 @@ type RCell
 
 
 type Gwh
-    = Gwh Int Int
+    = Gwh II
 
 
 fillG : Cell -> Int -> Int -> Grid
@@ -119,11 +119,11 @@ fillG c w h =
         l2 =
             scanl (<|) (II 2 2) [ iiRight, iiRight, iiDown, iiDown ]
     in
-    G (Gwh w h) gd l2
+    G (Gwh (II w h)) gd l2
 
 
 toGCEList : Grid -> List GCE
-toGCEList (G (Gwh w h) gd ds) =
+toGCEList (G (Gwh wh) gd ds) =
     let
         toGCE xy =
             GCE xy
@@ -135,17 +135,17 @@ toGCEList (G (Gwh w h) gd ds) =
                         RWater (List.member xy ds)
                 )
     in
-    iiRange (II w h) |> List.map toGCE
+    iiRange wh |> List.map toGCE
 
 
 getGcs : Cwh -> Gwh -> Float
-getGcs (Cwh cw ch) (Gwh gw gh) =
+getGcs (Cwh cw ch) (Gwh (II gw gh)) =
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
         * 0.8
 
 
 placeGridShape : Float -> Gwh -> Shape -> Shape
-placeGridShape gcs (Gwh gw gh) =
+placeGridShape gcs (Gwh (II gw gh)) =
     move (((toFloat gw * gcs) - gcs) * -0.5)
         (((toFloat gh * gcs) - gcs) * -0.5)
 
@@ -169,7 +169,7 @@ renderGrid cwh (Mxy mx my) g =
 
 
 renderGridBg : Float -> Gwh -> Shape
-renderGridBg gcs (Gwh gw gh) =
+renderGridBg gcs (Gwh (II gw gh)) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
