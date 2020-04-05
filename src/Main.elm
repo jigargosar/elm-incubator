@@ -194,20 +194,18 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
 
         gceList =
             toGCEList g
+
+        renderGCEList l =
+            l
+                |> List.map (renderGCE gcs)
+                |> group
+                |> placeGridShape gcs gwh
     in
     [ renderGridBg gcs gwh
-    , renderGridConnections gcs g
-        |> placeGridShape gcs gwh
-    , gceList
-        |> List.map (renderGCE gcs)
-        |> group
-        |> placeGridShape gcs gwh
+    , renderGridConnections gcs g |> placeGridShape gcs gwh
+    , renderGCEList gceList
     , renderConnectionToMouse mxy gcs g
-    , gceList
-        |> filterLastShape g
-        |> List.map (renderGCE gcs)
-        |> group
-        |> placeGridShape gcs gwh
+    , renderGCEList (filterLastShape g gceList)
     , renderPointer (gcs * 0.25) mx my
     ]
 
