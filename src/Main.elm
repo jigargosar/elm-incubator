@@ -214,7 +214,7 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
             group [ connectionPolyLine gcs (List.map idxToPt conIndices) ]
                 |> placeGridShape gcs gwh
 
-        renderLastCellAndConnectToMouse =
+        renderLastCellAndConnectionToMouse =
             case mbLastGCE of
                 Nothing ->
                     group []
@@ -226,7 +226,7 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         [ renderGridBg gcs gwh
         , renderCellConnections
         , renderGridCellEntries gceList
-        , renderLastCellAndConnectToMouse
+        , renderLastCellAndConnectionToMouse
         , renderPointer (gcs * 0.25) mx my
         ]
         |> draw
