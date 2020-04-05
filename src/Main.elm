@@ -139,6 +139,10 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
         * 0.8
 
 
+
+-- GRID VIEW
+
+
 renderGrid : Cwh -> Mxy -> Grid -> HM
 renderGrid cwh mxy g =
     toGridVM g |> renderGridVM cwh mxy
