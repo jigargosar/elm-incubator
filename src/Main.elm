@@ -55,6 +55,16 @@ iidFromList =
     List.map (Tuple.mapFirst (iiApply2 Tuple.pair)) >> Dict.fromList >> IIDict
 
 
+iidInsert : II -> a -> IIDict a -> IIDict a
+iidInsert ii a (IIDict d) =
+    IIDict (Dict.insert (iiApply2 Tuple.pair ii) a d)
+
+
+iidGet : II -> IIDict a -> Maybe a
+iidGet ii (IIDict d) =
+    Dict.get (iiApply2 Tuple.pair ii) d
+
+
 
 -- Grid
 
