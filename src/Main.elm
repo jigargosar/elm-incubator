@@ -200,7 +200,7 @@ renderGridConnections gcs (G _ d conPts) =
             ffFromII (I2 3 2)
 
         r1 =
-            line "green" (x1 * gcs) (y1 * gcs) (x2 * gcs) (y2 * gcs)
+            line "green" (gcs * 0.03) ( x1 * gcs, y1 * gcs ) ( x2 * gcs, y2 * gcs )
                 |> move (x1 * gcs) (y1 * gcs)
     in
     group [ r1 ]
@@ -351,9 +351,9 @@ rectangle c w h =
     Rectangle w h |> Shape c [] initialTransform
 
 
-line : String -> Float -> Float -> Float -> Float -> Shape
-line c x1 y1 x2 y2 =
-    Line x1 y1 x2 y2 |> Shape c [] initialTransform
+line : String -> Float -> ( Float, Float ) -> ( Float, Float ) -> Shape
+line c sw p1 p2 =
+    Line sw p1 p2 |> Shape c [] initialTransform
 
 
 ellipse : String -> Float -> Float -> Shape
@@ -380,7 +380,7 @@ type Form
     = Rectangle Float Float
     | Ellipse Float Float
     | Group (List Shape)
-    | Line Float Float Float Float
+    | Line Float ( Float, Float ) ( Float, Float )
 
 
 type Shape
@@ -404,7 +404,7 @@ translateBy dx dy (TF x y) =
 draw : Shape -> HM
 draw (Shape c cs (TF dx dy) s) =
     case s of
-        Line x1 y1 x2 y2 ->
+        Line sw ( x1, y1 ) ( x2, y2 ) ->
             Svg.line
                 [ Px.x1 x1
                 , Px.y1 y1
@@ -412,7 +412,7 @@ draw (Shape c cs (TF dx dy) s) =
                 , Px.y2 y2
                 , SA.stroke c
                 , TA.class cs
-                , Px.strokeWidth 1
+                , Px.strokeWidth sw
                 ]
                 []
 
