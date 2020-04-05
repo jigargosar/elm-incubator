@@ -280,7 +280,7 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             ( model, Cmd.none )
 
         GotBS w h ->
-            ( M (Cwh <| ffFromII (I2 w h)) mxy g, Cmd.none )
+            ( M (I2 w h |> ffFromII |> Cwh) mxy g, Cmd.none )
 
         OnCMM x y ->
             ( M cwh (Mxy (x - cw * 0.5) (y - ch * 0.5)) g, Cmd.none )
