@@ -23,7 +23,7 @@ import TypedSvg.Types as TT
 
 
 type Grid
-    = G Gwh (Dict ( Int, Int ) Cell) (List ( Int, Int ))
+    = G Gwh (Dict ( Int, Int ) Cell) (List I2)
 
 
 type Cell
@@ -52,23 +52,23 @@ fillG c w h =
 
         --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
-            scanl (<|) ( 2, 2 ) [ rightOf, rightOf, downOf, downOf ]
+            scanl (<|) (I2 2 2) [ rightOf, rightOf, downOf, downOf ]
     in
     G (Gwh w h) gd l2
 
 
-type alias I2 =
-    ( Int, Int )
+type I2
+    = I2 Int Int
 
 
-rightOf : ( Int, Int ) -> ( Int, Int )
-rightOf ( x, y ) =
-    ( x + 1, y )
+rightOf : I2 -> I2
+rightOf (I2 x y) =
+    I2 (x + 1) y
 
 
-downOf : ( Int, Int ) -> ( Int, Int )
-downOf ( x, y ) =
-    ( x, y + 1 )
+downOf : I2 -> I2
+downOf (I2 x y) =
+    I2 x (y + 1)
 
 
 toGCEList : Grid -> List GCE
@@ -82,7 +82,7 @@ toGCEList (G (Gwh w h) gd ds) =
                         REmpty
 
                     Just Water ->
-                        RWater (List.member ( x, y ) ds)
+                        RWater (List.member (I2 x y) ds)
                 )
     in
     rangeWh w h |> List.map (uncurry toGCE)
