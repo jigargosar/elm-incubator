@@ -289,10 +289,11 @@ gIdxToCanvas gcs xy gwh =
 
 placeGridShape : Float -> Gwh -> Shape -> Shape
 placeGridShape gcs gwh =
-    let
-        (F2 dx dy) =
-            getGDxy gcs gwh
-    in
+    moveF2 (getGDxy gcs gwh)
+
+
+moveF2 : F2 -> Shape -> Shape
+moveF2 (F2 dx dy) =
     move dx dy
 
 
