@@ -30,7 +30,12 @@ type Cell
 
 
 type GCE
-    = GCE Int Int (Maybe Cell)
+    = GCE Int Int RCell
+
+
+type RCell
+    = REmpty
+    | RWater Bool
 
 
 type Gwh
@@ -48,10 +53,18 @@ fillG c w h =
 
 
 toGCEList : Grid -> List GCE
-toGCEList (G (Gwh w h) gd _) =
+toGCEList (G (Gwh w h) gd ds) =
     let
         toGCE x y =
-            GCE x y (Dict.get ( x, y ) gd)
+            GCE x
+                y
+                (case Dict.get ( x, y ) gd of
+                    Nothing ->
+                        REmpty
+
+                    Just Water ->
+                        RWater (List.member ( x, y ) ds)
+                )
     in
     rangeWh w h |> List.map (uncurry toGCE)
 
@@ -102,21 +115,20 @@ renderGridBg gcs (Gwh gw gh) =
 
 
 renderGCE : Float -> GCE -> Shape
-renderGCE gcs (GCE x y mbc) =
-    let
-        rc cell =
-            case cell of
-                Water ->
-                    group
-                        [ let
-                            r =
-                                gcs * 0.2
-                          in
-                          ellipse "dodgerblue" r r
-                        ]
-                        |> move (toFloat x * gcs) (toFloat y * gcs)
-    in
-    mbc |> Maybe.map rc |> Maybe.withDefault (group [])
+renderGCE gcs (GCE x y rc) =
+    case rc of
+        REmpty ->
+            group []
+
+        RWater bool ->
+            group
+                [ let
+                    r =
+                        gcs * 0.2
+                  in
+                  ellipse "dodgerblue" r r
+                ]
+                |> move (toFloat x * gcs) (toFloat y * gcs)
 
 
 renderPointer : Float -> Float -> Float -> Shape
