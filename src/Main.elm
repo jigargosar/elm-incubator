@@ -115,15 +115,6 @@ type Cell
     = Water
 
 
-type GCE
-    = GCE I2 RCell
-
-
-type RCell
-    = REmpty
-    | RWater Bool
-
-
 type Gwh
     = Gwh I2
 
@@ -155,6 +146,15 @@ renderGrid cwh mxy g =
 
 type GridVM
     = GV Gwh (List GCE) (List I2) (Maybe GCE)
+
+
+type GCE
+    = GCE I2 RCell
+
+
+type RCell
+    = REmpty
+    | RWater Bool
 
 
 toGridVM : Grid -> GridVM
