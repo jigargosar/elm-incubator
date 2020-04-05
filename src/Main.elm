@@ -193,6 +193,7 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
             getGcs cwh gwh
     in
     [ renderGridBg gcs gwh
+    , renderGridCellsLayer1 gcs g
     , renderGridConnections gcs g
         |> placeGridShape gcs gwh
     , renderConnectionToMouse mxy gcs g
@@ -240,6 +241,42 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
+renderCellLayer1 : Float -> Grid -> I2 -> Shape
+renderCellLayer1 gcs (G _ gd l2Indices) xy =
+    if List.member xy l2Indices then
+        group []
+
+    else
+        case iidGet xy gd of
+            Nothing ->
+                group []
+
+            Just Water ->
+                renderWaterCell gcs xy False
+
+
+renderCellLayer2 : Float -> Grid -> I2 -> Shape
+renderCellLayer2 gcs (G _ gd l2Indices) xy =
+    if not (List.member xy l2Indices) then
+        group []
+
+    else
+        case iidGet xy gd of
+            Nothing ->
+                group []
+
+            Just Water ->
+                renderWaterCell gcs xy True
+
+
+renderGridCellsLayer1 : Float -> Grid -> Shape
+renderGridCellsLayer1 gcs ((G ((Gwh wh) as gwh) _ _) as g) =
+    iiRange wh
+        |> List.map (renderCellLayer2 gcs g)
+        |> group
+        |> placeGridShape gcs gwh
+
+
 renderGCE : Float -> GCE -> Shape
 renderGCE gcs (GCE (I2 x y) rc) =
     case rc of
@@ -259,6 +296,21 @@ renderGCE gcs (GCE (I2 x y) rc) =
                 [ ellipse1 "dodgerblue" (gcs * rFact)
                 ]
                 |> move (toFloat x * gcs) (toFloat y * gcs)
+
+
+renderWaterCell gcs (I2 x y) isSmall =
+    let
+        rFact =
+            if isSmall then
+                0.1
+
+            else
+                0.2
+    in
+    group
+        [ ellipse1 "dodgerblue" (gcs * rFact)
+        ]
+        |> move (toFloat x * gcs) (toFloat y * gcs)
 
 
 ellipse1 a b =
