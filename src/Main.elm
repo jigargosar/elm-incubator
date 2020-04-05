@@ -195,11 +195,11 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
     [ renderGridBg gcs gwh
     , renderGridConnections gcs g
         |> placeGridShape gcs gwh
-    , renderConnectionToMouse mxy gcs g
     , toGCEList g
         |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs gwh
+    , renderConnectionToMouse mxy gcs g
     , renderPointer (gcs * 0.25) mx my
     ]
 
