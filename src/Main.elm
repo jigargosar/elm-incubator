@@ -18,6 +18,25 @@ import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
 
 
+type II
+    = II Int Int
+
+
+iiApply2 : (Int -> Int -> a) -> II -> a
+iiApply2 func (II a b) =
+    func a b
+
+
+iiRight : II -> II
+iiRight (II x y) =
+    II (x + 1) y
+
+
+iiDown : II -> II
+iiDown (II x y) =
+    II x (y + 1)
+
+
 
 -- I2Dict
 
@@ -31,18 +50,9 @@ iidEmpty =
     IIDict Dict.empty
 
 
-type II
-    = II Int Int
-
-
-rightOf : II -> II
-rightOf (II x y) =
-    II (x + 1) y
-
-
-downOf : II -> II
-downOf (II x y) =
-    II x (y + 1)
+iidFromList : List ( II, a ) -> IIDict a
+iidFromList =
+    List.map (Tuple.mapFirst (iiApply2 Tuple.pair)) >> Dict.fromList >> IIDict
 
 
 
@@ -79,7 +89,7 @@ fillG c w h =
 
         --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
-            scanl (<|) (II 2 2) [ rightOf, rightOf, downOf, downOf ]
+            scanl (<|) (II 2 2) [ iiRight, iiRight, iiDown, iiDown ]
     in
     G (Gwh w h) gd l2
 
