@@ -192,8 +192,8 @@ toGV ((G gwh _ conIndices) as g) =
     GV gwh (toGCEList g) conIndices Nothing
 
 
-renderGV : Cwh -> GV -> HM
-renderGV cwh (GV gwh gceList conIndices mbLastGCE) =
+renderGV : Cwh -> Mxy -> GV -> HM
+renderGV cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
     let
         gcs =
             getGcs cwh gwh
@@ -216,13 +216,14 @@ renderGV cwh (GV gwh gceList conIndices mbLastGCE) =
             |> placeGridShape gcs gwh
         , -- render grid cells
           renderGridCellEntries gceList
+        , renderPointer (gcs * 0.25) mx my
         ]
         |> draw
 
 
 renderGrid2 : Cwh -> Mxy -> Grid -> HM
-renderGrid2 cwh _ g =
-    toGV g |> renderGV cwh
+renderGrid2 cwh mxy g =
+    toGV g |> renderGV cwh mxy
 
 
 renderGrid : Cwh -> Mxy -> Grid -> List HM
