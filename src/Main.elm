@@ -376,8 +376,11 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             let
                 newMxy =
                     Mxy (x - cw * 0.5) (y - ch * 0.5)
+
+                newGrid =
+                    updateGridOnMouseMove cwh newMxy g
             in
-            ( M cwh newMxy g, Cmd.none )
+            ( M cwh newMxy newGrid, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
