@@ -375,6 +375,7 @@ type Form
     = Rectangle Float Float
     | Ellipse Float Float
     | Group (List Shape)
+    | Line Float Float Float Float
 
 
 type Shape
@@ -398,6 +399,17 @@ translateBy dx dy (TF x y) =
 draw : Shape -> HM
 draw (Shape c cs (TF dx dy) s) =
     case s of
+        Line x1 y1 x2 y2 ->
+            Svg.line
+                [ Px.x1 x1
+                , Px.y1 y1
+                , Px.x2 x2
+                , Px.y2 y2
+                , SA.stroke c
+                , TA.class cs
+                ]
+                []
+
         Rectangle w h ->
             Svg.rect
                 [ Px.width w
