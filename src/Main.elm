@@ -183,6 +183,29 @@ placeGridShape gcs (Gwh (I2 gw gh)) =
         (((toFloat gh * gcs) - gcs) * -0.5)
 
 
+type GV
+    = GV Gwh (List GCE)
+
+
+renderGV : Cwh -> GV -> HM
+renderGV cwh (GV gwh gceList) =
+    let
+        gcs =
+            getGcs cwh gwh
+
+        renderGridCellEntries : List GCE -> Shape
+        renderGridCellEntries l =
+            l
+                |> List.map (renderGCE gcs)
+                |> group
+                |> placeGridShape gcs gwh
+    in
+    group
+        [ renderGridCellEntries gceList
+        ]
+        |> draw
+
+
 renderGrid : Cwh -> Mxy -> Grid -> List HM
 renderGrid cwh ((Mxy mx my) as mxy) g =
     let
