@@ -151,7 +151,7 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
 
 renderGrid : Cwh -> Mxy -> Grid -> HM
 renderGrid cwh mxy g =
-    toGV g |> renderGV cwh mxy
+    toGV g |> renderGridVM cwh mxy
 
 
 type GridVM
@@ -182,8 +182,8 @@ toGV (G ((Gwh wh) as gwh) gd conIndices) =
     GV gwh gceList conIndices mbLastGCE
 
 
-renderGV : Cwh -> Mxy -> GridVM -> HM
-renderGV cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
+renderGridVM : Cwh -> Mxy -> GridVM -> HM
+renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
     let
         gcs =
             getGcs cwh gwh
