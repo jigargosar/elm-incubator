@@ -191,7 +191,8 @@ renderGrid cwh (Mxy mx my) g =
     ]
 
 
-renderGridConnections gcs (G _ d conPts) =
+renderGridConnections : Float -> Grid -> Shape
+renderGridConnections gcs (G _ _ conPts) =
     let
         idxToPt (I2 a b) =
             ( toFloat a * gcs, toFloat b * gcs )
