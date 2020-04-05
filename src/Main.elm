@@ -143,24 +143,8 @@ fillG c w h =
     G (Gwh (I2 w h)) gd l2
 
 
-toGCEList1 : Grid -> List GCE
-toGCEList1 (G (Gwh wh) gd ds) =
-    let
-        toGCE xy =
-            GCE xy
-                (case iidGet xy gd of
-                    Nothing ->
-                        REmpty
-
-                    Just Water ->
-                        RWater (List.member xy ds)
-                )
-    in
-    iiRange wh |> List.map toGCE
-
-
-toGCEList2 : Grid -> List GCE
-toGCEList2 (G (Gwh wh) gd ds) =
+toGCEList : Grid -> List GCE
+toGCEList (G (Gwh wh) gd ds) =
     let
         toGCE xy =
             GCE xy
@@ -212,7 +196,7 @@ renderGrid cwh ((Mxy mx my) as mxy) g =
     , renderGridConnections gcs g
         |> placeGridShape gcs gwh
     , renderConnectionToMouse mxy gcs g
-    , toGCEList1 g
+    , toGCEList g
         |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs gwh
