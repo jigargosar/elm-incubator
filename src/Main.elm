@@ -152,6 +152,10 @@ updateGridOnMouseMove cwh mxy ((G gwh _ _) as g) =
     g
 
 
+canvasToGIdx gcs (F2 x y) (Gwh gwh) =
+    1
+
+
 
 -- GRID VIEW
 
@@ -264,8 +268,11 @@ gIdxToCanvas gcs xy (Gwh wh) =
 
         (F2 w h) =
             iiToFloat wh
+
+        dx =
+            ((w * gcs) - gcs) * -0.5
     in
-    F2 (((w * gcs) - gcs) * -0.5 + x * gcs) (((h * gcs) - gcs) * -0.5 + y * gcs)
+    F2 (dx + x * gcs) (((h * gcs) - gcs) * -0.5 + y * gcs)
 
 
 placeGridShape : Float -> Gwh -> Shape -> Shape
