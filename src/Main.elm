@@ -145,7 +145,7 @@ renderGrid cwh mxy g =
 
 
 
--- GRID VM
+-- GRID VIEW MODEL
 
 
 type GridVM
