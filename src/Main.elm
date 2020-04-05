@@ -167,10 +167,6 @@ updateGridOnMouseMove cwh mxy ((G gwh _ _) as g) =
     g
 
 
-canvasToGIdx gcs (F2 x y) (Gwh gwh) =
-    1
-
-
 
 -- GRID VIEW
 
@@ -273,6 +269,21 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         , renderPointer (gcs * 0.25) mx my
         ]
         |> draw
+
+
+canvasToGIdx : Float -> F2 -> Gwh -> I2
+canvasToGIdx gcs (F2 x y) gwh =
+    let
+        (F2 dx dy) =
+            getGDxy gcs gwh
+
+        gx =
+            round (x - dx)
+
+        gy =
+            round (y - dy)
+    in
+    I2 gx gy
 
 
 gIdxToCanvas : Float -> I2 -> Gwh -> F2
