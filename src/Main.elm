@@ -288,9 +288,12 @@ gIdxToCanvas gcs xy gwh =
 
 
 placeGridShape : Float -> Gwh -> Shape -> Shape
-placeGridShape gcs (Gwh (I2 gw gh)) =
-    move (((toFloat gw * gcs) - gcs) * -0.5)
-        (((toFloat gh * gcs) - gcs) * -0.5)
+placeGridShape gcs gwh =
+    let
+        (F2 dx dy) =
+            getGDxy gcs gwh
+    in
+    move dx dy
 
 
 connectionPolyLine : Float -> List ( Float, Float ) -> Shape
