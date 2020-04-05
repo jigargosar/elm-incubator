@@ -37,6 +37,16 @@ iiDown (II x y) =
     II x (y + 1)
 
 
+iiRange : II -> List II
+iiRange (II w h) =
+    let
+        fn : Int -> List II
+        fn x =
+            List.range 0 (h - 1) |> List.map (II x)
+    in
+    List.range 0 (w - 1) |> List.concatMap fn
+
+
 
 -- I2Dict
 
@@ -70,7 +80,7 @@ iidGet ii (IIDict d) =
 
 
 type Grid
-    = G Gwh (Dict ( Int, Int ) Cell) (List II)
+    = G Gwh (IIDict Cell) (List II)
 
 
 type Cell
@@ -94,8 +104,8 @@ fillG : Cell -> Int -> Int -> Grid
 fillG c w h =
     let
         gd =
-            rangeWh w h
-                |> List.foldl (flip Dict.insert c) Dict.empty
+            iiRange (II w h)
+                |> List.foldl (flip iidInsert c) iidEmpty
 
         --l1 = [ ( 2, 2 ), ( 3, 2 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
         l2 =
@@ -107,28 +117,29 @@ fillG c w h =
 toGCEList : Grid -> List GCE
 toGCEList (G (Gwh w h) gd ds) =
     let
-        toGCE x y =
+        toGCE ((II x y) as xy) =
             GCE x
                 y
-                (case Dict.get ( x, y ) gd of
+                (case iidGet xy gd of
                     Nothing ->
                         REmpty
 
                     Just Water ->
-                        RWater (List.member (II x y) ds)
+                        RWater (List.member xy ds)
                 )
     in
-    rangeWh w h |> List.map (uncurry toGCE)
+    iiRange (II w h) |> List.map toGCE
 
 
-rangeWh : Int -> Int -> List ( Int, Int )
-rangeWh w h =
-    let
-        fn : a -> List ( a, Int )
-        fn x =
-            List.range 0 (h - 1) |> List.map (Tuple.pair x)
-    in
-    List.range 0 (w - 1) |> List.concatMap fn
+
+--rangeWh : Int -> Int -> List ( Int, Int )
+--rangeWh w h =
+--    let
+--        fn : a -> List ( a, Int )
+--        fn x =
+--            List.range 0 (h - 1) |> List.map (Tuple.pair x)
+--    in
+--    List.range 0 (w - 1) |> List.concatMap fn
 
 
 getGcs : Cwh -> Gwh -> Float
