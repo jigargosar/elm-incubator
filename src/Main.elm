@@ -183,12 +183,17 @@ renderGrid cwh (Mxy mx my) g =
     [ renderGridBg gcs gwh
     , renderGridConnections gcs g
         |> placeGridShape gcs gwh
+    , renderConnectionToMouse mx my g
     , toGCEList g
         |> List.map (renderGCE gcs)
         |> group
         |> placeGridShape gcs gwh
     , renderPointer (gcs * 0.25) mx my
     ]
+
+
+renderConnectionToMouse mx my (G gwh _ conPts) =
+    group []
 
 
 renderGridConnections : Float -> Grid -> Shape
