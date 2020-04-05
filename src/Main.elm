@@ -149,8 +149,8 @@ getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
         * 0.8
 
 
-giToC : Float -> I2 -> Gwh -> F2
-giToC gcs xy (Gwh wh) =
+gIdxToCanvas : Float -> I2 -> Gwh -> F2
+gIdxToCanvas gcs xy (Gwh wh) =
     let
         (F2 x y) =
             iiToFloat xy
@@ -212,7 +212,7 @@ renderGV cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         renderMouseConnection (GCE xy _) =
             let
                 (F2 x1 y1) =
-                    giToC gcs xy gwh
+                    gIdxToCanvas gcs xy gwh
             in
             group
                 [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
