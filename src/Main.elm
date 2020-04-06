@@ -2,7 +2,7 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Browser
 import Browser.Events
 import Dict exposing (Dict)
@@ -131,7 +131,12 @@ initialGrid =
         gd =
             iiRange (I2 w h)
                 |> List.map (\xy -> ( xy, Water ))
+                |> List.Extra.updateIf (Tuple.first >> flip List.member seedIndices)
+                    (Tuple.mapSecond (always Seed))
                 |> iidFromList
+
+        seedIndices =
+            scanl (<|) (I2 1 4) [ iiRight, iiRight, iiDown, iiDown ]
 
         conIdxStack =
             scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
