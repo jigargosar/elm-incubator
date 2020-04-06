@@ -605,6 +605,18 @@ square a b =
     rectangle a b b
 
 
+renderPointer : Float -> Float -> Float -> HM
+renderPointer w x y =
+    Svg.g [ style_ [ transform_ [ translate_ x y ] ] ]
+        [ draw <| ellipse "black" 1 w
+        , draw <| ellipse "black" w 1
+        ]
+
+
+
+-- SVG STYLE RENDERING HELPERS
+
+
 px_ : Float -> String
 px_ float =
     String.fromFloat float ++ "px"
@@ -632,14 +644,6 @@ style_ ls =
 
 transitionAllLinear_ =
     "transition: all 0.5s linear"
-
-
-renderPointer : Float -> Float -> Float -> HM
-renderPointer w x y =
-    Svg.g [ style_ [ transform_ [ translate_ x y ] ] ]
-        [ draw <| ellipse "black" 1 w
-        , draw <| ellipse "black" w 1
-        ]
 
 
 
