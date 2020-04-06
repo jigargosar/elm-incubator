@@ -616,9 +616,10 @@ renderPointer r x y =
     Svg.g [ style_ [ transform_ [ translate_ x y, "scale(2)" ] ] ]
         [ draw <| ellipse "black" 1 r
         , draw <| ellipse "black" r 1
-        , draw <| rectangle "green" d 2
+
+        --, draw <| rectangle "green" d 2
         , Svg.rect
-            [ style_ [ transform_ [ "translate(-50%, -50%)" ] ]
+            [ style_ [ "transform-box: fill-box", transform_ [ "translate(-50%, -50%)" ] ]
             , Px.width 3
             , Px.height d
             , SA.fill "red"
