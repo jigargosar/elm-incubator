@@ -110,6 +110,21 @@ iidFromList =
     List.map (Tuple.mapFirst iiToPair) >> Dict.fromList >> IIDict
 
 
+iidFillAt : I2 -> a -> IIDict a -> IIDict a
+iidFillAt ii a (IIDict d) =
+    case Dict.get (iiToPair ii) d of
+        Nothing ->
+            IIDict d
+
+        Just _ ->
+            IIDict (Dict.insert (iiToPair ii) a d)
+
+
+iidFillOnly : List I2 -> a -> IIDict a -> IIDict a
+iidFillOnly iis a iid =
+    List.foldl (flip iidFillAt a) iid iis
+
+
 
 --iidInsert : II -> a -> IIDict a -> IIDict a
 --iidInsert ii a (IIDict d) =
@@ -282,6 +297,13 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
                     g
             in
             G a b c
+
+        clearConStackAndReplaceWithWall =
+            let
+                (G a b c) =
+                    g
+            in
+            G a (iidFillOnly c Wall b) []
     in
     case conI2Stack of
         [] ->
@@ -300,7 +322,7 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
                     g
 
         _ :: _ :: _ ->
-            setConStack []
+            clearConStackAndReplaceWithWall
 
         _ ->
             g
