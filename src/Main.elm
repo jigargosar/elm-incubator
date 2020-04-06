@@ -609,7 +609,8 @@ renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
     let
         styleString =
-            "transform: translate(" ++ String.fromFloat x ++ "px," ++ String.fromFloat y ++ ");"
+            [ "transform: translate(" ++ String.fromFloat x ++ "px," ++ String.fromFloat y ++ "px)" ]
+                |> String.join ";"
     in
     Svg.g [ TA.style styleString ]
         [ draw <| ellipse "black" 1 w
