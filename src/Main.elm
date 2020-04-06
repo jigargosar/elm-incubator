@@ -103,6 +103,11 @@ iidGet ii (IIDict d) =
     Dict.get (iiToPair ii) d
 
 
+iidGetEntry : I2 -> IIDict a -> Maybe ( I2, a )
+iidGetEntry ii (IIDict d) =
+    Dict.get (iiToPair ii) d |> Maybe.map (Tuple.pair ii)
+
+
 iidToList : IIDict a -> List ( I2, a )
 iidToList (IIDict d) =
     Dict.toList d |> List.map (Tuple.mapFirst (uncurry I2))
@@ -185,10 +190,17 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
         gcs =
             getGcs cwh gwh
 
-        ls : Maybe (List ( I2, Cell ))
-        ls =
-            iidGetAll conI2Stack gd
-                |> Maybe.map (List.map2 Tuple.pair conI2Stack)
+        func a b =
+            Debug.log "a,b" ( a, b )
+
+        _ =
+            Maybe.map2 func
+                (canvasToGIdx (F2 mx my) gcs gwh
+                    |> Maybe.andThen (flip iidGetEntry gd)
+                )
+                (iidGetAll conI2Stack gd
+                    |> Maybe.map (List.map2 Tuple.pair conI2Stack)
+                )
     in
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
