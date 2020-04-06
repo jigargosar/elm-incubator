@@ -122,12 +122,15 @@ type Gwh
     = Gwh I2
 
 
-initialGrid : Cell -> Int -> Int -> Grid
-initialGrid c w h =
+initialGrid : Grid
+initialGrid =
     let
+        ( w, h ) =
+            ( 10, 8 )
+
         gd =
             iiRange (I2 w h)
-                |> List.map (\xy -> ( xy, c ))
+                |> List.map (\xy -> ( xy, Water ))
                 |> iidFromList
 
         conIdxStack =
@@ -431,7 +434,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         grid =
-            initialGrid Water 10 8
+            initialGrid
     in
     ( M (flags.bs |> ffFromTuple |> Cwh) (Mxy 0 0) grid
     , Cmd.none
