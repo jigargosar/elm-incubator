@@ -13,7 +13,6 @@ import List.Extra exposing (scanl)
 import Maybe.Extra
 import Svg
 import Svg.Attributes as SA
-import Svg.Events as SE
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
