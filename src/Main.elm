@@ -607,12 +607,10 @@ square a b =
 
 renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
-    group
-        [ ellipse "black" 1 w
-        , ellipse "black" w 1
+    Svg.g []
+        [ draw <| ellipse "black" 1 w
+        , draw <| ellipse "black" w 1
         ]
-        |> move x y
-        |> draw
 
 
 
