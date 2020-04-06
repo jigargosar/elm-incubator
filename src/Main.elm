@@ -140,7 +140,7 @@ initialGrid : Grid
 initialGrid =
     let
         ( w, h ) =
-            ( 10, 8 )
+            ( 8, 8 )
 
         gd =
             iiRange (I2 w h)
