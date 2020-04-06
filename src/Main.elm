@@ -145,8 +145,13 @@ type alias GCtx =
     }
 
 
-toGCtx : Cwh -> Gwh -> GCtx
-toGCtx cwh ((Gwh wh) as gwh) =
+toGCtx : Cwh -> Grid -> GCtx
+toGCtx cwh (G gwh _ _) =
+    toGCtxHelp cwh gwh
+
+
+toGCtxHelp : Cwh -> Gwh -> GCtx
+toGCtxHelp cwh ((Gwh wh) as gwh) =
     let
         gcs =
             getGcs cwh gwh
@@ -235,11 +240,11 @@ canCellStartConnection cell =
             True
 
 
-updateGridOnMouseClick : Cwh -> Mxy -> Grid -> Grid
-updateGridOnMouseClick cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
+updateGridOnMouseClick : GCtx -> Mxy -> Grid -> Grid
+updateGridOnMouseClick ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
         gcs =
-            getGcs cwh gwh
+            ctx.cs
 
         maybeClickedEntry =
             canvasToGIdx (F2 mx my) gcs gwh
@@ -265,11 +270,11 @@ updateGridOnMouseClick cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
             g
 
 
-updateGridOnMouseMove : Cwh -> Mxy -> Grid -> Grid
-updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
+updateGridOnMouseMove : GCtx -> Mxy -> Grid -> Grid
+updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
         gcs =
-            getGcs cwh gwh
+            ctx.cs
 
         func : ( I2, Cell ) -> Maybe ( I2, Cell ) -> Grid
         func ( gIdx, cell ) mbLstEntry =
@@ -318,7 +323,7 @@ areAdjacent (I2 x1 y1) (I2 x2 y2) =
 
 renderGrid : Cwh -> Mxy -> Grid -> HM
 renderGrid cwh mxy g =
-    toGridVM g |> renderGridVM cwh mxy
+    toGridVM g |> renderGridVM (toGCtx cwh g) mxy
 
 
 
@@ -378,11 +383,11 @@ toGridVM (G gwh gd conI2Stack) =
 -- RENDER GRID VIEW MODEL
 
 
-renderGridVM : Cwh -> Mxy -> GridVM -> HM
-renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
+renderGridVM : GCtx -> Mxy -> GridVM -> HM
+renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
     let
         gcs =
-            getGcs cwh gwh
+            ctx.cs
 
         renderGridCellEntries : List GCE -> Shape
         renderGridCellEntries l =
@@ -570,6 +575,10 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
+    let
+        ctx =
+            toGCtx cwh g
+    in
     case message of
         NoOp ->
             ( model, Cmd.none )
@@ -583,7 +592,7 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
                     Mxy (x - cw * 0.5) (y - ch * 0.5)
 
                 newGrid =
-                    updateGridOnMouseMove cwh newMxy g
+                    updateGridOnMouseMove ctx newMxy g
             in
             ( M cwh newMxy newGrid, Cmd.none )
 
@@ -593,7 +602,7 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
                     Mxy (x - cw * 0.5) (y - ch * 0.5)
 
                 newGrid =
-                    updateGridOnMouseClick cwh newMxy g
+                    updateGridOnMouseClick ctx newMxy g
             in
             ( M cwh newMxy newGrid, Cmd.none )
 
