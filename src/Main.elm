@@ -626,6 +626,10 @@ style_ ls =
     SA.style (String.join ";" ls)
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 transitionAllLinear_ =
     "transition: all 0.5s linear"
 
