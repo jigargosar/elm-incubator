@@ -279,13 +279,24 @@ renderGridVM cwh (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         |> draw
 
 
-canvasToGIdx : F2 -> Float -> Gwh -> I2
+canvasToGIdx : F2 -> Float -> Gwh -> Maybe I2
 canvasToGIdx (F2 x y) gcs gwh =
     let
         (F2 dx dy) =
             getGDxy gcs gwh
     in
-    F2 ((x - dx) / gcs) ((y - dy) / gcs) |> ffRound
+    F2 ((x - dx) / gcs) ((y - dy) / gcs)
+        |> ffRound
+        |> validGIdx gwh
+
+
+validGIdx : Gwh -> I2 -> Maybe I2
+validGIdx (Gwh (I2 w h)) ((I2 x y) as idx) =
+    if x >= 0 && x < w && y >= 0 && y < h then
+        Just idx
+
+    else
+        Nothing
 
 
 gIdxToCanvas : Float -> I2 -> Gwh -> F2
