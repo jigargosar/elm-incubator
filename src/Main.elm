@@ -488,7 +488,8 @@ type alias CM =
 type Msg
     = NoOp
     | GotBS Int Int
-    | OnCMM Float Float
+    | OnMouseMove Float Float
+    | OnClick Float Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -500,7 +501,7 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
         GotBS w h ->
             ( M (I2 w h |> iiToFloat |> Cwh) mxy g, Cmd.none )
 
-        OnCMM x y ->
+        OnMouseMove x y ->
             let
                 newMxy =
                     Mxy (x - cw * 0.5) (y - ch * 0.5)
@@ -510,20 +511,29 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             in
             ( M cwh newMxy newGrid, Cmd.none )
 
+        OnClick x y ->
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onResize GotBS
         , Browser.Events.onMouseMove pageMouseMoveDecoder
+        , Browser.Events.onClick (pageXYDecoder OnClick)
         ]
+
+
+pageXYDecoder : (Float -> Float -> msg) -> Decoder msg
+pageXYDecoder tag =
+    JD.map2 tag
+        (JD.field "pageX" JD.float)
+        (JD.field "pageY" JD.float)
 
 
 pageMouseMoveDecoder : Decoder Msg
 pageMouseMoveDecoder =
-    JD.map2 OnCMM
-        (JD.field "pageX" JD.float)
-        (JD.field "pageY" JD.float)
+    pageXYDecoder OnMouseMove
 
 
 
