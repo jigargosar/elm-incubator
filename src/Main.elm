@@ -492,16 +492,16 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         renderLastCellAndConnectionToMouse =
             case mbLastGCE of
                 Nothing ->
-                    group []
+                    Svg.g [] []
 
                 Just lastGCE ->
-                    group [ renderMouseConnection lastGCE, renderGridCellEntries [ lastGCE ] ]
+                    Svg.g [] [ draw <| renderMouseConnection lastGCE, draw <| renderGridCellEntries [ lastGCE ] ]
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , draw <| renderCellConnections
         , draw <| renderGridCellEntries gceList
-        , draw <| renderLastCellAndConnectionToMouse
+        , renderLastCellAndConnectionToMouse
         , draw <| renderPointer (gcs * 0.25) mx my
         ]
 
