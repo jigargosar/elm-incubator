@@ -115,6 +115,7 @@ type Grid
 
 type Cell
     = Water
+    | Seed
 
 
 type Gwh
@@ -215,6 +216,7 @@ type GCE
 
 type RCell
     = RWater Bool
+    | RSeed Bool
 
 
 gceIdxEq expected (GCE actual _) =
@@ -229,6 +231,9 @@ toGridVM (G gwh gd conI2Stack) =
                 (case c of
                     Water ->
                         RWater (List.member xy conI2Stack)
+
+                    Seed ->
+                        RSeed (List.member xy conI2Stack)
                 )
 
         ls : List GCE
@@ -370,6 +375,20 @@ renderGCE gcs (GCE (I2 x y) rc) =
             in
             group
                 [ circle "dodgerblue" (gcs * rFact)
+                ]
+                |> move (toFloat x * gcs) (toFloat y * gcs)
+
+        RSeed isDown ->
+            let
+                rFact =
+                    if isDown then
+                        0.1
+
+                    else
+                        0.2
+            in
+            group
+                [ circle "brown" (gcs * rFact)
                 ]
                 |> move (toFloat x * gcs) (toFloat y * gcs)
 
