@@ -513,7 +513,17 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch [ Browser.Events.onResize GotBS ]
+    Sub.batch
+        [ Browser.Events.onResize GotBS
+        , Browser.Events.onMouseMove pageMouseMoveDecoder
+        ]
+
+
+pageMouseMoveDecoder : Decoder Msg
+pageMouseMoveDecoder =
+    JD.map2 OnCMM
+        (JD.field "pageX" JD.float)
+        (JD.field "pageY" JD.float)
 
 
 
@@ -528,7 +538,6 @@ view : Model -> Html Msg
 view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
     div
         [ class "fixed absolute--fill"
-        , SE.on "mousemove" pageMouseMoveDecoder
         ]
         [ Svg.svg
             [ TA.viewBox (cw * -0.5) (ch * -0.5) cw ch
@@ -543,13 +552,6 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
             , renderGrid cwh mxy g
             ]
         ]
-
-
-pageMouseMoveDecoder : Decoder Msg
-pageMouseMoveDecoder =
-    JD.map2 OnCMM
-        (JD.field "pageX" JD.float)
-        (JD.field "pageY" JD.float)
 
 
 rectangle : String -> Float -> Float -> Shape
