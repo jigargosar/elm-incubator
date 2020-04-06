@@ -473,15 +473,13 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                 |> List.map (renderGCE ctx)
                 |> Svg.g []
 
-        renderMouseConnection : GCE -> Shape
+        renderMouseConnection : GCE -> HM
         renderMouseConnection (GCE xy _) =
             let
                 (F2 x1 y1) =
                     gIdxToCanvas ctx xy
             in
-            group
-                [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
-                ]
+            connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
 
         renderCellConnections : HM
         renderCellConnections =
@@ -490,13 +488,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                     ( toFloat a * gcs, toFloat b * gcs )
             in
             Svg.g [ style_ [ transform_ [ uncurry translate_ (ffToPair ctx.dxy) ] ] ]
-                [ Svg.polyline
-                    [ SA.stroke "green"
-                    , SA.fill "none"
-                    , Px.strokeWidth (gcs * 0.03)
-                    , TA.points (List.map idxToPt conIndices)
-                    ]
-                    []
+                [ connectionPolyLine gcs (List.map idxToPt conIndices)
                 ]
 
         renderLastCellAndConnectionToMouse =
@@ -505,7 +497,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                     Svg.g [] []
 
                 Just lastGCE ->
-                    Svg.g [] [ draw <| renderMouseConnection lastGCE, renderGCE ctx lastGCE ]
+                    Svg.g [] [ renderMouseConnection lastGCE, renderGCE ctx lastGCE ]
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
@@ -550,14 +542,15 @@ gIdxToCanvas ctx xy =
     F2 (x * gcs + dx) (y * gcs + dy)
 
 
-moveF2 : F2 -> Shape -> Shape
-moveF2 (F2 dx dy) =
-    move dx dy
-
-
-connectionPolyLine : Float -> List ( Float, Float ) -> Shape
-connectionPolyLine gcs =
-    polyLine "green" (gcs * 0.03)
+connectionPolyLine : Float -> List ( Float, Float ) -> HM
+connectionPolyLine gcs pts =
+    Svg.polyline
+        [ SA.stroke "green"
+        , SA.fill "none"
+        , Px.strokeWidth (gcs * 0.03)
+        , TA.points pts
+        ]
+        []
 
 
 renderGridBg : Float -> Gwh -> Shape
@@ -791,11 +784,6 @@ rectangle c w h =
     Rectangle w h |> Shape c [] initialTransform
 
 
-polyLine : String -> Float -> List ( Float, Float ) -> Shape
-polyLine c sw pts =
-    PolyLine sw pts |> Shape c [] initialTransform
-
-
 ellipse : String -> Float -> Float -> Shape
 ellipse c w h =
     Ellipse w h |> Shape c [] initialTransform
@@ -806,21 +794,10 @@ group ss =
     Group ss |> Shape "none" [] initialTransform
 
 
-move : Float -> Float -> Shape -> Shape
-move dx dy =
-    mapTransform <| translateBy dx dy
-
-
-mapTransform : (TF -> TF) -> Shape -> Shape
-mapTransform fn (Shape c cs tx f) =
-    Shape c cs (fn tx) f
-
-
 type Form
     = Rectangle Float Float
     | Ellipse Float Float
     | Group (List Shape)
-    | PolyLine Float (List ( Float, Float ))
 
 
 type Shape
@@ -836,23 +813,9 @@ initialTransform =
     TF 0 0
 
 
-translateBy : Float -> Float -> TF -> TF
-translateBy dx dy (TF x y) =
-    TF (x + dx) (y + dy)
-
-
 draw : Shape -> HM
 draw (Shape c cs (TF dx dy) s) =
     case s of
-        PolyLine sw pts ->
-            Svg.polyline
-                [ SA.stroke c
-                , TA.class cs
-                , Px.strokeWidth sw
-                , TA.points pts
-                ]
-                []
-
         Rectangle w h ->
             Svg.rect
                 [ Px.width w
