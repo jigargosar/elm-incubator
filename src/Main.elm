@@ -190,7 +190,7 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
         gcs =
             getGcs cwh gwh
 
-        func (( idx, cell ) as current) ls =
+        func (( gIdx, cell ) as current) ls =
             if List.member current ls then
                 if List.Extra.elemIndex current ls == Just 1 then
                     G gwh gd (List.drop 1 conI2Stack)
@@ -203,9 +203,14 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
                     [] ->
                         g
 
-                    lst :: rest ->
-                        g
+                    ( lstIdx, lstCell ) :: _ ->
+                        if areAdjacent lstIdx gIdx && cell == lstCell then
+                            G gwh gd (gIdx :: conI2Stack)
 
+                        else
+                            g
+
+        foo : Maybe Grid
         foo =
             Maybe.map2 func
                 (canvasToGIdx (F2 mx my) gcs gwh
@@ -215,34 +220,7 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
                     |> Maybe.map (List.map2 Tuple.pair conI2Stack)
                 )
     in
-    case canvasToGIdx (F2 mx my) gcs gwh of
-        Just gIdx ->
-            if List.member gIdx conI2Stack then
-                case conI2Stack of
-                    _ :: sndLst :: rest ->
-                        if gIdx == sndLst then
-                            G gwh gd (sndLst :: rest)
-
-                        else
-                            g
-
-                    _ ->
-                        g
-
-            else
-                case conI2Stack of
-                    lst :: rest ->
-                        if areAdjacent lst gIdx && not (List.member gIdx conI2Stack) then
-                            G gwh gd (gIdx :: lst :: rest)
-
-                        else
-                            g
-
-                    _ ->
-                        g
-
-        Nothing ->
-            g
+    foo |> Maybe.withDefault g
 
 
 areAdjacent (I2 x1 y1) (I2 x2 y2) =
