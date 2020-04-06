@@ -463,12 +463,11 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         gcs =
             ctx.cs
 
-        renderGridCellEntries : List GCE -> Shape
+        renderGridCellEntries : List GCE -> HM
         renderGridCellEntries l =
             l
-                |> List.map (renderGCE gcs)
-                |> group
-                |> moveF2 ctx.dxy
+                |> List.map (renderGCE ctx)
+                |> Svg.g []
 
         renderMouseConnection : GCE -> Shape
         renderMouseConnection (GCE xy _) =
@@ -495,12 +494,12 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                     Svg.g [] []
 
                 Just lastGCE ->
-                    Svg.g [] [ draw <| renderMouseConnection lastGCE, draw <| renderGridCellEntries [ lastGCE ] ]
+                    Svg.g [] [ draw <| renderMouseConnection lastGCE, renderGridCellEntries [ lastGCE ] ]
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , draw <| renderCellConnections
-        , draw <| renderGridCellEntries gceList
+        , renderGridCellEntries gceList
         , renderLastCellAndConnectionToMouse
         , draw <| renderPointer (gcs * 0.25) mx my
         ]
@@ -555,11 +554,16 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
-renderGCE : Float -> GCE -> Shape
-renderGCE gcs (GCE (I2 x y) rc) =
+renderGCE : GCtx -> GCE -> HM
+renderGCE ctx (GCE (I2 x y) rc) =
     let
         mv =
             move (toFloat x * gcs) (toFloat y * gcs)
+                >> moveF2 ctx.dxy
+                >> draw
+
+        gcs =
+            ctx.cs
     in
     case rc of
         RWall ->
