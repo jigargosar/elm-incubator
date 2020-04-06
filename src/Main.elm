@@ -95,11 +95,9 @@ iidFromList =
 --iidInsert : II -> a -> IIDict a -> IIDict a
 --iidInsert ii a (IIDict d) =
 --    IIDict (Dict.insert (iiToPair ii) a d)
-
-
-iidGet : I2 -> IIDict a -> Maybe a
-iidGet ii (IIDict d) =
-    Dict.get (iiToPair ii) d
+--iidGet : I2 -> IIDict a -> Maybe a
+--iidGet ii (IIDict d) =
+--    Dict.get (iiToPair ii) d
 
 
 iidGetEntry : I2 -> IIDict a -> Maybe ( I2, a )
@@ -112,13 +110,11 @@ iidToList (IIDict d) =
     Dict.toList d |> List.map (Tuple.mapFirst (uncurry I2))
 
 
-iidGetAll : List I2 -> IIDict a -> Maybe (List a)
-iidGetAll iiKeys iid =
-    List.map (flip iidGet iid) iiKeys
-        |> Maybe.Extra.combine
 
-
-
+--iidGetAll : List I2 -> IIDict a -> Maybe (List a)
+--iidGetAll iiKeys iid =
+--    List.map (flip iidGet iid) iiKeys
+--        |> Maybe.Extra.combine
 -- Grid
 
 
