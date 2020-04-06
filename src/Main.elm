@@ -214,8 +214,7 @@ type GCE
 
 
 type RCell
-    = REmpty
-    | RWater Bool
+    = RWater Bool
 
 
 gceIdxEq expected (GCE actual _) =
@@ -360,9 +359,6 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
 renderGCE : Float -> GCE -> Shape
 renderGCE gcs (GCE (I2 x y) rc) =
     case rc of
-        REmpty ->
-            group []
-
         RWater isDown ->
             let
                 rFact =
