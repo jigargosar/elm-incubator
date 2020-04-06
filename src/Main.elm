@@ -615,14 +615,20 @@ translate_ x y =
     "translate(" ++ px_ x ++ "," ++ px_ y ++ ")"
 
 
+transform_ ls =
+    "transform:"
+        :: ls
+        |> String.join " "
+
+
+styles : List String -> Svg.Attribute msg
+styles ls =
+    SA.style (String.join ";" ls)
+
+
 renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
-    let
-        styleString =
-            [ "transform: " ++ translate_ x y ]
-                |> String.join ";"
-    in
-    Svg.g [ TA.style styleString ]
+    Svg.g [ styles [ transform_ [ translate_ x y ] ] ]
         [ draw <| ellipse "black" 1 w
         , draw <| ellipse "black" w 1
         ]
