@@ -502,7 +502,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
-        , renderGridCellEntries gceList
+        , Svg.g [] (List.map (renderGCE ctx) gceList)
         , renderLastCellAndConnectionToMouse
         , renderPointer (gcs * 0.25) mx my
         ]
