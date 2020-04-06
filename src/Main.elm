@@ -39,6 +39,10 @@ ffRound (F2 a b) =
     I2 (round a) (round b)
 
 
+ffToPair (F2 a b) =
+    ( a, b )
+
+
 
 -- II Int Int
 
@@ -479,14 +483,21 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                 [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
                 ]
 
-        renderCellConnections : Shape
+        renderCellConnections : HM
         renderCellConnections =
             let
                 idxToPt (I2 a b) =
                     ( toFloat a * gcs, toFloat b * gcs )
             in
-            group [ connectionPolyLine gcs (List.map idxToPt conIndices) ]
-                |> moveF2 ctx.dxy
+            Svg.g [ style_ [ transform_ [ uncurry translate_ (ffToPair ctx.dxy) ] ] ]
+                [ Svg.polyline
+                    [ SA.stroke "green"
+                    , SA.fill "none"
+                    , Px.strokeWidth (gcs * 0.03)
+                    , TA.points (List.map idxToPt conIndices)
+                    ]
+                    []
+                ]
 
         renderLastCellAndConnectionToMouse =
             case mbLastGCE of
@@ -498,7 +509,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
-        , draw <| renderCellConnections
+        , renderCellConnections
         , renderGridCellEntries gceList
         , renderLastCellAndConnectionToMouse
         , renderPointer (gcs * 0.25) mx my
