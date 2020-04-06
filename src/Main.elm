@@ -494,7 +494,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                     Svg.g [] []
 
                 Just lastGCE ->
-                    Svg.g [] [ draw <| renderMouseConnection lastGCE, renderGridCellEntries [ lastGCE ] ]
+                    Svg.g [] [ draw <| renderMouseConnection lastGCE, renderGCE ctx lastGCE ]
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
