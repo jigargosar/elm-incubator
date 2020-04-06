@@ -481,7 +481,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                 idxToPt (I2 a b) =
                     ( toFloat a * gcs, toFloat b * gcs )
             in
-            Svg.g [ style_ [ transform_ [ uncurry translate_ (ffToPair ctx.dxy) ] ] ]
+            Svg.g [ style_ [ transform_ [ translateFF_ ctx.dxy ] ] ]
                 [ connectionPolyLine gcs (List.map idxToPt conIndices)
                 ]
 
@@ -500,6 +500,10 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         , renderLastCellAndConnectionToMouse
         , renderPointer (gcs * 0.25) mx my
         ]
+
+
+translateFF_ ff =
+    uncurry translate_ (ffToPair ff)
 
 
 canvasToGIdx : GCtx -> F2 -> Maybe I2
