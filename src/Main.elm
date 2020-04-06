@@ -129,15 +129,30 @@ iidToList (IIDict d) =
 --    List.map (flip iidGet iid) iiKeys
 --        |> Maybe.Extra.combine
 -- Grid
-
-
-type Grid
-    = G Gwh (IIDict Cell) (List I2)
+-- GRID CELL
 
 
 type Cell
     = Water
     | Seed
+
+
+canCellStartConnection : Cell -> Bool
+canCellStartConnection cell =
+    case cell of
+        Water ->
+            True
+
+        Seed ->
+            True
+
+
+
+-- GRID MODEL
+
+
+type Grid
+    = G Gwh (IIDict Cell) (List I2)
 
 
 type Gwh
@@ -234,16 +249,6 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
 
 
 -- GRID UPDATE
-
-
-canCellStartConnection : Cell -> Bool
-canCellStartConnection cell =
-    case cell of
-        Water ->
-            True
-
-        Seed ->
-            True
 
 
 updateGridOnMouseClick : GCtx -> Mxy -> Grid -> Grid
