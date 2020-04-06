@@ -161,6 +161,21 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
                 |> clamp 10 50
     in
     let
+        getGDxy : Float -> Gwh -> F2
+        getGDxy gcs_ (Gwh wh_) =
+            let
+                (F2 w h) =
+                    iiToFloat wh_
+
+                dx =
+                    ((w * gcs_) - gcs_) * -0.5
+
+                dy =
+                    ((h * gcs_) - gcs_) * -0.5
+            in
+            F2 dx dy
+    in
+    let
         gcs =
             getGcs cwh gwh
 
@@ -211,21 +226,6 @@ initialGrid =
             seedIndices
     in
     G (Gwh (I2 w h)) gd conIdxStack
-
-
-getGDxy : Float -> Gwh -> F2
-getGDxy gcs (Gwh wh) =
-    let
-        (F2 w h) =
-            iiToFloat wh
-
-        dx =
-            ((w * gcs) - gcs) * -0.5
-
-        dy =
-            ((h * gcs) - gcs) * -0.5
-    in
-    F2 dx dy
 
 
 
