@@ -605,11 +605,21 @@ square a b =
     rectangle a b b
 
 
+px : Float -> String
+px float =
+    String.fromFloat float ++ "px"
+
+
+translatePx : Float -> Float -> String
+translatePx x y =
+    "translate(" ++ px x ++ "," ++ px y ++ ")"
+
+
 renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
     let
         styleString =
-            [ "transform: translate(" ++ String.fromFloat x ++ "px," ++ String.fromFloat y ++ "px)" ]
+            [ "transform: " ++ translatePx x y ]
                 |> String.join ";"
     in
     Svg.g [ TA.style styleString ]
