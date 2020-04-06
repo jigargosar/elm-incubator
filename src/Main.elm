@@ -257,8 +257,13 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
 -- GRID UPDATE
 
 
+setConStack : List I2 -> Grid -> Grid
+setConStack conStack (G a b _) =
+    G a b conStack
+
+
 updateGridOnMouseClick : GCtx -> Mxy -> Grid -> Grid
-updateGridOnMouseClick ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
+updateGridOnMouseClick ctx (Mxy mx my) ((G _ gd conI2Stack) as g) =
     let
         maybeClickedEntry =
             canvasToGIdx ctx (F2 mx my)
@@ -269,7 +274,7 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
             case maybeClickedEntry of
                 Just ( idx, cell ) ->
                     if canCellStartConnection cell then
-                        G gwh gd [ idx ]
+                        setConStack [ idx ] g
 
                     else
                         g
@@ -278,20 +283,20 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
                     g
 
         _ :: _ :: _ ->
-            G gwh gd []
+            setConStack [] g
 
         _ ->
             g
 
 
 updateGridOnMouseMove : GCtx -> Mxy -> Grid -> Grid
-updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
+updateGridOnMouseMove ctx (Mxy mx my) ((G _ gd conI2Stack) as g) =
     let
         func : ( I2, Cell ) -> Maybe ( I2, Cell ) -> Grid
         func ( gIdx, cell ) mbLstEntry =
             if List.member gIdx conI2Stack then
                 if List.Extra.elemIndex gIdx conI2Stack == Just 1 then
-                    G gwh gd (List.drop 1 conI2Stack)
+                    setConStack (List.drop 1 conI2Stack) g
 
                 else
                     g
@@ -303,7 +308,7 @@ updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
 
                     Just ( lstIdx, lstCell ) ->
                         if iiAreAdjacent lstIdx gIdx && cell == lstCell then
-                            G gwh gd (gIdx :: conI2Stack)
+                            setConStack (gIdx :: conI2Stack) g
 
                         else
                             g
