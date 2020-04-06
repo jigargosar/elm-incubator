@@ -557,12 +557,14 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
 renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE (I2 x y) rc) =
     let
+        (F2 dx dy) =
+            ctx.dxy
+
         mv =
             move (toFloat x * gcs) (toFloat y * gcs)
-                >> moveF2 ctx.dxy
                 >> draw
                 >> List.singleton
-                >> Svg.g []
+                >> Svg.g [ TA.transform [ TT.Translate dx dy ] ]
 
         gcs =
             ctx.cs
