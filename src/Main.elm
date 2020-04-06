@@ -2,6 +2,7 @@ module Main exposing (main)
 
 -- Browser.Element Scaffold
 
+import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
 import Dict exposing (Dict)
@@ -85,12 +86,6 @@ type IIDict a
     = IIDict (Dict ( Int, Int ) a)
 
 
-
---iidEmpty : IIDict a
---iidEmpty =
---    IIDict Dict.empty
-
-
 iidFromList : List ( I2, a ) -> IIDict a
 iidFromList =
     List.map (Tuple.mapFirst iiToPair) >> Dict.fromList >> IIDict
@@ -100,11 +95,14 @@ iidFromList =
 --iidInsert : II -> a -> IIDict a -> IIDict a
 --iidInsert ii a (IIDict d) =
 --    IIDict (Dict.insert (iiToPair ii) a d)
+--iidGet : I2 -> IIDict a -> Maybe a
+--iidGet ii (IIDict d) =
+--    Dict.get (iiToPair ii) d
 
 
-iidGet : I2 -> IIDict a -> Maybe a
-iidGet ii (IIDict d) =
-    Dict.get (iiToPair ii) d
+iidToList : IIDict a -> List ( I2, a )
+iidToList (IIDict d) =
+    Dict.toList d |> List.map (Tuple.mapFirst (uncurry I2))
 
 
 
@@ -123,18 +121,19 @@ type Gwh
     = Gwh I2
 
 
-fillG : Cell -> Int -> Int -> Grid
-fillG c w h =
+initialGrid : Cell -> Int -> Int -> Grid
+initialGrid c w h =
     let
         gd =
             iiRange (I2 w h)
                 |> List.map (\xy -> ( xy, c ))
                 |> iidFromList
 
-        l2 =
+        conIdxStack =
             scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
+                |> List.reverse
     in
-    G (Gwh (I2 w h)) gd l2
+    G (Gwh (I2 w h)) gd conIdxStack
 
 
 getGcs : Cwh -> Gwh -> Float
@@ -163,20 +162,20 @@ getGDxy gcs (Gwh wh) =
 
 
 updateGridOnMouseMove : Cwh -> Mxy -> Grid -> Grid
-updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conIndices) as g) =
+updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
         gcs =
             getGcs cwh gwh
     in
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
-            case List.reverse conIndices of
+            case conI2Stack of
                 fst :: snd :: rest ->
                     if gIdx == snd then
-                        G gwh gd (snd :: rest |> List.reverse)
+                        G gwh gd (snd :: rest)
 
-                    else if areAdjacent fst gIdx then
-                        G gwh gd (gIdx :: fst :: snd :: rest |> List.reverse)
+                    else if areAdjacent fst gIdx && not (List.member gIdx conI2Stack) then
+                        G gwh gd (gIdx :: fst :: snd :: rest)
 
                     else
                         g
@@ -219,28 +218,37 @@ type RCell
     | RWater Bool
 
 
-toGridVM : Grid -> GridVM
-toGridVM (G ((Gwh wh) as gwh) gd conIndices) =
-    let
-        toGCE xy =
-            GCE xy
-                (case iidGet xy gd of
-                    Nothing ->
-                        REmpty
+gceIdxEq expected (GCE actual _) =
+    actual == expected
 
-                    Just Water ->
-                        RWater (List.member xy conIndices)
+
+toGridVM : Grid -> GridVM
+toGridVM (G gwh gd conI2Stack) =
+    let
+        toGCE ( xy, c ) =
+            GCE xy
+                (case c of
+                    Water ->
+                        RWater (List.member xy conI2Stack)
                 )
 
-        ( mbLastGCE, gceList ) =
-            case List.Extra.last conIndices of
-                Just idx ->
-                    ( Just (toGCE idx), iiRange wh |> List.Extra.remove idx |> List.map toGCE )
+        ls : List GCE
+        ls =
+            iidToList gd |> List.map toGCE
 
-                Nothing ->
-                    ( Nothing, iiRange wh |> List.map toGCE )
+        ( mbLastGCE, gceList ) =
+            case conI2Stack of
+                idx :: _ ->
+                    ls
+                        |> List.Extra.select
+                        |> List.Extra.find (Tuple.first >> gceIdxEq idx)
+                        |> Maybe.map (Tuple.mapFirst Just)
+                        |> Maybe.withDefault ( Nothing, ls )
+
+                [] ->
+                    ( Nothing, ls )
     in
-    GV gwh gceList conIndices mbLastGCE
+    GV gwh gceList (List.reverse conI2Stack) mbLastGCE
 
 
 
@@ -408,7 +416,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         grid =
-            fillG Water 10 8
+            initialGrid Water 10 8
     in
     ( M (flags.bs |> ffFromTuple |> Cwh) (Mxy 0 0) grid
     , Cmd.none
