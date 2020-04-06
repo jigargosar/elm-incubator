@@ -135,6 +135,37 @@ type Grid
     = G Gwh (IIDict Cell) (List I2)
 
 
+type alias GCtx =
+    { cs : Float
+    , dxy : F2
+    , top : Float
+    , right : Float
+    , bottom : Float
+    , left : Float
+    }
+
+
+toGCtx : Cwh -> Gwh -> GCtx
+toGCtx cwh ((Gwh wh) as gwh) =
+    let
+        gcs =
+            getGcs cwh gwh
+
+        (F2 w h) =
+            iiToFloat wh
+
+        dxy =
+            getGDxy gcs gwh
+    in
+    { cs = gcs
+    , dxy = dxy
+    , top = -h / 2
+    , right = w / 2
+    , bottom = h / 2
+    , left = -w / 2
+    }
+
+
 type Cell
     = Water
     | Seed
