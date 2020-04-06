@@ -258,11 +258,18 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
 
 
 updateGridOnMouseClick : GCtx -> Mxy -> Grid -> Grid
-updateGridOnMouseClick ctx (Mxy mx my) ((G _ gd conI2Stack) as g) =
+updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
     let
-        maybeClickedEntry =
-            canvasToGIdx ctx (F2 mx my)
-                |> Maybe.andThen (flip iidGetEntry gd)
+        (G _ _ conI2Stack) =
+            g
+
+        entryAt : I2 -> Maybe ( I2, Cell )
+        entryAt idx =
+            let
+                (G _ gd _) =
+                    g
+            in
+            iidGetEntry idx gd
 
         setConStack : List I2 -> Grid
         setConStack c =
@@ -274,7 +281,10 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ gd conI2Stack) as g) =
     in
     case conI2Stack of
         [] ->
-            case maybeClickedEntry of
+            case
+                canvasToGIdx ctx (F2 mx my)
+                    |> Maybe.andThen entryAt
+            of
                 Just ( idx, cell ) ->
                     if canCellStartConnection cell then
                         setConStack [ idx ]
