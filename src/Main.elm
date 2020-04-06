@@ -194,6 +194,43 @@ getGDxy gcs (Gwh wh) =
 -- GRID UPDATE
 
 
+canCellStartConnection : Cell -> Bool
+canCellStartConnection cell =
+    case cell of
+        Water ->
+            True
+
+        Seed ->
+            True
+
+
+updateGridOnMouseClick : Cwh -> Mxy -> Grid -> Grid
+updateGridOnMouseClick cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
+    let
+        gcs =
+            getGcs cwh gwh
+
+        maybeClickedEntry =
+            canvasToGIdx (F2 mx my) gcs gwh
+                |> Maybe.andThen (flip iidGetEntry gd)
+    in
+    case conI2Stack of
+        [] ->
+            case maybeClickedEntry of
+                Just ( idx, cell ) ->
+                    if canCellStartConnection cell then
+                        G gwh gd [ idx ]
+
+                    else
+                        g
+
+                Nothing ->
+                    g
+
+        _ ->
+            g
+
+
 updateGridOnMouseMove : Cwh -> Mxy -> Grid -> Grid
 updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
@@ -517,7 +554,14 @@ update message ((M ((Cwh (F2 cw ch)) as cwh) mxy g) as model) =
             ( M cwh newMxy newGrid, Cmd.none )
 
         OnClick x y ->
-            ( model, Cmd.none )
+            let
+                newMxy =
+                    Mxy (x - cw * 0.5) (y - ch * 0.5)
+
+                newGrid =
+                    updateGridOnMouseClick cwh newMxy g
+            in
+            ( M cwh newMxy newGrid, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
