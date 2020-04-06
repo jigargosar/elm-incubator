@@ -618,10 +618,10 @@ renderPointer r x y =
         , draw <| ellipse "black" r 1
         , draw <| rectangle "green" d 2
         , Svg.rect
-            [ style_ [ "transform-origin: center", transform_ [ "translate(-50%, -50%)" ] ]
+            [ style_ [ transform_ [ "translate(-50%, -50%)" ] ]
             , Px.width 3
             , Px.height d
-            , SA.fill "black"
+            , SA.fill "red"
             ]
             []
         ]
