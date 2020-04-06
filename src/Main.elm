@@ -497,14 +497,13 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                 Just lastGCE ->
                     group [ renderMouseConnection lastGCE, renderGridCellEntries [ lastGCE ] ]
     in
-    group
-        [ renderGridBg gcs gwh
-        , renderCellConnections
-        , renderGridCellEntries gceList
-        , renderLastCellAndConnectionToMouse
-        , renderPointer (gcs * 0.25) mx my
+    Svg.g []
+        [ draw <| renderGridBg gcs gwh
+        , draw <| renderCellConnections
+        , draw <| renderGridCellEntries gceList
+        , draw <| renderLastCellAndConnectionToMouse
+        , draw <| renderPointer (gcs * 0.25) mx my
         ]
-        |> draw
 
 
 canvasToGIdx : GCtx -> F2 -> Maybe I2
