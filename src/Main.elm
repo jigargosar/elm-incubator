@@ -10,7 +10,6 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Json.Decode as JD exposing (Decoder)
 import List.Extra exposing (scanl)
-import Maybe.Extra
 import Svg
 import Svg.Attributes as SA
 import TypedSvg.Attributes as TA
@@ -63,8 +62,8 @@ iiDown (I2 x y) =
     I2 x (y + 1)
 
 
-iiRange : I2 -> List I2
-iiRange (I2 w h) =
+iiIndicesOf : I2 -> List I2
+iiIndicesOf (I2 w h) =
     let
         fn : Int -> List I2
         fn x =
@@ -76,6 +75,20 @@ iiRange (I2 w h) =
 iiToPair : I2 -> ( Int, Int )
 iiToPair =
     iiApply2 Tuple.pair
+
+
+iiIsValidIdxOf : I2 -> I2 -> Bool
+iiIsValidIdxOf (I2 w h) (I2 x y) =
+    x >= 0 && x < w && y >= 0 && y < h
+
+
+iiValidIdxOf : I2 -> I2 -> Maybe I2
+iiValidIdxOf wh idx =
+    if iiIsValidIdxOf wh idx then
+        Just idx
+
+    else
+        Nothing
 
 
 
@@ -138,7 +151,7 @@ initialGrid =
             ( 8, 8 )
 
         gd =
-            iiRange (I2 w h)
+            iiIndicesOf (I2 w h)
                 |> List.map (\xy -> ( xy, Water ))
                 |> List.Extra.updateIf (Tuple.first >> flip List.member seedIndices)
                     (Tuple.mapSecond (always Seed))
@@ -356,12 +369,8 @@ canvasToGIdx (F2 x y) gcs gwh =
 
 
 validGIdx : Gwh -> I2 -> Maybe I2
-validGIdx (Gwh (I2 w h)) ((I2 x y) as idx) =
-    if x >= 0 && x < w && y >= 0 && y < h then
-        Just idx
-
-    else
-        Nothing
+validGIdx (Gwh wh) idx =
+    iiValidIdxOf wh idx
 
 
 gIdxToCanvas : Float -> I2 -> Gwh -> F2
