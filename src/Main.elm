@@ -615,9 +615,9 @@ translate_ x y =
     "translate(" ++ px_ x ++ "," ++ px_ y ++ ")"
 
 
+transform_ : List String -> String
 transform_ ls =
-    "transform:"
-        :: ls
+    ("transform:" :: ls)
         |> String.join " "
 
 
