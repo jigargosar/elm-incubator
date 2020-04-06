@@ -170,10 +170,10 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conIndices) as g) =
     in
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
-            case conIndices of
+            case List.reverse conIndices of
                 _ :: snd :: rest ->
                     if gIdx == snd then
-                        G gwh gd (snd :: rest)
+                        G gwh gd (snd :: rest |> List.reverse)
 
                     else
                         g
