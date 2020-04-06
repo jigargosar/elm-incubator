@@ -164,6 +164,7 @@ getGcs : Cwh -> Gwh -> Float
 getGcs (Cwh (F2 cw ch)) (Gwh (I2 gw gh)) =
     min (cw * (1 / toFloat (gw + 1))) (ch * (1 / toFloat (gh + 1)))
         * 0.8
+        |> clamp 10 50
 
 
 getGDxy : Float -> Gwh -> F2
