@@ -312,6 +312,9 @@ updateGridOnMouseMove ctx (Mxy mx my) ((G _ gd conI2Stack) as g) =
 
                         else
                             g
+
+        entryAt i =
+            iidGetEntry i gd
     in
     if List.isEmpty conI2Stack then
         g
@@ -319,11 +322,11 @@ updateGridOnMouseMove ctx (Mxy mx my) ((G _ gd conI2Stack) as g) =
     else
         Maybe.map2 func
             (canvasToGIdx ctx (F2 mx my)
-                |> Maybe.andThen (flip iidGetEntry gd)
+                |> Maybe.andThen entryAt
             )
             (conI2Stack
                 |> List.head
-                |> Maybe.map (flip iidGetEntry gd)
+                |> Maybe.map entryAt
             )
             |> Maybe.withDefault g
 
