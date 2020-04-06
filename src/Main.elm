@@ -171,9 +171,12 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conIndices) as g) =
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
             case List.reverse conIndices of
-                _ :: snd :: rest ->
+                fst :: snd :: rest ->
                     if gIdx == snd then
                         G gwh gd (snd :: rest |> List.reverse)
+
+                    else if areAdjacent fst gIdx then
+                        G gwh gd (gIdx :: fst :: snd :: rest |> List.reverse)
 
                     else
                         g
@@ -183,6 +186,11 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conIndices) as g) =
 
         Nothing ->
             g
+
+
+areAdjacent (I2 x1 y1) (I2 x2 y2) =
+    (abs (x1 - x2) == 1 && y1 == y2)
+        || (abs (y1 - y2) == 1 && x1 == x2)
 
 
 
