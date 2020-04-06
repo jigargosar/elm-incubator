@@ -501,7 +501,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         , draw <| renderCellConnections
         , renderGridCellEntries gceList
         , renderLastCellAndConnectionToMouse
-        , draw <| renderPointer (gcs * 0.25) mx my
+        , renderPointer (gcs * 0.25) mx my
         ]
 
 
@@ -605,13 +605,14 @@ square a b =
     rectangle a b b
 
 
-renderPointer : Float -> Float -> Float -> Shape
+renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
     group
         [ ellipse "black" 1 w
         , ellipse "black" w 1
         ]
         |> move x y
+        |> draw
 
 
 
