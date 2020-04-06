@@ -467,12 +467,6 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         gcs =
             ctx.cs
 
-        renderGridCellEntries : List GCE -> HM
-        renderGridCellEntries l =
-            l
-                |> List.map (renderGCE ctx)
-                |> Svg.g []
-
         renderMouseConnection : GCE -> HM
         renderMouseConnection (GCE xy _) =
             let
