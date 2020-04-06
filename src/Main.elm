@@ -204,19 +204,29 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     in
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
-            case conI2Stack of
-                lst :: sndLst :: rest ->
-                    if gIdx == sndLst then
-                        G gwh gd (sndLst :: rest)
+            if List.member gIdx conI2Stack then
+                case conI2Stack of
+                    _ :: sndLst :: rest ->
+                        if gIdx == sndLst then
+                            G gwh gd (sndLst :: rest)
 
-                    else if areAdjacent lst gIdx && not (List.member gIdx conI2Stack) then
-                        G gwh gd (gIdx :: lst :: sndLst :: rest)
+                        else
+                            g
 
-                    else
+                    _ ->
                         g
 
-                _ ->
-                    g
+            else
+                case conI2Stack of
+                    lst :: rest ->
+                        if areAdjacent lst gIdx && not (List.member gIdx conI2Stack) then
+                            G gwh gd (gIdx :: lst :: rest)
+
+                        else
+                            g
+
+                    _ ->
+                        g
 
         Nothing ->
             g
