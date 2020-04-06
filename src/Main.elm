@@ -135,6 +135,43 @@ type Grid
     = G Gwh (IIDict Cell) (List I2)
 
 
+type Cell
+    = Water
+    | Seed
+
+
+type Gwh
+    = Gwh I2
+
+
+initialGrid : Grid
+initialGrid =
+    let
+        ( w, h ) =
+            ( 8, 8 )
+
+        gd =
+            iiIndicesOf (I2 w h)
+                |> List.map (\xy -> ( xy, Water ))
+                |> List.Extra.updateIf (Tuple.first >> flip List.member seedIndices)
+                    (Tuple.mapSecond (always Seed))
+                |> iidFromList
+
+        seedIndices =
+            scanl (<|) (I2 1 4) [ iiRight, iiRight, iiDown, iiDown ]
+
+        conIdxStack =
+            -- scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
+            --    |> List.reverse
+            seedIndices
+    in
+    G (Gwh (I2 w h)) gd conIdxStack
+
+
+
+-- GRID CONTEXT
+
+
 type alias GCtx =
     { cs : Float
     , gwh : Gwh
@@ -193,39 +230,6 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
     , bottom = h / 2
     , left = -w / 2
     }
-
-
-type Cell
-    = Water
-    | Seed
-
-
-type Gwh
-    = Gwh I2
-
-
-initialGrid : Grid
-initialGrid =
-    let
-        ( w, h ) =
-            ( 8, 8 )
-
-        gd =
-            iiIndicesOf (I2 w h)
-                |> List.map (\xy -> ( xy, Water ))
-                |> List.Extra.updateIf (Tuple.first >> flip List.member seedIndices)
-                    (Tuple.mapSecond (always Seed))
-                |> iidFromList
-
-        seedIndices =
-            scanl (<|) (I2 1 4) [ iiRight, iiRight, iiDown, iiDown ]
-
-        conIdxStack =
-            -- scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
-            --    |> List.reverse
-            seedIndices
-    in
-    G (Gwh (I2 w h)) gd conIdxStack
 
 
 
