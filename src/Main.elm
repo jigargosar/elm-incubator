@@ -626,6 +626,10 @@ styles ls =
     SA.style (String.join ";" ls)
 
 
+transitionAllLinear =
+    "transition: all 0.5s linear"
+
+
 renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
     Svg.g [ styles [ transform_ [ translate_ x y ] ] ]
