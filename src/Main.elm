@@ -153,8 +153,9 @@ initialGrid =
             scanl (<|) (I2 1 4) [ iiRight, iiRight, iiDown, iiDown ]
 
         conIdxStack =
-            scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
-                |> List.reverse
+            -- scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
+            --    |> List.reverse
+            seedIndices
     in
     G (Gwh (I2 w h)) gd conIdxStack
 
