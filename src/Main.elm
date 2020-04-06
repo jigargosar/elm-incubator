@@ -626,7 +626,7 @@ styles ls =
     SA.style (String.join ";" ls)
 
 
-transitionAllLinear =
+transitionAllLinear_ =
     "transition: all 0.5s linear"
 
 
