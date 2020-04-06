@@ -561,6 +561,8 @@ renderGCE ctx (GCE (I2 x y) rc) =
             move (toFloat x * gcs) (toFloat y * gcs)
                 >> moveF2 ctx.dxy
                 >> draw
+                >> List.singleton
+                >> Svg.g []
 
         gcs =
             ctx.cs
