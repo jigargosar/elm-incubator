@@ -10,6 +10,7 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Json.Decode as JD exposing (Decoder)
 import List.Extra exposing (scanl)
+import Maybe.Extra
 import Svg
 import Svg.Attributes as SA
 import Svg.Events as SE
@@ -95,14 +96,22 @@ iidFromList =
 --iidInsert : II -> a -> IIDict a -> IIDict a
 --iidInsert ii a (IIDict d) =
 --    IIDict (Dict.insert (iiToPair ii) a d)
---iidGet : I2 -> IIDict a -> Maybe a
---iidGet ii (IIDict d) =
---    Dict.get (iiToPair ii) d
+
+
+iidGet : I2 -> IIDict a -> Maybe a
+iidGet ii (IIDict d) =
+    Dict.get (iiToPair ii) d
 
 
 iidToList : IIDict a -> List ( I2, a )
 iidToList (IIDict d) =
     Dict.toList d |> List.map (Tuple.mapFirst (uncurry I2))
+
+
+iidGetAll : List I2 -> IIDict a -> Maybe (List a)
+iidGetAll iiKeys iid =
+    List.map (flip iidGet iid) iiKeys
+        |> Maybe.Extra.combine
 
 
 
@@ -175,6 +184,10 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
         gcs =
             getGcs cwh gwh
+
+        ls =
+            iidToList gd
+                |> List.filter (Tuple.first >> flip List.member conI2Stack)
     in
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
