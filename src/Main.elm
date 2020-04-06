@@ -336,12 +336,12 @@ renderGCE gcs (GCE (I2 x y) rc) =
                         0.2
             in
             group
-                [ ellipse1 "dodgerblue" (gcs * rFact)
+                [ circle "dodgerblue" (gcs * rFact)
                 ]
                 |> move (toFloat x * gcs) (toFloat y * gcs)
 
 
-ellipse1 a b =
+circle a b =
     ellipse a b b
 
 
