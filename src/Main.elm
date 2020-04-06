@@ -137,6 +137,7 @@ type Grid
 
 type alias GCtx =
     { cs : Float
+    , gwh : Gwh
     , dxy : F2
     , top : Float
     , right : Float
@@ -170,6 +171,7 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
             getGDxy gcs gwh
     in
     { cs = gcs
+    , gwh = gwh
     , dxy = dxy
     , top = -h / 2
     , right = w / 2
@@ -243,11 +245,8 @@ canCellStartConnection cell =
 updateGridOnMouseClick : GCtx -> Mxy -> Grid -> Grid
 updateGridOnMouseClick ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
-        gcs =
-            ctx.cs
-
         maybeClickedEntry =
-            canvasToGIdx (F2 mx my) gcs gwh
+            canvasToGIdx ctx (F2 mx my)
                 |> Maybe.andThen (flip iidGetEntry gd)
     in
     case conI2Stack of
@@ -273,9 +272,6 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
 updateGridOnMouseMove : GCtx -> Mxy -> Grid -> Grid
 updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
     let
-        gcs =
-            ctx.cs
-
         func : ( I2, Cell ) -> Maybe ( I2, Cell ) -> Grid
         func ( gIdx, cell ) mbLstEntry =
             if List.member gIdx conI2Stack then
@@ -302,7 +298,7 @@ updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
 
     else
         Maybe.map2 func
-            (canvasToGIdx (F2 mx my) gcs gwh
+            (canvasToGIdx ctx (F2 mx my)
                 |> Maybe.andThen (flip iidGetEntry gd)
             )
             (conI2Stack
@@ -433,15 +429,18 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         |> draw
 
 
-canvasToGIdx : F2 -> Float -> Gwh -> Maybe I2
-canvasToGIdx (F2 x y) gcs gwh =
+canvasToGIdx : GCtx -> F2 -> Maybe I2
+canvasToGIdx ctx (F2 x y) =
     let
         (F2 dx dy) =
-            getGDxy gcs gwh
+            ctx.dxy
+
+        gcs =
+            ctx.cs
     in
     F2 ((x - dx) / gcs) ((y - dy) / gcs)
         |> ffRound
-        |> validGIdx gwh
+        |> validGIdx ctx.gwh
 
 
 validGIdx : Gwh -> I2 -> Maybe I2
