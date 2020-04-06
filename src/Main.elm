@@ -212,15 +212,19 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
                         else
                             g
     in
-    Maybe.map2 func
-        (canvasToGIdx (F2 mx my) gcs gwh
-            |> Maybe.andThen (flip iidGetEntry gd)
-        )
-        (conI2Stack
-            |> List.head
-            |> Maybe.map (flip iidGetEntry gd)
-        )
-        |> Maybe.withDefault g
+    if List.isEmpty conI2Stack then
+        g
+
+    else
+        Maybe.map2 func
+            (canvasToGIdx (F2 mx my) gcs gwh
+                |> Maybe.andThen (flip iidGetEntry gd)
+            )
+            (conI2Stack
+                |> List.head
+                |> Maybe.map (flip iidGetEntry gd)
+            )
+            |> Maybe.withDefault g
 
 
 areAdjacent (I2 x1 y1) (I2 x2 y2) =
