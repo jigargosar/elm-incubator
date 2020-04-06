@@ -621,8 +621,8 @@ transform_ ls =
         |> String.join " "
 
 
-styles : List String -> Svg.Attribute msg
-styles ls =
+style_ : List String -> Svg.Attribute msg
+style_ ls =
     SA.style (String.join ";" ls)
 
 
@@ -632,7 +632,7 @@ transitionAllLinear_ =
 
 renderPointer : Float -> Float -> Float -> HM
 renderPointer w x y =
-    Svg.g [ styles [ transform_ [ translate_ x y ] ] ]
+    Svg.g [ style_ [ transform_ [ translate_ x y ] ] ]
         [ draw <| ellipse "black" 1 w
         , draw <| ellipse "black" w 1
         ]
