@@ -561,10 +561,9 @@ renderGCE ctx (GCE (I2 x y) rc) =
             ctx.dxy
 
         mv =
-            move (toFloat x * gcs) (toFloat y * gcs)
-                >> draw
+            draw
                 >> List.singleton
-                >> Svg.g [ TA.transform [ TT.Translate dx dy ] ]
+                >> Svg.g [ TA.transform [ TT.Translate (toFloat x * gcs + dx) (toFloat y * gcs + dy) ] ]
 
         gcs =
             ctx.cs
