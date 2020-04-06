@@ -341,6 +341,7 @@ renderGCE gcs (GCE (I2 x y) rc) =
                 |> move (toFloat x * gcs) (toFloat y * gcs)
 
 
+circle : String -> Float -> Shape
 circle a b =
     ellipse a b b
 
