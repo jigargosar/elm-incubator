@@ -394,7 +394,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
             l
                 |> List.map (renderGCE gcs)
                 |> group
-                |> placeGridShape gcs gwh
+                |> moveF2 ctx.dxy
 
         renderMouseConnection : GCE -> Shape
         renderMouseConnection (GCE xy _) =
@@ -413,7 +413,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                     ( toFloat a * gcs, toFloat b * gcs )
             in
             group [ connectionPolyLine gcs (List.map idxToPt conIndices) ]
-                |> placeGridShape gcs gwh
+                |> moveF2 ctx.dxy
 
         renderLastCellAndConnectionToMouse =
             case mbLastGCE of
@@ -459,11 +459,6 @@ gIdxToCanvas gcs xy gwh =
             getGDxy gcs gwh
     in
     F2 (x * gcs + dx) (y * gcs + dy)
-
-
-placeGridShape : Float -> Gwh -> Shape -> Shape
-placeGridShape gcs gwh =
-    moveF2 (getGDxy gcs gwh)
 
 
 moveF2 : F2 -> Shape -> Shape
