@@ -608,10 +608,22 @@ square a b =
 
 
 renderPointer : Float -> Float -> Float -> HM
-renderPointer w x y =
-    Svg.g [ style_ [ transform_ [ translate_ x y ] ] ]
-        [ draw <| ellipse "black" 1 w
-        , draw <| ellipse "black" w 1
+renderPointer r x y =
+    let
+        d =
+            r * 2
+    in
+    Svg.g [ style_ [ transform_ [ translate_ x y, "scale(2)" ] ] ]
+        [ draw <| ellipse "black" 1 r
+        , draw <| ellipse "black" r 1
+        , draw <| rectangle "green" d 2
+        , Svg.rect
+            [ style_ [ "transform-origin: center", transform_ [ "translate(-50%, -50%)" ] ]
+            , Px.width 3
+            , Px.height d
+            , SA.fill "black"
+            ]
+            []
         ]
 
 
