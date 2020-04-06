@@ -190,10 +190,23 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
         gcs =
             getGcs cwh gwh
 
-        func a b =
-            Debug.log "a,b" ( a, b )
+        func (( idx, cell ) as current) ls =
+            if List.member current ls then
+                if List.Extra.elemIndex current ls == Just 1 then
+                    G gwh gd (List.drop 1 conI2Stack)
 
-        _ =
+                else
+                    g
+
+            else
+                case ls of
+                    [] ->
+                        g
+
+                    lst :: rest ->
+                        g
+
+        foo =
             Maybe.map2 func
                 (canvasToGIdx (F2 mx my) gcs gwh
                     |> Maybe.andThen (flip iidGetEntry gd)
