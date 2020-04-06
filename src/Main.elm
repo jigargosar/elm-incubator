@@ -400,7 +400,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         renderMouseConnection (GCE xy _) =
             let
                 (F2 x1 y1) =
-                    gIdxToCanvas gcs xy gwh
+                    gIdxToCanvas ctx xy
             in
             group
                 [ connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
@@ -449,14 +449,17 @@ validGIdx (Gwh wh) idx =
     iiValidIdxOf wh idx
 
 
-gIdxToCanvas : Float -> I2 -> Gwh -> F2
-gIdxToCanvas gcs xy gwh =
+gIdxToCanvas : GCtx -> I2 -> F2
+gIdxToCanvas ctx xy =
     let
         (F2 x y) =
             iiToFloat xy
 
         (F2 dx dy) =
-            getGDxy gcs gwh
+            ctx.dxy
+
+        gcs =
+            ctx.cs
     in
     F2 (x * gcs + dx) (y * gcs + dy)
 
