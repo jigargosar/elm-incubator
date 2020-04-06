@@ -163,16 +163,26 @@ getGDxy gcs (Gwh wh) =
 
 
 updateGridOnMouseMove : Cwh -> Mxy -> Grid -> Grid
-updateGridOnMouseMove cwh (Mxy mx my) ((G gwh _ _) as g) =
+updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conIndices) as g) =
     let
         gcs =
             getGcs cwh gwh
-
-        _ =
-            canvasToGIdx (F2 mx my) gcs gwh
-                |> Debug.log "debug"
     in
-    g
+    case canvasToGIdx (F2 mx my) gcs gwh of
+        Just gIdx ->
+            case conIndices of
+                _ :: snd :: rest ->
+                    if gIdx == snd then
+                        G gwh gd (snd :: rest)
+
+                    else
+                        g
+
+                _ ->
+                    g
+
+        Nothing ->
+            g
 
 
 
