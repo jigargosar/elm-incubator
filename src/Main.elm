@@ -296,7 +296,7 @@ updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
                         g
 
                     Just ( lstIdx, lstCell ) ->
-                        if areAdjacent lstIdx gIdx && cell == lstCell then
+                        if iiAreAdjacent lstIdx gIdx && cell == lstCell then
                             G gwh gd (gIdx :: conI2Stack)
 
                         else
@@ -317,8 +317,8 @@ updateGridOnMouseMove ctx (Mxy mx my) ((G gwh gd conI2Stack) as g) =
             |> Maybe.withDefault g
 
 
-areAdjacent : I2 -> I2 -> Bool
-areAdjacent (I2 x1 y1) (I2 x2 y2) =
+iiAreAdjacent : I2 -> I2 -> Bool
+iiAreAdjacent (I2 x1 y1) (I2 x2 y2) =
     (abs (x1 - x2) == 1 && y1 == y2)
         || (abs (y1 - y2) == 1 && x1 == x2)
 
