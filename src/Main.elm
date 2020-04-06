@@ -141,6 +141,7 @@ iidToList (IIDict d) =
 type Cell
     = Water
     | Seed
+    | Wall
 
 
 canCellStartConnection : Cell -> Bool
@@ -151,6 +152,9 @@ canCellStartConnection cell =
 
         Seed ->
             True
+
+        Wall ->
+            False
 
 
 
@@ -385,6 +389,7 @@ type GCE
 type RCell
     = RWater Bool
     | RSeed Bool
+    | RWall
 
 
 gceIdxEq expected (GCE actual _) =
@@ -402,6 +407,9 @@ toGridVM (G gwh gd conI2Stack) =
 
                     Seed ->
                         RSeed (List.member xy conI2Stack)
+
+                    Wall ->
+                        RWall
                 )
 
         ls : List GCE
@@ -528,7 +536,14 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
 
 renderGCE : Float -> GCE -> Shape
 renderGCE gcs (GCE (I2 x y) rc) =
+    let
+        mv =
+            move (toFloat x * gcs) (toFloat y * gcs)
+    in
     case rc of
+        RWall ->
+            group [ square "yellow" (gcs * 0.8) ] |> mv
+
         RWater isDown ->
             let
                 rFact =
@@ -538,10 +553,7 @@ renderGCE gcs (GCE (I2 x y) rc) =
                     else
                         0.2
             in
-            group
-                [ circle "dodgerblue" (gcs * rFact)
-                ]
-                |> move (toFloat x * gcs) (toFloat y * gcs)
+            group [ circle "dodgerblue" (gcs * rFact) ] |> mv
 
         RSeed isDown ->
             let
@@ -552,15 +564,17 @@ renderGCE gcs (GCE (I2 x y) rc) =
                     else
                         0.2
             in
-            group
-                [ circle "brown" (gcs * rFact)
-                ]
-                |> move (toFloat x * gcs) (toFloat y * gcs)
+            group [ circle "brown" (gcs * rFact) ] |> mv
 
 
 circle : String -> Float -> Shape
 circle a b =
     ellipse a b b
+
+
+square : String -> Float -> Shape
+square a b =
+    rectangle a b b
 
 
 renderPointer : Float -> Float -> Float -> Shape
