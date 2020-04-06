@@ -227,6 +227,9 @@ updateGridOnMouseClick cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
                 Nothing ->
                     g
 
+        _ :: _ :: _ ->
+            G gwh gd []
+
         _ ->
             g
 
