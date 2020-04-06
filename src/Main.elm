@@ -185,9 +185,10 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
         gcs =
             getGcs cwh gwh
 
+        ls : Maybe (List ( I2, Cell ))
         ls =
-            iidToList gd
-                |> List.filter (Tuple.first >> flip List.member conI2Stack)
+            iidGetAll conI2Stack gd
+                |> Maybe.map (List.map2 Tuple.pair conI2Stack)
     in
     case canvasToGIdx (F2 mx my) gcs gwh of
         Just gIdx ->
