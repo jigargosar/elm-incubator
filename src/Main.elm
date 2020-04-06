@@ -190,9 +190,9 @@ updateGridOnMouseMove cwh (Mxy mx my) ((G gwh gd conI2Stack) as g) =
         gcs =
             getGcs cwh gwh
 
-        func (( gIdx, cell ) as current) ls =
-            if List.member current ls then
-                if List.Extra.elemIndex current ls == Just 1 then
+        func ( gIdx, cell ) ls =
+            if List.member gIdx conI2Stack then
+                if List.Extra.elemIndex gIdx conI2Stack == Just 1 then
                     G gwh gd (List.drop 1 conI2Stack)
 
                 else
