@@ -583,17 +583,25 @@ renderGCE ctx (GCE gIdx rc state) =
         wrapRCell n =
             Svg.g
                 [ style_
-                    [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ]
+                    [ "transition: all 0.2s"
+                    , transform_ [ translateFF_ translateValue, scale_ scaleValue ]
                     ]
                 ]
-                [ Svg.g
-                    [ style_
-                        [ "transition: all 0.2s"
-                        , transform_ [ scale_ scaleValue ]
-                        ]
-                    ]
-                    [ n ]
-                ]
+                [ n ]
+
+        translateValue =
+            case state of
+                Static ->
+                    gIdxToCanvas ctx gIdx
+
+                Connected ->
+                    gIdxToCanvas ctx gIdx
+
+                ConnectedLast ->
+                    gIdxToCanvas ctx gIdx
+
+                Leaving ->
+                    F2 -100 -100
 
         scaleValue =
             case state of
