@@ -594,11 +594,12 @@ renderGCE ctx (GCE gIdx rc) =
             [ draw <| circle "brown" (gcs * rFact) ] |> mv
 
 
-fillCircle fillString r attrs =
+fillCircle fillString r styles =
     Svg.circle
         (Px.r r
             :: SA.fill fillString
-            :: attrs
+            :: style_ styles
+            :: []
         )
         []
 
