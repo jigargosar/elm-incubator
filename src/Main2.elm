@@ -121,11 +121,15 @@ renderWaterCell maybeMouseGIdx ( gIdx, cell ) =
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
         |> scale
-            (if maybeMouseGIdx == Just gIdx then
-                0.5
+            (case cell of
+                Static ->
+                    1
 
-             else
-                1
+                Growing ->
+                    1
+
+                Shrinking ->
+                    0.5
             )
 
 
