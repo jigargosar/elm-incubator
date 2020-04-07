@@ -206,14 +206,14 @@ view _ (Mem _ gridCells) =
 
 
 renderWaterCell : ( ( Int, Int ), Anim ) -> Shape
-renderWaterCell ( gIdx, cellAnimation ) =
+renderWaterCell ( gIdx, anim ) =
     let
         _ =
-            animValue cellAnimation
+            animValue anim
     in
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
-        |> scale (animValue cellAnimation)
+        |> scale (animValue anim)
 
 
 waterRadius =
