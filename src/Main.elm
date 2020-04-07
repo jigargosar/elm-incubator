@@ -804,9 +804,10 @@ ellipse c w h =
     Ellipse w h |> Shape c [] initialTransform
 
 
-group : List Shape -> Shape
-group ss =
-    Group ss |> Shape "none" [] initialTransform
+
+--group : List Shape -> Shape
+--group ss =
+--    Group ss |> Shape "none" [] initialTransform
 
 
 type Form
