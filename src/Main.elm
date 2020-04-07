@@ -507,9 +507,8 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         , renderCellConnections
         , Svg.Keyed.node "g"
             []
-            (( "mouse-connection", renderConnectionToMouse )
-                :: List.map (renderGCEWithKey ctx) gceList
-            )
+            (List.map (renderGCEWithKey ctx) gceList)
+        , renderConnectionToMouse
         , renderPointer ctx mx my
         ]
 
