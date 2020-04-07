@@ -406,7 +406,7 @@ renderGrid cwh mxy g =
 
 
 type GridVM
-    = GV Gwh (List GCE) (List I2) (Maybe GCE)
+    = GV Gwh (List GCE) (List I2)
 
 
 type GCE
@@ -442,20 +442,8 @@ toGridVM (G gwh gd conI2Stack) =
         ls : List GCE
         ls =
             iidToList gd |> List.map toGCE
-
-        ( mbLastGCE, gceList ) =
-            case conI2Stack of
-                idx :: _ ->
-                    ls
-                        |> List.Extra.select
-                        |> List.Extra.find (Tuple.first >> gceIdxEq idx)
-                        |> Maybe.map (Tuple.mapFirst Just)
-                        |> Maybe.withDefault ( Nothing, ls )
-
-                [] ->
-                    ( Nothing, ls )
     in
-    GV gwh gceList (List.reverse conI2Stack) mbLastGCE
+    GV gwh ls (List.reverse conI2Stack)
 
 
 
@@ -463,7 +451,7 @@ toGridVM (G gwh gd conI2Stack) =
 
 
 renderGridVM : GCtx -> Mxy -> GridVM -> HM
-renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
+renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
     let
         gcs =
             ctx.cs
@@ -486,18 +474,18 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
                 [ connectionPolyLine gcs (List.map idxToPt conIndices)
                 ]
 
-        renderLastCellAndConnectionToMouse =
-            case mbLastGCE of
-                Nothing ->
-                    []
-
-                Just lastGCE ->
-                    [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
+        --renderLastCellAndConnectionToMouse =
+        --    case mbLastGCE of
+        --        Nothing ->
+        --            []
+        --
+        --        Just lastGCE ->
+        --            [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
-        , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList ++ renderLastCellAndConnectionToMouse)
+        , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList)
         , renderPointer ctx mx my
         ]
 
