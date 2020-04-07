@@ -12,7 +12,6 @@ import Json.Decode as JD exposing (Decoder)
 import List.Extra exposing (scanl)
 import Svg
 import Svg.Attributes as SA
-import Svg.Keyed
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
 import TypedSvg.Types as TT
@@ -546,16 +545,6 @@ connectionPolyLine gcs pts =
 renderGridBg : Float -> Gwh -> Shape
 renderGridBg gcs (Gwh (I2 gw gh)) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
-
-
-renderGCEWithKey : GCtx -> GCE -> ( String, HM )
-renderGCEWithKey gCtx ((GCE gIdx _ _) as gce) =
-    ( gIdxToKey gIdx, renderGCE gCtx gce )
-
-
-gIdxToKey : I2 -> String
-gIdxToKey (I2 ix iy) =
-    [ "(", String.fromInt ix, ",", String.fromInt iy, ")" ] |> String.join ""
 
 
 renderGCE : GCtx -> GCE -> HM
