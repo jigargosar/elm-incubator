@@ -38,8 +38,12 @@ animIsDone anim =
 
 
 animTick : Anim -> Anim
-animTick (Anim sa) =
-    Anim { sa | elapsed = sa.elapsed + 1 }
+animTick ((Anim sa) as anim) =
+    if animIsDone anim then
+        anim
+
+    else
+        Anim { sa | elapsed = sa.elapsed + 1 }
 
 
 animValue : Anim -> Number
