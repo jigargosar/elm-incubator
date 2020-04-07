@@ -460,7 +460,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
 
         renderCellConnections : HM
         renderCellConnections =
-            Svg.g [ style_ [ transform_ [ translateFF_ ctx.dxy ] ] ]
+            Svg.g []
                 [ renderConnectionPts gcs (List.map (gIdxToCanvas ctx) conIndices)
                 ]
 
