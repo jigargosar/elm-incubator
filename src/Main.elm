@@ -462,7 +462,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
                     ( toFloat a * gcs, toFloat b * gcs )
             in
             Svg.g [ style_ [ transform_ [ translateFF_ ctx.dxy ] ] ]
-                [ connectionPolyLine gcs (List.map idxToPt conIndices)
+                [ renderConnectionPts gcs (List.map idxToPt conIndices)
                 ]
 
         renderConnectionToMouse =
@@ -476,7 +476,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
                             (F2 x1 y1) =
                                 gIdxToCanvas ctx lst
                           in
-                          connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
+                          renderConnectionPts gcs [ ( x1, y1 ), ( mx, my ) ]
                         , renderGCE ctx gce
                         ]
                 )
@@ -529,8 +529,8 @@ gIdxToCanvas ctx xy =
     F2 (x * gcs + dx) (y * gcs + dy)
 
 
-connectionPolyLine : Float -> List ( Float, Float ) -> HM
-connectionPolyLine gcs pts =
+renderConnectionPts : Float -> List ( Float, Float ) -> HM
+renderConnectionPts gcs pts =
     Svg.polyline
         [ SA.stroke "green"
         , SA.fill "none"
