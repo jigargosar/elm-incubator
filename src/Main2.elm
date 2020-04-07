@@ -151,10 +151,9 @@ gridPositions =
 
 
 type Event
-    = MouseEnter
-    | MouseLeave
-    | MouseOver
-    | NoEvent
+    = MouseEntered
+    | MouseLeft
+    | MouseNotMoved
 
 
 update : Computer -> Mem -> Mem
@@ -174,29 +173,26 @@ update computer (Mem maybePreviousComputer gridCells) =
                 event =
                     if maybeCurrentMouseGIdx == Just gIdx then
                         if maybePreviousMouseGIdx == Just gIdx then
-                            MouseOver
+                            MouseNotMoved
 
                         else
-                            MouseEnter
+                            MouseEntered
 
                     else if maybePreviousMouseGIdx == Just gIdx then
-                        MouseLeave
+                        MouseLeft
 
                     else
-                        NoEvent
+                        MouseNotMoved
             in
             case event of
-                NoEvent ->
+                MouseNotMoved ->
                     animTick anim
 
-                MouseEnter ->
+                MouseEntered ->
                     animRetarget 0.5 anim
 
-                MouseLeave ->
+                MouseLeft ->
                     animRetarget 1 anim
-
-                MouseOver ->
-                    animTick anim
         )
         gridCells
         |> Mem (Just computer)
