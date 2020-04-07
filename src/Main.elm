@@ -591,9 +591,10 @@ renderGCE ctx (GCE gIdx rc) =
                     else
                         0.2
             in
-            [ draw <| circle "brown" (gcs * rFact) ] |> mv
+            [ fillCircle "brown" (gcs * rFact) [] ] |> mv
 
 
+fillCircle : String -> Float -> List String -> Svg.Svg msg
 fillCircle fillS r styles =
     Svg.circle
         (Px.r r
