@@ -168,6 +168,21 @@ view _ (Mem _ gridCells) =
 
 renderWaterCell : ( ( Int, Int ), CellAnimation ) -> Shape
 renderWaterCell ( gIdx, cellAnimation ) =
+    let
+        currentValue (Scaling sc) =
+            if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
+                sc.to
+
+            else
+                let
+                    progress =
+                        sc.elapsed / sc.duration
+                in
+                Debug.log "debug" progress
+
+        _ =
+            currentValue cellAnimation
+    in
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
         |> scale
