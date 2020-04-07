@@ -471,7 +471,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
                         []
 
                     Just ((GCE lst _ _) as gce) ->
-                        [ renderConnectionPts gcs [ gIdxToCanvas ctx lst, mff ]
+                        [ renderConnectionPts ctx.cs [ gIdxToCanvas ctx lst, mff ]
                         , renderGCE ctx gce
                         ]
                 )
