@@ -601,7 +601,7 @@ renderGCE ctx (GCE gIdx rc state) =
                     gIdxToCanvas ctx gIdx
 
                 Leaving ->
-                    F2 -100 -100
+                    F2 -150 -150
 
         scaleValue =
             case state of
