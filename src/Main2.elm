@@ -71,8 +71,7 @@ waterRadius =
 
 renderWaterCell : ( Int, Int ) -> Shape
 renderWaterCell gIdx =
-    circle lightBlue waterRadius
-        |> moveGridIdxToScreen gIdx
+    circle lightBlue waterRadius |> moveGridIdxToScreen gIdx
 
 
 moveGridIdxToScreen gIdx =
