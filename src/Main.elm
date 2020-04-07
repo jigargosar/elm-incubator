@@ -274,6 +274,40 @@ toGCtxHelp cwh ((Gwh wh) as gwh) =
     }
 
 
+canvasToGIdx : GCtx -> F2 -> Maybe I2
+canvasToGIdx ctx (F2 x y) =
+    let
+        (F2 dx dy) =
+            ctx.dxy
+
+        gcs =
+            ctx.cs
+    in
+    F2 ((x - dx) / gcs) ((y - dy) / gcs)
+        |> ffRound
+        |> validGIdx ctx.gwh
+
+
+validGIdx : Gwh -> I2 -> Maybe I2
+validGIdx (Gwh wh) idx =
+    iiValidIdxOf wh idx
+
+
+gIdxToCanvas : GCtx -> I2 -> F2
+gIdxToCanvas ctx xy =
+    let
+        (F2 x y) =
+            iiToFloat xy
+
+        (F2 dx dy) =
+            ctx.dxy
+
+        gcs =
+            ctx.cs
+    in
+    F2 (x * gcs + dx) (y * gcs + dy)
+
+
 
 -- GRID UPDATE
 
@@ -488,40 +522,6 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
 translateFF_ : F2 -> String
 translateFF_ ff =
     uncurry translate_ (ffToPair ff)
-
-
-canvasToGIdx : GCtx -> F2 -> Maybe I2
-canvasToGIdx ctx (F2 x y) =
-    let
-        (F2 dx dy) =
-            ctx.dxy
-
-        gcs =
-            ctx.cs
-    in
-    F2 ((x - dx) / gcs) ((y - dy) / gcs)
-        |> ffRound
-        |> validGIdx ctx.gwh
-
-
-validGIdx : Gwh -> I2 -> Maybe I2
-validGIdx (Gwh wh) idx =
-    iiValidIdxOf wh idx
-
-
-gIdxToCanvas : GCtx -> I2 -> F2
-gIdxToCanvas ctx xy =
-    let
-        (F2 x y) =
-            iiToFloat xy
-
-        (F2 dx dy) =
-            ctx.dxy
-
-        gcs =
-            ctx.cs
-    in
-    F2 (x * gcs + dx) (y * gcs + dy)
 
 
 renderConnectionPts : GCtx -> List F2 -> HM
