@@ -17,11 +17,11 @@ init =
     Mem
 
 
-gridWidth =
+gridXLength =
     10
 
 
-gridHeight =
+gridYLength =
     10
 
 
@@ -31,11 +31,16 @@ gridCellWidth =
 
 gridPositions : List ( Int, Int )
 gridPositions =
-    List.range 0 (gridWidth - 1)
+    List.range 0 (gridXLength - 1)
         |> List.concatMap
             (\x ->
-                List.range 0 (gridHeight - 1) |> List.map (Tuple.pair x)
+                List.range 0 (gridYLength - 1) |> List.map (Tuple.pair x)
             )
+
+
+gIdxToScreen : ( Int, Int ) -> ( Float, Float )
+gIdxToScreen ( x, y ) =
+    ( toFloat x * gridCellWidth, toFloat y * 50 )
 
 
 update : Computer -> Mem -> Mem
@@ -49,15 +54,14 @@ view computer mem =
     ]
 
 
-gIdxToScreen : ( Int, Int ) -> ( Float, Float )
-gIdxToScreen ( x, y ) =
-    ( toFloat x * gridCellWidth, toFloat y * 50 )
-
-
 renderCell : ( Int, Int ) -> Shape
 renderCell gIdx =
     circle lightBlue 50
-        |> uncurry move (gIdxToScreen gIdx)
+        |> moveGridIdxToScreen gIdx
+
+
+moveGridIdxToScreen gIdx =
+    uncurry move (gIdxToScreen gIdx)
 
 
 main =
