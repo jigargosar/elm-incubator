@@ -15,6 +15,7 @@ import Svg.Attributes as SA
 import Svg.Keyed
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
+import TypedSvg.Core
 import TypedSvg.Types as TT
 
 
@@ -585,6 +586,20 @@ renderGCE ctx (GCE gIdx rc state) =
 
         gcs =
             ctx.cs
+
+        ( scaleValue, zIndexValue ) =
+            case state of
+                Static ->
+                    ( 1, 0 )
+
+                Connected isLast ->
+                    ( 0.75
+                    , if isLast then
+                        1
+
+                      else
+                        0
+                    )
     in
     wrapRCell <|
         case rc of
@@ -614,11 +629,11 @@ renderGCE ctx (GCE gIdx rc state) =
                 Svg.circle
                     [ Px.r (gcs * 0.2)
                     , style_
-                        [ "transition: all 1s linear"
+                        [ "transition: all 0.2s"
                         , "fill: brown"
-                        , transform_ [ scale_ scl ]
+                        , transform_ [ scale_ scaleValue ]
+                        , "z-index : " ++ String.fromInt zIndexValue
                         ]
-                    , SA.id (Debug.toString gIdx |> String.replace " " "-")
                     ]
                     []
 
