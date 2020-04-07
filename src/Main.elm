@@ -579,9 +579,6 @@ renderGCE ctx (GCE gIdx rc state) =
                   )
                 ]
 
-        gcs =
-            ctx.cs
-
         ( scaleValue, zIndexValue ) =
             case state of
                 Static ->
@@ -592,6 +589,9 @@ renderGCE ctx (GCE gIdx rc state) =
 
                 Connected ->
                     ( 0.75, 0 )
+
+        gcs =
+            ctx.cs
     in
     wrapRCell <|
         case rc of
