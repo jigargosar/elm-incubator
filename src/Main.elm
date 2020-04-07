@@ -465,7 +465,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
                 [ renderConnectionPts gcs (List.map idxToPt conIndices)
                 ]
 
-        renderConnectionToMouse =
+        renderConnectionToPointer =
             Svg.g []
                 (case List.Extra.find (\(GCE _ _ state) -> state == ConnectedLast) gceList of
                     Nothing ->
@@ -485,7 +485,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
         , Svg.g [] (List.map (renderGCE ctx) gceList)
-        , renderConnectionToMouse
+        , renderConnectionToPointer
         , renderPointer ctx mx my
         ]
 
