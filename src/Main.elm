@@ -1,7 +1,5 @@
 module Main exposing (main)
 
--- Browser.Element Scaffold
-
 import Basics.Extra exposing (flip, uncurry)
 import Browser
 import Browser.Events
