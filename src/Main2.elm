@@ -110,6 +110,16 @@ gridPositions =
             )
 
 
+
+--currentProgress (Anim sc) =
+--    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
+--        1
+--
+--    else
+--        sc.elapsed / sc.duration
+--
+
+
 currentValue (Anim sc) =
     if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
         sc.to
@@ -126,8 +136,12 @@ currentValue (Anim sc) =
 
 
 retargetAnim : Number -> Anim -> Anim
-retargetAnim to (Anim sa) =
-    Anim { sa | elapsed = sa.elapsed + 1 }
+retargetAnim to ((Anim a) as an) =
+    let
+        nv =
+            { a | from = a.to, to = to, elapsed = 0 }
+    in
+    Anim nv
 
 
 update : Computer -> Mem -> Mem
@@ -147,7 +161,7 @@ update computer (Mem maybePreviousComputer gridCells) =
                     Anim { sa | elapsed = sa.elapsed + 1 }
     in
     Dict.map
-        (\gIdx cellAnimation ->
+        (\gIdx anim ->
             let
                 event =
                     if maybeCurrentMouseGIdx == Just gIdx then
@@ -165,16 +179,18 @@ update computer (Mem maybePreviousComputer gridCells) =
             in
             case event of
                 NoEvent ->
-                    tickCellAnimation cellAnimation
+                    tickCellAnimation anim
 
                 MouseEnter ->
-                    Anim { from = 1, to = 0.5, duration = 30, elapsed = 0 }
+                    retargetAnim 0.5 anim
 
+                --Anim { from = 1, to = 0.5, duration = 30, elapsed = 0 }
                 MouseLeave ->
-                    Anim { from = 0.5, to = 1, duration = 30, elapsed = 0 }
+                    retargetAnim 1 anim
 
+                --Anim { from = 0.5, to = 1, duration = 30, elapsed = 0 }
                 MouseOver ->
-                    tickCellAnimation cellAnimation
+                    tickCellAnimation anim
         )
         gridCells
         |> Mem (Just computer)
