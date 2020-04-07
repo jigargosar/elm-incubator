@@ -32,6 +32,11 @@ animProgress (Anim sc) =
         sc.elapsed / sc.duration
 
 
+animIsDone : Anim -> Bool
+animIsDone anim =
+    animProgress anim == 1
+
+
 animTick : Anim -> Anim
 animTick (Anim sa) =
     Anim { sa | elapsed = sa.elapsed + 1 }
