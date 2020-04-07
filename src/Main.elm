@@ -599,18 +599,10 @@ renderGCE ctx (GCE gIdx rc state) =
                 draw <| square "yellow" (gcs * 0.8)
 
             Water ->
-                Svg.circle
-                    [ Px.r (gcs * 0.2)
-                    , style_ [ "fill: dodgerblue" ]
-                    ]
-                    []
+                draw <| circle "dodgerblue" (gcs * 0.2)
 
             Seed ->
-                Svg.circle
-                    [ Px.r (gcs * 0.2)
-                    , style_ [ "fill: brown" ]
-                    ]
-                    []
+                draw <| circle "brown" (gcs * 0.2)
 
 
 renderPointer : GCtx -> Float -> Float -> HM
@@ -806,9 +798,11 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
 
 
 -- DRAW SHAPES as SVG
---circle : String -> Float -> Shape
---circle a b =
---    ellipse a b b
+
+
+circle : String -> Float -> Shape
+circle a b =
+    ellipse a b b
 
 
 square : String -> Float -> Shape
