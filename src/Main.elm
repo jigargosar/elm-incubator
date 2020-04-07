@@ -609,20 +609,21 @@ renderGCE ctx (GCE gIdx rc) =
             in
             [ fillCircle "brown"
                 (gcs * 0.2)
-                [ "transition: transform 1s linear"
-                , transform_ [ "scale(" ++ String.fromFloat scl ++ ")" ]
+                [ style_
+                    [ "transition: transform 1s linear"
+                    , transform_ [ "scale(" ++ String.fromFloat scl ++ ")" ]
+                    ]
+                , SA.id (Debug.toString gIdx |> String.replace " " "-")
                 ]
             ]
                 |> mv
 
 
-fillCircle : String -> Float -> List String -> Svg.Svg msg
-fillCircle fillS r styles =
+fillCircle fillS r attrs =
     Svg.circle
         (Px.r r
             :: SA.fill fillS
-            :: style_ styles
-            :: []
+            :: attrs
         )
         []
 
