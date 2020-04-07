@@ -107,17 +107,17 @@ update computer mem =
 
 
 view : Computer -> Mem -> List Shape
-view computer mem =
+view computer (Mem gridCells) =
     let
         maybeMouseGIdx =
             computerToGIdx computer
     in
-    [ group (List.map (renderWaterCell maybeMouseGIdx) gridPositions)
+    [ group (List.map (renderWaterCell maybeMouseGIdx) (Dict.toList gridCells))
     ]
 
 
-renderWaterCell : Maybe ( Int, Int ) -> ( Int, Int ) -> Shape
-renderWaterCell maybeMouseGIdx gIdx =
+renderWaterCell : Maybe ( Int, Int ) -> ( ( Int, Int ), Cell ) -> Shape
+renderWaterCell maybeMouseGIdx ( gIdx, cell ) =
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
         |> scale
