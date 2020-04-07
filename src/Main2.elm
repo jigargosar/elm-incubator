@@ -69,6 +69,11 @@ screenToGIdx x y =
         |> validGIdx
 
 
+computerToGIdx : Computer -> Maybe ( Int, Int )
+computerToGIdx { mouse } =
+    screenToGIdx mouse.x mouse.y
+
+
 gridPositions : List ( Int, Int )
 gridPositions =
     List.range 0 (gridXLength - 1)
@@ -85,13 +90,25 @@ update computer mem =
 
 view : Computer -> Mem -> List Shape
 view computer mem =
-    [ group (List.map renderWaterCell gridPositions)
+    let
+        maybeMouseGIdx =
+            computerToGIdx computer
+    in
+    [ group (List.map (renderWaterCell maybeMouseGIdx) gridPositions)
     ]
 
 
-renderWaterCell : ( Int, Int ) -> Shape
-renderWaterCell gIdx =
-    circle lightBlue waterRadius |> moveGridIdxToScreen gIdx
+renderWaterCell : Maybe ( Int, Int ) -> ( Int, Int ) -> Shape
+renderWaterCell maybeMouseGIdx gIdx =
+    circle lightBlue waterRadius
+        |> moveGridIdxToScreen gIdx
+        |> scale
+            (if maybeMouseGIdx == Just gIdx then
+                0.5
+
+             else
+                1
+            )
 
 
 waterRadius =
