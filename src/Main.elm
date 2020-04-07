@@ -410,13 +410,7 @@ type GridVM
 
 
 type GCE
-    = GCE I2 RCell CellState
-
-
-type RCell
-    = RWater
-    | RSeed
-    | RWall
+    = GCE I2 Cell CellState
 
 
 type CellState
@@ -433,18 +427,9 @@ toGridVM : Grid -> GridVM
 toGridVM (G gwh gd conI2Stack) =
     let
         toGCE : ( I2, Cell ) -> GCE
-        toGCE ( xy, c ) =
+        toGCE ( xy, cell ) =
             GCE xy
-                (case c of
-                    Water ->
-                        RWater
-
-                    Seed ->
-                        RSeed
-
-                    Wall ->
-                        RWall
-                )
+                cell
                 (case conI2Stack of
                     [] ->
                         Static
@@ -612,17 +597,17 @@ renderGCE ctx (GCE gIdx rc state) =
     in
     wrapRCell <|
         case rc of
-            RWall ->
+            Wall ->
                 draw <| square "yellow" (gcs * 0.8)
 
-            RWater ->
+            Water ->
                 Svg.circle
                     [ Px.r (gcs * 0.2)
                     , style_ [ "fill: dodgerblue" ]
                     ]
                     []
 
-            RSeed ->
+            Seed ->
                 Svg.circle
                     [ Px.r (gcs * 0.2)
                     , style_ [ "fill: brown" ]
