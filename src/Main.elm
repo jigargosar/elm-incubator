@@ -612,7 +612,7 @@ renderGCE ctx (GCE gIdx rc) =
                 , style_
                     [ "transition: transform 1s linear"
                     , "fill: brown"
-                    , transform_ [ "scale(" ++ String.fromFloat scl ++ ")" ]
+                    , transform_ [ scale_ scl ]
                     ]
                 , SA.id (Debug.toString gIdx |> String.replace " " "-")
                 ]
@@ -657,6 +657,11 @@ px_ float =
 translate_ : Float -> Float -> String
 translate_ x y =
     "translate(" ++ px_ x ++ "," ++ px_ y ++ ")"
+
+
+scale_ : Float -> String
+scale_ scl =
+    "scale(" ++ String.fromFloat scl ++ ")"
 
 
 transform_ : List String -> String
