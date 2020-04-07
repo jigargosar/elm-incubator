@@ -36,15 +36,15 @@ init =
 
 
 gridXLength =
-    10
+    7
 
 
 gridYLength =
-    10
+    7
 
 
 gridCellWidth =
-    50
+    70
 
 
 gridXYLeftTop : ( Float, Float )
@@ -111,6 +111,9 @@ update computer (Mem gridCells) =
         (\gIdx cellState ->
             if Just gIdx == maybeMouseGIdx then
                 Shrinking
+
+            else if cellState == Shrinking then
+                Static
 
             else
                 cellState
