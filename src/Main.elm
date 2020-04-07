@@ -565,18 +565,16 @@ renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE gIdx rc state) =
     let
         wrapRCell n =
-            Svg.Keyed.node "g"
+            Svg.g
                 [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
-                [ ( gIdxToKey gIdx
-                  , Svg.g
-                        [ style_
-                            [ "transition: all 0.2s"
-                            , transform_ [ scale_ scaleValue ]
-                            , "z-index : " ++ String.fromInt zIndexValue
-                            ]
+                [ Svg.g
+                    [ style_
+                        [ "transition: all 0.2s"
+                        , transform_ [ scale_ scaleValue ]
+                        , "z-index : " ++ String.fromInt zIndexValue
                         ]
-                        [ n ]
-                  )
+                    ]
+                    [ n ]
                 ]
 
         ( scaleValue, zIndexValue ) =
