@@ -15,7 +15,6 @@ import Svg.Attributes as SA
 import Svg.Keyed
 import TypedSvg.Attributes as TA
 import TypedSvg.Attributes.InPx as Px
-import TypedSvg.Core
 import TypedSvg.Types as TT
 
 
@@ -416,7 +415,7 @@ type GCE
 
 type RCell
     = RWater Bool
-    | RSeed Bool
+    | RSeed
     | RWall
 
 
@@ -441,7 +440,7 @@ toGridVM (G gwh gd conI2Stack) =
                         RWater (List.member xy conI2Stack)
 
                     Seed ->
-                        RSeed (List.member xy conI2Stack)
+                        RSeed
 
                     Wall ->
                         RWall
@@ -617,15 +616,7 @@ renderGCE ctx (GCE gIdx rc state) =
                 in
                 draw <| circle "dodgerblue" (gcs * rFact)
 
-            RSeed isDown ->
-                let
-                    scl =
-                        if isDown then
-                            0.75
-
-                        else
-                            1
-                in
+            RSeed ->
                 Svg.circle
                     [ Px.r (gcs * 0.2)
                     , style_
