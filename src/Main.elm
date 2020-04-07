@@ -414,7 +414,7 @@ type GCE
 
 
 type RCell
-    = RWater Bool
+    = RWater
     | RSeed
     | RWall
 
@@ -437,7 +437,7 @@ toGridVM (G gwh gd conI2Stack) =
             GCE xy
                 (case c of
                     Water ->
-                        RWater (List.member xy conI2Stack)
+                        RWater
 
                     Seed ->
                         RSeed
@@ -615,16 +615,12 @@ renderGCE ctx (GCE gIdx rc state) =
             RWall ->
                 draw <| square "yellow" (gcs * 0.8)
 
-            RWater isDown ->
-                let
-                    rFact =
-                        if isDown then
-                            0.1
-
-                        else
-                            0.2
-                in
-                draw <| circle "dodgerblue" (gcs * rFact)
+            RWater ->
+                Svg.circle
+                    [ Px.r (gcs * 0.2)
+                    , style_ [ "fill: dodgerblue" ]
+                    ]
+                    []
 
             RSeed ->
                 Svg.circle
@@ -827,11 +823,9 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
 
 
 -- DRAW SHAPES as SVG
-
-
-circle : String -> Float -> Shape
-circle a b =
-    ellipse a b b
+--circle : String -> Float -> Shape
+--circle a b =
+--    ellipse a b b
 
 
 square : String -> Float -> Shape
