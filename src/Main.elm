@@ -410,13 +410,18 @@ type GridVM
 
 
 type GCE
-    = GCE I2 RCell
+    = GCE I2 RCell CellState
 
 
 type RCell
     = RWater Bool
     | RSeed Bool
     | RWall
+
+
+type CellState
+    = Static
+    | Connected Bool
 
 
 
@@ -427,6 +432,7 @@ type RCell
 toGridVM : Grid -> GridVM
 toGridVM (G gwh gd conI2Stack) =
     let
+        toGCE : ( I2, Cell ) -> GCE
         toGCE ( xy, c ) =
             GCE xy
                 (case c of
@@ -438,6 +444,20 @@ toGridVM (G gwh gd conI2Stack) =
 
                     Wall ->
                         RWall
+                )
+                (case conI2Stack of
+                    [] ->
+                        Static
+
+                    lastIdx :: othersIndices ->
+                        if xy == lastIdx then
+                            Connected True
+
+                        else if List.member xy othersIndices then
+                            Connected False
+
+                        else
+                            Static
                 )
 
         ls : List GCE
@@ -546,7 +566,7 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
 
 
 renderGCEWithKey : GCtx -> GCE -> ( String, HM )
-renderGCEWithKey gCtx ((GCE gIdx _) as gce) =
+renderGCEWithKey gCtx ((GCE gIdx _ _) as gce) =
     ( gIdxToKey gIdx, renderGCE gCtx gce )
 
 
@@ -556,7 +576,7 @@ gIdxToKey (I2 ix iy) =
 
 
 renderGCE : GCtx -> GCE -> HM
-renderGCE ctx (GCE gIdx rc) =
+renderGCE ctx (GCE gIdx rc state) =
     let
         keyedGroup n =
             Svg.Keyed.node "g"
