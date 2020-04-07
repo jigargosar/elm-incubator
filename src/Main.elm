@@ -585,6 +585,7 @@ renderGCE ctx (GCE gIdx rc state) =
                 [ style_
                     [ "transition: all 0.2s"
                     , transform_ [ translateFF_ translateValue, scale_ scaleValue ]
+                    , "opacity: " ++ String.fromFloat opacityValue
                     ]
                 ]
                 [ n ]
@@ -602,6 +603,20 @@ renderGCE ctx (GCE gIdx rc state) =
 
                 Leaving ->
                     F2 0 -250
+
+        opacityValue =
+            case state of
+                Static ->
+                    1
+
+                ConnectedLast ->
+                    1
+
+                Connected ->
+                    1
+
+                Leaving ->
+                    0
 
         scaleValue =
             case state of
