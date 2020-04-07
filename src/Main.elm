@@ -487,11 +487,26 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         --
         --        Just lastGCE ->
         --            [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
+        renderConnectionToMouse =
+            Svg.g []
+                (case List.Extra.last conIndices of
+                    Nothing ->
+                        []
+
+                    Just lst ->
+                        [ let
+                            (F2 x1 y1) =
+                                gIdxToCanvas ctx lst
+                          in
+                          connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
+                        ]
+                )
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
         , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList)
+        , renderConnectionToMouse
         , renderPointer ctx mx my
         ]
 
