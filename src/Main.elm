@@ -505,8 +505,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
-        , renderConnectionToMouse
-        , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList)
+        , Svg.Keyed.node "g" [] (( "mouse-connection", renderConnectionToMouse ) :: List.map (renderGCEWithKey ctx) gceList)
         , renderPointer ctx mx my
         ]
 
@@ -602,7 +601,7 @@ renderGCE ctx (GCE gIdx rc state) =
                     ( 1, 0 )
 
                 ConnectedLast ->
-                    ( 0.75, 1 )
+                    ( 0.75, 2 )
 
                 Connected ->
                     ( 0.75, 0 )
