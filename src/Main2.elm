@@ -177,19 +177,18 @@ renderWaterCell ( gIdx, cellAnimation ) =
                 let
                     progress =
                         sc.elapsed / sc.duration
+
+                    v =
+                        (sc.to - sc.from) * progress + sc.from
                 in
-                Debug.log "debug" progress
+                v
 
         _ =
             currentValue cellAnimation
     in
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
-        |> scale
-            (case cellAnimation of
-                Scaling sa ->
-                    sa.to
-            )
+        |> scale (currentValue cellAnimation)
 
 
 waterRadius =
