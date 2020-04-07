@@ -10,7 +10,12 @@ import Playground exposing (..)
 
 
 type Anim
-    = Anim { from : Number, to : Number, duration : Number, elapsed : Number }
+    = Anim
+        { from : Number
+        , to : Number
+        , duration : Number
+        , elapsed : Number
+        }
 
 
 animStatic : Number -> Anim
