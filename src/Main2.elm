@@ -79,13 +79,6 @@ initialGridCells =
         |> Dict.fromList
 
 
-type Event
-    = MouseEnter
-    | MouseLeave
-    | MouseOver
-    | NoEvent
-
-
 init : Mem
 init =
     Mem Nothing initialGridCells
@@ -155,6 +148,13 @@ gridPositions =
             (\x ->
                 List.range 0 (gridYLength - 1) |> List.map (Tuple.pair x)
             )
+
+
+type Event
+    = MouseEnter
+    | MouseLeave
+    | MouseOver
+    | NoEvent
 
 
 update : Computer -> Mem -> Mem
