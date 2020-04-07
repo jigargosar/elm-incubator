@@ -20,13 +20,16 @@ type alias GridCells =
 initialGridCells : GridCells
 initialGridCells =
     gridPositions
-        |> List.map (flip Tuple.pair (Static 1))
+        |> List.map (flip Tuple.pair (static 1))
         |> Dict.fromList
 
 
+static val =
+    Scaling { from = val, to = val, duration = 0, elapsed = 0 }
+
+
 type CellAnimation
-    = Static Number
-    | Scaling Number
+    = Scaling { from : Number, to : Number, duration : Number, elapsed : Number }
 
 
 type Event
@@ -117,6 +120,11 @@ update computer (Mem maybePreviousComputer gridCells) =
         maybePreviousMouseGIdx : Maybe ( Int, Int )
         maybePreviousMouseGIdx =
             maybePreviousComputer |> Maybe.andThen computerToGIdx
+
+        tickCellAnimation cellAnimation =
+            case cellAnimation of
+                Scaling sa ->
+                    Scaling { sa | elapsed = sa.elapsed + 1 }
     in
     Dict.map
         (\gIdx cellAnimation ->
@@ -137,18 +145,16 @@ update computer (Mem maybePreviousComputer gridCells) =
             in
             case event of
                 NoEvent ->
-                    -- tick
-                    cellAnimation
+                    tickCellAnimation cellAnimation
 
                 MouseEnter ->
-                    Scaling 0.5
+                    Scaling { from = 1, to = 0.5, duration = 30, elapsed = 0 }
 
                 MouseLeave ->
-                    Scaling 1
+                    Scaling { from = 0.5, to = 1, duration = 30, elapsed = 0 }
 
                 MouseOver ->
-                    -- tick
-                    cellAnimation
+                    tickCellAnimation cellAnimation
         )
         gridCells
         |> Mem (Just computer)
@@ -166,11 +172,8 @@ renderWaterCell ( gIdx, cellAnimation ) =
         |> moveGridIdxToScreen gIdx
         |> scale
             (case cellAnimation of
-                Static scaleVal ->
-                    scaleVal
-
-                Scaling scaleVal ->
-                    scaleVal
+                Scaling sa ->
+                    sa.to
             )
 
 
