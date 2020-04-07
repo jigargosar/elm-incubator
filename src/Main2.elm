@@ -25,6 +25,10 @@ gridHeight =
     10
 
 
+gridCellWidth =
+    50
+
+
 gridPositions : List ( Int, Int )
 gridPositions =
     List.range 0 (gridWidth - 1)
@@ -47,7 +51,7 @@ view computer mem =
 
 gIdxToScreen : ( Int, Int ) -> ( Float, Float )
 gIdxToScreen ( x, y ) =
-    ( toFloat x * 50, toFloat y * 50 )
+    ( toFloat x * gridCellWidth, toFloat y * 50 )
 
 
 renderCell : ( Int, Int ) -> Shape
