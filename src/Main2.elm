@@ -14,20 +14,19 @@ type Mem
 
 
 type alias GridCells =
-    Dict ( Int, Int ) Cell
+    Dict ( Int, Int ) CellAnimation
 
 
 initialGridCells : GridCells
 initialGridCells =
     gridPositions
-        |> List.map (flip Tuple.pair Static)
+        |> List.map (flip Tuple.pair (Static 1))
         |> Dict.fromList
 
 
-type Cell
-    = Static
-    | Growing
-    | Shrinking
+type CellAnimation
+    = Static Number
+    | Scaling Number
 
 
 type Event
@@ -120,7 +119,7 @@ update computer (Mem maybePreviousComputer gridCells) =
             maybePreviousComputer |> Maybe.andThen computerToGIdx
     in
     Dict.map
-        (\gIdx cellState ->
+        (\gIdx cellAnimation ->
             let
                 event =
                     if maybeCurrentMouseGIdx == Just gIdx then
@@ -139,16 +138,17 @@ update computer (Mem maybePreviousComputer gridCells) =
             case event of
                 NoEvent ->
                     -- tick
-                    cellState
+                    cellAnimation
 
                 MouseEnter ->
-                    Shrinking
+                    Scaling 0.5
 
                 MouseLeave ->
-                    Static
+                    Scaling 1
 
                 MouseOver ->
-                    Shrinking
+                    -- tick
+                    cellAnimation
         )
         gridCells
         |> Mem (Just computer)
@@ -160,20 +160,17 @@ view _ (Mem _ gridCells) =
     ]
 
 
-renderWaterCell : ( ( Int, Int ), Cell ) -> Shape
-renderWaterCell ( gIdx, cell ) =
+renderWaterCell : ( ( Int, Int ), CellAnimation ) -> Shape
+renderWaterCell ( gIdx, cellAnimation ) =
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
         |> scale
-            (case cell of
-                Static ->
-                    1
+            (case cellAnimation of
+                Static scaleVal ->
+                    scaleVal
 
-                Growing ->
-                    1
-
-                Shrinking ->
-                    0.5
+                Scaling scaleVal ->
+                    scaleVal
             )
 
 
