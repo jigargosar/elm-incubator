@@ -584,14 +584,20 @@ renderGCE ctx (GCE gIdx rc) =
 
         RSeed isDown ->
             let
-                rFact =
+                scl =
                     if isDown then
-                        0.1
+                        0.75
 
                     else
-                        0.2
+                        1
             in
-            [ fillCircle "brown" (gcs * rFact) [] ] |> mv
+            [ fillCircle "brown"
+                (gcs * 0.2)
+                [ "transition: transform 1s linear"
+                , transform_ [ "scale(" ++ String.fromFloat scl ++ ")" ]
+                ]
+            ]
+                |> mv
 
 
 fillCircle : String -> Float -> List String -> Svg.Svg msg
