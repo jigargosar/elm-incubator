@@ -607,25 +607,18 @@ renderGCE ctx (GCE gIdx rc) =
                     else
                         1
             in
-            [ fillCircle "brown"
-                (gcs * 0.2)
-                [ style_
+            [ Svg.circle
+                [ Px.r (gcs * 0.2)
+                , style_
                     [ "transition: transform 1s linear"
+                    , "fill: brown"
                     , transform_ [ "scale(" ++ String.fromFloat scl ++ ")" ]
                     ]
                 , SA.id (Debug.toString gIdx |> String.replace " " "-")
                 ]
+                []
             ]
                 |> mv
-
-
-fillCircle fillS r attrs =
-    Svg.circle
-        (Px.r r
-            :: SA.fill fillS
-            :: attrs
-        )
-        []
 
 
 renderPointer : GCtx -> Float -> Float -> HM
