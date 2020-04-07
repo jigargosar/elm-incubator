@@ -45,6 +45,30 @@ gIdxToScreen ( x, y ) =
     ( toFloat x * gridCellWidth + dx, toFloat y * gridCellWidth + dy )
 
 
+isGIdxValid : ( Int, Int ) -> Bool
+isGIdxValid ( x, y ) =
+    x >= 0 && x <= gridXLength && y >= 0 && y < gridYLength
+
+
+validGIdx : ( Int, Int ) -> Maybe ( Int, Int )
+validGIdx gIdx =
+    if isGIdxValid gIdx then
+        Just gIdx
+
+    else
+        Nothing
+
+
+screenToGIdx : Float -> Float -> Maybe ( Int, Int )
+screenToGIdx x y =
+    let
+        ( dx, dy ) =
+            gridXYLeftTop
+    in
+    ( round ((x - dx) / gridCellWidth), round ((y - dy) / gridCellWidth) )
+        |> validGIdx
+
+
 gridPositions : List ( Int, Int )
 gridPositions =
     List.range 0 (gridXLength - 1)
