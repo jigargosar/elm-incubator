@@ -561,16 +561,15 @@ renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE gIdx rc) =
     let
         mv =
-            draw
-                >> List.singleton
-                >> Svg.g [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
+            Svg.g [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
 
         gcs =
             ctx.cs
     in
     case rc of
         RWall ->
-            group [ square "yellow" (gcs * 0.8) ] |> mv
+            [ draw <| square "yellow" (gcs * 0.8) ]
+                |> mv
 
         RWater isDown ->
             let
@@ -581,7 +580,7 @@ renderGCE ctx (GCE gIdx rc) =
                     else
                         0.2
             in
-            group [ circle "dodgerblue" (gcs * rFact) ] |> mv
+            [ draw <| circle "dodgerblue" (gcs * rFact) ] |> mv
 
         RSeed isDown ->
             let
@@ -592,7 +591,7 @@ renderGCE ctx (GCE gIdx rc) =
                     else
                         0.2
             in
-            group [ circle "brown" (gcs * rFact) ] |> mv
+            [ draw <| circle "brown" (gcs * rFact) ] |> mv
 
 
 renderPointer : GCtx -> Float -> Float -> HM
