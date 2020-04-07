@@ -370,9 +370,6 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
         Dragging l o ->
             clearConStackAndReplaceWithWall (l :: o)
 
-        _ ->
-            g
-
 
 updateGridOnMouseMove : GCtx -> Mxy -> Grid -> Grid
 updateGridOnMouseMove ctx (Mxy mx my) g =
