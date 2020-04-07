@@ -502,6 +502,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         ]
 
 
+translateFF_ : F2 -> String
 translateFF_ ff =
     uncurry translate_ (ffToPair ff)
 
@@ -557,15 +558,12 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
 
 
 renderGCE : GCtx -> GCE -> HM
-renderGCE ctx (GCE (I2 x y) rc) =
+renderGCE ctx (GCE gIdx rc) =
     let
-        (F2 dx dy) =
-            ctx.dxy
-
         mv =
             draw
                 >> List.singleton
-                >> Svg.g [ TA.transform [ TT.Translate (toFloat x * gcs + dx) (toFloat y * gcs + dy) ] ]
+                >> Svg.g [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
 
         gcs =
             ctx.cs
