@@ -36,6 +36,15 @@ gridXYLeftTop =
     )
 
 
+gIdxToScreen : ( Int, Int ) -> ( Float, Float )
+gIdxToScreen ( x, y ) =
+    let
+        ( dx, dy ) =
+            gridXYLeftTop
+    in
+    ( toFloat x * gridCellWidth + dx, toFloat y * gridCellWidth + dy )
+
+
 gridPositions : List ( Int, Int )
 gridPositions =
     List.range 0 (gridXLength - 1)
@@ -43,21 +52,6 @@ gridPositions =
             (\x ->
                 List.range 0 (gridYLength - 1) |> List.map (Tuple.pair x)
             )
-
-
-gIdxToScreen : ( Int, Int ) -> ( Float, Float )
-gIdxToScreen ( x_, y_ ) =
-    let
-        x =
-            toFloat x_
-
-        y =
-            toFloat y_
-
-        ( dx, dy ) =
-            gridXYLeftTop
-    in
-    ( x * gridCellWidth + dx, y * gridCellWidth + dy )
 
 
 update : Computer -> Mem -> Mem
