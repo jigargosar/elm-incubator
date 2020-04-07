@@ -156,8 +156,8 @@ type MouseMoveEvent
     | MouseNotMoved
 
 
-update : Computer -> Mem -> Mem
-update computer (Mem maybePreviousComputer gridCells) =
+mouseMoveEventForGIdx : ( Int, Int ) -> Computer -> Maybe Computer -> MouseMoveEvent
+mouseMoveEventForGIdx gIdx computer maybePreviousComputer =
     let
         maybeCurrentMouseGIdx : Maybe ( Int, Int )
         maybeCurrentMouseGIdx =
@@ -167,24 +167,25 @@ update computer (Mem maybePreviousComputer gridCells) =
         maybePreviousMouseGIdx =
             maybePreviousComputer |> Maybe.andThen computerToGIdx
     in
+    if maybeCurrentMouseGIdx == Just gIdx then
+        if maybePreviousMouseGIdx == Just gIdx then
+            MouseNotMoved
+
+        else
+            MouseEntered
+
+    else if maybePreviousMouseGIdx == Just gIdx then
+        MouseLeft
+
+    else
+        MouseNotMoved
+
+
+update : Computer -> Mem -> Mem
+update computer (Mem maybePreviousComputer gridCells) =
     Dict.map
         (\gIdx anim ->
-            let
-                event =
-                    if maybeCurrentMouseGIdx == Just gIdx then
-                        if maybePreviousMouseGIdx == Just gIdx then
-                            MouseNotMoved
-
-                        else
-                            MouseEntered
-
-                    else if maybePreviousMouseGIdx == Just gIdx then
-                        MouseLeft
-
-                    else
-                        MouseNotMoved
-            in
-            case event of
+            case mouseMoveEventForGIdx gIdx computer maybePreviousComputer of
                 MouseNotMoved ->
                     animTick anim
 
