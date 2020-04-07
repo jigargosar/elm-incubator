@@ -457,12 +457,8 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
 
         renderCellConnections : HM
         renderCellConnections =
-            let
-                idxToPt (I2 a b) =
-                    ( toFloat a * gcs, toFloat b * gcs )
-            in
             Svg.g [ style_ [ transform_ [ translateFF_ ctx.dxy ] ] ]
-                [ renderConnectionPts gcs (List.map idxToPt conIndices)
+                [ renderConnectionPts gcs (List.map (gIdxToCanvas ctx >> ffToPair) conIndices)
                 ]
 
         renderConnectionToPointer =
