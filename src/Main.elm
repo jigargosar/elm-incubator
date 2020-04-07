@@ -498,7 +498,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         , renderCellConnections
         , Svg.g [] (List.map (renderGCE ctx) gceList)
         , renderLastCellAndConnectionToMouse
-        , renderPointer (gcs * 0.25) mx my
+        , renderPointer ctx mx my
         ]
 
 
@@ -597,24 +597,27 @@ renderGCE ctx (GCE (I2 x y) rc) =
             group [ circle "brown" (gcs * rFact) ] |> mv
 
 
-renderPointer : Float -> Float -> Float -> HM
-renderPointer r x y =
+renderPointer : GCtx -> Float -> Float -> HM
+renderPointer ctx x y =
     let
-        d =
-            r * 2
+        r =
+            ctx.cs * 0.15
+
+        sw =
+            r * 0.1
     in
     Svg.g [ style_ [ transform_ [ translate_ x y, "scale(2)" ] ] ]
-        [ draw <| ellipse "black" 1 r
-        , draw <| ellipse "black" r 1
+        [ draw <| ellipse "black" sw r
+        , draw <| ellipse "black" r sw
 
         --, draw <| rectangle "green" d 2
-        , Svg.rect
-            [ style_ [ "transform-box: fill-box", transform_ [ "translate(-50%, -50%)" ] ]
-            , Px.width 3
-            , Px.height d
-            , SA.fill "red"
-            ]
-            []
+        --, Svg.rect
+        --    [ style_ [ "transform-box: fill-box", transform_ [ "translate(-50%, -50%)" ] ]
+        --    , Px.width 3
+        --    , Px.height d
+        --    , SA.fill "red"
+        --    ]
+        --    []
         ]
 
 
