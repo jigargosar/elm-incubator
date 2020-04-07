@@ -488,7 +488,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         --        Just lastGCE ->
         --            [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
         renderConnectionToMouse =
-            Svg.g []
+            Svg.g [ style_ [ zIndex_ 1 ] ]
                 (case List.Extra.last conIndices of
                     Nothing ->
                         []
@@ -505,8 +505,8 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
-        , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList)
         , renderConnectionToMouse
+        , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList)
         , renderPointer ctx mx my
         ]
 
@@ -586,12 +586,11 @@ renderGCE ctx (GCE gIdx rc state) =
     let
         wrapRCell n =
             Svg.g
-                [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
+                [ style_ [ zIndex_ zIndexValue, transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
                 [ Svg.g
                     [ style_
                         [ "transition: all 0.2s"
                         , transform_ [ scale_ scaleValue ]
-                        , zIndex_ zIndexValue
                         ]
                     ]
                     [ n ]
