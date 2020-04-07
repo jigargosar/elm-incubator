@@ -590,12 +590,12 @@ renderPointer ctx x y =
         r =
             ctx.cs * 0.15
 
-        sw =
+        thickness =
             r * 0.1
     in
     Svg.g [ style_ [ transform_ [ translate_ x y, "scale(2)" ] ] ]
-        [ draw <| ellipse "black" sw r
-        , draw <| ellipse "black" r sw
+        [ draw <| ellipse "black" thickness r
+        , draw <| ellipse "black" r thickness
 
         --, draw <| rectangle "green" d 2
         --, Svg.rect
