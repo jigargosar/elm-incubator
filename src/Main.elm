@@ -415,7 +415,8 @@ type GCE
 
 type CellState
     = Static
-    | Connected Bool
+    | Connected
+    | ConnectedLast
 
 
 
@@ -436,10 +437,10 @@ toGridVM (G gwh gd conI2Stack) =
 
                     lastIdx :: othersIndices ->
                         if xy == lastIdx then
-                            Connected True
+                            ConnectedLast
 
                         else if List.member xy othersIndices then
-                            Connected False
+                            Connected
 
                         else
                             Static
@@ -586,14 +587,11 @@ renderGCE ctx (GCE gIdx rc state) =
                 Static ->
                     ( 1, 0 )
 
-                Connected isLast ->
-                    ( 0.75
-                    , if isLast then
-                        1
+                ConnectedLast ->
+                    ( 0.75, 1 )
 
-                      else
-                        0
-                    )
+                Connected ->
+                    ( 0.75, 0 )
     in
     wrapRCell <|
         case rc of
