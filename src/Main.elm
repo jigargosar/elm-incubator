@@ -561,6 +561,11 @@ gIdxToKey (I2 ix iy) =
     [ "(", String.fromInt ix, ",", String.fromInt iy, ")" ] |> String.join ""
 
 
+zIndex_ : Int -> String
+zIndex_ z =
+    "z-index : " ++ String.fromInt z
+
+
 renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE gIdx rc state) =
     let
@@ -571,7 +576,7 @@ renderGCE ctx (GCE gIdx rc state) =
                     [ style_
                         [ "transition: all 0.2s"
                         , transform_ [ scale_ scaleValue ]
-                        , "z-index : " ++ String.fromInt zIndexValue
+                        , zIndex_ zIndexValue
                         ]
                     ]
                     [ n ]
