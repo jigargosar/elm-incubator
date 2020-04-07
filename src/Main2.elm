@@ -1,6 +1,7 @@
 module Main2 exposing (main)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
+import Dict exposing (Dict)
 import Playground exposing (..)
 
 
@@ -9,12 +10,29 @@ import Playground exposing (..)
 
 
 type Mem
-    = Mem
+    = Mem GridCells
+
+
+type alias GridCells =
+    Dict ( Int, Int ) Cell
+
+
+initialGridCells : GridCells
+initialGridCells =
+    gridPositions
+        |> List.map (flip Tuple.pair Static)
+        |> Dict.fromList
+
+
+type Cell
+    = Static
+    | Growing
+    | Shrinking
 
 
 init : Mem
 init =
-    Mem
+    Mem initialGridCells
 
 
 gridXLength =
