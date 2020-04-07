@@ -348,13 +348,6 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
                     g
             in
             G a b c
-
-        clearConStackAndReplaceWithWall stack =
-            let
-                (G a b _) =
-                    g
-            in
-            G a (iidFillOnly stack Wall b) Idle
     in
     case gridState of
         Transitioning _ ->
@@ -376,7 +369,14 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
                     g
 
         Dragging l o ->
-            clearConStackAndReplaceWithWall (l :: o)
+            setGridState
+                (case o of
+                    [] ->
+                        Idle
+
+                    h :: t ->
+                        Transitioning (GTConnectionsLeaving l h t)
+                )
 
 
 updateGridOnMouseMove : GCtx -> Mxy -> Grid -> Grid
