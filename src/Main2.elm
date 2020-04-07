@@ -155,10 +155,8 @@ update computer (Mem maybePreviousComputer gridCells) =
         maybePreviousMouseGIdx =
             maybePreviousComputer |> Maybe.andThen computerToGIdx
 
-        tickCellAnimation cellAnimation =
-            case cellAnimation of
-                Anim sa ->
-                    Anim { sa | elapsed = sa.elapsed + 1 }
+        tickCellAnimation (Anim sa) =
+            Anim { sa | elapsed = sa.elapsed + 1 }
     in
     Dict.map
         (\gIdx anim ->
