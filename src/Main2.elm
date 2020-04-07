@@ -32,26 +32,16 @@ animTick (Anim sa) =
     Anim { sa | elapsed = sa.elapsed + 1 }
 
 
-currentValue (Anim sc) =
-    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
-        sc.to
-
-    else
-        let
-            progress =
-                sc.elapsed / sc.duration
-
-            v =
-                (sc.to - sc.from) * progress + sc.from
-        in
-        v
+animValue : Anim -> Number
+animValue ((Anim sc) as anim) =
+    (sc.to - sc.from) * animProgress anim + sc.from
 
 
-retargetAnim : Number -> Anim -> Anim
-retargetAnim to ((Anim a) as an) =
+animRetarget : Number -> Anim -> Anim
+animRetarget to ((Anim a) as an) =
     let
         nv =
-            { a | from = currentValue an, to = to, elapsed = 0 }
+            { a | from = animValue an, to = to, elapsed = 0 }
     in
     Anim nv
 
@@ -186,10 +176,10 @@ update computer (Mem maybePreviousComputer gridCells) =
                     animTick anim
 
                 MouseEnter ->
-                    retargetAnim 0.5 anim
+                    animRetarget 0.5 anim
 
                 MouseLeave ->
-                    retargetAnim 1 anim
+                    animRetarget 1 anim
 
                 MouseOver ->
                     animTick anim
@@ -208,11 +198,11 @@ renderWaterCell : ( ( Int, Int ), Anim ) -> Shape
 renderWaterCell ( gIdx, cellAnimation ) =
     let
         _ =
-            currentValue cellAnimation
+            animValue cellAnimation
     in
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
-        |> scale (currentValue cellAnimation)
+        |> scale (animValue cellAnimation)
 
 
 waterRadius =
