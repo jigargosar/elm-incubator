@@ -14,7 +14,7 @@ type Mem
 
 
 type alias GridCells =
-    Dict ( Int, Int ) CellAnimation
+    Dict ( Int, Int ) Anim
 
 
 initialGridCells : GridCells
@@ -25,11 +25,11 @@ initialGridCells =
 
 
 static val =
-    Scaling { from = val, to = val, duration = 0, elapsed = 0 }
+    Anim { from = val, to = val, duration = 0, elapsed = 0 }
 
 
-type CellAnimation
-    = Scaling { from : Number, to : Number, duration : Number, elapsed : Number }
+type Anim
+    = Anim { from : Number, to : Number, duration : Number, elapsed : Number }
 
 
 type Event
@@ -110,6 +110,26 @@ gridPositions =
             )
 
 
+currentValue (Anim sc) =
+    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
+        sc.to
+
+    else
+        let
+            progress =
+                sc.elapsed / sc.duration
+
+            v =
+                (sc.to - sc.from) * progress + sc.from
+        in
+        v
+
+
+retargetAnim : Number -> Anim -> Anim
+retargetAnim to (Anim sa) =
+    Anim { sa | elapsed = sa.elapsed + 1 }
+
+
 update : Computer -> Mem -> Mem
 update computer (Mem maybePreviousComputer gridCells) =
     let
@@ -123,8 +143,8 @@ update computer (Mem maybePreviousComputer gridCells) =
 
         tickCellAnimation cellAnimation =
             case cellAnimation of
-                Scaling sa ->
-                    Scaling { sa | elapsed = sa.elapsed + 1 }
+                Anim sa ->
+                    Anim { sa | elapsed = sa.elapsed + 1 }
     in
     Dict.map
         (\gIdx cellAnimation ->
@@ -148,10 +168,10 @@ update computer (Mem maybePreviousComputer gridCells) =
                     tickCellAnimation cellAnimation
 
                 MouseEnter ->
-                    Scaling { from = 1, to = 0.5, duration = 30, elapsed = 0 }
+                    Anim { from = 1, to = 0.5, duration = 30, elapsed = 0 }
 
                 MouseLeave ->
-                    Scaling { from = 0.5, to = 1, duration = 30, elapsed = 0 }
+                    Anim { from = 0.5, to = 1, duration = 30, elapsed = 0 }
 
                 MouseOver ->
                     tickCellAnimation cellAnimation
@@ -166,23 +186,9 @@ view _ (Mem _ gridCells) =
     ]
 
 
-renderWaterCell : ( ( Int, Int ), CellAnimation ) -> Shape
+renderWaterCell : ( ( Int, Int ), Anim ) -> Shape
 renderWaterCell ( gIdx, cellAnimation ) =
     let
-        currentValue (Scaling sc) =
-            if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
-                sc.to
-
-            else
-                let
-                    progress =
-                        sc.elapsed / sc.duration
-
-                    v =
-                        (sc.to - sc.from) * progress + sc.from
-                in
-                v
-
         _ =
             currentValue cellAnimation
     in
