@@ -489,16 +489,15 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices mbLastGCE) =
         renderLastCellAndConnectionToMouse =
             case mbLastGCE of
                 Nothing ->
-                    Svg.g [] []
+                    []
 
                 Just lastGCE ->
-                    Svg.g [] [ renderMouseConnection lastGCE, renderGCE ctx lastGCE ]
+                    [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
     in
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
-        , renderGCEListKeyed ctx gceList
-        , renderLastCellAndConnectionToMouse
+        , Svg.Keyed.node "g" [] (List.map (renderGCEWithKey ctx) gceList ++ renderLastCellAndConnectionToMouse)
         , renderPointer ctx mx my
         ]
 
@@ -558,11 +557,6 @@ renderGridBg gcs (Gwh (I2 gw gh)) =
     rectangle "lightyellow" (toFloat (gw + 1) * gcs) (toFloat (gh + 1) * gcs)
 
 
-renderGCEListKeyed : GCtx -> List GCE -> HM
-renderGCEListKeyed gCtx gceList =
-    Svg.Keyed.node "g" [] (List.map (renderGCEWithKey gCtx) gceList)
-
-
 renderGCEWithKey : GCtx -> GCE -> ( String, HM )
 renderGCEWithKey gCtx ((GCE gIdx _) as gce) =
     ( gIdxToKey gIdx, renderGCE gCtx gce )
@@ -576,16 +570,18 @@ gIdxToKey (I2 ix iy) =
 renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE gIdx rc) =
     let
-        mv =
-            Svg.g [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
+        keyedGroup n =
+            Svg.Keyed.node "g"
+                [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
+                [ ( gIdxToKey gIdx, n ) ]
 
         gcs =
             ctx.cs
     in
     case rc of
         RWall ->
-            [ draw <| square "yellow" (gcs * 0.8) ]
-                |> mv
+            (draw <| square "yellow" (gcs * 0.8))
+                |> keyedGroup
 
         RWater isDown ->
             let
@@ -596,7 +592,7 @@ renderGCE ctx (GCE gIdx rc) =
                     else
                         0.2
             in
-            [ draw <| circle "dodgerblue" (gcs * rFact) ] |> mv
+            keyedGroup (draw <| circle "dodgerblue" (gcs * rFact))
 
         RSeed isDown ->
             let
@@ -607,18 +603,18 @@ renderGCE ctx (GCE gIdx rc) =
                     else
                         1
             in
-            [ Svg.circle
-                [ Px.r (gcs * 0.2)
-                , style_
-                    [ "transition: all 1s linear"
-                    , "fill: brown"
-                    , transform_ [ scale_ scl ]
+            keyedGroup
+                (Svg.circle
+                    [ Px.r (gcs * 0.2)
+                    , style_
+                        [ "transition: all 1s linear"
+                        , "fill: brown"
+                        , transform_ [ scale_ scl ]
+                        ]
+                    , SA.id (Debug.toString gIdx |> String.replace " " "-")
                     ]
-                , SA.id (Debug.toString gIdx |> String.replace " " "-")
-                ]
-                []
-            ]
-                |> mv
+                    []
+                )
 
 
 renderPointer : GCtx -> Float -> Float -> HM
