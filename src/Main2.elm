@@ -50,12 +50,12 @@ update computer mem =
 
 view : Computer -> Mem -> List Shape
 view computer mem =
-    [ group (List.map renderCell gridPositions)
+    [ group (List.map renderWaterCell gridPositions)
     ]
 
 
-renderCell : ( Int, Int ) -> Shape
-renderCell gIdx =
+renderWaterCell : ( Int, Int ) -> Shape
+renderWaterCell gIdx =
     circle lightBlue 50
         |> moveGridIdxToScreen gIdx
 
