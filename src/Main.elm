@@ -419,11 +419,6 @@ type CellState
     | ConnectedLast
 
 
-
---gceIdxEq expected (GCE actual _) =
---    actual == expected
-
-
 toGridVM : Grid -> GridVM
 toGridVM (G gwh gd conI2Stack) =
     let
@@ -475,16 +470,17 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
 
         renderConnectionToMouse =
             Svg.g []
-                (case List.Extra.last conIndices of
+                (case List.Extra.find (\(GCE _ _ state) -> state == ConnectedLast) gceList of
                     Nothing ->
                         []
 
-                    Just lst ->
+                    Just ((GCE lst _ _) as gce) ->
                         [ let
                             (F2 x1 y1) =
                                 gIdxToCanvas ctx lst
                           in
                           connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
+                        , renderGCE ctx gce
                         ]
                 )
     in
