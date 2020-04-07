@@ -120,6 +120,10 @@ gridPositions =
 --
 
 
+tickAnimation (Anim sa) =
+    Anim { sa | elapsed = sa.elapsed + 1 }
+
+
 currentValue (Anim sc) =
     if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
         sc.to
@@ -154,9 +158,6 @@ update computer (Mem maybePreviousComputer gridCells) =
         maybePreviousMouseGIdx : Maybe ( Int, Int )
         maybePreviousMouseGIdx =
             maybePreviousComputer |> Maybe.andThen computerToGIdx
-
-        tickAnimation (Anim sa) =
-            Anim { sa | elapsed = sa.elapsed + 1 }
     in
     Dict.map
         (\gIdx anim ->
