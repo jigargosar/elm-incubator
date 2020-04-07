@@ -461,7 +461,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         renderCellConnections : HM
         renderCellConnections =
             Svg.g []
-                [ renderConnectionPts gcs (List.map (gIdxToCanvas ctx) conIndices)
+                [ renderConnectionPts ctx (List.map (gIdxToCanvas ctx) conIndices)
                 ]
 
         renderConnectionToPointer =
@@ -471,7 +471,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
                         []
 
                     Just ((GCE lst _ _) as gce) ->
-                        [ renderConnectionPts ctx.cs [ gIdxToCanvas ctx lst, mff ]
+                        [ renderConnectionPts ctx [ gIdxToCanvas ctx lst, mff ]
                         , renderGCE ctx gce
                         ]
                 )
@@ -524,12 +524,12 @@ gIdxToCanvas ctx xy =
     F2 (x * gcs + dx) (y * gcs + dy)
 
 
-renderConnectionPts : Float -> List F2 -> HM
-renderConnectionPts gcs pts =
+renderConnectionPts : GCtx -> List F2 -> HM
+renderConnectionPts ctx pts =
     Svg.polyline
         [ SA.stroke "green"
         , SA.fill "none"
-        , Px.strokeWidth (gcs * 0.03)
+        , Px.strokeWidth (ctx.cs * 0.03)
         , TA.points (List.map ffToPair pts)
         ]
         []
