@@ -187,6 +187,11 @@ type Grid
 type GridState
     = Idle
     | Dragging I2 (List I2)
+    | Transitioning TransitionState
+
+
+type TransitionState
+    = GTConnectionsLeaving I2 I2 (List I2)
 
 
 type Gwh
@@ -352,6 +357,9 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
             G a (iidFillOnly stack Wall b) Idle
     in
     case gridState of
+        Transitioning _ ->
+            g
+
         Idle ->
             case
                 canvasToGIdx ctx (F2 mx my)
@@ -394,6 +402,9 @@ updateGridOnMouseMove ctx (Mxy mx my) g =
             G a b c
     in
     case gridState of
+        Transitioning _ ->
+            g
+
         Idle ->
             g
 
@@ -453,6 +464,7 @@ type CellState
     = Static
     | Connected
     | ConnectedLast
+    | Leaving
 
 
 toGridVM : Grid -> GridVM
@@ -475,6 +487,15 @@ toGridVM (G gwh gd gridState) =
 
                         else
                             Static
+
+                    Transitioning transitionState ->
+                        case transitionState of
+                            GTConnectionsLeaving a b c ->
+                                if List.member xy (a :: b :: c) then
+                                    Leaving
+
+                                else
+                                    Static
                 )
 
         ls : List GCE
@@ -489,6 +510,9 @@ toGridVM (G gwh gd gridState) =
 
             Dragging i2 i2s ->
                 List.reverse (i2 :: i2s)
+
+            Transitioning _ ->
+                []
         )
 
 
@@ -581,6 +605,9 @@ renderGCE ctx (GCE gIdx rc state) =
 
                 Connected ->
                     0.75
+
+                Leaving ->
+                    1
 
         gcs =
             ctx.cs
