@@ -6,6 +6,57 @@ import Playground exposing (..)
 
 
 
+-- Animation
+
+
+type Anim
+    = Anim { from : Number, to : Number, duration : Number, elapsed : Number }
+
+
+animStatic : Number -> Anim
+animStatic val =
+    Anim { from = val, to = val, duration = 10, elapsed = 0 }
+
+
+animProgress : Anim -> Float
+animProgress (Anim sc) =
+    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
+        1
+
+    else
+        sc.elapsed / sc.duration
+
+
+animTick : Anim -> Anim
+animTick (Anim sa) =
+    Anim { sa | elapsed = sa.elapsed + 1 }
+
+
+currentValue (Anim sc) =
+    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
+        sc.to
+
+    else
+        let
+            progress =
+                sc.elapsed / sc.duration
+
+            v =
+                (sc.to - sc.from) * progress + sc.from
+        in
+        v
+
+
+retargetAnim : Number -> Anim -> Anim
+retargetAnim to ((Anim a) as an) =
+    let
+        nv =
+            { a | from = currentValue an, to = to, elapsed = 0 }
+    in
+    Anim nv
+
+
+
 -- Game Scaffold
 
 
@@ -20,16 +71,8 @@ type alias GridCells =
 initialGridCells : GridCells
 initialGridCells =
     gridPositions
-        |> List.map (flip Tuple.pair (static 1))
+        |> List.map (flip Tuple.pair (animStatic 1))
         |> Dict.fromList
-
-
-static val =
-    Anim { from = val, to = val, duration = 10, elapsed = 0 }
-
-
-type Anim
-    = Anim { from : Number, to : Number, duration : Number, elapsed : Number }
 
 
 type Event
@@ -110,44 +153,6 @@ gridPositions =
             )
 
 
-
---currentProgress (Anim sc) =
---    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
---        1
---
---    else
---        sc.elapsed / sc.duration
---
-
-
-tickAnimation (Anim sa) =
-    Anim { sa | elapsed = sa.elapsed + 1 }
-
-
-currentValue (Anim sc) =
-    if sc.from == sc.to || sc.duration <= 0 || sc.elapsed >= sc.duration then
-        sc.to
-
-    else
-        let
-            progress =
-                sc.elapsed / sc.duration
-
-            v =
-                (sc.to - sc.from) * progress + sc.from
-        in
-        v
-
-
-retargetAnim : Number -> Anim -> Anim
-retargetAnim to ((Anim a) as an) =
-    let
-        nv =
-            { a | from = currentValue an, to = to, elapsed = 0 }
-    in
-    Anim nv
-
-
 update : Computer -> Mem -> Mem
 update computer (Mem maybePreviousComputer gridCells) =
     let
@@ -178,7 +183,7 @@ update computer (Mem maybePreviousComputer gridCells) =
             in
             case event of
                 NoEvent ->
-                    tickAnimation anim
+                    animTick anim
 
                 MouseEnter ->
                     retargetAnim 0.5 anim
@@ -187,7 +192,7 @@ update computer (Mem maybePreviousComputer gridCells) =
                     retargetAnim 1 anim
 
                 MouseOver ->
-                    tickAnimation anim
+                    animTick anim
         )
         gridCells
         |> Mem (Just computer)
