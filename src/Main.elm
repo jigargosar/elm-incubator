@@ -419,8 +419,9 @@ type RCell
     | RWall
 
 
-gceIdxEq expected (GCE actual _) =
-    actual == expected
+
+--gceIdxEq expected (GCE actual _) =
+--    actual == expected
 
 
 toGridVM : Grid -> GridVM
@@ -456,14 +457,13 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         gcs =
             ctx.cs
 
-        renderMouseConnection : GCE -> HM
-        renderMouseConnection (GCE xy _) =
-            let
-                (F2 x1 y1) =
-                    gIdxToCanvas ctx xy
-            in
-            connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
-
+        --renderMouseConnection : GCE -> HM
+        --renderMouseConnection (GCE xy _) =
+        --    let
+        --        (F2 x1 y1) =
+        --            gIdxToCanvas ctx xy
+        --    in
+        --    connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
         renderCellConnections : HM
         renderCellConnections =
             let
