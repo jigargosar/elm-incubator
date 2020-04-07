@@ -463,13 +463,6 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         gcs =
             ctx.cs
 
-        --renderMouseConnection : GCE -> HM
-        --renderMouseConnection (GCE xy _) =
-        --    let
-        --        (F2 x1 y1) =
-        --            gIdxToCanvas ctx xy
-        --    in
-        --    connectionPolyLine gcs [ ( x1, y1 ), ( mx, my ) ]
         renderCellConnections : HM
         renderCellConnections =
             let
@@ -480,13 +473,6 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
                 [ connectionPolyLine gcs (List.map idxToPt conIndices)
                 ]
 
-        --renderLastCellAndConnectionToMouse =
-        --    case mbLastGCE of
-        --        Nothing ->
-        --            []
-        --
-        --        Just lastGCE ->
-        --            [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
         renderConnectionToMouse =
             Svg.g []
                 (case List.Extra.last conIndices of
