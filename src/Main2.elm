@@ -150,7 +150,7 @@ gridPositions =
             )
 
 
-type Event
+type MouseMoveEvent
     = MouseEntered
     | MouseLeft
     | MouseNotMoved
