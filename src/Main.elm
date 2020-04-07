@@ -131,9 +131,11 @@ iidFillOnly iis a iid =
 --iidInsert : II -> a -> IIDict a -> IIDict a
 --iidInsert ii a (IIDict d) =
 --    IIDict (Dict.insert (iiToPair ii) a d)
---iidGet : I2 -> IIDict a -> Maybe a
---iidGet ii (IIDict d) =
---    Dict.get (iiToPair ii) d
+
+
+iidGet : I2 -> IIDict a -> Maybe a
+iidGet ii (IIDict d) =
+    Dict.get (iiToPair ii) d
 
 
 iidGetEntry : I2 -> IIDict a -> Maybe ( I2, a )
@@ -179,7 +181,12 @@ canCellStartConnection cell =
 
 
 type Grid
-    = G Gwh (IIDict Cell) (List I2)
+    = G Gwh (IIDict Cell) GridState
+
+
+type GridState
+    = Idle
+    | Dragging I2 (List I2)
 
 
 type Gwh
@@ -206,8 +213,11 @@ initialGrid =
             -- scanl (<|) (I2 2 2) [ iiRight, iiRight, iiDown, iiDown ]
             --    |> List.reverse
             seedIndices
+
+        gridState =
+            List.Extra.uncons conIdxStack |> Maybe.map (uncurry Dragging) |> Maybe.withDefault Idle
     in
-    G (Gwh (I2 w h)) gd conIdxStack
+    G (Gwh (I2 w h)) gd gridState
 
 
 
@@ -315,7 +325,7 @@ gIdxToCanvas ctx xy =
 updateGridOnMouseClick : GCtx -> Mxy -> Grid -> Grid
 updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
     let
-        (G _ _ conI2Stack) =
+        (G _ _ gridState) =
             g
 
         entryAt : I2 -> Maybe ( I2, Cell )
@@ -326,30 +336,30 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
             in
             iidGetEntry idx gd
 
-        setConStack : List I2 -> Grid
-        setConStack c =
+        setGridState : GridState -> Grid
+        setGridState c =
             let
                 (G a b _) =
                     g
             in
             G a b c
 
-        clearConStackAndReplaceWithWall =
+        clearConStackAndReplaceWithWall stack =
             let
-                (G a b c) =
+                (G a b _) =
                     g
             in
-            G a (iidFillOnly c Wall b) []
+            G a (iidFillOnly stack Wall b) Idle
     in
-    case conI2Stack of
-        [] ->
+    case gridState of
+        Idle ->
             case
                 canvasToGIdx ctx (F2 mx my)
                     |> Maybe.andThen entryAt
             of
                 Just ( idx, cell ) ->
                     if canCellStartConnection cell then
-                        setConStack [ idx ]
+                        setGridState (Dragging idx [])
 
                     else
                         g
@@ -357,8 +367,8 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
                 Nothing ->
                     g
 
-        _ :: _ :: _ ->
-            clearConStackAndReplaceWithWall
+        Dragging l o ->
+            clearConStackAndReplaceWithWall (l :: o)
 
         _ ->
             g
@@ -367,60 +377,58 @@ updateGridOnMouseClick ctx (Mxy mx my) ((G _ _ _) as g) =
 updateGridOnMouseMove : GCtx -> Mxy -> Grid -> Grid
 updateGridOnMouseMove ctx (Mxy mx my) g =
     let
-        (G _ _ conI2Stack) =
+        (G _ _ gridState) =
             g
 
-        entryAt : I2 -> Maybe ( I2, Cell )
-        entryAt idx =
+        cellAt : I2 -> Maybe Cell
+        cellAt idx =
             let
                 (G _ gd _) =
                     g
             in
-            iidGetEntry idx gd
+            iidGet idx gd
 
-        setConStack : List I2 -> Grid
-        setConStack c =
+        setGridState : GridState -> Grid
+        setGridState c =
             let
                 (G a b _) =
                     g
             in
             G a b c
     in
-    let
-        func : ( I2, Cell ) -> Maybe ( I2, Cell ) -> Grid
-        func ( gIdx, cell ) mbLstEntry =
-            if List.member gIdx conI2Stack then
-                if List.Extra.elemIndex gIdx conI2Stack == Just 1 then
-                    setConStack (List.drop 1 conI2Stack)
+    case gridState of
+        Idle ->
+            g
 
-                else
+        Dragging lst others ->
+            case canvasToGIdx ctx (F2 mx my) of
+                Nothing ->
                     g
 
-            else
-                case mbLstEntry of
-                    Nothing ->
-                        g
+                Just gIdx ->
+                    if List.member gIdx (lst :: others) then
+                        case others of
+                            [] ->
+                                g
 
-                    Just ( lstIdx, lstCell ) ->
-                        if iiAreAdjacent lstIdx gIdx && cell == lstCell then
-                            setConStack (gIdx :: conI2Stack)
+                            sndLst :: othersBeforeSndLst ->
+                                if sndLst == gIdx then
+                                    setGridState (Dragging sndLst othersBeforeSndLst)
 
-                        else
-                            g
-    in
-    if List.isEmpty conI2Stack then
-        g
+                                else
+                                    g
 
-    else
-        Maybe.map2 func
-            (canvasToGIdx ctx (F2 mx my)
-                |> Maybe.andThen entryAt
-            )
-            (conI2Stack
-                |> List.head
-                |> Maybe.map entryAt
-            )
-            |> Maybe.withDefault g
+                    else
+                        case ( cellAt gIdx, cellAt lst ) of
+                            ( Just cell, Just lstCell ) ->
+                                if iiAreAdjacent lst gIdx && cell == lstCell then
+                                    setGridState (Dragging gIdx (lst :: others))
+
+                                else
+                                    g
+
+                            _ ->
+                                g
 
 
 
@@ -451,17 +459,17 @@ type CellState
 
 
 toGridVM : Grid -> GridVM
-toGridVM (G gwh gd conI2Stack) =
+toGridVM (G gwh gd gridState) =
     let
         toGCE : ( I2, Cell ) -> GCE
         toGCE ( xy, cell ) =
             GCE xy
                 cell
-                (case conI2Stack of
-                    [] ->
+                (case gridState of
+                    Idle ->
                         Static
 
-                    lastIdx :: othersIndices ->
+                    Dragging lastIdx othersIndices ->
                         if xy == lastIdx then
                             ConnectedLast
 
@@ -476,7 +484,15 @@ toGridVM (G gwh gd conI2Stack) =
         ls =
             iidToList gd |> List.map toGCE
     in
-    GV gwh ls (List.reverse conI2Stack)
+    GV gwh
+        ls
+        (case gridState of
+            Idle ->
+                []
+
+            Dragging i2 i2s ->
+                List.reverse (i2 :: i2s)
+        )
 
 
 
