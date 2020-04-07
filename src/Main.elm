@@ -610,7 +610,7 @@ renderGCE ctx (GCE gIdx rc) =
             [ Svg.circle
                 [ Px.r (gcs * 0.2)
                 , style_
-                    [ "transition: transform 1s linear"
+                    [ "transition: all 1s linear"
                     , "fill: brown"
                     , transform_ [ scale_ scl ]
                     ]
