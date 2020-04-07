@@ -594,6 +594,15 @@ renderGCE ctx (GCE gIdx rc) =
             [ draw <| circle "brown" (gcs * rFact) ] |> mv
 
 
+fillCircle fillString r attrs =
+    Svg.circle
+        (Px.r r
+            :: SA.fill fillString
+            :: attrs
+        )
+        []
+
+
 renderPointer : GCtx -> Float -> Float -> HM
 renderPointer ctx x y =
     let
