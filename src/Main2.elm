@@ -155,7 +155,7 @@ update computer (Mem maybePreviousComputer gridCells) =
         maybePreviousMouseGIdx =
             maybePreviousComputer |> Maybe.andThen computerToGIdx
 
-        tickCellAnimation (Anim sa) =
+        tickAnimation (Anim sa) =
             Anim { sa | elapsed = sa.elapsed + 1 }
     in
     Dict.map
@@ -177,7 +177,7 @@ update computer (Mem maybePreviousComputer gridCells) =
             in
             case event of
                 NoEvent ->
-                    tickCellAnimation anim
+                    tickAnimation anim
 
                 MouseEnter ->
                     retargetAnim 0.5 anim
@@ -186,7 +186,7 @@ update computer (Mem maybePreviousComputer gridCells) =
                     retargetAnim 1 anim
 
                 MouseOver ->
-                    tickCellAnimation anim
+                    tickAnimation anim
         )
         gridCells
         |> Mem (Just computer)
