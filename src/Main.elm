@@ -629,12 +629,7 @@ renderGCE ctx (GCE gIdx rc state) =
             RSeed ->
                 Svg.circle
                     [ Px.r (gcs * 0.2)
-                    , style_
-                        [ "transition: all 0.2s"
-                        , "fill: brown"
-                        , transform_ [ scale_ scaleValue ]
-                        , "z-index : " ++ String.fromInt zIndexValue
-                        ]
+                    , style_ [ "fill: brown" ]
                     ]
                     []
 
