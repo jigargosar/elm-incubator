@@ -65,13 +65,13 @@ view computer mem =
     ]
 
 
-waterRadius =
-    gridCellWidth * 0.4
-
-
 renderWaterCell : ( Int, Int ) -> Shape
 renderWaterCell gIdx =
     circle lightBlue waterRadius |> moveGridIdxToScreen gIdx
+
+
+waterRadius =
+    gridCellWidth * 0.4
 
 
 moveGridIdxToScreen gIdx =
