@@ -597,16 +597,6 @@ renderGCE ctx (GCE (I2 x y) rc) =
             group [ circle "brown" (gcs * rFact) ] |> mv
 
 
-circle : String -> Float -> Shape
-circle a b =
-    ellipse a b b
-
-
-square : String -> Float -> Shape
-square a b =
-    rectangle a b b
-
-
 renderPointer : Float -> Float -> Float -> HM
 renderPointer r x y =
     let
@@ -788,6 +778,20 @@ view (M ((Cwh (F2 cw ch)) as cwh) mxy g) =
             , renderGrid cwh mxy g
             ]
         ]
+
+
+
+-- DRAW SHAPES as SVG
+
+
+circle : String -> Float -> Shape
+circle a b =
+    ellipse a b b
+
+
+square : String -> Float -> Shape
+square a b =
+    rectangle a b b
 
 
 rectangle : String -> Float -> Float -> Shape
