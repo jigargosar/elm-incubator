@@ -10,7 +10,7 @@ import Playground exposing (..)
 
 
 type Mem
-    = Mem GridCells
+    = Mem (Maybe Computer) GridCells
 
 
 type alias GridCells =
@@ -30,9 +30,16 @@ type Cell
     | Shrinking
 
 
+type Event
+    = MouseEnter
+    | MouseLeave
+    | MouseOver
+    | NoEvent
+
+
 init : Mem
 init =
-    Mem initialGridCells
+    Mem Nothing initialGridCells
 
 
 gridXLength =
@@ -102,28 +109,53 @@ gridPositions =
 
 
 update : Computer -> Mem -> Mem
-update computer (Mem gridCells) =
+update computer (Mem maybePreviousComputer gridCells) =
     let
-        maybeMouseGIdx =
+        maybeCurrentMouseGIdx : Maybe ( Int, Int )
+        maybeCurrentMouseGIdx =
             computerToGIdx computer
+
+        maybePreviousMouseGIdx : Maybe ( Int, Int )
+        maybePreviousMouseGIdx =
+            maybePreviousComputer |> Maybe.andThen computerToGIdx
     in
     Dict.map
         (\gIdx cellState ->
-            if Just gIdx == maybeMouseGIdx then
-                Shrinking
+            let
+                event =
+                    if maybeCurrentMouseGIdx == Just gIdx then
+                        if maybePreviousMouseGIdx == Just gIdx then
+                            MouseOver
 
-            else if cellState == Shrinking then
-                Static
+                        else
+                            MouseEnter
 
-            else
-                cellState
+                    else if maybePreviousMouseGIdx == Just gIdx then
+                        MouseLeave
+
+                    else
+                        NoEvent
+            in
+            case event of
+                NoEvent ->
+                    -- tick
+                    cellState
+
+                MouseEnter ->
+                    Shrinking
+
+                MouseLeave ->
+                    Static
+
+                MouseOver ->
+                    Shrinking
         )
         gridCells
-        |> Mem
+        |> Mem (Just computer)
 
 
 view : Computer -> Mem -> List Shape
-view computer (Mem gridCells) =
+view _ (Mem _ gridCells) =
     [ group (List.map renderWaterCell (Dict.toList gridCells))
     ]
 
