@@ -102,22 +102,31 @@ gridPositions =
 
 
 update : Computer -> Mem -> Mem
-update computer mem =
-    mem
-
-
-view : Computer -> Mem -> List Shape
-view computer (Mem gridCells) =
+update computer (Mem gridCells) =
     let
         maybeMouseGIdx =
             computerToGIdx computer
     in
-    [ group (List.map (renderWaterCell maybeMouseGIdx) (Dict.toList gridCells))
+    Dict.map
+        (\gIdx cellState ->
+            if Just gIdx == maybeMouseGIdx then
+                Shrinking
+
+            else
+                cellState
+        )
+        gridCells
+        |> Mem
+
+
+view : Computer -> Mem -> List Shape
+view computer (Mem gridCells) =
+    [ group (List.map renderWaterCell (Dict.toList gridCells))
     ]
 
 
-renderWaterCell : Maybe ( Int, Int ) -> ( ( Int, Int ), Cell ) -> Shape
-renderWaterCell maybeMouseGIdx ( gIdx, cell ) =
+renderWaterCell : ( ( Int, Int ), Cell ) -> Shape
+renderWaterCell ( gIdx, cell ) =
     circle lightBlue waterRadius
         |> moveGridIdxToScreen gIdx
         |> scale
