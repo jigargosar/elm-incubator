@@ -1,9 +1,9 @@
-const Module = require('./Main.elm')
+const Module = require('./Main2.elm')
 
 require('./styles.css')
 require('tachyons')
 
-Module['Elm']['Main'].init({
+Module['Elm']['Main2'].init({
   node: document.getElementById('root'),
   flags: { now: Date.now(), bs: [window.innerWidth, window.innerHeight] },
 })
