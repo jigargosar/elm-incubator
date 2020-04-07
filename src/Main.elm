@@ -487,9 +487,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
     Svg.g []
         [ draw <| renderGridBg gcs gwh
         , renderCellConnections
-        , Svg.Keyed.node "g"
-            []
-            (List.map (renderGCEWithKey ctx) gceList)
+        , Svg.g [] (List.map (renderGCE ctx) gceList)
         , renderConnectionToMouse
         , renderPointer ctx mx my
         ]
