@@ -25,7 +25,7 @@ initialGridCells =
 
 
 static val =
-    Anim { from = val, to = val, duration = 0, elapsed = 0 }
+    Anim { from = val, to = val, duration = 10, elapsed = 0 }
 
 
 type Anim
@@ -139,7 +139,7 @@ retargetAnim : Number -> Anim -> Anim
 retargetAnim to ((Anim a) as an) =
     let
         nv =
-            { a | from = a.to, to = to, elapsed = 0 }
+            { a | from = currentValue an, to = to, elapsed = 0 }
     in
     Anim nv
 
@@ -184,11 +184,9 @@ update computer (Mem maybePreviousComputer gridCells) =
                 MouseEnter ->
                     retargetAnim 0.5 anim
 
-                --Anim { from = 1, to = 0.5, duration = 30, elapsed = 0 }
                 MouseLeave ->
                     retargetAnim 1 anim
 
-                --Anim { from = 0.5, to = 1, duration = 30, elapsed = 0 }
                 MouseOver ->
                     tickCellAnimation anim
         )
