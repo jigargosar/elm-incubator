@@ -488,7 +488,7 @@ renderGridVM ctx (Mxy mx my) (GV gwh gceList conIndices) =
         --        Just lastGCE ->
         --            [ ( "mouse-connection", Svg.g [] [ renderMouseConnection lastGCE ] ), renderGCEWithKey ctx lastGCE ]
         renderConnectionToMouse =
-            Svg.g [ style_ [ zIndex_ 1, "position: relative", transform_ [ scale_ 1 ] ] ]
+            Svg.g []
                 (case List.Extra.last conIndices of
                     Nothing ->
                         []
@@ -579,20 +579,13 @@ gIdxToKey (I2 ix iy) =
     [ "(", String.fromInt ix, ",", String.fromInt iy, ")" ] |> String.join ""
 
 
-zIndex_ : Int -> String
-zIndex_ z =
-    "z-index : " ++ String.fromInt z
-
-
 renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE gIdx rc state) =
     let
         wrapRCell n =
             Svg.g
                 [ style_
-                    [ zIndex_ zIndexValue
-                    , "position: relative"
-                    , transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ]
+                    [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ]
                     ]
                 ]
                 [ Svg.g
@@ -604,16 +597,16 @@ renderGCE ctx (GCE gIdx rc state) =
                     [ n ]
                 ]
 
-        ( scaleValue, zIndexValue ) =
+        scaleValue =
             case state of
                 Static ->
-                    ( 1, 0 )
+                    1
 
                 ConnectedLast ->
-                    ( 0.75, 2 )
+                    0.75
 
                 Connected ->
-                    ( 0.75, 0 )
+                    0.75
 
         gcs =
             ctx.cs
