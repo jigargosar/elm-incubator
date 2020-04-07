@@ -578,7 +578,7 @@ gIdxToKey (I2 ix iy) =
 renderGCE : GCtx -> GCE -> HM
 renderGCE ctx (GCE gIdx rc state) =
     let
-        keyedGroup n =
+        wrapRCell n =
             Svg.Keyed.node "g"
                 [ style_ [ transform_ [ translateFF_ (gIdxToCanvas ctx gIdx) ] ] ]
                 [ ( gIdxToKey gIdx, n ) ]
@@ -586,33 +586,32 @@ renderGCE ctx (GCE gIdx rc state) =
         gcs =
             ctx.cs
     in
-    case rc of
-        RWall ->
-            (draw <| square "yellow" (gcs * 0.8))
-                |> keyedGroup
+    wrapRCell <|
+        case rc of
+            RWall ->
+                draw <| square "yellow" (gcs * 0.8)
 
-        RWater isDown ->
-            let
-                rFact =
-                    if isDown then
-                        0.1
+            RWater isDown ->
+                let
+                    rFact =
+                        if isDown then
+                            0.1
 
-                    else
-                        0.2
-            in
-            keyedGroup (draw <| circle "dodgerblue" (gcs * rFact))
+                        else
+                            0.2
+                in
+                draw <| circle "dodgerblue" (gcs * rFact)
 
-        RSeed isDown ->
-            let
-                scl =
-                    if isDown then
-                        0.75
+            RSeed isDown ->
+                let
+                    scl =
+                        if isDown then
+                            0.75
 
-                    else
-                        1
-            in
-            keyedGroup
-                (Svg.circle
+                        else
+                            1
+                in
+                Svg.circle
                     [ Px.r (gcs * 0.2)
                     , style_
                         [ "transition: all 1s linear"
@@ -622,7 +621,6 @@ renderGCE ctx (GCE gIdx rc state) =
                     , SA.id (Debug.toString gIdx |> String.replace " " "-")
                     ]
                     []
-                )
 
 
 renderPointer : GCtx -> Float -> Float -> HM
