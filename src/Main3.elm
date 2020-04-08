@@ -4,6 +4,7 @@ import Basics.Extra exposing (uncurry)
 import Browser
 import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, pct, px, row, transforms, vh, width, wrap)
 import Html.Styled exposing (div, styled)
+import List.Extra
 import Process
 import Task
 
@@ -12,9 +13,16 @@ import Task
 -- Model
 
 
+type alias LeavingAnim =
+    { idx : Int
+    , remaining : Int
+    }
+
+
 type Model
     = Idle
     | Connecting Int (List Int)
+    | Collecting (List LeavingAnim)
 
 
 type alias Flags =
@@ -127,6 +135,14 @@ viewGrid m =
                     |> List.map (viewCell (last :: previousIndices))
                 )
 
+        Collecting ls ->
+            styled div
+                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
+                (List.range 1 (gridRows * gridColumns)
+                    |> List.map (viewLeavingCell ls)
+                )
+
 
 gridStyle : Int -> Int -> Float -> Css.Style
 gridStyle r c w =
@@ -146,6 +162,16 @@ gridStyle r c w =
                 ++ "px)"
         , Css.property "grid-gap" "1px"
         ]
+
+
+viewLeavingCell : List LeavingAnim -> Int -> HM
+viewLeavingCell ls idx =
+    case List.Extra.find (.idx >> (==) idx) ls of
+        Just _ ->
+            styled div [ bgc "dodgerblue", transforms [ Css.translateY (px -200) ] ] [] []
+
+        Nothing ->
+            styled div [ bgc "dodgerblue" ] [] []
 
 
 viewCell : List Int -> Int -> HM
