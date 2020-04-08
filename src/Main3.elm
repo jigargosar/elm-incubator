@@ -18,7 +18,7 @@ type Model
     | Connecting Int (List Int)
     | Collecting (List Int)
     | Falling (List Int) (List ( Int, Int ))
-    | ResetBeforeGenerating (List Int)
+    | GeneratedStart (List Int)
     | GeneratedFalling (List Int)
 
 
@@ -32,7 +32,7 @@ init _ =
     , delayedSequence
         ( seconds 1, Set <| Connecting 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
         [ ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        , ( seconds 1
+        , ( seconds 0
           , Set <|
                 Falling (9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ])
                     [ ( 2, 9 )
@@ -46,7 +46,7 @@ init _ =
           )
 
         --, ( seconds 1, Set <| ResetBeforeGenerating [] )
-        , ( seconds 1, Set <| ResetBeforeGenerating [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+        , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
         , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
         ]
     )
@@ -165,7 +165,7 @@ viewGrid m =
                     |> List.map (viewFallingCell leaving falling)
                 )
 
-        ResetBeforeGenerating genLs ->
+        GeneratedStart genLs ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
