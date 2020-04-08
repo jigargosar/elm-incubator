@@ -60,7 +60,7 @@ simulation : List ( number, Msg )
 simulation =
     let
         connected =
-            [ 10, 11, 12, 13, 20, 27, 26, 25 ]
+            [ 9, 10, 11, 12, 13, 20, 27, 26, 25 ]
 
         dragSim =
             List.Extra.inits connected
