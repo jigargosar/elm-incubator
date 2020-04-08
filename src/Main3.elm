@@ -82,10 +82,8 @@ simulation =
                     , ( 6, 27 )
                     ]
              )
-
-           --, ( seconds 1, Set <| ResetBeforeGenerating [] )
            , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-           , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+           , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            ]
 
 
