@@ -34,6 +34,7 @@ type Model
     | Connecting Int (List Int)
     | Collecting (List Int)
     | Falling (List Int) (List ( Int, Int ))
+    | ResetBeforeGenerating (List Int)
 
 
 type alias Flags =
@@ -175,6 +176,14 @@ viewGrid m =
                     |> List.map (viewFallingCell leaving falling)
                 )
 
+        ResetBeforeGenerating empty ->
+            styled div
+                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
+                (List.range 1 (gridRows * gridColumns)
+                    |> List.map (viewEmptyCellNoTransition empty)
+                )
+
 
 gridStyle : Int -> Int -> Float -> Css.Style
 gridStyle r c w =
@@ -194,6 +203,22 @@ gridStyle r c w =
                 ++ "px)"
         , Css.property "grid-gap" "1px"
         ]
+
+
+viewEmptyCellNoTransition : List Int -> Int -> HM
+viewEmptyCellNoTransition emptyLs idx =
+    case List.member idx emptyLs of
+        True ->
+            viewWaterCell idx
+                [ opacity (num 0)
+                , transition []
+                ]
+
+        False ->
+            viewWaterCell idx
+                [ opacity (num 1)
+                , transition []
+                ]
 
 
 viewFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
