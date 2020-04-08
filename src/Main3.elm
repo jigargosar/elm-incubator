@@ -1,9 +1,7 @@
 module Main3 exposing (..)
 
--- Browser.Element Scaffold
-
 import Browser
-import Html exposing (Html)
+import Html.Styled exposing (div)
 
 
 
@@ -49,14 +47,13 @@ subscriptions _ =
 -- View
 
 
-view : Model -> Html Msg
+type alias HM =
+    Html.Styled.Html Msg
+
+
+view : Model -> HM
 view _ =
-    empty
-
-
-empty : Html msg
-empty =
-    Html.text ""
+    div [] []
 
 
 
@@ -67,7 +64,7 @@ main : Program Flags Model Msg
 main =
     Browser.element
         { init = init
-        , view = view
+        , view = view >> Html.Styled.toUnstyled
         , update = update
         , subscriptions = subscriptions
         }
