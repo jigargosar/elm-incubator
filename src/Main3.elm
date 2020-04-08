@@ -46,6 +46,12 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
+    ( Idle
+    , startSimulation
+    )
+
+
+startSimulation =
     let
         connected =
             [ 10, 11, 12, 13, 20, 27, 26, 25 ]
@@ -55,8 +61,7 @@ init _ =
                 |> List.map (Dragging >> Set)
                 |> List.map (Tuple.pair 100)
     in
-    ( Idle
-    , delayedSequence
+    simulate
         (dragSim
             --++ [ ( seconds 1, Set <| Dragging connected ) ]
             ++ [ ( seconds 1, Set <| Leaving connected )
@@ -78,15 +83,14 @@ init _ =
                , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
                ]
         )
-    )
 
 
 seconds n =
     n * 1000
 
 
-delayedSequence : List ( Float, Msg ) -> Cmd Msg
-delayedSequence list =
+simulate : List ( Float, Msg ) -> Cmd Msg
+simulate list =
     case list of
         [] ->
             Cmd.none
@@ -103,6 +107,7 @@ type Msg
     = NoOp
     | Set Model
     | OnTimeout Msg (List ( Float, Msg ))
+    | StartSim
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -116,7 +121,10 @@ update message model =
 
         OnTimeout msg pending ->
             update msg model
-                |> addCmd (delayedSequence pending)
+                |> addCmd (simulate pending)
+
+        StartSim ->
+            ( model, startSimulation )
 
 
 addCmd : Cmd msg -> ( a, Cmd msg ) -> ( a, Cmd msg )
