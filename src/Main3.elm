@@ -109,6 +109,7 @@ type Msg
     = NoOp
     | Set Model
     | DragStart Int
+    | DragOver Int
     | OnTimeout Msg (List ( Float, Msg ))
     | LoopSimulation
 
@@ -133,6 +134,14 @@ update message model =
             case ( model, validIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     ( Dragging [ idx ], Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        DragOver unverifiedIdx ->
+            case ( model, validIdx unverifiedIdx ) of
+                ( Dragging draggingIndices, Just idx ) ->
+                    ( Dragging (idx :: draggingIndices), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
