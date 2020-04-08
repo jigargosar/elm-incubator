@@ -17,6 +17,8 @@ import Css
         , wrap
         )
 import Html.Styled exposing (div, styled)
+import Process
+import Task
 
 
 
@@ -35,7 +37,8 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
-    , Cmd.none
+    , Process.sleep (1 * 1000)
+        |> Task.perform (\_ -> SetConnected 4 [ 5, 6, 7 ])
     )
 
 
