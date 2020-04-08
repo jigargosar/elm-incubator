@@ -193,10 +193,10 @@ viewWaterCell idx styles =
             (idx - 1) // gridColumns
 
         x =
-            toFloat xi * (gridCellWidth + 1)
+            (toFloat xi * (gridCellWidth + 1)) + 300
 
         y =
-            toFloat yi * (gridCellWidth + 1)
+            (toFloat yi * (gridCellWidth + 1)) + 400
     in
     styled div
         []
