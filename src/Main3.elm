@@ -19,7 +19,7 @@ import Css
         , width
         )
 import Css.Transitions as Transitions exposing (transition)
-import Html.Styled exposing (div, styled)
+import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
 import Task
@@ -46,7 +46,18 @@ init _ =
     , delayedSequence
         ( seconds 1, Set <| Connecting 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
         [ ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        , ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        , ( seconds 1
+          , Set <|
+                Falling (9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ])
+                    [ ( 2, 9 )
+                    , ( 3, 10 )
+                    , ( 18, 25 )
+                    , ( 4, 18 )
+                    , ( 5, 19 )
+                    , ( 19, 26 )
+                    , ( 6, 27 )
+                    ]
+          )
         ]
     )
 
@@ -253,7 +264,7 @@ viewWaterCell idx styles =
                 :: styles
             )
             []
-            []
+            [ text (String.fromInt idx) ]
         ]
 
 
