@@ -28,7 +28,7 @@ init _ =
     ( Idle
     , delayedSequence
         ( seconds 1, Set <| Connecting 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
-        [ ( seconds 1, Set Idle ) ]
+        [ ( seconds 1, Set <| Collecting <| 6 :: [ 7, 8, 9, 14, 19, 18, 17 ] ) ]
     )
 
 
@@ -162,7 +162,12 @@ viewLeavingCell : List Int -> Int -> HM
 viewLeavingCell ls idx =
     case List.member idx ls of
         True ->
-            styled div [ bgc "dodgerblue", transforms [ Css.translateY (px -100) ] ] [] []
+            styled div
+                [ bgc "dodgerblue"
+                , transforms [ Css.translateY (px -300), Css.scale 0.5 ]
+                ]
+                []
+                []
 
         False ->
             styled div [ bgc "dodgerblue" ] [] []
