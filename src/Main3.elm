@@ -28,10 +28,20 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
+    let
+        dragStart =
+            9
+
+        dragRest =
+            [ 10, 11, 12, 13, 20, 25, 26, 27 ]
+
+        leaving =
+            dragStart :: dragRest
+    in
     ( Idle
     , delayedSequence
         ( seconds 1, Set <| Dragging 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        [ ( seconds 1, Set <| Leaving <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        [ ( seconds 1, Set <| Leaving leaving )
         , ( seconds 0
           , Set <|
                 Falling (9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ])
