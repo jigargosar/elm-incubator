@@ -1,7 +1,25 @@
 module Main3 exposing (main)
 
 import Browser
-import Css exposing (batch, displayFlex, fixed, height, left, num, opacity, pct, position, px, top, transforms, translate, translate2, translateY, vh, width, zero)
+import Css
+    exposing
+        ( batch
+        , displayFlex
+        , fixed
+        , height
+        , left
+        , num
+        , opacity
+        , pct
+        , position
+        , px
+        , top
+        , transforms
+        , translateY
+        , vh
+        , width
+        , zero
+        )
 import Css.Transitions as Transitions exposing (transition)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
@@ -15,7 +33,7 @@ import Task
 
 type Model
     = Idle
-    | Dragging Int (List Int)
+    | Dragging (List Int)
     | Leaving (List Int)
     | Falling (List Int) (List ( Int, Int ))
     | GeneratedStart (List Int)
@@ -29,22 +47,16 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     let
-        dragStart =
-            9
-
-        dragRest =
+        connected =
             [ 10, 11, 12, 13, 20, 25, 26, 27 ]
-
-        leaving =
-            dragStart :: dragRest
     in
     ( Idle
     , delayedSequence
-        [ ( seconds 1, Set <| Dragging 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        , ( seconds 1, Set <| Leaving leaving )
+        [ ( seconds 1, Set <| Dragging connected )
+        , ( seconds 1, Set <| Leaving connected )
         , ( seconds 0
           , Set <|
-                Falling (9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ])
+                Falling connected
                     [ ( 2, 9 )
                     , ( 3, 10 )
                     , ( 18, 25 )
@@ -153,12 +165,12 @@ viewGrid m =
                     |> List.map (viewCell [])
                 )
 
-        Dragging last previousIndices ->
+        Dragging connected ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
                 (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewCell (last :: previousIndices))
+                    |> List.map (viewCell connected)
                 )
 
         Leaving ls ->
