@@ -163,7 +163,7 @@ viewLeavingCell : List Int -> Int -> HM
 viewLeavingCell ls idx =
     case List.member idx ls of
         True ->
-            viewWaterCell
+            viewWaterCell idx
                 [ position fixed
                 , left (pct 50)
                 , top (px 0)
@@ -172,19 +172,19 @@ viewLeavingCell ls idx =
                 ]
 
         False ->
-            viewWaterCell []
+            viewWaterCell idx []
 
 
 viewCell : List Int -> Int -> HM
 viewCell connectedIndices idx =
     if List.member idx connectedIndices then
-        viewWaterCell [ transforms [ Css.scale 0.5 ] ]
+        viewWaterCell idx [ transforms [ Css.scale 0.5 ] ]
 
     else
-        viewWaterCell []
+        viewWaterCell idx []
 
 
-viewWaterCell styles =
+viewWaterCell idx styles =
     styled div
         []
         []
