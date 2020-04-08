@@ -44,8 +44,10 @@ init _ =
                     , ( 6, 27 )
                     ]
           )
-        , ( seconds 1, Set <| ResetBeforeGenerating [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-        , ( seconds 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+        , ( seconds 1, Set <| ResetBeforeGenerating [] )
+
+        --, ( seconds 1, Set <| ResetBeforeGenerating [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+        --, ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
         ]
     )
 
@@ -204,14 +206,14 @@ viewGeneratedCellsStart : List Int -> Int -> HM
 viewGeneratedCellsStart genLs idx =
     case List.member idx genLs of
         True ->
-            viewWaterCell idx
+            viewWaterCell2 True
+                idx
                 [ opacity (num 0)
-                , transition []
                 , transforms [ translateY (px -300) ]
                 ]
 
         False ->
-            viewWaterCell idx [ transition [] ]
+            viewWaterCell2 True idx []
 
 
 viewFallingGeneratedCells : List Int -> Int -> HM
@@ -260,7 +262,11 @@ viewCell connectedIndices idx =
         viewWaterCell idx []
 
 
-viewWaterCell idx styles =
+viewWaterCell =
+    viewWaterCell2 False
+
+
+viewWaterCell2 resetTransitions idx styles =
     let
         xi =
             modBy gridColumns (idx - 1)
@@ -283,11 +289,16 @@ viewWaterCell idx styles =
             :: position fixed
             :: opacity (num 1)
             :: transition
-                [ Transitions.transform 200
-                , Transitions.opacity 200
-                , Transitions.top 200
-                , Transitions.left 200
-                ]
+                (if resetTransitions then
+                    []
+
+                 else
+                    [ Transitions.transform 200
+                    , Transitions.opacity 200
+                    , Transitions.top 200
+                    , Transitions.left 200
+                    ]
+                )
             :: styles
         )
         []
