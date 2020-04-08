@@ -34,7 +34,7 @@ import Task
 type Model
     = Idle
     | Dragging (List Int)
-    | LeavingAndFalling (List Int) (List ( Int, Int ))
+    | LeavingAndFalling (List Int) (List ( Int, Int )) (List Int)
     | GeneratedStart (List Int)
     | GeneratedFalling (List Int)
 
@@ -179,10 +179,10 @@ update message model =
             case model of
                 Dragging draggingIndices ->
                     let
-                        ( changes, _ ) =
+                        ( changes, newEmptyIndices ) =
                             computeFallingFromEmptyIndices draggingIndices ( [], [] )
                     in
-                    ( LeavingAndFalling draggingIndices changes, Cmd.none )
+                    ( LeavingAndFalling draggingIndices changes newEmptyIndices, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -265,7 +265,7 @@ viewGrid m =
                     |> List.map (viewCell connected)
                 )
 
-        LeavingAndFalling leaving falling ->
+        LeavingAndFalling leaving falling _ ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
