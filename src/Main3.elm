@@ -45,6 +45,7 @@ init _ =
 
 type Msg
     = NoOp
+    | SetConnected Int (List Int)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -52,6 +53,9 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        SetConnected last previousIndices ->
+            ( Connecting last previousIndices, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
