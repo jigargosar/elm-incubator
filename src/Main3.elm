@@ -108,6 +108,7 @@ simulate list =
 type Msg
     = NoOp
     | Set Model
+    | DragStart Int
     | OnTimeout Msg (List ( Float, Msg ))
     | LoopSimulation
 
@@ -127,6 +128,17 @@ update message model =
 
         LoopSimulation ->
             ( model, loopSimulation )
+
+        DragStart idx ->
+            case model of
+                Idle ->
+                    ( Dragging [ idx ], Cmd.none )
+
+                Dragging dragging ->
+                    ( Dragging <| idx :: dragging, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 addCmd : Cmd msg -> ( a, Cmd msg ) -> ( a, Cmd msg )
