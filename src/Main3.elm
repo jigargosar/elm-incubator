@@ -100,7 +100,7 @@ view m =
 
 
 gridColumns =
-    5
+    7
 
 
 gridRows =
@@ -185,6 +185,19 @@ viewCell connectedIndices idx =
 
 
 viewWaterCell idx styles =
+    let
+        xi =
+            modBy gridColumns (idx - 1)
+
+        yi =
+            (idx - 1) // gridColumns
+
+        x =
+            toFloat xi * (gridCellWidth + 1)
+
+        y =
+            toFloat yi * (gridCellWidth + 1)
+    in
     styled div
         []
         []
@@ -192,6 +205,8 @@ viewWaterCell idx styles =
             (bgc "dodgerblue"
                 :: width (px gridCellWidth)
                 :: height (px gridCellWidth)
+                :: left (px x)
+                :: top (px y)
                 :: position fixed
                 :: opacity (num 1)
                 :: transition
