@@ -129,9 +129,9 @@ update message model =
         LoopSimulation ->
             ( model, loopSimulation )
 
-        DragStart idx ->
-            case model of
-                Idle ->
+        DragStart unverifiedIdx ->
+            case ( model, validIdx unverifiedIdx ) of
+                ( Idle, Just idx ) ->
                     ( Dragging [ idx ], Cmd.none )
 
                 _ ->
@@ -174,6 +174,22 @@ gridColumns =
 
 gridRows =
     5
+
+
+minIdx =
+    1
+
+
+maxIdx =
+    gridRows * gridColumns
+
+
+validIdx idx =
+    if clamp minIdx maxIdx idx == idx then
+        Just idx
+
+    else
+        Nothing
 
 
 gridCellWidth =
