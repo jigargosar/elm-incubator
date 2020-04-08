@@ -35,7 +35,7 @@ type Model
     = Idle
     | Dragging (List Int)
     | Leaving (List Int)
-    | Falling (List Int) (List ( Int, Int ))
+    | LeavingAndFalling (List Int) (List ( Int, Int ))
     | GeneratedStart (List Int)
     | GeneratedFalling (List Int)
 
@@ -68,11 +68,11 @@ simulation =
                 |> List.map (Tuple.pair 100)
     in
     []
-        ++ dragSim
         --++ [ ( seconds 1, Set <| Dragging connected ) ]
-        ++ [ ( seconds 1, DragEnd ) ]
+        ++ dragSim
         --++ [ ( seconds 1, Set <| Leaving connected )]
-        ++ [ ( 0, Set (Falling connected (computeChanges connected [])) ) ]
+        --++ [ ( 0, Set (LeavingAndFalling connected (computeChanges connected [])) ) ]
+        ++ [ ( seconds 1, DragEnd ) ]
         ++ [ ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( seconds 1, Set Idle )
@@ -178,7 +178,7 @@ update message model =
         DragEnd ->
             case model of
                 Dragging draggingIndices ->
-                    ( Leaving draggingIndices, Cmd.none )
+                    ( LeavingAndFalling draggingIndices (computeChanges draggingIndices []), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -269,7 +269,7 @@ viewGrid m =
                     |> List.map (viewLeavingCell ls)
                 )
 
-        Falling leaving falling ->
+        LeavingAndFalling leaving falling ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
