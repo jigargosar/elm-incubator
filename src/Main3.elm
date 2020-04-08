@@ -67,18 +67,8 @@ simulation =
                 |> List.map (Tuple.pair 100)
     in
     []
-        --++ [ ( seconds 1, Set <| Dragging connected ) ]
         ++ dragSim
-        --++ [ ( seconds 1, Set <| Leaving connected )]
-        --++ [ ( 0, Set (LeavingAndFalling connected (computeChanges connected [])) ) ]
         ++ [ ( 300, DragEnd ) ]
-
-
-
---++ [ ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
---   , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
---   , ( seconds 1, Set Idle )
---   ]
 
 
 computeFallingFromEmptyIndices : List number -> ( List ( number, number ), List number ) -> ( List ( number, number ), List number )
