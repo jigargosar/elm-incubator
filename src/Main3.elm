@@ -73,21 +73,44 @@ simulation =
         ++ [ ( seconds 1, DragEnd ) ]
         --++ [ ( seconds 1, Set <| Leaving connected )]
         ++ [ ( 0
-             , Set <|
-                Falling connected
-                    [ ( 2, 9 )
-                    , ( 3, 10 )
-                    , ( 18, 25 )
-                    , ( 4, 18 )
-                    , ( 5, 19 )
-                    , ( 19, 26 )
-                    , ( 6, 27 )
-                    ]
+             , Set (Falling connected (computeChanges connected []))
              )
            , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( seconds 1, Set Idle )
            ]
+
+
+computeChanges : List number -> List ( number, number ) -> List ( number, number )
+computeChanges emptyIndices changes =
+    case List.sortBy negate emptyIndices of
+        [] ->
+            changes
+
+        firstEmpty :: remainingEmpty ->
+            case firstNonEmptyIndexAbove firstEmpty remainingEmpty of
+                Just neIdx ->
+                    computeChanges (neIdx :: remainingEmpty) (( neIdx, firstEmpty ) :: changes)
+
+                Nothing ->
+                    computeChanges remainingEmpty changes
+
+
+firstNonEmptyIndexAbove idx emptyIndices =
+    case idxAbove idx of
+        Nothing ->
+            Nothing
+
+        Just above ->
+            if List.member above emptyIndices then
+                firstNonEmptyIndexAbove above emptyIndices
+
+            else
+                Just above
+
+
+idxAbove idx =
+    validIdx (idx - gridColumns)
 
 
 seconds n =
