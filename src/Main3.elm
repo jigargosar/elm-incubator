@@ -28,8 +28,8 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
     , delayedSequence
-        ( seconds 1, Set <| Connecting 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
-        [ ( seconds 1, Set <| Collecting <| 6 :: [ 7, 8, 9, 14, 19, 18, 17 ] ) ]
+        ( seconds 1, Set <| Connecting 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        [ ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] ) ]
     )
 
 
