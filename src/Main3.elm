@@ -134,9 +134,6 @@ update message model =
                 Idle ->
                     ( Dragging [ idx ], Cmd.none )
 
-                Dragging dragging ->
-                    ( Dragging <| idx :: dragging, Cmd.none )
-
                 _ ->
                     ( model, Cmd.none )
 
