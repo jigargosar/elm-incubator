@@ -44,6 +44,8 @@ init _ =
                     , ( 6, 27 )
                     ]
           )
+        , ( seconds 1, Set <| ResetBeforeGenerating [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+        , ( seconds 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
         ]
     )
 
@@ -209,10 +211,7 @@ viewGeneratedCellsStart genLs idx =
                 ]
 
         False ->
-            viewWaterCell idx
-                [ opacity (num 1)
-                , transition []
-                ]
+            viewWaterCell idx [ transition [] ]
 
 
 viewFallingGeneratedCells : List Int -> Int -> HM
@@ -220,15 +219,11 @@ viewFallingGeneratedCells genLs idx =
     case List.member idx genLs of
         True ->
             viewWaterCell idx
-                [ opacity (num 0)
-                , transforms [ translateY zero ]
+                [ transforms [ translateY zero ]
                 ]
 
         False ->
-            viewWaterCell idx
-                [ opacity (num 1)
-                , transition []
-                ]
+            viewWaterCell idx []
 
 
 viewFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
@@ -280,27 +275,23 @@ viewWaterCell idx styles =
             (toFloat yi * (gridCellWidth + 1)) + 400
     in
     styled div
+        (bgc "dodgerblue"
+            :: width (px gridCellWidth)
+            :: height (px gridCellWidth)
+            :: left (px x)
+            :: top (px y)
+            :: position fixed
+            :: opacity (num 1)
+            :: transition
+                [ Transitions.transform 200
+                , Transitions.opacity 200
+                , Transitions.top 200
+                , Transitions.left 200
+                ]
+            :: styles
+        )
         []
-        []
-        [ styled div
-            (bgc "dodgerblue"
-                :: width (px gridCellWidth)
-                :: height (px gridCellWidth)
-                :: left (px x)
-                :: top (px y)
-                :: position fixed
-                :: opacity (num 1)
-                :: transition
-                    [ Transitions.transform 200
-                    , Transitions.opacity 200
-                    , Transitions.top 200
-                    , Transitions.left 200
-                    ]
-                :: styles
-            )
-            []
-            [ text (String.fromInt idx) ]
-        ]
+        [ text (String.fromInt idx) ]
 
 
 bgc =
