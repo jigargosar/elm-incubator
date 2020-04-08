@@ -1,7 +1,7 @@
 module Main3 exposing (..)
 
 import Browser
-import Css exposing (height, px, width)
+import Css exposing (backgroundColor, displayFlex, flexFlow2, height, hex, num, px, row, width, wrap)
 import Html.Styled exposing (div, styled)
 
 
@@ -54,15 +54,23 @@ type alias HM =
 
 view : Model -> HM
 view _ =
-    div [] []
+    styled div
+        [ Css.property "display" "grid"
+        , Css.property "grid-template-columns" "repeat(5, 50px)"
+        , Css.property "grid-template-rows" "repeat(5, 50px)"
+        , Css.property "grid-gap" "1px"
+        ]
+        []
+        (List.range 1 (5 * 5) |> List.map viewCell2)
 
 
-viewCell x y =
-    styled div [ Css.left (px x), Css.top (px y) ] [] []
+viewCell2 : a -> HM
+viewCell2 _ =
+    styled div [ bgc "dodgerblue" ] [] []
 
 
-viewCell2 =
-    styled div [ width (px 50), height (px 50) ] [] []
+bgc =
+    Css.property "background-color"
 
 
 
