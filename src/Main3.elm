@@ -24,21 +24,19 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
-    , scheduleWithDelay
-        ( 1 * 1000, SetConnected 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
-        []
+    , delayedSequence
+        ( seconds 1, SetConnected 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
+        [ ( seconds 1, SetIdle ) ]
     )
 
 
-scheduleWithDelay : ( Float, Msg ) -> List ( Float, Msg ) -> Cmd Msg
-scheduleWithDelay ( millis, msg ) rest =
+seconds n =
+    n * 1000
+
+
+delayedSequence : ( Float, Msg ) -> List ( Float, Msg ) -> Cmd Msg
+delayedSequence ( millis, msg ) rest =
     Process.sleep millis |> Task.perform (\_ -> OnTimeout msg rest)
-
-
-delay : Float -> msg -> Cmd msg
-delay afterMillis msg =
-    Process.sleep afterMillis
-        |> Task.perform (\_ -> msg)
 
 
 
@@ -48,6 +46,7 @@ delay afterMillis msg =
 type Msg
     = NoOp
     | SetConnected Int (List Int)
+    | SetIdle
     | OnTimeout Msg (List ( Float, Msg ))
 
 
@@ -60,12 +59,15 @@ update message model =
         SetConnected last previousIndices ->
             ( Connecting last previousIndices, Cmd.none )
 
+        SetIdle ->
+            ( Idle, Cmd.none )
+
         OnTimeout msg [] ->
             update msg model
 
         OnTimeout msg (next :: rest) ->
             update msg model
-                |> addCmd (scheduleWithDelay next rest)
+                |> addCmd (delayedSequence next rest)
 
 
 addCmd : Cmd msg -> ( a, Cmd msg ) -> ( a, Cmd msg )
