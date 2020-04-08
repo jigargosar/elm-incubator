@@ -20,6 +20,7 @@ import Css
         )
 import Css.Transitions as Transitions exposing (transition)
 import Html.Styled exposing (div, styled)
+import List.Extra
 import Process
 import Task
 
@@ -32,6 +33,7 @@ type Model
     = Idle
     | Connecting Int (List Int)
     | Collecting (List Int)
+    | Falling (List Int) (List ( Int, Int ))
 
 
 type alias Flags =
@@ -43,7 +45,9 @@ init _ =
     ( Idle
     , delayedSequence
         ( seconds 1, Set <| Connecting 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        [ ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] ) ]
+        [ ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        , ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        ]
     )
 
 
@@ -152,6 +156,14 @@ viewGrid m =
                     |> List.map (viewLeavingCell ls)
                 )
 
+        Falling leaving falling ->
+            styled div
+                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
+                (List.range 1 (gridRows * gridColumns)
+                    |> List.map (viewFallingCell leaving falling)
+                )
+
 
 gridStyle : Int -> Int -> Float -> Css.Style
 gridStyle r c w =
@@ -173,13 +185,22 @@ gridStyle r c w =
         ]
 
 
+viewFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
+viewFallingCell leavingLs fallingLs idx =
+    case List.Extra.find (Tuple.first >> (==) idx) fallingLs of
+        Just ( _, dstIdx ) ->
+            viewWaterCell dstIdx []
+
+        Nothing ->
+            viewLeavingCell leavingLs idx
+
+
 viewLeavingCell : List Int -> Int -> HM
 viewLeavingCell ls idx =
     case List.member idx ls of
         True ->
             viewWaterCell idx
-                [ position fixed
-                , left (pct 50)
+                [ left (pct 50)
                 , top (px 0)
                 , opacity (num 0)
                 , transforms [ Css.scale 0.5 ]
