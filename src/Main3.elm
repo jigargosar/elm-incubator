@@ -24,7 +24,7 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
     , Process.sleep (1 * 1000)
-        |> Task.perform (\_ -> SetConnected 4 [ 5, 6, 7 ])
+        |> Task.perform (\_ -> SetConnected 6 [ 7, 8, 9, 14, 13, 12 ])
     )
 
 
