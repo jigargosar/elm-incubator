@@ -47,12 +47,17 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
-    , startSimulation
+    , loopSimulation
     )
 
 
-startSimulation : Cmd Msg
-startSimulation =
+loopSimulation : Cmd Msg
+loopSimulation =
+    simulate (simulation ++ [ ( seconds 2, LoopSimulation ) ])
+
+
+simulation : List ( number, Msg )
+simulation =
     let
         connected =
             [ 10, 11, 12, 13, 20, 27, 26, 25 ]
@@ -62,28 +67,26 @@ startSimulation =
                 |> List.map (Dragging >> Set)
                 |> List.map (Tuple.pair 100)
     in
-    simulate
-        (dragSim
-            --++ [ ( seconds 1, Set <| Dragging connected ) ]
-            ++ [ ( seconds 1, Set <| Leaving connected )
-               , ( seconds 0
-                 , Set <|
-                    Falling connected
-                        [ ( 2, 9 )
-                        , ( 3, 10 )
-                        , ( 18, 25 )
-                        , ( 4, 18 )
-                        , ( 5, 19 )
-                        , ( 19, 26 )
-                        , ( 6, 27 )
-                        ]
-                 )
+    dragSim
+        --++ [ ( seconds 1, Set <| Dragging connected ) ]
+        ++ [ ( seconds 1, Set <| Leaving connected )
+           , ( seconds 0
+             , Set <|
+                Falling connected
+                    [ ( 2, 9 )
+                    , ( 3, 10 )
+                    , ( 18, 25 )
+                    , ( 4, 18 )
+                    , ( 5, 19 )
+                    , ( 19, 26 )
+                    , ( 6, 27 )
+                    ]
+             )
 
-               --, ( seconds 1, Set <| ResetBeforeGenerating [] )
-               , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-               , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-               ]
-        )
+           --, ( seconds 1, Set <| ResetBeforeGenerating [] )
+           , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+           , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+           ]
 
 
 seconds n =
@@ -108,7 +111,7 @@ type Msg
     = NoOp
     | Set Model
     | OnTimeout Msg (List ( Float, Msg ))
-    | StartSim
+    | LoopSimulation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -124,8 +127,8 @@ update message model =
             update msg model
                 |> addCmd (simulate pending)
 
-        StartSim ->
-            ( model, startSimulation )
+        LoopSimulation ->
+            ( model, loopSimulation )
 
 
 addCmd : Cmd msg -> ( a, Cmd msg ) -> ( a, Cmd msg )
