@@ -25,8 +25,8 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
     , delayedSequence
-        ( seconds 1, SetConnected 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
-        [ ( seconds 1, SetIdle ) ]
+        ( seconds 1, Set <| Connecting 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
+        [ ( seconds 1, Set Idle ) ]
     )
 
 
@@ -45,8 +45,7 @@ delayedSequence ( millis, msg ) rest =
 
 type Msg
     = NoOp
-    | SetConnected Int (List Int)
-    | SetIdle
+    | Set Model
     | OnTimeout Msg (List ( Float, Msg ))
 
 
@@ -56,11 +55,8 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        SetConnected last previousIndices ->
-            ( Connecting last previousIndices, Cmd.none )
-
-        SetIdle ->
-            ( Idle, Cmd.none )
+        Set m2 ->
+            ( m2, Cmd.none )
 
         OnTimeout msg [] ->
             update msg model
