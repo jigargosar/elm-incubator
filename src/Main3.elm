@@ -1,23 +1,7 @@
 module Main3 exposing (main)
 
 import Browser
-import Css
-    exposing
-        ( batch
-        , displayFlex
-        , fixed
-        , height
-        , left
-        , num
-        , opacity
-        , pct
-        , position
-        , px
-        , top
-        , transforms
-        , vh
-        , width
-        )
+import Css exposing (batch, displayFlex, fixed, height, left, num, opacity, pct, position, px, top, transforms, translate, translate2, translateY, vh, width, zero)
 import Css.Transitions as Transitions exposing (transition)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
@@ -35,6 +19,7 @@ type Model
     | Collecting (List Int)
     | Falling (List Int) (List ( Int, Int ))
     | ResetBeforeGenerating (List Int)
+    | GeneratedFalling (List Int)
 
 
 type alias Flags =
@@ -176,12 +161,20 @@ viewGrid m =
                     |> List.map (viewFallingCell leaving falling)
                 )
 
-        ResetBeforeGenerating empty ->
+        ResetBeforeGenerating genLs ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
                 (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewEmptyCellNoTransition empty)
+                    |> List.map (viewGeneratedCellsStart genLs)
+                )
+
+        GeneratedFalling genLs ->
+            styled div
+                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
+                (List.range 1 (gridRows * gridColumns)
+                    |> List.map (viewFallingGeneratedCells genLs)
                 )
 
 
@@ -205,13 +198,30 @@ gridStyle r c w =
         ]
 
 
-viewEmptyCellNoTransition : List Int -> Int -> HM
-viewEmptyCellNoTransition emptyLs idx =
-    case List.member idx emptyLs of
+viewGeneratedCellsStart : List Int -> Int -> HM
+viewGeneratedCellsStart genLs idx =
+    case List.member idx genLs of
         True ->
             viewWaterCell idx
                 [ opacity (num 0)
                 , transition []
+                , transforms [ translateY (px -300) ]
+                ]
+
+        False ->
+            viewWaterCell idx
+                [ opacity (num 1)
+                , transition []
+                ]
+
+
+viewFallingGeneratedCells : List Int -> Int -> HM
+viewFallingGeneratedCells genLs idx =
+    case List.member idx genLs of
+        True ->
+            viewWaterCell idx
+                [ opacity (num 0)
+                , transforms [ translateY zero ]
                 ]
 
         False ->
