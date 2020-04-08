@@ -1,7 +1,7 @@
 module Main3 exposing (..)
 
 import Browser
-import Css exposing (backgroundColor, displayFlex, flexFlow2, height, hex, num, px, row, vh, width, wrap)
+import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, px, row, vh, width, wrap)
 import Html.Styled exposing (div, styled)
 
 
@@ -78,23 +78,29 @@ gridCellWidth =
 
 viewGrid =
     styled div
+        [ gridStyle gridRows gridColumns gridCellWidth
+        ]
+        []
+        (List.range 1 (5 * 5) |> List.map viewCell2)
+
+
+gridStyle r c w =
+    batch
         [ Css.property "display" "grid"
         , Css.property "grid-template-columns" <|
             "repeat("
-                ++ String.fromInt gridColumns
+                ++ String.fromInt c
                 ++ ", "
-                ++ String.fromFloat gridCellWidth
+                ++ String.fromFloat w
                 ++ "px)"
         , Css.property "grid-template-rows" <|
             "repeat("
-                ++ String.fromInt gridRows
+                ++ String.fromInt r
                 ++ ", "
                 ++ String.fromFloat gridCellWidth
                 ++ "px)"
         , Css.property "grid-gap" "1px"
         ]
-        []
-        (List.range 1 (5 * 5) |> List.map viewCell2)
 
 
 viewCell2 : a -> HM
