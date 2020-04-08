@@ -98,13 +98,17 @@ viewGrid m =
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
-                (List.range 1 (gridRows * gridColumns) |> List.map viewCell)
+                (List.range 1 (gridRows * gridColumns)
+                    |> List.map (viewCell [])
+                )
 
         Connecting last previousIndices ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
-                (List.range 1 (gridRows * gridColumns) |> List.map viewCell)
+                (List.range 1 (gridRows * gridColumns)
+                    |> List.map (viewCell (last :: previousIndices))
+                )
 
 
 gridStyle : Int -> Int -> Float -> Css.Style
@@ -127,9 +131,13 @@ gridStyle r c w =
         ]
 
 
-viewCell : a -> HM
-viewCell _ =
-    styled div [ bgc "dodgerblue" ] [] []
+viewCell : List Int -> Int -> HM
+viewCell connectedIndices idx =
+    if List.member idx connectedIndices then
+        styled div [ bgc "dodgerblue" ] [] []
+
+    else
+        styled div [ bgc "dodgerblue" ] [] []
 
 
 bgc =
