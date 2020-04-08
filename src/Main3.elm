@@ -70,7 +70,7 @@ simulation =
     dragSim
         --++ [ ( seconds 1, Set <| Dragging connected ) ]
         ++ [ ( seconds 1, Set <| Leaving connected )
-           , ( seconds 0
+           , ( 0
              , Set <|
                 Falling connected
                     [ ( 2, 9 )
