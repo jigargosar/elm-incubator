@@ -51,6 +51,7 @@ init _ =
     )
 
 
+startSimulation : Cmd Msg
 startSimulation =
     let
         connected =
