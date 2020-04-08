@@ -63,11 +63,12 @@ simulation =
             [ 9, 10, 11, 12, 13, 20, 27, 26, 25 ]
 
         dragSim =
-            List.Extra.inits connected
-                |> List.map (Dragging >> Set)
+            DragStart 9
+                :: List.map DragOver connected
                 |> List.map (Tuple.pair 100)
     in
-    dragSim
+    []
+        ++ dragSim
         --++ [ ( seconds 1, Set <| Dragging connected ) ]
         ++ [ ( seconds 1, Set <| Leaving connected )
            , ( 0
@@ -84,6 +85,7 @@ simulation =
              )
            , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+           , ( seconds 1, Set Idle )
            ]
 
 
