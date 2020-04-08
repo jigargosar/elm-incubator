@@ -81,7 +81,7 @@ viewGrid =
         [ gridStyle gridRows gridColumns gridCellWidth
         ]
         []
-        (List.range 1 (5 * 5) |> List.map viewCell2)
+        (List.range 1 (gridRows * gridColumns) |> List.map viewCell2)
 
 
 gridStyle : Int -> Int -> Float -> Css.Style
