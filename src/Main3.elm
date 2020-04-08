@@ -1,7 +1,21 @@
-module Main3 exposing (..)
+module Main3 exposing (main)
 
 import Browser
-import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, px, row, vh, width, wrap)
+import Css
+    exposing
+        ( backgroundColor
+        , batch
+        , displayFlex
+        , flexFlow2
+        , height
+        , hex
+        , num
+        , px
+        , row
+        , vh
+        , width
+        , wrap
+        )
 import Html.Styled exposing (div, styled)
 
 
