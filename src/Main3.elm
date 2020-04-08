@@ -40,8 +40,8 @@ init _ =
     in
     ( Idle
     , delayedSequence
-        ( seconds 1, Set <| Dragging 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        [ ( seconds 1, Set <| Leaving leaving )
+        [ ( seconds 1, Set <| Dragging 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        , ( seconds 1, Set <| Leaving leaving )
         , ( seconds 0
           , Set <|
                 Falling (9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ])
@@ -66,9 +66,14 @@ seconds n =
     n * 1000
 
 
-delayedSequence : ( Float, Msg ) -> List ( Float, Msg ) -> Cmd Msg
-delayedSequence ( millis, msg ) rest =
-    Process.sleep millis |> Task.perform (\_ -> OnTimeout msg rest)
+delayedSequence : List ( Float, Msg ) -> Cmd Msg
+delayedSequence list =
+    case list of
+        [] ->
+            Cmd.none
+
+        ( millis, msg ) :: rest ->
+            Process.sleep millis |> Task.perform (\_ -> OnTimeout msg rest)
 
 
 
@@ -90,12 +95,9 @@ update message model =
         Set m2 ->
             ( m2, Cmd.none )
 
-        OnTimeout msg [] ->
+        OnTimeout msg pending ->
             update msg model
-
-        OnTimeout msg (next :: rest) ->
-            update msg model
-                |> addCmd (delayedSequence next rest)
+                |> addCmd (delayedSequence pending)
 
 
 addCmd : Cmd msg -> ( a, Cmd msg ) -> ( a, Cmd msg )
