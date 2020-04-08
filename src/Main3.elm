@@ -15,8 +15,8 @@ import Task
 
 type Model
     = Idle
-    | Connecting Int (List Int)
-    | Collecting (List Int)
+    | Dragging Int (List Int)
+    | Leaving (List Int)
     | Falling (List Int) (List ( Int, Int ))
     | GeneratedStart (List Int)
     | GeneratedFalling (List Int)
@@ -30,8 +30,8 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
     , delayedSequence
-        ( seconds 1, Set <| Connecting 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
-        [ ( seconds 1, Set <| Collecting <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        ( seconds 1, Set <| Dragging 9 [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
+        [ ( seconds 1, Set <| Leaving <| 9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ] )
         , ( seconds 0
           , Set <|
                 Falling (9 :: [ 10, 11, 12, 13, 20, 25, 26, 27 ])
@@ -141,7 +141,7 @@ viewGrid m =
                     |> List.map (viewCell [])
                 )
 
-        Connecting last previousIndices ->
+        Dragging last previousIndices ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
@@ -149,7 +149,7 @@ viewGrid m =
                     |> List.map (viewCell (last :: previousIndices))
                 )
 
-        Collecting ls ->
+        Leaving ls ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
