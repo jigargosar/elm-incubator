@@ -2,7 +2,7 @@ module Main3 exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser
-import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, pct, px, row, transforms, vh, width, wrap)
+import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, pct, px, row, transforms, vh, width, wrap, zero)
 import Html.Styled exposing (div, styled)
 import List.Extra
 import Process
