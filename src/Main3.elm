@@ -1,11 +1,25 @@
 module Main3 exposing (main)
 
-import Basics.Extra exposing (uncurry)
 import Browser
-import Css exposing (backgroundColor, batch, displayFlex, fixed, flexFlow2, height, hex, left, num, opacity, pct, position, px, row, top, transforms, vh, width, wrap, zero)
+import Css
+    exposing
+        ( batch
+        , displayFlex
+        , fixed
+        , height
+        , left
+        , num
+        , opacity
+        , pct
+        , position
+        , px
+        , top
+        , transforms
+        , vh
+        , width
+        )
 import Css.Transitions as Transitions exposing (transition)
 import Html.Styled exposing (div, styled)
-import List.Extra
 import Process
 import Task
 
