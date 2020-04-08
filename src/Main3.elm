@@ -141,7 +141,11 @@ update message model =
         DragOver unverifiedIdx ->
             case ( model, validIdx unverifiedIdx ) of
                 ( Dragging draggingIndices, Just idx ) ->
-                    ( Dragging (idx :: draggingIndices), Cmd.none )
+                    if List.member idx draggingIndices then
+                        ( model, Cmd.none )
+
+                    else
+                        ( Dragging (idx :: draggingIndices), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
