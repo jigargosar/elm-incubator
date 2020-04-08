@@ -1,5 +1,6 @@
 module Main3 exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser
 import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, pct, px, row, transforms, vh, width, wrap)
 import Html.Styled exposing (div, styled)
@@ -23,9 +24,20 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
-    , Process.sleep (1 * 1000)
-        |> Task.perform (\_ -> SetConnected 6 [ 7, 8, 9, 14, 19, 18, 17 ])
+    , batchDelayed
+        [ ( 1 * 1000, SetConnected 6 [ 7, 8, 9, 14, 19, 18, 17 ] )
+        ]
     )
+
+
+batchDelayed list =
+    Cmd.batch (List.map (uncurry delay) list)
+
+
+delay : Float -> msg -> Cmd msg
+delay afterMillis msg =
+    Process.sleep afterMillis
+        |> Task.perform (\_ -> msg)
 
 
 
