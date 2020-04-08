@@ -2,7 +2,8 @@ module Main3 exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser
-import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, pct, px, row, transforms, vh, width, wrap, zero)
+import Css exposing (backgroundColor, batch, displayFlex, fixed, flexFlow2, height, hex, left, num, opacity, pct, position, px, row, top, transforms, vh, width, wrap, zero)
+import Css.Transitions as Transitions exposing (transition)
 import Html.Styled exposing (div, styled)
 import List.Extra
 import Process
@@ -162,24 +163,48 @@ viewLeavingCell : List Int -> Int -> HM
 viewLeavingCell ls idx =
     case List.member idx ls of
         True ->
-            styled div
-                [ bgc "dodgerblue"
-                , transforms [ Css.translateY (px -300), Css.scale 0.5 ]
+            viewWaterCell
+                [ position fixed
+                , left (pct 50)
+                , top (px 0)
+                , opacity (num 0.01)
+                , transforms [ Css.scale 0.5 ]
                 ]
-                []
-                []
 
         False ->
-            styled div [ bgc "dodgerblue" ] [] []
+            viewWaterCell []
 
 
 viewCell : List Int -> Int -> HM
 viewCell connectedIndices idx =
     if List.member idx connectedIndices then
-        styled div [ bgc "dodgerblue", transforms [ Css.scale 0.5 ] ] [] []
+        viewWaterCell [ transforms [ Css.scale 0.5 ] ]
 
     else
-        styled div [ bgc "dodgerblue" ] [] []
+        viewWaterCell []
+
+
+viewWaterCell styles =
+    styled div
+        []
+        []
+        [ styled div
+            (bgc "dodgerblue"
+                :: width (px gridCellWidth)
+                :: height (px gridCellWidth)
+                :: position fixed
+                :: opacity (num 1)
+                :: transition
+                    [ Transitions.transform 200
+                    , Transitions.opacity 200
+                    , Transitions.top 200
+                    , Transitions.left 200
+                    ]
+                :: styles
+            )
+            []
+            []
+        ]
 
 
 bgc =
