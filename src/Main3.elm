@@ -71,7 +71,7 @@ simulation =
         ++ dragSim
         --++ [ ( seconds 1, Set <| Leaving connected )]
         --++ [ ( 0, Set (LeavingAndFalling connected (computeChanges connected [])) ) ]
-        ++ [ ( seconds 1, DragEnd ) ]
+        ++ [ ( 300, DragEnd ) ]
 
 
 
