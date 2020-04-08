@@ -72,17 +72,20 @@ simulation =
         --++ [ ( seconds 1, Set <| Leaving connected )]
         --++ [ ( 0, Set (LeavingAndFalling connected (computeChanges connected [])) ) ]
         ++ [ ( seconds 1, DragEnd ) ]
-        ++ [ ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-           , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-           , ( seconds 1, Set Idle )
-           ]
+
+
+
+--++ [ ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+--   , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+--   , ( seconds 1, Set Idle )
+--   ]
 
 
 computeFallingFromEmptyIndices : List number -> ( List ( number, number ), List number ) -> ( List ( number, number ), List number )
 computeFallingFromEmptyIndices emptyIndices ( changes, newEmptyIndices ) =
     case List.sortBy negate emptyIndices of
         [] ->
-            ( changes, newEmptyIndices )
+            ( changes, newEmptyIndices |> Debug.log "debug" )
 
         firstEmpty :: remainingEmpty ->
             case firstNonEmptyIndexAbove firstEmpty remainingEmpty of
@@ -189,7 +192,8 @@ update message model =
                             computeFallingFromEmptyIndices draggingIndices ( [], [] )
                     in
                     ( LeavingAndFalling draggingIndices changes newEmptyIndices
-                    , delay 300 StepGen |> always Cmd.none
+                    , delay 300 StepGen
+                      --|> always Cmd.none
                     )
 
                 _ ->
@@ -199,7 +203,7 @@ update message model =
             case model of
                 LeavingAndFalling _ _ genIndices ->
                     ( GeneratedStart genIndices
-                    , Task.succeed () |> Task.perform (\_ -> StepGen)
+                    , delay 300 StepGen
                     )
 
                 GeneratedStart gi ->
