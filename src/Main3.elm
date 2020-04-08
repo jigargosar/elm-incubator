@@ -13,16 +13,10 @@ import Task
 -- Model
 
 
-type alias LeavingAnim =
-    { idx : Int
-    , remaining : Int
-    }
-
-
 type Model
     = Idle
     | Connecting Int (List Int)
-    | Collecting (List LeavingAnim)
+    | Collecting (List Int)
 
 
 type alias Flags =
@@ -164,13 +158,13 @@ gridStyle r c w =
         ]
 
 
-viewLeavingCell : List LeavingAnim -> Int -> HM
+viewLeavingCell : List Int -> Int -> HM
 viewLeavingCell ls idx =
-    case List.Extra.find (.idx >> (==) idx) ls of
-        Just _ ->
-            styled div [ bgc "dodgerblue", transforms [ Css.translateY (px -200) ] ] [] []
+    case List.member idx ls of
+        True ->
+            styled div [ bgc "dodgerblue", transforms [ Css.translateY (px -100) ] ] [] []
 
-        Nothing ->
+        False ->
             styled div [ bgc "dodgerblue" ] [] []
 
 
