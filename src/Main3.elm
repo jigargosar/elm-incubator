@@ -1,7 +1,7 @@
 module Main3 exposing (..)
 
 import Browser
-import Css exposing (backgroundColor, displayFlex, flexFlow2, height, hex, num, px, row, width, wrap)
+import Css exposing (backgroundColor, displayFlex, flexFlow2, height, hex, num, px, row, vh, width, wrap)
 import Html.Styled exposing (div, styled)
 
 
@@ -54,6 +54,17 @@ type alias HM =
 
 view : Model -> HM
 view _ =
+    styled div
+        [ displayFlex
+        , Css.alignItems Css.center
+        , Css.justifyContent Css.center
+        , Css.minHeight (vh 100)
+        ]
+        []
+        [ viewGrid ]
+
+
+viewGrid =
     styled div
         [ Css.property "display" "grid"
         , Css.property "grid-template-columns" "repeat(5, 50px)"
