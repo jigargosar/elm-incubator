@@ -112,6 +112,7 @@ type Msg
     | Set Model
     | DragStart Int
     | DragOver Int
+    | DragEnd
     | OnTimeout Msg (List ( Float, Msg ))
     | LoopSimulation
 
@@ -148,6 +149,14 @@ update message model =
 
                     else
                         ( Dragging (idx :: draggingIndices), Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        DragEnd ->
+            case model of
+                Dragging draggingIndices ->
+                    ( model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
