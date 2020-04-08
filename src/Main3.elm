@@ -70,8 +70,9 @@ simulation =
     []
         ++ dragSim
         --++ [ ( seconds 1, Set <| Dragging connected ) ]
-        ++ [ ( seconds 1, Set <| Leaving connected )
-           , ( 0
+        ++ [ ( seconds 1, DragEnd ) ]
+        --++ [ ( seconds 1, Set <| Leaving connected )]
+        ++ [ ( 0
              , Set <|
                 Falling connected
                     [ ( 2, 9 )
@@ -156,7 +157,7 @@ update message model =
         DragEnd ->
             case model of
                 Dragging draggingIndices ->
-                    ( model, Cmd.none )
+                    ( Leaving draggingIndices, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
