@@ -25,6 +25,7 @@ import Html.Styled exposing (div, styled)
 
 type Model
     = Idle
+    | Connecting Int (List Int)
 
 
 type alias Flags =
@@ -67,7 +68,7 @@ type alias HM =
 
 
 view : Model -> HM
-view _ =
+view m =
     styled div
         [ displayFlex
         , Css.alignItems Css.center
@@ -75,7 +76,7 @@ view _ =
         , Css.minHeight (vh 100)
         ]
         []
-        [ viewGrid ]
+        [ viewGrid m ]
 
 
 gridColumns =
@@ -90,12 +91,20 @@ gridCellWidth =
     50
 
 
-viewGrid =
-    styled div
-        [ gridStyle gridRows gridColumns gridCellWidth
-        ]
-        []
-        (List.range 1 (gridRows * gridColumns) |> List.map viewCell2)
+viewGrid : Model -> HM
+viewGrid m =
+    case m of
+        Idle ->
+            styled div
+                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
+                (List.range 1 (gridRows * gridColumns) |> List.map viewCell2)
+
+        Connecting last previousIndices ->
+            styled div
+                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
+                (List.range 1 (gridRows * gridColumns) |> List.map viewCell2)
 
 
 gridStyle : Int -> Int -> Float -> Css.Style
