@@ -48,29 +48,36 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     let
         connected =
-            [ 10, 11, 12, 13, 20, 25, 26, 27 ]
+            [ 10, 11, 12, 13, 20, 27, 26, 25 ]
+
+        dragSim =
+            List.Extra.inits connected
+                |> List.map (Dragging >> Set)
+                |> List.map (Tuple.pair 100)
     in
     ( Idle
     , delayedSequence
-        [ ( seconds 1, Set <| Dragging connected )
-        , ( seconds 1, Set <| Leaving connected )
-        , ( seconds 0
-          , Set <|
-                Falling connected
-                    [ ( 2, 9 )
-                    , ( 3, 10 )
-                    , ( 18, 25 )
-                    , ( 4, 18 )
-                    , ( 5, 19 )
-                    , ( 19, 26 )
-                    , ( 6, 27 )
-                    ]
-          )
+        (dragSim
+            --++ [ ( seconds 1, Set <| Dragging connected ) ]
+            ++ [ ( seconds 1, Set <| Leaving connected )
+               , ( seconds 0
+                 , Set <|
+                    Falling connected
+                        [ ( 2, 9 )
+                        , ( 3, 10 )
+                        , ( 18, 25 )
+                        , ( 4, 18 )
+                        , ( 5, 19 )
+                        , ( 19, 26 )
+                        , ( 6, 27 )
+                        ]
+                 )
 
-        --, ( seconds 1, Set <| ResetBeforeGenerating [] )
-        , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-        , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
-        ]
+               --, ( seconds 1, Set <| ResetBeforeGenerating [] )
+               , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+               , ( 1, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+               ]
+        )
     )
 
 
