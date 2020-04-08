@@ -1,21 +1,7 @@
 module Main3 exposing (main)
 
 import Browser
-import Css
-    exposing
-        ( backgroundColor
-        , batch
-        , displayFlex
-        , flexFlow2
-        , height
-        , hex
-        , num
-        , px
-        , row
-        , vh
-        , width
-        , wrap
-        )
+import Css exposing (backgroundColor, batch, displayFlex, flexFlow2, height, hex, num, pct, px, row, transforms, vh, width, wrap)
 import Html.Styled exposing (div, styled)
 import Process
 import Task
@@ -141,7 +127,7 @@ gridStyle r c w =
 viewCell : List Int -> Int -> HM
 viewCell connectedIndices idx =
     if List.member idx connectedIndices then
-        styled div [ bgc "dodgerblue" ] [] []
+        styled div [ bgc "dodgerblue", transforms [ Css.scale 0.5 ] ] [] []
 
     else
         styled div [ bgc "dodgerblue" ] [] []
