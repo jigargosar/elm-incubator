@@ -1,7 +1,8 @@
 module Main3 exposing (..)
 
 import Browser
-import Html.Styled exposing (div)
+import Css exposing (height, px, width)
+import Html.Styled exposing (div, styled)
 
 
 
@@ -54,6 +55,14 @@ type alias HM =
 view : Model -> HM
 view _ =
     div [] []
+
+
+viewCell x y =
+    styled div [ Css.left (px x), Css.top (px y) ] [] []
+
+
+viewCell2 =
+    styled div [ width (px 50), height (px 50) ] [] []
 
 
 
