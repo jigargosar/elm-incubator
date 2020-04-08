@@ -125,6 +125,11 @@ simulate list =
             Process.sleep millis |> Task.perform (\_ -> OnTimeout msg rest)
 
 
+delay : Float -> b -> Cmd b
+delay millis msg =
+    Process.sleep millis |> Task.perform (\_ -> msg)
+
+
 
 -- Update
 
@@ -135,6 +140,7 @@ type Msg
     | DragStart Int
     | DragOver Int
     | DragEnd
+    | StepGen
     | OnTimeout Msg (List ( Float, Msg ))
     | LoopSimulation
 
@@ -182,7 +188,25 @@ update message model =
                         ( changes, newEmptyIndices ) =
                             computeFallingFromEmptyIndices draggingIndices ( [], [] )
                     in
-                    ( LeavingAndFalling draggingIndices changes newEmptyIndices, Cmd.none )
+                    ( LeavingAndFalling draggingIndices changes newEmptyIndices
+                    , delay 300 StepGen |> always Cmd.none
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        StepGen ->
+            case model of
+                LeavingAndFalling _ _ genIndices ->
+                    ( GeneratedStart genIndices
+                    , Task.succeed () |> Task.perform (\_ -> StepGen)
+                    )
+
+                GeneratedStart gi ->
+                    ( GeneratedFalling gi, delay 300 StepGen )
+
+                GeneratedFalling _ ->
+                    ( Idle, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
