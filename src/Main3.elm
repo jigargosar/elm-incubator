@@ -98,13 +98,13 @@ viewGrid m =
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
-                (List.range 1 (gridRows * gridColumns) |> List.map viewCell2)
+                (List.range 1 (gridRows * gridColumns) |> List.map viewCell)
 
         Connecting last previousIndices ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
-                (List.range 1 (gridRows * gridColumns) |> List.map viewCell2)
+                (List.range 1 (gridRows * gridColumns) |> List.map viewCell)
 
 
 gridStyle : Int -> Int -> Float -> Css.Style
@@ -127,8 +127,8 @@ gridStyle r c w =
         ]
 
 
-viewCell2 : a -> HM
-viewCell2 _ =
+viewCell : a -> HM
+viewCell _ =
     styled div [ bgc "dodgerblue" ] [] []
 
 
