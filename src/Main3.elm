@@ -64,11 +64,33 @@ view _ =
         [ viewGrid ]
 
 
+gridColumns =
+    5
+
+
+gridRows =
+    5
+
+
+gridCellWidth =
+    50
+
+
 viewGrid =
     styled div
         [ Css.property "display" "grid"
-        , Css.property "grid-template-columns" "repeat(5, 50px)"
-        , Css.property "grid-template-rows" "repeat(5, 50px)"
+        , Css.property "grid-template-columns" <|
+            "repeat("
+                ++ String.fromInt gridColumns
+                ++ ", "
+                ++ String.fromFloat gridCellWidth
+                ++ "px)"
+        , Css.property "grid-template-rows" <|
+            "repeat("
+                ++ String.fromInt gridRows
+                ++ ", "
+                ++ String.fromFloat gridCellWidth
+                ++ "px)"
         , Css.property "grid-gap" "1px"
         ]
         []
