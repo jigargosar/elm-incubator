@@ -78,8 +78,8 @@ simulation =
            ]
 
 
-computeChanges : List number -> List ( number, number ) -> List ( number, number )
-computeChanges emptyIndices changes =
+computeFallingFromEmptyIndices : List number -> List ( number, number ) -> List ( number, number )
+computeFallingFromEmptyIndices emptyIndices changes =
     case List.sortBy negate emptyIndices of
         [] ->
             changes
@@ -87,10 +87,10 @@ computeChanges emptyIndices changes =
         firstEmpty :: remainingEmpty ->
             case firstNonEmptyIndexAbove firstEmpty remainingEmpty of
                 Just neIdx ->
-                    computeChanges (neIdx :: remainingEmpty) (( neIdx, firstEmpty ) :: changes)
+                    computeFallingFromEmptyIndices (neIdx :: remainingEmpty) (( neIdx, firstEmpty ) :: changes)
 
                 Nothing ->
-                    computeChanges remainingEmpty changes
+                    computeFallingFromEmptyIndices remainingEmpty changes
 
 
 firstNonEmptyIndexAbove idx emptyIndices =
@@ -177,7 +177,7 @@ update message model =
         DragEnd ->
             case model of
                 Dragging draggingIndices ->
-                    ( LeavingAndFalling draggingIndices (computeChanges draggingIndices []), Cmd.none )
+                    ( LeavingAndFalling draggingIndices (computeFallingFromEmptyIndices draggingIndices []), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
