@@ -84,6 +84,7 @@ viewGrid =
         (List.range 1 (5 * 5) |> List.map viewCell2)
 
 
+gridStyle : Int -> Int -> Float -> Css.Style
 gridStyle r c w =
     batch
         [ Css.property "display" "grid"
