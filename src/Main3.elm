@@ -72,10 +72,8 @@ simulation =
         --++ [ ( seconds 1, Set <| Dragging connected ) ]
         ++ [ ( seconds 1, DragEnd ) ]
         --++ [ ( seconds 1, Set <| Leaving connected )]
-        ++ [ ( 0
-             , Set (Falling connected (computeChanges connected []))
-             )
-           , ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
+        ++ [ ( 0, Set (Falling connected (computeChanges connected [])) ) ]
+        ++ [ ( seconds 1, Set <| GeneratedStart [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( 0, Set <| GeneratedFalling [ 2, 3, 4, 5, 6, 11, 12, 13, 20 ] )
            , ( seconds 1, Set Idle )
            ]
