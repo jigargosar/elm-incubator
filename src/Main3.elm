@@ -34,7 +34,6 @@ import Task
 type Model
     = Idle
     | Dragging (List Int)
-    | Leaving (List Int)
     | LeavingAndFalling (List Int) (List ( Int, Int ))
     | GeneratedStart (List Int)
     | GeneratedFalling (List Int)
@@ -261,20 +260,12 @@ viewGrid m =
                     |> List.map (viewCell connected)
                 )
 
-        Leaving ls ->
-            styled div
-                [ gridStyle gridRows gridColumns gridCellWidth ]
-                []
-                (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewLeavingCell ls)
-                )
-
         LeavingAndFalling leaving falling ->
             styled div
                 [ gridStyle gridRows gridColumns gridCellWidth ]
                 []
                 (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewFallingCell leaving falling)
+                    |> List.map (viewLeavingAndFallingCell leaving falling)
                 )
 
         GeneratedStart genLs ->
@@ -340,29 +331,24 @@ viewFallingGeneratedCells genLs idx =
             viewWaterCell idx []
 
 
-viewFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
-viewFallingCell leavingLs fallingLs idx =
+viewLeavingAndFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
+viewLeavingAndFallingCell leavingLs fallingLs idx =
     case List.Extra.find (Tuple.first >> (==) idx) fallingLs of
         Just ( _, dstIdx ) ->
             viewWaterCell dstIdx []
 
         Nothing ->
-            viewLeavingCell leavingLs idx
+            case List.member idx leavingLs of
+                True ->
+                    viewWaterCell idx
+                        [ left (pct 50)
+                        , top (px 0)
+                        , opacity (num 0)
+                        , transforms [ Css.scale 0.5 ]
+                        ]
 
-
-viewLeavingCell : List Int -> Int -> HM
-viewLeavingCell ls idx =
-    case List.member idx ls of
-        True ->
-            viewWaterCell idx
-                [ left (pct 50)
-                , top (px 0)
-                , opacity (num 0)
-                , transforms [ Css.scale 0.5 ]
-                ]
-
-        False ->
-            viewWaterCell idx []
+                False ->
+                    viewWaterCell idx []
 
 
 viewCell : List Int -> Int -> HM
