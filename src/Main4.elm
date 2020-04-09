@@ -5,9 +5,9 @@ import Browser.Events
 import Html exposing (Html)
 import Svg exposing (rect, svg)
 import Svg.Attributes exposing (fill, opacity)
-import TypedSvg.Attributes exposing (viewBox)
+import TypedSvg.Attributes exposing (transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (height, width)
-import TypedSvg.Types exposing (Opacity(..))
+import TypedSvg.Types exposing (Opacity(..), Transform(..))
 
 
 gridColumns =
@@ -123,12 +123,31 @@ type Rectangle
 type alias RectangleRecord =
     { x : Float
     , y : Float
-    , scale : Float
-    , fade : Float
+    , s : Float
+    , o : Float
     , fill : String
     , w : Float
     , h : Float
     }
+
+
+renderRect (Rectangle m) =
+    rect
+        [ width m.w
+        , height m.h
+        , fill m.fill
+        , transform <| renderRectTransform m
+        ]
+        []
+
+
+renderRectTransform m =
+    Translate (m.w * -0.5) (m.h * -0.5)
+        :: renderTransform m
+
+
+renderTransform m =
+    [ Translate m.x m.y, Scale m.s m.s ]
 
 
 opacity =
