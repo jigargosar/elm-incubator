@@ -370,6 +370,11 @@ viewCell cellView =
     viewStyledWaterCellAt (cellViewToIndex cellView) (cellViewToStyles cellView)
 
 
+
+--viewCell2 cellView =
+--    case cellView of
+
+
 cellViewToIndex cellView =
     case cellView of
         IdleCell idx ->
@@ -400,17 +405,10 @@ cellViewToStyles cellView =
             [ transforms [ Css.scale 0.5 ] ]
 
         LeavingCell _ ->
-            [ left (pct 50)
-            , top (px 0)
-            , opacity (num 0)
-            , transforms [ Css.scale 0.5 ]
-            ]
+            [ left (pct 50), top (px 0), opacity (num 0), transforms [ Css.scale 0.5 ] ]
 
         EnteringStartCell _ ->
-            [ opacity (num 0)
-            , transforms [ translateY (px -300) ]
-            , transitionNone
-            ]
+            [ opacity (num 0), transforms [ translateY (px -300) ], transitionNone ]
 
         EnteringCell _ ->
             [ transforms [ translateY zero ] ]
