@@ -179,7 +179,7 @@ update message model =
             in
             ( case ( model, validIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
-                    Dragging [ ( idx, initAnim 1 0.5 ) ]
+                    Dragging [ ( idx, initDragAnim ) ]
 
                 ( Dragging list, Just idx ) ->
                     case find (firstEq idx) list of
@@ -187,7 +187,7 @@ update message model =
                             Dragging (( idx, animReverse anim ) :: list)
 
                         Nothing ->
-                            Dragging (( idx, initAnim 1 0.5 ) :: list)
+                            Dragging (( idx, initDragAnim ) :: list)
 
                 _ ->
                     model
