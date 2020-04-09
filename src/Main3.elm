@@ -298,24 +298,29 @@ viewGrid m =
                 (gridCellIndices |> List.map (viewCell connected))
 
         EndingDrag endingDragState ->
-            case endingDragState of
-                LeavingAndFalling _ leaving falling _ ->
-                    styled div
-                        []
-                        []
-                        (gridCellIndices |> List.map (viewLeavingAndFallingCell leaving falling))
+            viewEndingDragGrid endingDragState
 
-                GeneratedStart _ generated ->
-                    styled div
-                        []
-                        []
-                        (gridCellIndices |> List.map (viewGeneratedCellsStart generated))
 
-                GeneratedFalling _ genLs ->
-                    styled div
-                        []
-                        []
-                        (gridCellIndices |> List.map (viewFallingGeneratedCells genLs))
+viewEndingDragGrid : EndingDragState -> HM
+viewEndingDragGrid endingDragState =
+    case endingDragState of
+        LeavingAndFalling _ leaving falling _ ->
+            styled div
+                []
+                []
+                (gridCellIndices |> List.map (viewLeavingAndFallingCell leaving falling))
+
+        GeneratedStart _ generated ->
+            styled div
+                []
+                []
+                (gridCellIndices |> List.map (viewGeneratedCellsStart generated))
+
+        GeneratedFalling _ genLs ->
+            styled div
+                []
+                []
+                (gridCellIndices |> List.map (viewFallingGeneratedCells genLs))
 
 
 viewGeneratedCellsStart : List Int -> Int -> HM
