@@ -584,10 +584,14 @@ viewCell cellView =
                 )
 
         ResetIdleCell idx ->
-            viewHelp idx
-                [ waterCellStyle (AtGridIndex idx) 1 1
-                , transitionNone
-                ]
+            --viewHelp idx
+            --    [ waterCellStyle (AtGridIndex idx) 1 1
+            --    , transitionNone
+            --    ]
+            viewHelp2 idx
+                (moveToAddr (AtGridIndex idx)
+                    >> setT INSTANT
+                )
 
 
 waterCellStyle : Address -> Float -> Float -> Css.Style
