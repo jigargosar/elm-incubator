@@ -271,16 +271,16 @@ viewGrid : Model -> HM
 viewGrid m =
     case m of
         Idle ->
-            viewGridCells (List.map IdleCell gridCellIndices)
+            viewGridCells (List.map (\idx -> CellView idx IdleCell) gridCellIndices)
 
         Dragging connected ->
             let
                 func idx =
                     if List.member idx connected then
-                        ConnectedCell idx
+                        CellView idx ConnectedCell
 
                     else
-                        IdleCell idx
+                        CellView idx IdleCell
             in
             viewGridCells (List.map func gridCellIndices)
 
@@ -303,14 +303,14 @@ viewEndingDragGrid endingDragState =
                 func idx =
                     case List.Extra.find (Tuple.first >> (==) idx) falling of
                         Just ( _, fallingToIdx ) ->
-                            FallingCell idx fallingToIdx
+                            CellView fallingToIdx <| FallingCell idx
 
                         Nothing ->
                             if List.member idx leaving then
-                                LeavingCell idx
+                                CellView idx LeavingCell
 
                             else
-                                IdleCell idx
+                                CellView idx IdleCell
             in
             viewGridCells (List.map func gridCellIndices)
 
@@ -319,10 +319,10 @@ viewEndingDragGrid endingDragState =
                 func idx =
                     case List.member idx generated of
                         True ->
-                            StartEnteringCell idx
+                            CellView idx StartEnteringCell
 
                         False ->
-                            ResetIdleCell idx
+                            CellView idx ResetIdleCell
             in
             viewGridCells (List.map func gridCellIndices)
 
@@ -331,10 +331,10 @@ viewEndingDragGrid endingDragState =
                 func idx =
                     case List.member idx generated of
                         True ->
-                            IdleCell idx
+                            CellView idx IdleCell
 
                         False ->
-                            ResetIdleCell idx
+                            CellView idx ResetIdleCell
             in
             viewGridCells (List.map func gridCellIndices)
 
@@ -344,12 +344,16 @@ type alias Idx =
 
 
 type CellViewState
-    = IdleCell Idx
-    | ConnectedCell Idx
-    | LeavingCell Idx
-    | FallingCell Idx Idx
-    | StartEnteringCell Idx
-    | ResetIdleCell Idx
+    = IdleCell
+    | ConnectedCell
+    | LeavingCell
+    | FallingCell Idx
+    | StartEnteringCell
+    | ResetIdleCell
+
+
+type CellView
+    = CellView Idx CellViewState
 
 
 type Address
@@ -501,45 +505,46 @@ setT t (Shape s) =
     Shape { s | transition = t }
 
 
-viewCell : CellViewState -> HM
-viewCell cellView =
+viewCell : CellView -> HM
+viewCell (CellView idx cellViewState) =
     let
-        viewHelp2 idx fn =
+        viewHelp2 fn =
             fn (waterRect idx) |> drawSH
     in
-    case cellView of
-        IdleCell idx ->
-            viewHelp2 idx
+    case cellViewState of
+        IdleCell ->
+            viewHelp2
                 (moveToAddr (AtGridIndex idx))
 
-        ConnectedCell idx ->
-            viewHelp2 idx
+        ConnectedCell ->
+            viewHelp2
                 (moveToAddr (AtGridIndex idx)
                     >> setT FAST
                     >> sca 0.5
                 )
 
-        LeavingCell idx ->
-            viewHelp2 idx
+        LeavingCell ->
+            viewHelp2
                 (moveToAddr AtWaterCollector
                     >> sca 0.5
                     >> fade 0
                 )
 
-        FallingCell fromIdx toIdx ->
-            viewHelp2 fromIdx
-                (moveToAddr (AtGridIndex toIdx))
+        FallingCell fromIdx ->
+            waterRect fromIdx
+                |> moveToAddr (AtGridIndex idx)
+                |> drawSH
 
-        StartEnteringCell idx ->
-            viewHelp2 idx
+        StartEnteringCell ->
+            viewHelp2
                 (moveToAddr (AtGridIndexEntrance idx)
                     >> sca 0
                     >> fade 0
                     >> setT INSTANT
                 )
 
-        ResetIdleCell idx ->
-            viewHelp2 idx
+        ResetIdleCell ->
+            viewHelp2
                 (moveToAddr (AtGridIndex idx)
                     >> setT INSTANT
                 )
