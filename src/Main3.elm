@@ -319,7 +319,7 @@ viewEndingDragGrid endingDragState =
                 func idx =
                     case List.member idx generated of
                         True ->
-                            EnteringStartCell idx
+                            StartEnteringCell idx
 
                         False ->
                             ResetIdleCell idx
@@ -348,7 +348,7 @@ type CellView
     | ConnectedCell Idx
     | LeavingCell Idx
     | FallingCell Idx Idx
-    | EnteringStartCell Idx
+    | StartEnteringCell Idx
     | EnteringCell Idx
     | ResetIdleCell Idx
 
@@ -414,7 +414,7 @@ viewCell cellView =
                 , transitionDefault
                 ]
 
-        EnteringStartCell idx ->
+        StartEnteringCell idx ->
             viewStyledCell idx
                 [ waterCellStyle (AtGridIndexEntrance idx) 0 0
                 , transitionNone
