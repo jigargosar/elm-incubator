@@ -387,16 +387,7 @@ viewCell cellView =
             viewResetIdleCell idx
 
 
-viewGeneratedCellsStart : List Int -> Int -> HM
-viewGeneratedCellsStart genLs idx =
-    case List.member idx genLs of
-        True ->
-            viewEnteringStartCell idx
-
-        False ->
-            viewResetIdleCell idx
-
-
+viewEnteringStartCell : Int -> HM
 viewEnteringStartCell idx =
     viewStyledWaterCellAt
         idx
@@ -406,20 +397,12 @@ viewEnteringStartCell idx =
         ]
 
 
+viewResetIdleCell : Int -> HM
 viewResetIdleCell idx =
     viewStyledWaterCellAt idx [ transitionNone ]
 
 
-viewFallingGeneratedCells : List Int -> Int -> HM
-viewFallingGeneratedCells genLs idx =
-    case List.member idx genLs of
-        True ->
-            viewEnteringCell idx
-
-        False ->
-            viewIdleCell idx
-
-
+viewEnteringCell : Int -> HM
 viewEnteringCell idx =
     viewStyledWaterCellAt idx [ transforms [ translateY zero ] ]
 
