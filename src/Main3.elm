@@ -285,10 +285,7 @@ viewGrid : Model -> HM
 viewGrid m =
     case m of
         Idle ->
-            styled div
-                []
-                []
-                (gridCellIndices |> List.map viewIdleCell)
+            viewGridCells (List.map IdleCell gridCellIndices)
 
         Dragging connected ->
             styled div
@@ -298,6 +295,13 @@ viewGrid m =
 
         EndingDrag endingDragState ->
             viewEndingDragGrid endingDragState
+
+
+viewGridCells cellViewList =
+    styled div
+        []
+        []
+        (List.map viewCell cellViewList)
 
 
 viewEndingDragGrid : EndingDragState -> HM
