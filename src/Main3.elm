@@ -367,7 +367,7 @@ viewGeneratedCellsStart : List Int -> Int -> HM
 viewGeneratedCellsStart genLs idx =
     case List.member idx genLs of
         True ->
-            viewWaterCell
+            viewStyledCellAt
                 idx
                 [ opacity (num 0)
                 , transforms [ translateY (px -300) ]
@@ -375,14 +375,14 @@ viewGeneratedCellsStart genLs idx =
                 ]
 
         False ->
-            viewWaterCell idx [ transitionNone ]
+            viewStyledCellAt idx [ transitionNone ]
 
 
 viewFallingGeneratedCells : List Int -> Int -> HM
 viewFallingGeneratedCells genLs idx =
     case List.member idx genLs of
         True ->
-            viewWaterCell idx [ transforms [ translateY zero ] ]
+            viewStyledCellAt idx [ transforms [ translateY zero ] ]
 
         False ->
             viewIdleCell idx
@@ -390,7 +390,7 @@ viewFallingGeneratedCells genLs idx =
 
 viewLeavingCell : Int -> HM
 viewLeavingCell idx =
-    viewWaterCell idx
+    viewStyledCellAt idx
         [ left (pct 50)
         , top (px 0)
         , opacity (num 0)
@@ -400,16 +400,16 @@ viewLeavingCell idx =
 
 viewIdleCell : Int -> HM
 viewIdleCell idx =
-    viewWaterCell idx []
+    viewStyledCellAt idx []
 
 
 viewConnectedCell : Int -> HM
 viewConnectedCell idx =
-    viewWaterCell idx [ transforms [ Css.scale 0.5 ] ]
+    viewStyledCellAt idx [ transforms [ Css.scale 0.5 ] ]
 
 
-viewWaterCell : Int -> List Css.Style -> HM
-viewWaterCell idx styles =
+viewStyledCellAt : Int -> List Css.Style -> HM
+viewStyledCellAt idx styles =
     let
         xi =
             modBy gridColumns (idx - 1)
