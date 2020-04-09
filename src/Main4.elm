@@ -140,6 +140,11 @@ main =
 -- SVG PUBLIC API
 
 
+square : String -> Float -> List (Shape -> Shape) -> Svg.Svg msg
+square c w =
+    rect c w w
+
+
 rect : String -> Float -> Float -> List (Shape -> Shape) -> Svg.Svg msg
 rect color w h fnList =
     let
