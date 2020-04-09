@@ -1,7 +1,7 @@
 module Main3 exposing (main)
 
 import Browser
-import Css exposing (fixed, height, ms, num, opacity, position, px, scale, transforms, width)
+import Css exposing (fixed, height, num, opacity, position, px, scale, transforms, width)
 import Css.Animations as Anim
 import Html.Styled exposing (div, styled, text)
 import List.Extra
@@ -387,18 +387,10 @@ movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-
---fadeInKeyframes =
---    Css.Animations.keyframes
---        [ ( 0, [ Css.Animations.opacity (num 0) ] )
---        , ( 100, [ Css.Animations.opacity (num 1) ] )
---        ]
-
-
-scaleHalfAt address =
+fadeInKeyframes =
     Anim.keyframes
-        [ ( 0, [ Anim.transform [ translateAddress address, scale 1 ] ] )
-        , ( 100, [ Anim.transform [ translateAddress address, scale 0.5 ] ] )
+        [ ( 0, [ Anim.opacity (num 0) ] )
+        , ( 100, [ Anim.opacity (num 1) ] )
         ]
 
 
@@ -409,61 +401,43 @@ scaleHalf =
         ]
 
 
-
---, Css.animationName (scaleHalfAt (AtGridIndex idx))
---, Css.animationDuration (ms fastTransitionDuration)
---, Css.property "animation-fill-mode" "both"
-
-
 viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
         IdleCell idx ->
-            div []
-                [ viewStyledCell idx
-                    [ waterCellStyle (AtGridIndex idx) 1 1
-                    , transitionDefault
-                    ]
+            viewStyledCell idx
+                [ waterCellStyle (AtGridIndex idx) 1 1
+                , transitionDefault
                 ]
 
         ConnectedCell idx ->
-            div []
-                [ viewStyledCell idx
-                    [ waterCellStyle (AtGridIndex idx) 0.5 1
-                    , transitionFast
-                    ]
+            viewStyledCell idx
+                [ waterCellStyle (AtGridIndex idx) 0.5 1
+                , transitionFast
                 ]
 
         LeavingCell idx ->
-            div []
-                [ viewStyledCell idx
-                    [ waterCellStyle AtWaterCollector 0.5 0
-                    , transitionDefault
-                    ]
+            viewStyledCell idx
+                [ waterCellStyle AtWaterCollector 0.5 0
+                , transitionDefault
                 ]
 
         FallingCell fromIdx toIdx ->
-            div []
-                [ viewStyledCell fromIdx
-                    [ waterCellStyle (AtGridIndex toIdx) 1 1
-                    , transitionDefault
-                    ]
+            viewStyledCell fromIdx
+                [ waterCellStyle (AtGridIndex toIdx) 1 1
+                , transitionDefault
                 ]
 
         StartEnteringCell idx ->
-            div []
-                [ viewStyledCell idx
-                    [ waterCellStyle (AtGridIndexEntrance idx) 0 0
-                    , transitionNone
-                    ]
+            viewStyledCell idx
+                [ waterCellStyle (AtGridIndexEntrance idx) 0 0
+                , transitionNone
                 ]
 
         ResetIdleCell idx ->
-            div []
-                [ viewStyledCell idx
-                    [ waterCellStyle (AtGridIndex idx) 1 1
-                    , transitionNone
-                    ]
+            viewStyledCell idx
+                [ waterCellStyle (AtGridIndex idx) 1 1
+                , transitionNone
                 ]
 
 
