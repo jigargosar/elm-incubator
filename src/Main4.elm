@@ -173,6 +173,10 @@ update message model =
             )
 
         OnDrag unverifiedIdx ->
+            let
+                initDragAnim =
+                    initAnim 1 0.5
+            in
             ( case ( model, validIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     Dragging [ ( idx, initAnim 1 0.5 ) ]
