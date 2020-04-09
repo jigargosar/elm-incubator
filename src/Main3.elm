@@ -412,7 +412,7 @@ cellViewToStyles cellView =
             [ transforms [ translateY zero ] ]
 
         ResetIdleCell _ ->
-            []
+            [ transitionNone ]
 
 
 viewEnteringStartCell : Int -> HM
