@@ -316,11 +316,11 @@ viewEndingDragGrid endingDragState =
                 []
                 (gridCellIndices |> List.map (viewGeneratedCellsStart generated))
 
-        GeneratedFalling _ genLs ->
+        GeneratedFalling _ generated ->
             styled div
                 []
                 []
-                (gridCellIndices |> List.map (viewFallingGeneratedCells genLs))
+                (gridCellIndices |> List.map (viewFallingGeneratedCells generated))
 
 
 viewGeneratedCellsStart : List Int -> Int -> HM
