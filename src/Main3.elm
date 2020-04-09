@@ -303,7 +303,7 @@ viewEndingDragGrid endingDragState =
                 func idx =
                     case List.Extra.find (Tuple.first >> (==) idx) falling of
                         Just ( _, fallingToIdx ) ->
-                            IdleCell fallingToIdx
+                            FallingCell idx fallingToIdx
 
                         Nothing ->
                             if List.member idx leaving then
@@ -347,6 +347,7 @@ type CellView
     = IdleCell Idx
     | ConnectedCell Idx
     | LeavingCell Idx
+    | FallingCell Idx Idx
     | EnteringStartCell Idx
     | EnteringCell Idx
     | ResetIdleCell Idx
@@ -404,6 +405,12 @@ viewCell cellView =
         LeavingCell idx ->
             viewStyledCell idx
                 [ waterCellStyle AtWaterCollector 0.5 0
+                , transitionDefault
+                ]
+
+        FallingCell fromIdx toIdx ->
+            viewStyledCell fromIdx
+                [ waterCellStyle (AtGridIndex toIdx) 1 1
                 , transitionDefault
                 ]
 
