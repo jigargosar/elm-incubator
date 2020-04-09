@@ -200,7 +200,7 @@ update message model =
                                     defaultTransitionDuration
                             in
                             ( EndingDrag (GeneratedStart duration genIndices)
-                            , delay 3 StepEndingDrag
+                            , delay defaultTransitionDuration StepEndingDrag
                             )
 
                         GeneratedStart _ genIndices ->
