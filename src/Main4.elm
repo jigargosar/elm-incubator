@@ -4,6 +4,7 @@ import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
 import Html exposing (Html)
+import List.Extra exposing (find)
 import Svg exposing (rect, svg)
 import Svg.Attributes as SA
 import TypedSvg.Attributes exposing (transform, viewBox)
@@ -125,21 +126,41 @@ screenTop =
 
 
 view : Model -> Html Msg
-view _ =
+view model =
     svg
         [ viewBox screenLeft screenTop screenWidth screenHeight
         , width screenWidth
         , height screenHeight
         ]
         [ rect "#ffc973" screenWidth screenHeight []
+        , case model of
+            Idle ->
+                batch (List.map renderIdx gridIndices)
 
-        --, circle "#46a4ff" 100 []
-        , batch (List.map renderIdx gridIndices)
+            Dragging list ->
+                let
+                    func idx =
+                        case find (firstEq idx) list of
+                            Just ( _, anim ) ->
+                                renderIdxAnim idx anim
+
+                            Nothing ->
+                                renderIdx idx
+                in
+                batch (List.map func gridIndices)
         ]
+
+
+firstEq expected ( actual, _ ) =
+    expected == actual
 
 
 renderIdx idx =
     circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx ]
+
+
+renderIdxAnim idx anim =
+    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale anim.scale ]
 
 
 moveToIdx idx =
@@ -172,10 +193,6 @@ idxToXY idx =
 
 batch =
     Svg.g []
-
-
-empty =
-    batch []
 
 
 
@@ -240,12 +257,26 @@ move dx dy shape =
             Circle (moveRecord dx dy m)
 
 
+scale : Float -> Shape -> Shape
+scale s shape =
+    case shape of
+        Rectangle m ->
+            Rectangle (scaleRecord s m)
+
+        Circle m ->
+            Circle (scaleRecord s m)
+
+
 
 -- SVG PRIVATE API
 
 
 moveRecord dx dy ({ x, y } as m) =
     { m | x = x + dx, y = y + dy }
+
+
+scaleRecord ns ({ s } as m) =
+    { m | s = s * ns }
 
 
 type Shape
