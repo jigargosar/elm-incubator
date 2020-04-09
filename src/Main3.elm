@@ -428,36 +428,34 @@ type alias ShapeRecord =
 
 
 drawSH (Shape s) =
-    let
-        (Rectangle w h) =
-            s.form
-    in
-    styled div
-        (opacity (num s.fade)
-            :: transforms [ translate2 (px s.x) (px s.y), scale s.scale ]
-            :: bgc s.fill
-            :: Css.property "transition"
-                ("all "
-                    ++ String.fromFloat
-                        (case s.transition of
-                            INSTANT ->
-                                0
+    case s.form of
+        Rectangle w h ->
+            styled div
+                (opacity (num s.fade)
+                    :: transforms [ translate2 (px s.x) (px s.y), scale s.scale ]
+                    :: bgc s.fill
+                    :: Css.property "transition"
+                        ("all "
+                            ++ String.fromFloat
+                                (case s.transition of
+                                    INSTANT ->
+                                        0
 
-                            FAST ->
-                                fastTransitionDuration
+                                    FAST ->
+                                        fastTransitionDuration
 
-                            MEDIUM ->
-                                defaultTransitionDuration
+                                    MEDIUM ->
+                                        defaultTransitionDuration
+                                )
+                            ++ "ms"
                         )
-                    ++ "ms"
+                    :: position fixed
+                    :: width (px w)
+                    :: height (px h)
+                    :: s.styles
                 )
-            :: position fixed
-            :: width (px w)
-            :: height (px h)
-            :: s.styles
-        )
-        []
-        []
+                []
+                []
 
 
 rectangle : Float -> Float -> Shape
