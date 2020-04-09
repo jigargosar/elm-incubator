@@ -6,7 +6,7 @@ import Html exposing (Html)
 import Svg exposing (rect, svg)
 import Svg.Attributes as SA
 import TypedSvg.Attributes exposing (transform, viewBox)
-import TypedSvg.Attributes.InPx exposing (height, width)
+import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
 
 
@@ -116,23 +116,29 @@ view _ =
         [ rect "orange" screenWidth screenHeight [ fade 0.5 ] ]
 
 
-type Rectangle
+type Shape
     = Rectangle RectangleRecord
+    | Circle CircleRecord
 
 
-rect : String -> Float -> Float -> List (Rectangle -> Rectangle) -> Svg.Svg msg
+rect : String -> Float -> Float -> List (Shape -> Shape) -> Svg.Svg msg
 rect color w h fnList =
     let
         m =
             Rectangle (initRectRecord color w h)
     in
     List.foldl (<|) m fnList
-        |> renderRectangle
+        |> renderShape
 
 
-fade : Float -> Rectangle -> Rectangle
-fade o (Rectangle m) =
-    Rectangle { m | o = o }
+fade : Float -> Shape -> Shape
+fade o shape =
+    case shape of
+        Rectangle m ->
+            Rectangle { m | o = o }
+
+        Circle m ->
+            Circle { m | o = o }
 
 
 type alias RectangleRecord =
@@ -146,13 +152,28 @@ type alias RectangleRecord =
     }
 
 
+type alias CircleRecord =
+    { x : Float
+    , y : Float
+    , s : Float
+    , o : Float
+    , fill : String
+    , r : Float
+    }
+
+
 initRectRecord : String -> Float -> Float -> RectangleRecord
 initRectRecord =
     RectangleRecord 0 0 1 1
 
 
-renderRectangle (Rectangle m) =
-    renderRectRecord m
+renderShape shape =
+    case shape of
+        Rectangle m ->
+            renderRectRecord m
+
+        Circle m ->
+            renderCircleRecord m
 
 
 renderRectRecord : RectangleRecord -> Svg.Svg msg
@@ -162,6 +183,17 @@ renderRectRecord m =
         , height m.h
         , SA.fill m.fill
         , transform <| renderRectTransform m
+        , opacity m.o
+        ]
+        []
+
+
+renderCircleRecord : CircleRecord -> Svg.Svg msg
+renderCircleRecord m =
+    Svg.rect
+        [ r m.r
+        , SA.fill m.fill
+        , transform <| renderTransform m
         , opacity m.o
         ]
         []
