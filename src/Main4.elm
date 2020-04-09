@@ -1,6 +1,7 @@
 module Main4 exposing (main)
 
 import Browser
+import Browser.Events
 import Html exposing (Html)
 
 
@@ -29,6 +30,7 @@ init _ =
 
 type Msg
     = NoOp
+    | Tick
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -37,10 +39,13 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
+        Tick ->
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch [ Browser.Events.onAnimationFrame (\_ -> Tick) ]
 
 
 
