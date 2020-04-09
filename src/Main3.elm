@@ -354,6 +354,15 @@ type Address
     | AtWaterCollector
 
 
+translateAddress address =
+    case address of
+        AtGridIndex idx ->
+            1
+
+        _ ->
+            1
+
+
 viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
