@@ -488,7 +488,7 @@ waterRect : Int -> Shape
 waterRect idx =
     initShape (Rectangle gridCellWidth gridCellWidth (String.fromInt idx))
         |> fill "dodgerblue"
-        |> setT MEDIUM
+        |> trans MEDIUM
 
 
 moveToAddr_ : Address -> Shape -> Shape
@@ -512,30 +512,30 @@ moveAtWaterCollector =
     moveToAddr_ AtWaterCollector
 
 
-setT : TRANSITION -> Shape -> Shape
-setT t (Shape s) =
+trans : TRANSITION -> Shape -> Shape
+trans t (Shape s) =
     Shape { s | transition = t }
 
 
 viewCell : CellView -> HM
 viewCell (CellView idx cellViewState) =
     let
-        viewHelp2 fn =
+        drawWaterRect fn =
             fn (waterRect idx) |> drawSH
     in
     case cellViewState of
         IdleCell ->
-            viewHelp2 (moveAtGridIdx idx)
+            drawWaterRect (moveAtGridIdx idx)
 
         ConnectedCell ->
-            viewHelp2
+            drawWaterRect
                 (moveAtGridIdx idx
-                    >> setT FAST
+                    >> trans FAST
                     >> sca 0.5
                 )
 
         LeavingCell ->
-            viewHelp2
+            drawWaterRect
                 (moveAtWaterCollector
                     >> sca 0.5
                     >> fade 0
@@ -547,17 +547,17 @@ viewCell (CellView idx cellViewState) =
                 |> drawSH
 
         StartEnteringCell ->
-            viewHelp2
+            drawWaterRect
                 (moveAtGridIdxEntrance idx
                     >> sca 0
                     >> fade 0
-                    >> setT INSTANT
+                    >> trans INSTANT
                 )
 
         ResetIdleCell ->
-            viewHelp2
+            drawWaterRect
                 (moveAtGridIdx idx
-                    >> setT INSTANT
+                    >> trans INSTANT
                 )
 
 
