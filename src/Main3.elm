@@ -3,8 +3,7 @@ module Main3 exposing (main)
 import Browser
 import Css
     exposing
-        ( batch
-        , displayFlex
+        ( displayFlex
         , fixed
         , height
         , left
@@ -295,7 +294,7 @@ viewGrid m =
             styled div
                 []
                 []
-                (gridCellIndices |> List.map (viewCell connected))
+                (gridCellIndices |> List.map (viewConnectedCells connected))
 
         EndingDrag endingDragState ->
             viewEndingDragGrid endingDragState
@@ -321,6 +320,11 @@ viewEndingDragGrid endingDragState =
                 []
                 []
                 (gridCellIndices |> List.map (viewFallingGeneratedCells generated))
+
+
+type CellView
+    = IdleCell Int
+    | ConnectedCell Int
 
 
 viewGeneratedCellsStart : List Int -> Int -> HM
@@ -367,8 +371,8 @@ viewLeavingAndFallingCell leavingLs fallingLs idx =
                     viewIdleCell idx
 
 
-viewCell : List Int -> Int -> HM
-viewCell connectedIndices idx =
+viewConnectedCells : List Int -> Int -> HM
+viewConnectedCells connectedIndices idx =
     if List.member idx connectedIndices then
         viewConnectedCell idx
 
