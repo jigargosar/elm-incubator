@@ -387,20 +387,6 @@ movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-fadeInKeyframes =
-    Anim.keyframes
-        [ ( 0, [ Anim.opacity (num 0) ] )
-        , ( 100, [ Anim.opacity (num 1) ] )
-        ]
-
-
-scaleHalf =
-    Anim.keyframes
-        [ ( 0, [ Anim.transform [ scale 1 ] ] )
-        , ( 100, [ Anim.transform [ scale 0.5 ] ] )
-        ]
-
-
 viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
