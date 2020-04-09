@@ -1,5 +1,6 @@
 module Main4 exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
 import Html exposing (Html)
@@ -35,16 +36,20 @@ validIdx idx =
 
 
 gridCellWidth =
-    50
+    75
 
 
+gridWidth =
+    toFloat gridColumns * gridCellWidth
+
+
+gridHeight =
+    toFloat gridRows * gridCellWidth
+
+
+gridIndices : List Int
 gridIndices =
     List.range minGridIdx maxGridIdx
-
-
-gridCellIndices : List Int
-gridCellIndices =
-    List.range 1 (gridRows * gridColumns)
 
 
 
@@ -118,8 +123,50 @@ view _ =
         , height screenHeight
         ]
         [ rect "#ffc973" screenWidth screenHeight []
-        , circle "#46a4ff" 100 []
+
+        --, circle "#46a4ff" 100 []
+        , batch (List.map renderIdx gridIndices)
         ]
+
+
+renderIdx idx =
+    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx ]
+
+
+moveToIdx idx =
+    uncurry move (idxToXY idx)
+
+
+idxToXY : Int -> ( Float, Float )
+idxToXY idx =
+    let
+        xi =
+            modBy gridColumns idx
+
+        yi =
+            idx // gridColumns
+
+        dx =
+            (gridWidth - gridCellWidth) * -0.5
+
+        dy =
+            (gridHeight - gridCellWidth) * -0.5
+
+        x =
+            toFloat xi * gridCellWidth + dx
+
+        y =
+            toFloat yi * gridCellWidth + dy
+    in
+    ( x, y )
+
+
+batch =
+    Svg.g []
+
+
+empty =
+    batch []
 
 
 
@@ -174,8 +221,22 @@ fade o shape =
             Circle { m | o = o }
 
 
+move : Float -> Float -> Shape -> Shape
+move dx dy shape =
+    case shape of
+        Rectangle m ->
+            Rectangle (moveRecord dx dy m)
+
+        Circle m ->
+            Circle (moveRecord dx dy m)
+
+
 
 -- SVG PRIVATE API
+
+
+moveRecord dx dy ({ x, y } as m) =
+    { m | x = x + dx, y = y + dy }
 
 
 type Shape
