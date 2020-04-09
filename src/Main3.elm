@@ -393,21 +393,6 @@ viewFallingGeneratedCells genLs idx =
             viewIdleCell idx
 
 
-viewLeavingAndFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
-viewLeavingAndFallingCell leavingLs fallingLs idx =
-    case List.Extra.find (Tuple.first >> (==) idx) fallingLs of
-        Just ( _, dstIdx ) ->
-            viewWaterCell dstIdx []
-
-        Nothing ->
-            case List.member idx leavingLs of
-                True ->
-                    viewLeavingCell idx
-
-                False ->
-                    viewIdleCell idx
-
-
 viewLeavingCell : Int -> HM
 viewLeavingCell idx =
     viewWaterCell idx
