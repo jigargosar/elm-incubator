@@ -369,7 +369,7 @@ viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
         IdleCell idx ->
-            viewIdleCell idx
+            viewResetIdleCell idx
 
         ConnectedCell idx ->
             viewConnectedCell idx
