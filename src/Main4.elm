@@ -112,7 +112,11 @@ screenTop =
 
 view : Model -> Html Msg
 view _ =
-    svg [ viewBox screenLeft screenTop screenWidth screenHeight, width screenWidth, height screenHeight ]
+    svg
+        [ viewBox screenLeft screenTop screenWidth screenHeight
+        , width screenWidth
+        , height screenHeight
+        ]
         [ rect "#ffc973" screenWidth screenHeight []
         , circle "#46a4ff" 100 []
         ]
