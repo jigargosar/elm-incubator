@@ -388,12 +388,39 @@ movePoint dx dy ( x, y ) =
 
 
 type TRANSFORM
-    = SCALE Float
-    | TRANSLATE Float Float
+    = TRANSFORM Float Float Float
 
 
 type FADE
     = FADE Float
+
+
+type STYLES
+    = STYLES (List Css.Style)
+
+
+type TRANSITION
+    = FAST
+    | MEDIUM
+    | INSTANT
+
+
+type Form
+    = Rectangle Float Float
+
+
+type Shape
+    = Shape FADE TRANSFORM STYLES TRANSITION Form
+
+
+rectangle : Float -> Float -> Shape
+rectangle w h =
+    initShape (Rectangle w h)
+
+
+initShape : Form -> Shape
+initShape =
+    Shape (FADE 1) (TRANSFORM 0 0 1) (STYLES []) INSTANT
 
 
 viewCell : CellView -> HM
