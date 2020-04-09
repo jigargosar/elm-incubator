@@ -154,7 +154,14 @@ update message model =
             ( model, Cmd.none )
 
         Tick ->
-            ( model, Cmd.none )
+            ( case model of
+                Idle ->
+                    model
+
+                Dragging list ->
+                    Dragging (List.map (Tuple.mapSecond animTick) list)
+            , Cmd.none
+            )
 
         OnDrag unverifiedIdx ->
             ( case ( model, validIdx unverifiedIdx ) of
