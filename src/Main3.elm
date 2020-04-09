@@ -1,9 +1,19 @@
 module Main3 exposing (main)
 
 import Browser
-import Css exposing (fixed, height, num, opacity, position, px, scale, transforms, translate, translate2, translateX, width)
-import Css.Animations as Anim
-import Css.Transitions exposing (transition)
+import Css
+    exposing
+        ( fixed
+        , height
+        , num
+        , opacity
+        , position
+        , px
+        , scale
+        , transforms
+        , translate2
+        , width
+        )
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
@@ -374,26 +384,19 @@ addressToXY address =
             ( gridXOffset + (gridWidth / 2), gridCellWidth )
 
 
-translateAddress : Address -> Css.Transform {}
-translateAddress address =
-    let
-        ( x, y ) =
-            addressToXY address
-    in
-    Css.translate2 (px x) (px y)
+
+--translateAddress : Address -> Css.Transform {}
+--translateAddress address =
+--    let
+--        ( x, y ) =
+--            addressToXY address
+--    in
+--    Css.translate2 (px x) (px y)
 
 
 movePoint : number -> number -> ( number, number ) -> ( number, number )
 movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
-
-
-type FADE
-    = FADE Float
-
-
-type STROKE
-    = STROKE String Float
 
 
 type TRANSITION
@@ -478,9 +481,10 @@ initShape form =
         }
 
 
-move : Float -> Float -> Shape -> Shape
-move dx dy (Shape s) =
-    Shape { s | x = s.x + dx, y = s.y + dy }
+
+--move : Float -> Float -> Shape -> Shape
+--move dx dy (Shape s) =
+--    Shape { s | x = s.x + dx, y = s.y + dy }
 
 
 moveTo : Float -> Float -> Shape -> Shape
@@ -594,23 +598,22 @@ viewCell cellView =
                 )
 
 
-waterCellStyle : Address -> Float -> Float -> Css.Style
-waterCellStyle address scaleV fadeV =
-    Css.batch
-        [ cellStyle address scaleV fadeV
-        , bgc "dodgerblue"
-        ]
 
-
-cellStyle : Address -> Float -> Float -> Css.Style
-cellStyle address scaleV fadeV =
-    Css.batch
-        [ transforms [ translateAddress address, scale scaleV ]
-        , opacity (num fadeV)
-        , position fixed
-        , width (px gridCellWidth)
-        , height (px gridCellWidth)
-        ]
+--waterCellStyle : Address -> Float -> Float -> Css.Style
+--waterCellStyle address scaleV fadeV =
+--    Css.batch
+--        [ cellStyle address scaleV fadeV
+--        , bgc "dodgerblue"
+--        ]
+--cellStyle : Address -> Float -> Float -> Css.Style
+--cellStyle address scaleV fadeV =
+--    Css.batch
+--        [ transforms [ translateAddress address, scale scaleV ]
+--        , opacity (num fadeV)
+--        , position fixed
+--        , width (px gridCellWidth)
+--        , height (px gridCellWidth)
+--        ]
 
 
 gridIndexToPoint : Int -> ( Float, Float )
@@ -655,19 +658,17 @@ bgc =
     Css.property "background-color"
 
 
-transitionNone =
-    Css.property "transition" "none"
 
-
-transitionDefault =
-    Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration ++ "ms")
-
-
-transitionFast =
-    Css.property "transition" ("all " ++ String.fromFloat fastTransitionDuration ++ "ms")
-
-
-
+--transitionNone =
+--    Css.property "transition" "none"
+--
+--
+--transitionDefault =
+--    Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration ++ "ms")
+--
+--
+--transitionFast =
+--    Css.property "transition" ("all " ++ String.fromFloat fastTransitionDuration ++ "ms")
 -- Main
 
 
