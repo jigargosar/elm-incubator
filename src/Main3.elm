@@ -426,20 +426,20 @@ viewCell cellView =
                 ]
 
 
+waterCellStyle : Address -> Float -> Float -> Css.Style
+waterCellStyle address scaleV fadeV =
+    Css.batch
+        [ cellStyle address scaleV fadeV
+        , bgc "dodgerblue"
+        ]
+
+
 cellStyle : Address -> Float -> Float -> Css.Style
 cellStyle address scaleV fadeV =
     Css.batch
         [ transforms [ translateAddress address, scale scaleV ]
         , opacity (num fadeV)
         , position fixed
-        ]
-
-
-waterCellStyle : Address -> Float -> Float -> Css.Style
-waterCellStyle address scaleV fadeV =
-    Css.batch
-        [ cellStyle address scaleV fadeV
-        , bgc "dodgerblue"
         ]
 
 
