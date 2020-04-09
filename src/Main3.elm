@@ -9,7 +9,6 @@ import Css
         , opacity
         , position
         , px
-        , scale
         , transforms
         , translate2
         , width
@@ -414,7 +413,7 @@ drawSH (Shape s) =
         Rectangle w h content ->
             styled div
                 (opacity (num s.fade)
-                    :: transforms [ translate2 (px s.x) (px s.y), scale s.scale ]
+                    :: transforms [ translate2 (px s.x) (px s.y), Css.scale s.scale ]
                     :: bgc s.fill
                     :: Css.property "transition"
                         ("all "
@@ -470,8 +469,8 @@ moveTo x y (Shape s) =
     Shape { s | x = x, y = y }
 
 
-sca : Float -> Shape -> Shape
-sca sc (Shape s) =
+scale : Float -> Shape -> Shape
+scale sc (Shape s) =
     Shape { s | scale = s.scale * sc }
 
 
@@ -531,13 +530,13 @@ viewCell (CellView idx cellViewState) =
             drawWaterRect
                 (moveAtGridIdx idx
                     >> trans FAST
-                    >> sca 0.5
+                    >> scale 0.5
                 )
 
         LeavingCell ->
             drawWaterRect
                 (moveAtWaterCollector
-                    >> sca 0.5
+                    >> scale 0.5
                     >> fade 0
                 )
 
@@ -549,7 +548,7 @@ viewCell (CellView idx cellViewState) =
         StartEnteringCell ->
             drawWaterRect
                 (moveAtGridIdxEntrance idx
-                    >> sca 0
+                    >> scale 0
                     >> fade 0
                     >> trans INSTANT
                 )
