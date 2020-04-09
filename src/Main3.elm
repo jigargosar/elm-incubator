@@ -536,10 +536,15 @@ viewCell cellView =
                 |> drawSH
 
         ConnectedCell idx ->
-            viewHelp idx
-                [ waterCellStyle (AtGridIndex idx) 0.5 1
-                , transitionFast
-                ]
+            --viewHelp idx
+            --    [ waterCellStyle (AtGridIndex idx) 0.5 1
+            --    , transitionFast
+            --    ]
+            waterRect
+                |> moveToAddr (AtGridIndex idx)
+                |> setT FAST
+                |> sca 0.5
+                |> drawSH
 
         LeavingCell idx ->
             viewHelp idx
