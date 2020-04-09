@@ -1,8 +1,7 @@
 module Main3 exposing (main)
 
-import Basics.Extra exposing (uncurry)
 import Browser
-import Css exposing (displayFlex, fixed, height, left, num, opacity, pct, position, px, scale, top, transforms, translateY, vh, width, zero)
+import Css exposing (fixed, height, num, opacity, position, px, scale, transforms, width)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
@@ -221,14 +220,18 @@ type alias HM =
 
 view : Model -> HM
 view m =
-    styled div
-        [ displayFlex
-        , Css.alignItems Css.center
-        , Css.justifyContent Css.center
-        , Css.minHeight (vh 100)
-        ]
-        []
-        [ viewGrid m ]
+    viewGrid m
+
+
+
+--styled div
+--    [ displayFlex
+--    , Css.alignItems Css.center
+--    , Css.justifyContent Css.center
+--    , Css.minHeight (vh 100)
+--    ]
+--    []
+--    [ viewGrid m ]
 
 
 gridColumns =
@@ -351,7 +354,7 @@ type CellView
 
 type Address
     = AtGridIndex Idx
-    | AtGridIndexEnterance Idx
+    | AtGridIndexEntrance Idx
     | AtWaterCollector
 
 
@@ -361,7 +364,7 @@ addressToXY address =
         AtGridIndex idx ->
             gridIndexToPoint idx
 
-        AtGridIndexEnterance idx ->
+        AtGridIndexEntrance idx ->
             gridIndexToPoint idx
                 |> movePoint 0 -300
 
@@ -406,7 +409,7 @@ viewCell cellView =
 
         EnteringStartCell idx ->
             viewStyledCell idx
-                [ waterCellStyle (AtGridIndexEnterance idx) 0 0
+                [ waterCellStyle (AtGridIndexEntrance idx) 0 0
                 , transitionNone
                 ]
 
@@ -475,8 +478,8 @@ viewStyledCell idx styles =
     styled div
         (width (px gridCellWidth)
             :: height (px gridCellWidth)
-            :: left zero
-            :: top zero
+            --:: left zero
+            --:: top zero
             :: styles
         )
         []
