@@ -282,7 +282,7 @@ viewGrid m =
     case m of
         Idle ->
             styled div
-                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
                 []
                 (List.range 1 (gridRows * gridColumns)
                     |> List.map (viewCell [])
@@ -290,7 +290,7 @@ viewGrid m =
 
         Dragging connected ->
             styled div
-                [ gridStyle gridRows gridColumns gridCellWidth ]
+                []
                 []
                 (List.range 1 (gridRows * gridColumns)
                     |> List.map (viewCell connected)
@@ -300,47 +300,27 @@ viewGrid m =
             case endingDragState of
                 LeavingAndFalling _ leaving falling _ ->
                     styled div
-                        [ gridStyle gridRows gridColumns gridCellWidth ]
+                        []
                         []
                         (List.range 1 (gridRows * gridColumns)
                             |> List.map (viewLeavingAndFallingCell leaving falling)
                         )
 
-                GeneratedStart _ genLs ->
+                GeneratedStart _ generated ->
                     styled div
-                        [ gridStyle gridRows gridColumns gridCellWidth ]
+                        []
                         []
                         (List.range 1 (gridRows * gridColumns)
-                            |> List.map (viewGeneratedCellsStart genLs)
+                            |> List.map (viewGeneratedCellsStart generated)
                         )
 
                 GeneratedFalling _ genLs ->
                     styled div
-                        [ gridStyle gridRows gridColumns gridCellWidth ]
+                        []
                         []
                         (List.range 1 (gridRows * gridColumns)
                             |> List.map (viewFallingGeneratedCells genLs)
                         )
-
-
-gridStyle : Int -> Int -> Float -> Css.Style
-gridStyle r c w =
-    batch
-        [ Css.property "display" "grid"
-        , Css.property "grid-template-columns" <|
-            "repeat("
-                ++ String.fromInt c
-                ++ ", "
-                ++ String.fromFloat w
-                ++ "px)"
-        , Css.property "grid-template-rows" <|
-            "repeat("
-                ++ String.fromInt r
-                ++ ", "
-                ++ String.fromFloat gridCellWidth
-                ++ "px)"
-        , Css.property "grid-gap" "1px"
-        ]
 
 
 viewGeneratedCellsStart : List Int -> Int -> HM
