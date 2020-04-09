@@ -91,6 +91,15 @@ animScaleValue ({ from, to, duration, elapsed } as anim) =
     (to - from) * animProgress anim + from
 
 
+animTick : Anim -> Anim
+animTick ({ elapsed } as anim) =
+    if animIsDone anim then
+        anim
+
+    else
+        { anim | elapsed = elapsed + 1 }
+
+
 type Model
     = Idle
     | Dragging (List ( Idx, Anim ))
