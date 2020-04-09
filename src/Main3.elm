@@ -199,7 +199,7 @@ update message model =
                         LeavingAndFalling _ _ _ genIndices ->
                             let
                                 duration =
-                                    300
+                                    0
                             in
                             ( EndingDrag (GeneratedStart duration genIndices)
                             , delay duration StepEndingDrag
