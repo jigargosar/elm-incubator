@@ -331,7 +331,7 @@ viewEndingDragGrid endingDragState =
                 func idx =
                     case List.member idx generated of
                         True ->
-                            EnteringCell idx
+                            IdleCell idx
 
                         False ->
                             ResetIdleCell idx
