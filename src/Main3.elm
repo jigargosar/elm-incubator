@@ -396,7 +396,11 @@ cellViewToStyles cellView =
             [ transforms [ Css.scale 0.5 ] ]
 
         LeavingCell _ ->
-            []
+            [ left (pct 50)
+            , top (px 0)
+            , opacity (num 0)
+            , transforms [ Css.scale 0.5 ]
+            ]
 
         EnteringStartCell _ ->
             []
