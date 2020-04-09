@@ -367,24 +367,7 @@ type CellView
 
 viewCell : CellView -> HM
 viewCell cellView =
-    case cellView of
-        IdleCell idx ->
-            viewIdleCell idx
-
-        ConnectedCell idx ->
-            viewConnectedCell idx
-
-        LeavingCell idx ->
-            viewLeavingCell idx
-
-        EnteringStartCell idx ->
-            viewEnteringStartCell idx
-
-        EnteringCell idx ->
-            viewEnteringCell idx
-
-        ResetIdleCell idx ->
-            viewResetIdleCell idx
+    viewStyledWaterCellAt (cellViewToIndex cellView) (cellViewToStyles cellView)
 
 
 cellViewToIndex cellView =
@@ -434,46 +417,6 @@ cellViewToStyles cellView =
 
         ResetIdleCell _ ->
             [ transitionNone ]
-
-
-viewEnteringStartCell : Int -> HM
-viewEnteringStartCell idx =
-    viewStyledWaterCellAt
-        idx
-        [ opacity (num 0)
-        , transforms [ translateY (px -300) ]
-        , transitionNone
-        ]
-
-
-viewEnteringCell : Int -> HM
-viewEnteringCell idx =
-    viewStyledWaterCellAt idx [ transforms [ translateY zero ] ]
-
-
-viewResetIdleCell : Int -> HM
-viewResetIdleCell idx =
-    viewStyledWaterCellAt idx [ transitionNone ]
-
-
-viewLeavingCell : Int -> HM
-viewLeavingCell idx =
-    viewStyledWaterCellAt idx
-        [ left (pct 50)
-        , top (px 0)
-        , opacity (num 0)
-        , transforms [ Css.scale 0.5 ]
-        ]
-
-
-viewIdleCell : Int -> HM
-viewIdleCell idx =
-    viewStyledWaterCellAt idx []
-
-
-viewConnectedCell : Int -> HM
-viewConnectedCell idx =
-    viewStyledWaterCellAt idx [ transforms [ Css.scale 0.5 ] ]
 
 
 viewStyledWaterCellAt : Int -> List Css.Style -> HM
