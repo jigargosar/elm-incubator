@@ -391,14 +391,6 @@ type FADE
     = FADE Float
 
 
-type STYLES
-    = STYLES (List Css.Style)
-
-
-type FILL
-    = FILL String
-
-
 type STROKE
     = STROKE String Float
 
@@ -418,16 +410,21 @@ type Shape
 
 
 type alias ShapeRecord =
-    { fade : FADE
+    { fade : Float
     , x : Float
     , y : Float
     , scale : Float
-    , fill : FILL
-    , stroke : STROKE
-    , styles : STYLES
+    , fill : String
+    , stroke : String
+    , strokeWidth : Float
+    , styles : List Css.Style
     , transition : TRANSITION
     , form : Form
     }
+
+
+drawSH (Shape s) =
+    styled div (opacity (num s.fade) :: s.styles) [] []
 
 
 rectangle : Float -> Float -> Shape
@@ -436,9 +433,19 @@ rectangle w h =
 
 
 initShape : Form -> Shape
-initShape =
-    ShapeRecord (FADE 1) 0 0 1 (FILL "none") (STROKE "none" 0) (STYLES []) INSTANT
-        >> Shape
+initShape form =
+    Shape
+        { fade = 1
+        , x = 0
+        , y = 0
+        , scale = 1
+        , fill = "none"
+        , stroke = "none"
+        , strokeWidth = 1
+        , styles = []
+        , transition = INSTANT
+        , form = form
+        }
 
 
 waterRect : Shape
