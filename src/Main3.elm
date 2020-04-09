@@ -388,37 +388,37 @@ viewCell cellView =
     case cellView of
         IdleCell idx ->
             viewStyledWaterCellAt idx
-                [ cellStyle (AtGridIndex idx) 1 1
+                [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ConnectedCell idx ->
             viewStyledWaterCellAt idx
-                [ cellStyle (AtGridIndex idx) 0.5 1
+                [ waterCellStyle (AtGridIndex idx) 0.5 1
                 , transitionFast
                 ]
 
         LeavingCell idx ->
             viewStyledWaterCellAt idx
-                [ cellStyle AtWaterCollector 0.5 0
+                [ waterCellStyle AtWaterCollector 0.5 0
                 , transitionDefault
                 ]
 
         EnteringStartCell idx ->
             viewStyledWaterCellAt idx
-                [ cellStyle (AtGridIndexEnterance idx) 0 0
+                [ waterCellStyle (AtGridIndexEnterance idx) 0 0
                 , transitionNone
                 ]
 
         EnteringCell idx ->
             viewStyledWaterCellAt idx
-                [ cellStyle (AtGridIndex idx) 1 1
+                [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
-                [ cellStyle (AtGridIndex idx) 1 1
+                [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionNone
                 ]
 
@@ -429,6 +429,14 @@ cellStyle address scaleV fadeV =
         [ transforms [ translateAddress address, scale scaleV ]
         , opacity (num fadeV)
         , position fixed
+        ]
+
+
+waterCellStyle : Address -> Float -> Float -> Css.Style
+waterCellStyle address scaleV fadeV =
+    Css.batch
+        [ cellStyle address scaleV fadeV
+        , bgc "dodgerblue"
         ]
 
 
