@@ -491,13 +491,25 @@ waterRect idx =
         |> setT MEDIUM
 
 
-moveToAddr : Address -> Shape -> Shape
-moveToAddr address =
+moveToAddr_ : Address -> Shape -> Shape
+moveToAddr_ address =
     let
         ( x, y ) =
             addressToXY address
     in
     moveTo x y
+
+
+moveAtGridIdx =
+    AtGridIndex >> moveToAddr_
+
+
+moveAtGridIdxEntrance =
+    AtGridIndexEntrance >> moveToAddr_
+
+
+moveAtWaterCollector =
+    moveToAddr_ AtWaterCollector
 
 
 setT : TRANSITION -> Shape -> Shape
@@ -513,31 +525,30 @@ viewCell (CellView idx cellViewState) =
     in
     case cellViewState of
         IdleCell ->
-            viewHelp2
-                (moveToAddr (AtGridIndex idx))
+            viewHelp2 (moveAtGridIdx idx)
 
         ConnectedCell ->
             viewHelp2
-                (moveToAddr (AtGridIndex idx)
+                (moveAtGridIdx idx
                     >> setT FAST
                     >> sca 0.5
                 )
 
         LeavingCell ->
             viewHelp2
-                (moveToAddr AtWaterCollector
+                (moveAtWaterCollector
                     >> sca 0.5
                     >> fade 0
                 )
 
         FallingCell fromIdx ->
             waterRect fromIdx
-                |> moveToAddr (AtGridIndex idx)
+                |> moveAtGridIdx idx
                 |> drawSH
 
         StartEnteringCell ->
             viewHelp2
-                (moveToAddr (AtGridIndexEntrance idx)
+                (moveAtGridIdxEntrance idx
                     >> sca 0
                     >> fade 0
                     >> setT INSTANT
@@ -545,7 +556,7 @@ viewCell (CellView idx cellViewState) =
 
         ResetIdleCell ->
             viewHelp2
-                (moveToAddr (AtGridIndex idx)
+                (moveAtGridIdx idx
                     >> setT INSTANT
                 )
 
