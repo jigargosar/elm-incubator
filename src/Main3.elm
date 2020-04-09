@@ -285,7 +285,7 @@ viewGrid m =
                 []
                 []
                 (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewCell [])
+                    |> List.map viewIdleCell
                 )
 
         Dragging connected ->
@@ -349,7 +349,7 @@ viewFallingGeneratedCells genLs idx =
             viewWaterCell idx [ transforms [ translateY zero ] ]
 
         False ->
-            viewDefaultCell idx
+            viewIdleCell idx
 
 
 viewLeavingAndFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
@@ -364,7 +364,7 @@ viewLeavingAndFallingCell leavingLs fallingLs idx =
                     viewLeavingCell idx
 
                 False ->
-                    viewDefaultCell idx
+                    viewIdleCell idx
 
 
 viewCell : List Int -> Int -> HM
@@ -373,7 +373,7 @@ viewCell connectedIndices idx =
         viewConnectedCell idx
 
     else
-        viewDefaultCell idx
+        viewIdleCell idx
 
 
 viewLeavingCell : Int -> HM
@@ -386,8 +386,8 @@ viewLeavingCell idx =
         ]
 
 
-viewDefaultCell : Int -> HM
-viewDefaultCell idx =
+viewIdleCell : Int -> HM
+viewIdleCell idx =
     viewWaterCell idx []
 
 
