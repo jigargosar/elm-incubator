@@ -387,6 +387,27 @@ viewCell cellView =
             viewResetIdleCell idx
 
 
+cellViewToIndex cellView =
+    case cellView of
+        IdleCell idx ->
+            idx
+
+        ConnectedCell idx ->
+            idx
+
+        LeavingCell idx ->
+            idx
+
+        EnteringStartCell idx ->
+            idx
+
+        EnteringCell idx ->
+            idx
+
+        ResetIdleCell idx ->
+            idx
+
+
 cellViewToStyles cellView =
     case cellView of
         IdleCell _ ->
