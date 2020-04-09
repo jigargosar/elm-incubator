@@ -288,10 +288,15 @@ viewGrid m =
             viewGridCells (List.map IdleCell gridCellIndices)
 
         Dragging connected ->
-            styled div
-                []
-                []
-                (gridCellIndices |> List.map (viewConnectedCells connected))
+            let
+                func idx =
+                    if List.member idx connected then
+                        ConnectedCell idx
+
+                    else
+                        IdleCell idx
+            in
+            viewGridCells (List.map func gridCellIndices)
 
         EndingDrag endingDragState ->
             viewEndingDragGrid endingDragState
