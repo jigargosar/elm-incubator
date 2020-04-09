@@ -346,9 +346,7 @@ viewFallingGeneratedCells : List Int -> Int -> HM
 viewFallingGeneratedCells genLs idx =
     case List.member idx genLs of
         True ->
-            viewWaterCell idx
-                [ transforms [ translateY zero ]
-                ]
+            viewWaterCell idx [ transforms [ translateY zero ] ]
 
         False ->
             viewWaterCell idx []
