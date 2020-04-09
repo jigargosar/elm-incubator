@@ -409,7 +409,7 @@ cellViewToStyles cellView =
             ]
 
         EnteringCell _ ->
-            []
+            [ transforms [ translateY zero ] ]
 
         ResetIdleCell _ ->
             []
