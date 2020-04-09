@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Html exposing (Html)
 import Svg exposing (rect, svg)
-import Svg.Attributes exposing (fill, opacity)
+import Svg.Attributes as SA
 import TypedSvg.Attributes exposing (transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (height, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
@@ -160,7 +160,7 @@ renderRectRecord m =
     Svg.rect
         [ width m.w
         , height m.h
-        , fill m.fill
+        , SA.fill m.fill
         , transform <| renderRectTransform m
         , opacity m.o
         ]
