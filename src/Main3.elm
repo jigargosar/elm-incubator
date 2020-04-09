@@ -414,12 +414,7 @@ viewConnectedCell idx =
 
 
 viewWaterCell : Int -> List Css.Style -> HM
-viewWaterCell =
-    viewWaterCell2 False
-
-
-viewWaterCell2 : Bool -> Int -> List Css.Style -> HM
-viewWaterCell2 resetTransitions idx styles =
+viewWaterCell idx styles =
     let
         xi =
             modBy gridColumns (idx - 1)
@@ -442,16 +437,11 @@ viewWaterCell2 resetTransitions idx styles =
             :: position fixed
             :: opacity (num 1)
             :: transition
-                (if resetTransitions then
-                    []
-
-                 else
-                    [ Transitions.transform defaultTransitionDuration
-                    , Transitions.opacity defaultTransitionDuration
-                    , Transitions.top defaultTransitionDuration
-                    , Transitions.left defaultTransitionDuration
-                    ]
-                )
+                [ Transitions.transform defaultTransitionDuration
+                , Transitions.opacity defaultTransitionDuration
+                , Transitions.top defaultTransitionDuration
+                , Transitions.left defaultTransitionDuration
+                ]
             :: styles
         )
         []
