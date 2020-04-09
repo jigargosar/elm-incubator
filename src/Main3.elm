@@ -313,10 +313,20 @@ viewEndingDragGrid : EndingDragState -> HM
 viewEndingDragGrid endingDragState =
     case endingDragState of
         LeavingAndFalling _ leaving falling _ ->
-            styled div
-                []
-                []
-                (gridCellIndices |> List.map (viewLeavingAndFallingCell leaving falling))
+            let
+                func idx =
+                    case List.Extra.find (Tuple.first >> (==) idx) falling of
+                        Just ( _, fallingToIdx ) ->
+                            IdleCell fallingToIdx
+
+                        Nothing ->
+                            if List.member idx leaving then
+                                LeavingCell idx
+
+                            else
+                                IdleCell idx
+            in
+            viewGridCells (List.map func gridCellIndices)
 
         GeneratedStart _ generated ->
             styled div
@@ -338,6 +348,7 @@ type alias Idx =
 type CellView
     = IdleCell Idx
     | ConnectedCell Idx
+    | LeavingCell Idx
 
 
 viewCell : CellView -> HM
@@ -348,6 +359,9 @@ viewCell cellView =
 
         ConnectedCell idx ->
             viewConnectedCell idx
+
+        LeavingCell idx ->
+            viewLeavingCell idx
 
 
 viewGeneratedCellsStart : List Int -> Int -> HM
@@ -392,15 +406,6 @@ viewLeavingAndFallingCell leavingLs fallingLs idx =
 
                 False ->
                     viewIdleCell idx
-
-
-viewConnectedCells : List Int -> Int -> HM
-viewConnectedCells connectedIndices idx =
-    if List.member idx connectedIndices then
-        viewConnectedCell idx
-
-    else
-        viewIdleCell idx
 
 
 viewLeavingCell : Int -> HM
