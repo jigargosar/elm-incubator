@@ -327,6 +327,16 @@ type CellView
     | ConnectedCell Int
 
 
+viewCell : CellView -> HM
+viewCell cellView =
+    case cellView of
+        IdleCell idx ->
+            viewIdleCell idx
+
+        ConnectedCell idx ->
+            viewConnectedCell idx
+
+
 viewGeneratedCellsStart : List Int -> Int -> HM
 viewGeneratedCellsStart genLs idx =
     case List.member idx genLs of
