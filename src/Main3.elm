@@ -417,7 +417,6 @@ viewStyledWaterCellAt idx styles =
             :: top (px y)
             :: position fixed
             :: opacity (num 1)
-            :: transitionDefault
             :: styles
         )
         []
