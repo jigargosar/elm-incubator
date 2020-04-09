@@ -397,14 +397,14 @@ viewEnteringStartCell idx =
         ]
 
 
-viewResetIdleCell : Int -> HM
-viewResetIdleCell idx =
-    viewStyledWaterCellAt idx [ transitionNone ]
-
-
 viewEnteringCell : Int -> HM
 viewEnteringCell idx =
     viewStyledWaterCellAt idx [ transforms [ translateY zero ] ]
+
+
+viewResetIdleCell : Int -> HM
+viewResetIdleCell idx =
+    viewStyledWaterCellAt idx [ transitionNone ]
 
 
 viewLeavingCell : Int -> HM
