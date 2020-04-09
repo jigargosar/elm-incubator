@@ -367,6 +367,15 @@ viewLeavingAndFallingCell leavingLs fallingLs idx =
                     viewDefaultCell idx
 
 
+viewCell : List Int -> Int -> HM
+viewCell connectedIndices idx =
+    if List.member idx connectedIndices then
+        viewConnectedCell idx
+
+    else
+        viewDefaultCell idx
+
+
 viewLeavingCell : Int -> HM
 viewLeavingCell idx =
     viewWaterCell idx
@@ -382,13 +391,9 @@ viewDefaultCell idx =
     viewWaterCell idx []
 
 
-viewCell : List Int -> Int -> HM
-viewCell connectedIndices idx =
-    if List.member idx connectedIndices then
-        viewWaterCell idx [ transforms [ Css.scale 0.5 ] ]
-
-    else
-        viewWaterCell idx []
+viewConnectedCell : Int -> HM
+viewConnectedCell idx =
+    viewWaterCell idx [ transforms [ Css.scale 0.5 ] ]
 
 
 viewWaterCell : Int -> List Css.Style -> HM
@@ -396,6 +401,7 @@ viewWaterCell =
     viewWaterCell2 False
 
 
+viewWaterCell2 : Bool -> Int -> List Css.Style -> HM
 viewWaterCell2 resetTransitions idx styles =
     let
         xi =
