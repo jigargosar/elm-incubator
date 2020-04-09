@@ -365,6 +365,12 @@ type CellView
     | ResetIdleCell Idx
 
 
+type Address
+    = AtGridIndex Int
+    | AtEnteringGridIndex Int
+    | AtWaterCollector
+
+
 viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
