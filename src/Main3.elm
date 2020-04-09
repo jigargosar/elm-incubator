@@ -406,7 +406,7 @@ type TRANSITION
 
 
 type Form
-    = Rectangle Float Float
+    = Rectangle Float Float String
 
 
 type Shape
@@ -429,7 +429,7 @@ type alias ShapeRecord =
 
 drawSH (Shape s) =
     case s.form of
-        Rectangle w h ->
+        Rectangle w h content ->
             styled div
                 (opacity (num s.fade)
                     :: transforms [ translate2 (px s.x) (px s.y), scale s.scale ]
@@ -455,12 +455,7 @@ drawSH (Shape s) =
                     :: s.styles
                 )
                 []
-                []
-
-
-rectangle : Float -> Float -> Shape
-rectangle w h =
-    initShape (Rectangle w h)
+                [ text content ]
 
 
 initShape : Form -> Shape
@@ -504,9 +499,9 @@ fill c (Shape s) =
     Shape { s | fill = c }
 
 
-waterRect : Shape
-waterRect =
-    rectangle gridCellWidth gridCellWidth
+waterRect : Int -> Shape
+waterRect idx =
+    initShape (Rectangle gridCellWidth gridCellWidth (String.fromInt idx))
         |> fill "dodgerblue"
         |> setT MEDIUM
 
@@ -532,7 +527,7 @@ viewCell cellView =
             styled div styles [] [ text (String.fromInt idx) ]
 
         viewHelp2 idx fn =
-            fn waterRect |> drawSH
+            fn (waterRect idx) |> drawSH
     in
     case cellView of
         IdleCell idx ->
