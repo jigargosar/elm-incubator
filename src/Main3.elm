@@ -393,7 +393,7 @@ cellViewToStyles cellView =
             []
 
         ConnectedCell _ ->
-            []
+            [ transforms [ Css.scale 0.5 ] ]
 
         LeavingCell _ ->
             []
