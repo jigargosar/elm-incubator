@@ -79,8 +79,15 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
-    , Cmd.batch [ Process.sleep 100 |> Task.perform (\_ -> OnDrag 2) ]
+    , Cmd.batch
+        [ delay 100 (OnDrag 2)
+        , delay 100 (OnDrag 3)
+        ]
     )
+
+
+delay ms msg =
+    Process.sleep ms |> Task.perform (\_ -> msg)
 
 
 
