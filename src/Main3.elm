@@ -451,7 +451,7 @@ transitionNone =
 
 
 transitionDefault =
-    Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration)
+    Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration ++ "ms")
 
 
 
