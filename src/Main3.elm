@@ -447,6 +447,8 @@ cellStyle address scaleV fadeV =
         [ transforms [ translateAddress address, scale scaleV ]
         , opacity (num fadeV)
         , position fixed
+        , width (px gridCellWidth)
+        , height (px gridCellWidth)
         ]
 
 
@@ -483,10 +485,7 @@ gridWidth =
 viewStyledCell : Int -> List Css.Style -> HM
 viewStyledCell idx styles =
     styled div
-        (width (px gridCellWidth)
-            :: height (px gridCellWidth)
-            :: styles
-        )
+        styles
         []
         [ text (String.fromInt idx) ]
 
