@@ -113,7 +113,9 @@ screenTop =
 view : Model -> Html Msg
 view _ =
     svg [ viewBox screenLeft screenTop screenWidth screenHeight, width screenWidth, height screenHeight ]
-        [ rect "orange" screenWidth screenHeight [ fade 0.5 ] ]
+        [ rect "orange" screenWidth screenHeight [ fade 0.5 ]
+        , circle "dodgerblue" 100 [ fade 0.5 ]
+        ]
 
 
 type Shape
@@ -205,7 +207,7 @@ renderRectRecord m =
 
 renderCircleRecord : CircleRecord -> Svg.Svg msg
 renderCircleRecord m =
-    Svg.rect
+    Svg.circle
         [ r m.r
         , SA.fill m.fill
         , transform <| renderTransform m
