@@ -63,9 +63,9 @@ type alias Anim =
     { from : Float, to : Float, duration : Float, elapsed : Float }
 
 
-initAnim : Float -> Anim
-initAnim to =
-    { from = 1, to = to, duration = 200, elapsed = 0 }
+initAnim : Float -> Float -> Anim
+initAnim from to =
+    { from = from, to = to, duration = 200, elapsed = 0 }
 
 
 animProgress : Anim -> Float
@@ -170,10 +170,10 @@ update message model =
         OnDrag unverifiedIdx ->
             ( case ( model, validIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
-                    Dragging [ ( idx, initAnim 0.5 ) ]
+                    Dragging [ ( idx, initAnim 1 0.5 ) ]
 
                 ( Dragging list, Just idx ) ->
-                    Dragging (( idx, initAnim 0.5 ) :: list)
+                    Dragging (( idx, initAnim 1 0.5 ) :: list)
 
                 _ ->
                     model
