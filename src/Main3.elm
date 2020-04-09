@@ -205,12 +205,12 @@ update message model =
                             , delay duration StepEndingDrag
                             )
 
-                        GeneratedStart _ gi ->
+                        GeneratedStart _ genIndices ->
                             let
                                 duration =
                                     300
                             in
-                            ( EndingDrag (GeneratedFalling duration gi), delay duration StepEndingDrag )
+                            ( EndingDrag (GeneratedFalling duration genIndices), delay duration StepEndingDrag )
 
                         GeneratedFalling _ _ ->
                             ( Idle, Cmd.none )
