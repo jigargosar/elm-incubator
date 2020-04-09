@@ -5,8 +5,10 @@ import Browser
 import Browser.Events
 import Html exposing (Html)
 import List.Extra exposing (find)
+import Process
 import Svg exposing (rect, svg)
 import Svg.Attributes as SA
+import Task
 import TypedSvg.Attributes exposing (transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
@@ -77,7 +79,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( Idle
-    , Cmd.none
+    , Cmd.batch [ Process.sleep 100 |> Task.perform (\_ -> OnDrag 2) ]
     )
 
 
