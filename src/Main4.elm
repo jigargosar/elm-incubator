@@ -36,7 +36,7 @@ validIdx idx =
 
 
 gridCellWidth =
-    75
+    50
 
 
 gridWidth =
