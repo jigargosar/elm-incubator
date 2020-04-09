@@ -359,23 +359,35 @@ viewCell cellView =
     case cellView of
         IdleCell idx ->
             viewStyledWaterCellAt idx
-                []
+                [ transitionDefault ]
 
         ConnectedCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ Css.scale 0.5 ], transitionFast ]
+                [ transforms [ Css.scale 0.5 ]
+                , transitionFast
+                ]
 
         LeavingCell idx ->
             viewStyledWaterCellAt idx
-                [ left (pct 50), top (px 0), opacity (num 0), transforms [ Css.scale 0.5 ] ]
+                [ left (pct 50)
+                , top (px 0)
+                , opacity (num 0)
+                , transforms [ Css.scale 0.5 ]
+                , transitionDefault
+                ]
 
         EnteringStartCell idx ->
             viewStyledWaterCellAt idx
-                [ opacity (num 0), transforms [ translateY (px -300), scale 0 ], transitionNone ]
+                [ opacity (num 0)
+                , transforms [ translateY (px -300), scale 0 ]
+                , transitionNone
+                ]
 
         EnteringCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateY zero, scale 1 ] ]
+                [ transforms [ translateY zero, scale 1 ]
+                , transitionDefault
+                ]
 
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
