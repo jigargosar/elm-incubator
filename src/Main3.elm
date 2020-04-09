@@ -472,25 +472,10 @@ gridWidth =
 
 viewStyledWaterCellAt : Int -> List Css.Style -> HM
 viewStyledWaterCellAt idx styles =
-    let
-        xi =
-            modBy gridColumns (idx - 1)
-
-        yi =
-            (idx - 1) // gridColumns
-
-        x =
-            (toFloat xi * (gridCellWidth + 1)) + 300
-
-        y =
-            (toFloat yi * (gridCellWidth + 1)) + 400
-    in
     styled div
         (bgc "dodgerblue"
             :: width (px gridCellWidth)
             :: height (px gridCellWidth)
-            :: left (px x)
-            :: top (px y)
             :: left zero
             :: top zero
             :: position fixed
