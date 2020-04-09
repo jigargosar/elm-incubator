@@ -64,12 +64,31 @@ type alias Idx =
 
 
 type alias Anim =
-    { from : Float, to : Float, duration : Int, elapsed : Int }
+    { from : Float, to : Float, duration : Float, elapsed : Float }
 
 
 initAnim : Float -> Anim
 initAnim to =
     { from = 1, to = to, duration = 300, elapsed = 0 }
+
+
+animProgress : Anim -> Float
+animProgress { from, to, duration, elapsed } =
+    if from == to || duration <= 0 || elapsed >= duration then
+        1
+
+    else
+        elapsed / duration
+
+
+animIsDone : Anim -> Bool
+animIsDone anim =
+    animProgress anim == 1
+
+
+animScaleValue : Anim -> Float
+animScaleValue ({ from, to, duration, elapsed } as anim) =
+    (to - from) * animProgress anim + from
 
 
 type Model
@@ -199,11 +218,6 @@ firstEq expected ( actual, _ ) =
 
 renderIdx idx =
     circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx ]
-
-
-animScaleValue : Anim -> Float
-animScaleValue anim =
-    anim.to
 
 
 renderIdxAnim idx anim =
