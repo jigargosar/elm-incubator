@@ -61,7 +61,7 @@ computeFallingFromEmptyIndices : List number -> ( List ( number, number ), List 
 computeFallingFromEmptyIndices emptyIndices ( changes, newEmptyIndices ) =
     case List.sortBy negate emptyIndices of
         [] ->
-            ( changes, newEmptyIndices |> Debug.log "debug" )
+            ( changes, newEmptyIndices )
 
         firstEmpty :: remainingEmpty ->
             case firstNonEmptyIndexAbove firstEmpty remainingEmpty of
