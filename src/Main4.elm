@@ -113,11 +113,26 @@ screenTop =
 view : Model -> Html Msg
 view _ =
     svg [ viewBox screenLeft screenTop screenWidth screenHeight, width screenWidth, height screenHeight ]
-        [ rect [ width screenWidth, height screenHeight, fill "orange", opacity 0.5 ] [] ]
+        [ rect "orange" screenWidth screenHeight [ fade 0.5 ] ]
 
 
 type Rectangle
     = Rectangle RectangleRecord
+
+
+rect : String -> Float -> Float -> List (Rectangle -> Rectangle) -> Svg.Svg msg
+rect color w h fnList =
+    let
+        m =
+            Rectangle (initRectRecord color w h)
+    in
+    List.foldl (<|) m fnList
+        |> renderRectangle
+
+
+fade : Float -> Rectangle -> Rectangle
+fade o (Rectangle m) =
+    Rectangle { m | o = o }
 
 
 type alias RectangleRecord =
@@ -131,9 +146,18 @@ type alias RectangleRecord =
     }
 
 
-renderRect : RectangleRecord -> Svg.Svg msg
-renderRect m =
-    rect
+initRectRecord : String -> Float -> Float -> RectangleRecord
+initRectRecord =
+    RectangleRecord 0 0 1 1
+
+
+renderRectangle (Rectangle m) =
+    renderRectRecord m
+
+
+renderRectRecord : RectangleRecord -> Svg.Svg msg
+renderRectRecord m =
+    Svg.rect
         [ width m.w
         , height m.h
         , fill m.fill
