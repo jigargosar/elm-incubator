@@ -478,19 +478,45 @@ initShape form =
         }
 
 
-waterRect : Shape
-waterRect =
-    rectangle gridCellWidth gridCellWidth
-
-
 move : Float -> Float -> Shape -> Shape
 move dx dy (Shape s) =
     Shape { s | x = s.x + dx, y = s.y + dy }
 
 
+moveTo : Float -> Float -> Shape -> Shape
+moveTo x y (Shape s) =
+    Shape { s | x = x, y = y }
+
+
 sca : Float -> Shape -> Shape
 sca sc (Shape s) =
     Shape { s | scale = s.scale * sc }
+
+
+fill : String -> Shape -> Shape
+fill c (Shape s) =
+    Shape { s | fill = c }
+
+
+waterRect : Shape
+waterRect =
+    rectangle gridCellWidth gridCellWidth
+        |> fill "dodgerblue"
+        |> setT MEDIUM
+
+
+moveToAddr : Address -> Shape -> Shape
+moveToAddr address =
+    let
+        ( x, y ) =
+            addressToXY address
+    in
+    moveTo x y
+
+
+setT : TRANSITION -> Shape -> Shape
+setT t (Shape s) =
+    Shape { s | transition = t }
 
 
 viewCell : CellView -> HM
@@ -501,10 +527,13 @@ viewCell cellView =
     in
     case cellView of
         IdleCell idx ->
-            viewHelp idx
-                [ waterCellStyle (AtGridIndex idx) 1 1
-                , transitionDefault
-                ]
+            --viewHelp idx
+            --    [ waterCellStyle (AtGridIndex idx) 1 1
+            --    , transitionDefault
+            --    ]
+            waterRect
+                |> moveToAddr (AtGridIndex idx)
+                |> drawSH
 
         ConnectedCell idx ->
             viewHelp idx
