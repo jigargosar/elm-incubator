@@ -88,6 +88,7 @@ init _ =
 type Msg
     = NoOp
     | Tick
+    | OnDrag Idx
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -98,6 +99,19 @@ update message model =
 
         Tick ->
             ( model, Cmd.none )
+
+        OnDrag unverifiedIdx ->
+            ( case ( model, validIdx unverifiedIdx ) of
+                ( Idle, Just idx ) ->
+                    Dragging [ ( idx, Anim 0.5 ) ]
+
+                ( Dragging list, Just idx ) ->
+                    Dragging (( idx, Anim 0.5 ) :: list)
+
+                _ ->
+                    model
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
