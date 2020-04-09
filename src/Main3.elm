@@ -418,7 +418,11 @@ type Form
 
 
 type Shape
-    = Shape FADE TRANSFORM FILL STROKE STYLES TRANSITION Form
+    = Shape ShapeRecord
+
+
+type alias ShapeRecord =
+    { fade : FADE, transform : TRANSFORM, fill : FILL, stroke : STROKE, styles : STYLES, transition : TRANSITION, form : Form }
 
 
 rectangle : Float -> Float -> Shape
@@ -428,7 +432,22 @@ rectangle w h =
 
 initShape : Form -> Shape
 initShape =
-    Shape (FADE 1) (TRANSFORM 0 0 1) (FILL "none") (STROKE "none" 0) (STYLES []) INSTANT
+    ShapeRecord (FADE 1) (TRANSFORM 0 0 1) (FILL "none") (STROKE "none" 0) (STYLES []) INSTANT
+        >> Shape
+
+
+waterRect : Shape
+waterRect =
+    rectangle gridCellWidth gridCellWidth
+
+
+move : Float -> Float -> Shape -> Shape
+move dx dy (Shape s) =
+    let
+        (TRANSFORM x y sca) =
+            s.transform
+    in
+    Shape { s | transform = TRANSFORM (x + dx) (y + dy) sca }
 
 
 viewCell : CellView -> HM
