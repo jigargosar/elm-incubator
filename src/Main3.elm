@@ -435,6 +435,7 @@ viewWaterCell2 resetTransitions idx styles =
                     , Transitions.left 200
                     ]
                 )
+            :: transition []
             :: styles
         )
         []
