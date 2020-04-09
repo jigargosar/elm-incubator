@@ -403,7 +403,10 @@ cellViewToStyles cellView =
             ]
 
         EnteringStartCell _ ->
-            []
+            [ opacity (num 0)
+            , transforms [ translateY (px -300) ]
+            , transitionNone
+            ]
 
         EnteringCell _ ->
             []
