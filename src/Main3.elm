@@ -387,6 +387,15 @@ movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
+type TRANSFORM
+    = SCALE Float
+    | TRANSLATE Float Float
+
+
+type FADE
+    = FADE Float
+
+
 viewCell : CellView -> HM
 viewCell cellView =
     let
