@@ -348,6 +348,9 @@ type CellView
     = IdleCell Idx
     | ConnectedCell Idx
     | LeavingCell Idx
+    | EnteringStartCell Idx
+    | EnteringCell Idx
+    | ResetIdleCell Idx
 
 
 viewCell : CellView -> HM
@@ -362,30 +365,51 @@ viewCell cellView =
         LeavingCell idx ->
             viewLeavingCell idx
 
+        EnteringStartCell idx ->
+            viewEnteringStartCell idx
+
+        EnteringCell idx ->
+            viewEnteringCell idx
+
+        ResetIdleCell idx ->
+            viewResetIdleCell idx
+
 
 viewGeneratedCellsStart : List Int -> Int -> HM
 viewGeneratedCellsStart genLs idx =
     case List.member idx genLs of
         True ->
-            viewStyledWaterCellAt
-                idx
-                [ opacity (num 0)
-                , transforms [ translateY (px -300) ]
-                , transitionNone
-                ]
+            viewEnteringStartCell idx
 
         False ->
-            viewStyledWaterCellAt idx [ transitionNone ]
+            viewResetIdleCell idx
+
+
+viewEnteringStartCell idx =
+    viewStyledWaterCellAt
+        idx
+        [ opacity (num 0)
+        , transforms [ translateY (px -300) ]
+        , transitionNone
+        ]
+
+
+viewResetIdleCell idx =
+    viewStyledWaterCellAt idx [ transitionNone ]
 
 
 viewFallingGeneratedCells : List Int -> Int -> HM
 viewFallingGeneratedCells genLs idx =
     case List.member idx genLs of
         True ->
-            viewStyledWaterCellAt idx [ transforms [ translateY zero ] ]
+            viewEnteringCell idx
 
         False ->
             viewIdleCell idx
+
+
+viewEnteringCell idx =
+    viewStyledWaterCellAt idx [ transforms [ translateY zero ] ]
 
 
 viewLeavingCell : Int -> HM
