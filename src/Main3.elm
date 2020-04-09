@@ -388,27 +388,25 @@ viewCell cellView =
     case cellView of
         IdleCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateAddress (AtGridIndex idx) ]
+                [ cellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ConnectedCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateAddress (AtGridIndex idx), Css.scale 0.5 ]
+                [ cellStyle (AtGridIndex idx) 0.5 1
                 , transitionFast
                 ]
 
         LeavingCell idx ->
             viewStyledWaterCellAt idx
-                [ opacity (num 0)
-                , transforms [ translateAddress AtWaterCollector, Css.scale 0.5 ]
+                [ cellStyle AtWaterCollector 0.5 0
                 , transitionDefault
                 ]
 
         EnteringStartCell idx ->
             viewStyledWaterCellAt idx
-                [ opacity (num 0)
-                , transforms [ translateAddress (AtGridIndexEnterance idx), scale 0 ]
+                [ cellStyle (AtGridIndexEnterance idx) 0 0
                 , transitionNone
                 ]
 
@@ -423,6 +421,14 @@ viewCell cellView =
                 [ transforms [ translateAddress (AtGridIndex idx) ]
                 , transitionNone
                 ]
+
+
+cellStyle : Address -> Float -> Float -> Css.Style
+cellStyle address scaleV fadeV =
+    Css.batch
+        [ transforms [ translateAddress address, scale scaleV ]
+        , opacity (num fadeV)
+        ]
 
 
 gridIndexToPoint : Int -> ( Float, Float )
