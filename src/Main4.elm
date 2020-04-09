@@ -131,6 +131,15 @@ rect color w h fnList =
         |> renderShape
 
 
+circle : String -> Float -> List (Shape -> Shape) -> Svg.Svg msg
+circle color r fnList =
+    let
+        m =
+            Circle (initCircleRecord color r)
+    in
+    List.foldl (<|) m fnList |> renderShape
+
+
 fade : Float -> Shape -> Shape
 fade o shape =
     case shape of
@@ -167,6 +176,12 @@ initRectRecord =
     RectangleRecord 0 0 1 1
 
 
+initCircleRecord : String -> Float -> CircleRecord
+initCircleRecord =
+    CircleRecord 0 0 1 1
+
+
+renderShape : Shape -> Svg.Svg msg
 renderShape shape =
     case shape of
         Rectangle m ->
