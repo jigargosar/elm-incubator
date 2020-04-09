@@ -387,37 +387,37 @@ viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
         IdleCell idx ->
-            viewStyledWaterCellAt idx
+            viewStyledCell idx
                 [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ConnectedCell idx ->
-            viewStyledWaterCellAt idx
+            viewStyledCell idx
                 [ waterCellStyle (AtGridIndex idx) 0.5 1
                 , transitionFast
                 ]
 
         LeavingCell idx ->
-            viewStyledWaterCellAt idx
+            viewStyledCell idx
                 [ waterCellStyle AtWaterCollector 0.5 0
                 , transitionDefault
                 ]
 
         EnteringStartCell idx ->
-            viewStyledWaterCellAt idx
+            viewStyledCell idx
                 [ waterCellStyle (AtGridIndexEnterance idx) 0 0
                 , transitionNone
                 ]
 
         EnteringCell idx ->
-            viewStyledWaterCellAt idx
+            viewStyledCell idx
                 [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ResetIdleCell idx ->
-            viewStyledWaterCellAt idx
+            viewStyledCell idx
                 [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionNone
                 ]
@@ -470,8 +470,8 @@ gridWidth =
     toFloat gridColumns * (gridCellWidth + 1)
 
 
-viewStyledWaterCellAt : Int -> List Css.Style -> HM
-viewStyledWaterCellAt idx styles =
+viewStyledCell : Int -> List Css.Style -> HM
+viewStyledCell idx styles =
     styled div
         (bgc "dodgerblue"
             :: width (px gridCellWidth)
