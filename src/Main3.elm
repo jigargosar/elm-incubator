@@ -38,9 +38,9 @@ type Model
 
 
 type EndingDragState
-    = LeavingAndFalling (List Int) (List ( Int, Int )) (List Int)
-    | GeneratedStart (List Int)
-    | GeneratedFalling (List Int)
+    = LeavingAndFalling Float (List Int) (List ( Int, Int )) (List Int)
+    | GeneratedStart Float (List Int)
+    | GeneratedFalling Float (List Int)
 
 
 type alias Flags =
@@ -136,7 +136,7 @@ type Msg
     | OnDragStart Int
     | OnDragOver Int
     | OnDragEnd
-    | StepGen
+    | StepEndingDrag
     | OnTimeout Msg (List ( Float, Msg ))
     | OnLoopSimulation
 
@@ -180,28 +180,39 @@ update message model =
                     let
                         ( changes, newEmptyIndices ) =
                             computeFallingFromEmptyIndices draggingIndices ( [], [] )
+
+                        duration =
+                            300
                     in
-                    ( EndingDrag (LeavingAndFalling draggingIndices changes newEmptyIndices)
-                    , delay 300 StepGen
+                    ( EndingDrag (LeavingAndFalling duration draggingIndices changes newEmptyIndices)
+                    , delay duration StepEndingDrag
                       --|> always Cmd.none
                     )
 
                 _ ->
                     ( model, Cmd.none )
 
-        StepGen ->
+        StepEndingDrag ->
             case model of
                 EndingDrag endingDragState ->
                     case endingDragState of
-                        LeavingAndFalling _ _ genIndices ->
-                            ( EndingDrag (GeneratedStart genIndices)
-                            , delay 300 StepGen
+                        LeavingAndFalling _ _ _ genIndices ->
+                            let
+                                duration =
+                                    300
+                            in
+                            ( EndingDrag (GeneratedStart duration genIndices)
+                            , delay duration StepEndingDrag
                             )
 
-                        GeneratedStart gi ->
-                            ( EndingDrag (GeneratedFalling gi), delay 300 StepGen )
+                        GeneratedStart _ gi ->
+                            let
+                                duration =
+                                    300
+                            in
+                            ( EndingDrag (GeneratedFalling duration gi), delay duration StepEndingDrag )
 
-                        GeneratedFalling _ ->
+                        GeneratedFalling _ _ ->
                             ( Idle, Cmd.none )
 
                 _ ->
@@ -287,7 +298,7 @@ viewGrid m =
 
         EndingDrag endingDragState ->
             case endingDragState of
-                LeavingAndFalling leaving falling _ ->
+                LeavingAndFalling _ leaving falling _ ->
                     styled div
                         [ gridStyle gridRows gridColumns gridCellWidth ]
                         []
@@ -295,7 +306,7 @@ viewGrid m =
                             |> List.map (viewLeavingAndFallingCell leaving falling)
                         )
 
-                GeneratedStart genLs ->
+                GeneratedStart _ genLs ->
                     styled div
                         [ gridStyle gridRows gridColumns gridCellWidth ]
                         []
@@ -303,7 +314,7 @@ viewGrid m =
                             |> List.map (viewGeneratedCellsStart genLs)
                         )
 
-                GeneratedFalling genLs ->
+                GeneratedFalling _ genLs ->
                     styled div
                         [ gridStyle gridRows gridColumns gridCellWidth ]
                         []
