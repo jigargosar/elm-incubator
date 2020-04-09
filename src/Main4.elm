@@ -164,15 +164,6 @@ circle color r fnList =
     List.foldl (<|) m fnList |> renderShape
 
 
-
--- SVG PRIVATE API
-
-
-type Shape
-    = Rectangle RectangleRecord
-    | Circle CircleRecord
-
-
 fade : Float -> Shape -> Shape
 fade o shape =
     case shape of
@@ -181,6 +172,15 @@ fade o shape =
 
         Circle m ->
             Circle { m | o = o }
+
+
+
+-- SVG PRIVATE API
+
+
+type Shape
+    = Rectangle RectangleRecord
+    | Circle CircleRecord
 
 
 type alias RectangleRecord =
