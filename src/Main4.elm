@@ -117,14 +117,18 @@ view _ =
 
 
 type Rectangle
-    = Rectangle
-        { x : Float
-        , y : Float
-        , w : Float
-        , h : Float
-        , fill : String
-        , fade : Float
-        }
+    = Rectangle RectangleRecord
+
+
+type alias RectangleRecord =
+    { x : Float
+    , y : Float
+    , scale : Float
+    , fade : Float
+    , fill : String
+    , w : Float
+    , h : Float
+    }
 
 
 opacity =
