@@ -349,7 +349,7 @@ viewFallingGeneratedCells genLs idx =
             viewWaterCell idx [ transforms [ translateY zero ] ]
 
         False ->
-            viewWaterCell idx []
+            viewDefaultCell idx
 
 
 viewLeavingAndFallingCell : List Int -> List ( Int, Int ) -> Int -> HM
@@ -361,15 +361,25 @@ viewLeavingAndFallingCell leavingLs fallingLs idx =
         Nothing ->
             case List.member idx leavingLs of
                 True ->
-                    viewWaterCell idx
-                        [ left (pct 50)
-                        , top (px 0)
-                        , opacity (num 0)
-                        , transforms [ Css.scale 0.5 ]
-                        ]
+                    viewLeavingCell idx
 
                 False ->
-                    viewWaterCell idx []
+                    viewDefaultCell idx
+
+
+viewLeavingCell : Int -> HM
+viewLeavingCell idx =
+    viewWaterCell idx
+        [ left (pct 50)
+        , top (px 0)
+        , opacity (num 0)
+        , transforms [ Css.scale 0.5 ]
+        ]
+
+
+viewDefaultCell : Int -> HM
+viewDefaultCell idx =
+    viewWaterCell idx []
 
 
 viewCell : List Int -> Int -> HM
@@ -381,6 +391,7 @@ viewCell connectedIndices idx =
         viewWaterCell idx []
 
 
+viewWaterCell : Int -> List Css.Style -> HM
 viewWaterCell =
     viewWaterCell2 False
 
