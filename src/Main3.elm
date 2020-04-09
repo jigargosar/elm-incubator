@@ -181,7 +181,7 @@ update message model =
                             computeFallingFromEmptyIndices draggingIndices ( [], [] )
 
                         duration =
-                            300
+                            defaultTransitionDuration
                     in
                     ( EndingDrag (LeavingAndFalling duration draggingIndices changes newEmptyIndices)
                     , delay duration StepEndingDrag
@@ -198,7 +198,7 @@ update message model =
                         LeavingAndFalling _ _ _ genIndices ->
                             let
                                 duration =
-                                    0
+                                    defaultTransitionDuration
                             in
                             ( EndingDrag (GeneratedStart duration genIndices)
                             , delay duration StepEndingDrag
@@ -207,7 +207,7 @@ update message model =
                         GeneratedStart _ genIndices ->
                             let
                                 duration =
-                                    300
+                                    defaultTransitionDuration
                             in
                             ( EndingDrag (GeneratedFalling duration genIndices), delay duration StepEndingDrag )
 
@@ -461,16 +461,20 @@ viewWaterCell2 resetTransitions idx styles =
                     []
 
                  else
-                    [ Transitions.transform 200
-                    , Transitions.opacity 200
-                    , Transitions.top 200
-                    , Transitions.left 200
+                    [ Transitions.transform defaultTransitionDuration
+                    , Transitions.opacity defaultTransitionDuration
+                    , Transitions.top defaultTransitionDuration
+                    , Transitions.left defaultTransitionDuration
                     ]
                 )
             :: styles
         )
         []
         [ text (String.fromInt idx) ]
+
+
+defaultTransitionDuration =
+    500
 
 
 bgc =
