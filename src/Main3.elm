@@ -428,6 +428,7 @@ cellStyle address scaleV fadeV =
     Css.batch
         [ transforms [ translateAddress address, scale scaleV ]
         , opacity (num fadeV)
+        , position fixed
         ]
 
 
