@@ -179,7 +179,6 @@ update message model =
                     in
                     ( EndingDrag (LeavingAndFalling duration draggingIndices changes newEmptyIndices)
                     , delay duration StepEndingDrag
-                      --|> always Cmd.none
                     )
 
                 _ ->
@@ -233,17 +232,6 @@ type alias HM =
 view : Model -> HM
 view m =
     viewGrid m
-
-
-
---styled div
---    [ displayFlex
---    , Css.alignItems Css.center
---    , Css.justifyContent Css.center
---    , Css.minHeight (vh 100)
---    ]
---    []
---    [ viewGrid m ]
 
 
 gridColumns =
@@ -384,16 +372,6 @@ addressToXY address =
             ( gridXOffset + (gridWidth / 2), gridCellWidth )
 
 
-
---translateAddress : Address -> Css.Transform {}
---translateAddress address =
---    let
---        ( x, y ) =
---            addressToXY address
---    in
---    Css.translate2 (px x) (px y)
-
-
 movePoint : number -> number -> ( number, number ) -> ( number, number )
 movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
@@ -475,9 +453,12 @@ initShape form =
 
 
 
---move : Float -> Float -> Shape -> Shape
---move dx dy (Shape s) =
---    Shape { s | x = s.x + dx, y = s.y + dy }
+--noinspection ElmUnusedSymbol
+
+
+move : Float -> Float -> Shape -> Shape
+move dx dy (Shape s) =
+    Shape { s | x = s.x + dx, y = s.y + dy }
 
 
 moveTo : Float -> Float -> Shape -> Shape
@@ -523,26 +504,15 @@ setT t (Shape s) =
 viewCell : CellView -> HM
 viewCell cellView =
     let
-        viewHelp idx styles =
-            styled div styles [] [ text (String.fromInt idx) ]
-
         viewHelp2 idx fn =
             fn (waterRect idx) |> drawSH
     in
     case cellView of
         IdleCell idx ->
-            --viewHelp idx
-            --    [ waterCellStyle (AtGridIndex idx) 1 1
-            --    , transitionDefault
-            --    ]
             viewHelp2 idx
                 (moveToAddr (AtGridIndex idx))
 
         ConnectedCell idx ->
-            --viewHelp idx
-            --    [ waterCellStyle (AtGridIndex idx) 0.5 1
-            --    , transitionFast
-            --    ]
             viewHelp2 idx
                 (moveToAddr (AtGridIndex idx)
                     >> setT FAST
@@ -550,10 +520,6 @@ viewCell cellView =
                 )
 
         LeavingCell idx ->
-            --viewHelp idx
-            --    [ waterCellStyle AtWaterCollector 0.5 0
-            --    , transitionDefault
-            --    ]
             viewHelp2 idx
                 (moveToAddr AtWaterCollector
                     >> sca 0.5
@@ -561,18 +527,10 @@ viewCell cellView =
                 )
 
         FallingCell fromIdx toIdx ->
-            --viewHelp fromIdx
-            --    [ waterCellStyle (AtGridIndex toIdx) 1 1
-            --    , transitionDefault
-            --    ]
             viewHelp2 fromIdx
                 (moveToAddr (AtGridIndex toIdx))
 
         StartEnteringCell idx ->
-            --viewHelp idx
-            --    [ waterCellStyle (AtGridIndexEntrance idx) 0 0
-            --    , transitionNone
-            --    ]
             viewHelp2 idx
                 (moveToAddr (AtGridIndexEntrance idx)
                     >> sca 0
@@ -581,32 +539,10 @@ viewCell cellView =
                 )
 
         ResetIdleCell idx ->
-            --viewHelp idx
-            --    [ waterCellStyle (AtGridIndex idx) 1 1
-            --    , transitionNone
-            --    ]
             viewHelp2 idx
                 (moveToAddr (AtGridIndex idx)
                     >> setT INSTANT
                 )
-
-
-
---waterCellStyle : Address -> Float -> Float -> Css.Style
---waterCellStyle address scaleV fadeV =
---    Css.batch
---        [ cellStyle address scaleV fadeV
---        , bgc "dodgerblue"
---        ]
---cellStyle : Address -> Float -> Float -> Css.Style
---cellStyle address scaleV fadeV =
---    Css.batch
---        [ transforms [ translateAddress address, scale scaleV ]
---        , opacity (num fadeV)
---        , position fixed
---        , width (px gridCellWidth)
---        , height (px gridCellWidth)
---        ]
 
 
 gridIndexToPoint : Int -> ( Float, Float )
@@ -652,16 +588,6 @@ bgc =
 
 
 
---transitionNone =
---    Css.property "transition" "none"
---
---
---transitionDefault =
---    Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration ++ "ms")
---
---
---transitionFast =
---    Css.property "transition" ("all " ++ String.fromFloat fastTransitionDuration ++ "ms")
 -- Main
 
 
