@@ -56,11 +56,7 @@ gridIndices =
 
 
 
--- Model
-
-
-type alias Idx =
-    Int
+-- ANIM
 
 
 type alias Anim =
@@ -98,6 +94,14 @@ animTick delta ({ elapsed } as anim) =
 
     else
         { anim | elapsed = elapsed + delta }
+
+
+
+-- Model
+
+
+type alias Idx =
+    Int
 
 
 type Model
