@@ -473,13 +473,10 @@ gridWidth =
 viewStyledCell : Int -> List Css.Style -> HM
 viewStyledCell idx styles =
     styled div
-        (bgc "dodgerblue"
-            :: width (px gridCellWidth)
+        (width (px gridCellWidth)
             :: height (px gridCellWidth)
             :: left zero
             :: top zero
-            :: position fixed
-            :: opacity (num 1)
             :: styles
         )
         []
