@@ -343,7 +343,7 @@ type alias Idx =
     Int
 
 
-type CellView
+type CellViewState
     = IdleCell Idx
     | ConnectedCell Idx
     | LeavingCell Idx
@@ -501,7 +501,7 @@ setT t (Shape s) =
     Shape { s | transition = t }
 
 
-viewCell : CellView -> HM
+viewCell : CellViewState -> HM
 viewCell cellView =
     let
         viewHelp2 idx fn =
