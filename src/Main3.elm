@@ -365,11 +365,6 @@ type CellView
     | ResetIdleCell Idx
 
 
-viewCell1 : CellView -> HM
-viewCell1 cellView =
-    viewStyledWaterCellAt (cellViewToIndex cellView) (cellViewToStyles cellView)
-
-
 viewCell : CellView -> HM
 viewCell cellView =
     case cellView of
@@ -396,48 +391,6 @@ viewCell cellView =
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
                 [ transitionNone ]
-
-
-cellViewToIndex cellView =
-    case cellView of
-        IdleCell idx ->
-            idx
-
-        ConnectedCell idx ->
-            idx
-
-        LeavingCell idx ->
-            idx
-
-        EnteringStartCell idx ->
-            idx
-
-        EnteringCell idx ->
-            idx
-
-        ResetIdleCell idx ->
-            idx
-
-
-cellViewToStyles cellView =
-    case cellView of
-        IdleCell _ ->
-            []
-
-        ConnectedCell _ ->
-            [ transforms [ Css.scale 0.5 ] ]
-
-        LeavingCell _ ->
-            [ left (pct 50), top (px 0), opacity (num 0), transforms [ Css.scale 0.5 ] ]
-
-        EnteringStartCell _ ->
-            [ opacity (num 0), transforms [ translateY (px -300) ], transitionNone ]
-
-        EnteringCell _ ->
-            [ transforms [ translateY zero ] ]
-
-        ResetIdleCell _ ->
-            [ transitionNone ]
 
 
 viewStyledWaterCellAt : Int -> List Css.Style -> HM
