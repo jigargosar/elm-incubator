@@ -351,7 +351,7 @@ type CellView
 
 type Address
     = AtGridIndex Idx
-    | AtEnteringGridIndex Idx
+    | AtGridIndexEnterance Idx
     | AtWaterCollector
 
 
@@ -361,7 +361,7 @@ addressToXY address =
         AtGridIndex idx ->
             gridIndexToPoint idx
 
-        AtEnteringGridIndex idx ->
+        AtGridIndexEnterance idx ->
             gridIndexToPoint idx
                 |> movePoint 0 -300
 
@@ -378,6 +378,7 @@ translateAddress address =
     Css.translate2 (px x) (px y)
 
 
+movePoint : number -> number -> ( number, number ) -> ( number, number )
 movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
 
@@ -387,39 +388,41 @@ viewCell cellView =
     case cellView of
         IdleCell idx ->
             viewStyledWaterCellAt idx
-                [ transitionDefault ]
+                [ transforms [ translateAddress (AtGridIndex idx) ]
+                , transitionDefault
+                ]
 
         ConnectedCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ Css.scale 0.5 ]
+                [ transforms [ translateAddress (AtGridIndex idx), Css.scale 0.5 ]
                 , transitionFast
                 ]
 
         LeavingCell idx ->
             viewStyledWaterCellAt idx
-                [ left (pct 50)
-                , top (px 0)
-                , opacity (num 0)
-                , transforms [ Css.scale 0.5 ]
+                [ opacity (num 0)
+                , transforms [ translateAddress AtWaterCollector, Css.scale 0.5 ]
                 , transitionDefault
                 ]
 
         EnteringStartCell idx ->
             viewStyledWaterCellAt idx
                 [ opacity (num 0)
-                , transforms [ translateY (px -300), scale 0 ]
+                , transforms [ translateAddress (AtGridIndexEnterance idx), scale 0 ]
                 , transitionNone
                 ]
 
         EnteringCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateY zero, scale 1 ]
+                [ transforms [ translateAddress (AtGridIndex idx), scale 1 ]
                 , transitionDefault
                 ]
 
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
-                [ transitionNone ]
+                [ transforms [ translateAddress (AtGridIndex idx) ]
+                , transitionNone
+                ]
 
 
 gridIndexToPoint : Int -> ( Float, Float )
@@ -473,6 +476,8 @@ viewStyledWaterCellAt idx styles =
             :: height (px gridCellWidth)
             :: left (px x)
             :: top (px y)
+            :: left zero
+            :: top zero
             :: position fixed
             :: opacity (num 1)
             :: styles
