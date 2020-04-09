@@ -493,6 +493,10 @@ sca sc (Shape s) =
     Shape { s | scale = s.scale * sc }
 
 
+fade o (Shape s) =
+    Shape { s | fade = o }
+
+
 fill : String -> Shape -> Shape
 fill c (Shape s) =
     Shape { s | fill = c }
@@ -524,6 +528,9 @@ viewCell cellView =
     let
         viewHelp idx styles =
             styled div styles [] [ text (String.fromInt idx) ]
+
+        viewHelp2 idx fn =
+            fn waterRect |> drawSH
     in
     case cellView of
         IdleCell idx ->
@@ -531,26 +538,30 @@ viewCell cellView =
             --    [ waterCellStyle (AtGridIndex idx) 1 1
             --    , transitionDefault
             --    ]
-            waterRect
-                |> moveToAddr (AtGridIndex idx)
-                |> drawSH
+            viewHelp2 idx
+                (moveToAddr (AtGridIndex idx))
 
         ConnectedCell idx ->
             --viewHelp idx
             --    [ waterCellStyle (AtGridIndex idx) 0.5 1
             --    , transitionFast
             --    ]
-            waterRect
-                |> moveToAddr (AtGridIndex idx)
-                |> setT FAST
-                |> sca 0.5
-                |> drawSH
+            viewHelp2 idx
+                (moveToAddr (AtGridIndex idx)
+                    >> setT FAST
+                    >> sca 0.5
+                )
 
         LeavingCell idx ->
-            viewHelp idx
-                [ waterCellStyle AtWaterCollector 0.5 0
-                , transitionDefault
-                ]
+            --viewHelp idx
+            --    [ waterCellStyle AtWaterCollector 0.5 0
+            --    , transitionDefault
+            --    ]
+            viewHelp2 idx
+                (moveToAddr AtWaterCollector
+                    >> sca 0.5
+                    >> fade 0
+                )
 
         FallingCell fromIdx toIdx ->
             viewHelp fromIdx
