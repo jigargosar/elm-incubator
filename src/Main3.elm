@@ -564,16 +564,24 @@ viewCell cellView =
                 )
 
         FallingCell fromIdx toIdx ->
-            viewHelp fromIdx
-                [ waterCellStyle (AtGridIndex toIdx) 1 1
-                , transitionDefault
-                ]
+            --viewHelp fromIdx
+            --    [ waterCellStyle (AtGridIndex toIdx) 1 1
+            --    , transitionDefault
+            --    ]
+            viewHelp2 fromIdx
+                (moveToAddr (AtGridIndex toIdx))
 
         StartEnteringCell idx ->
-            viewHelp idx
-                [ waterCellStyle (AtGridIndexEntrance idx) 0 0
-                , transitionNone
-                ]
+            --viewHelp idx
+            --    [ waterCellStyle (AtGridIndexEntrance idx) 0 0
+            --    , transitionNone
+            --    ]
+            viewHelp2 idx
+                (moveToAddr (AtGridIndexEntrance idx)
+                    >> sca 0
+                    >> fade 0
+                    >> setT INSTANT
+                )
 
         ResetIdleCell idx ->
             viewHelp idx
