@@ -49,7 +49,7 @@ simulation =
         dragSim =
             OnDragStart 9
                 :: List.map OnDragOver connected
-                |> List.map (Tuple.pair 100)
+                |> List.map (Tuple.pair 50)
     in
     []
         ++ dragSim
@@ -413,7 +413,7 @@ viewStyledWaterCellAt idx styles =
 
 
 defaultTransitionDuration =
-    500
+    1000
 
 
 bgc =
