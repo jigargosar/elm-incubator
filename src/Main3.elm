@@ -56,7 +56,7 @@ init _ =
 
 loopSimulation : Cmd Msg
 loopSimulation =
-    simulate (simulation ++ [ ( seconds 2, LoopSimulation ) ])
+    simulate (simulation ++ [ ( seconds 2, OnLoopSimulation ) ])
 
 
 simulation : List ( number, Msg )
@@ -66,13 +66,13 @@ simulation =
             [ 9, 10, 11, 12, 13, 20, 27, 26, 25 ]
 
         dragSim =
-            DragStart 9
-                :: List.map DragOver connected
+            OnDragStart 9
+                :: List.map OnDragOver connected
                 |> List.map (Tuple.pair 100)
     in
     []
         ++ dragSim
-        ++ [ ( 300, DragEnd ) ]
+        ++ [ ( 300, OnDragEnd ) ]
 
 
 computeFallingFromEmptyIndices : List number -> ( List ( number, number ), List number ) -> ( List ( number, number ), List number )
@@ -133,13 +133,12 @@ delay millis msg =
 
 type Msg
     = NoOp
-    | Set Model
-    | DragStart Int
-    | DragOver Int
-    | DragEnd
+    | OnDragStart Int
+    | OnDragOver Int
+    | OnDragEnd
     | StepGen
     | OnTimeout Msg (List ( Float, Msg ))
-    | LoopSimulation
+    | OnLoopSimulation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -148,17 +147,14 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Set m2 ->
-            ( m2, Cmd.none )
-
         OnTimeout msg pending ->
             update msg model
                 |> addCmd (simulate pending)
 
-        LoopSimulation ->
+        OnLoopSimulation ->
             ( model, loopSimulation )
 
-        DragStart unverifiedIdx ->
+        OnDragStart unverifiedIdx ->
             case ( model, validIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     ( Dragging [ idx ], Cmd.none )
@@ -166,7 +162,7 @@ update message model =
                 _ ->
                     ( model, Cmd.none )
 
-        DragOver unverifiedIdx ->
+        OnDragOver unverifiedIdx ->
             case ( model, validIdx unverifiedIdx ) of
                 ( Dragging draggingIndices, Just idx ) ->
                     if List.member idx draggingIndices then
@@ -178,7 +174,7 @@ update message model =
                 _ ->
                     ( model, Cmd.none )
 
-        DragEnd ->
+        OnDragEnd ->
             case model of
                 Dragging draggingIndices ->
                     let
