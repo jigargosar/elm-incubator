@@ -474,6 +474,7 @@ scale sc (Shape s) =
     Shape { s | scale = s.scale * sc }
 
 
+fade : Float -> Shape -> Shape
 fade o (Shape s) =
     Shape { s | fade = o }
 
