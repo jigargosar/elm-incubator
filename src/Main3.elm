@@ -416,6 +416,10 @@ defaultTransitionDuration =
     1000
 
 
+fastTransitionDuration =
+    1000
+
+
 bgc =
     Css.property "background-color"
 
@@ -426,6 +430,10 @@ transitionNone =
 
 transitionDefault =
     Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration ++ "ms")
+
+
+transitionFast =
+    Css.property "transition" ("all " ++ String.fromFloat fastTransitionDuration ++ "ms")
 
 
 
