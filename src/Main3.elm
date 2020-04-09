@@ -485,8 +485,6 @@ viewStyledCell idx styles =
     styled div
         (width (px gridCellWidth)
             :: height (px gridCellWidth)
-            --:: left zero
-            --:: top zero
             :: styles
         )
         []
