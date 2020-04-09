@@ -322,9 +322,13 @@ viewEndingDragGrid endingDragState =
                 (gridCellIndices |> List.map (viewFallingGeneratedCells generated))
 
 
+type alias Idx =
+    Int
+
+
 type CellView
-    = IdleCell Int
-    | ConnectedCell Int
+    = IdleCell Idx
+    | ConnectedCell Idx
 
 
 viewCell : CellView -> HM
