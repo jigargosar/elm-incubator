@@ -86,8 +86,8 @@ animIsDone anim =
     animProgress anim == 1
 
 
-animScaleValue : Anim -> Float
-animScaleValue ({ from, to, duration, elapsed } as anim) =
+animValue : Anim -> Float
+animValue ({ from, to, duration, elapsed } as anim) =
     (to - from) * animProgress anim + from
 
 
@@ -230,7 +230,7 @@ renderIdx idx =
 
 
 renderIdxAnim idx anim =
-    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (animScaleValue anim) ]
+    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (animValue anim) ]
 
 
 moveToIdx idx =
