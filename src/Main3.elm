@@ -2,6 +2,7 @@ module Main3 exposing (main)
 
 import Browser
 import Css exposing (fixed, height, num, opacity, position, px, scale, transforms, width)
+import Css.Animations as Anim
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
@@ -384,6 +385,21 @@ translateAddress address =
 movePoint : number -> number -> ( number, number ) -> ( number, number )
 movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
+
+
+
+--fadeInKeyframes =
+--    Css.Animations.keyframes
+--        [ ( 0, [ Css.Animations.opacity (num 0) ] )
+--        , ( 100, [ Css.Animations.opacity (num 1) ] )
+--        ]
+
+
+scaleHalf =
+    Anim.keyframes
+        [ ( 0, [ Anim.transform [ scale 1 ] ] )
+        , ( 100, [ Anim.transform [ scale 0.5 ] ] )
+        ]
 
 
 viewCell : CellView -> HM
