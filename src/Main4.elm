@@ -122,7 +122,7 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     let
         dragIndices =
-            [ 9, 10, 11, 12, 19, 26, 25, 24 ]
+            [ 9, 10, 11, 11, 10, 9, 9, 10, 11, 12, 19, 26, 25, 24 ]
 
         dragCmds =
             List.foldl
