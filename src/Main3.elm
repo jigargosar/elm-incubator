@@ -412,13 +412,13 @@ viewCell cellView =
 
         EnteringCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateAddress (AtGridIndex idx), scale 1 ]
+                [ cellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateAddress (AtGridIndex idx) ]
+                [ cellStyle (AtGridIndex idx) 1 1
                 , transitionNone
                 ]
 
