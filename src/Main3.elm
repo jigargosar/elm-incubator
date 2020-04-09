@@ -34,7 +34,11 @@ import Task
 type Model
     = Idle
     | Dragging (List Int)
-    | LeavingAndFalling (List Int) (List ( Int, Int )) (List Int)
+    | EndingDrag EndingDragState
+
+
+type EndingDragState
+    = LeavingAndFalling (List Int) (List ( Int, Int )) (List Int)
     | GeneratedStart (List Int)
     | GeneratedFalling (List Int)
 
@@ -181,7 +185,7 @@ update message model =
                         ( changes, newEmptyIndices ) =
                             computeFallingFromEmptyIndices draggingIndices ( [], [] )
                     in
-                    ( LeavingAndFalling draggingIndices changes newEmptyIndices
+                    ( EndingDrag (LeavingAndFalling draggingIndices changes newEmptyIndices)
                     , delay 300 StepGen
                       --|> always Cmd.none
                     )
@@ -191,16 +195,18 @@ update message model =
 
         StepGen ->
             case model of
-                LeavingAndFalling _ _ genIndices ->
-                    ( GeneratedStart genIndices
-                    , delay 300 StepGen
-                    )
+                EndingDrag endingDragState ->
+                    case endingDragState of
+                        LeavingAndFalling _ _ genIndices ->
+                            ( EndingDrag (GeneratedStart genIndices)
+                            , delay 300 StepGen
+                            )
 
-                GeneratedStart gi ->
-                    ( GeneratedFalling gi, delay 300 StepGen )
+                        GeneratedStart gi ->
+                            ( EndingDrag (GeneratedFalling gi), delay 300 StepGen )
 
-                GeneratedFalling _ ->
-                    ( Idle, Cmd.none )
+                        GeneratedFalling _ ->
+                            ( Idle, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -283,29 +289,31 @@ viewGrid m =
                     |> List.map (viewCell connected)
                 )
 
-        LeavingAndFalling leaving falling _ ->
-            styled div
-                [ gridStyle gridRows gridColumns gridCellWidth ]
-                []
-                (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewLeavingAndFallingCell leaving falling)
-                )
+        EndingDrag endingDragState ->
+            case endingDragState of
+                LeavingAndFalling leaving falling _ ->
+                    styled div
+                        [ gridStyle gridRows gridColumns gridCellWidth ]
+                        []
+                        (List.range 1 (gridRows * gridColumns)
+                            |> List.map (viewLeavingAndFallingCell leaving falling)
+                        )
 
-        GeneratedStart genLs ->
-            styled div
-                [ gridStyle gridRows gridColumns gridCellWidth ]
-                []
-                (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewGeneratedCellsStart genLs)
-                )
+                GeneratedStart genLs ->
+                    styled div
+                        [ gridStyle gridRows gridColumns gridCellWidth ]
+                        []
+                        (List.range 1 (gridRows * gridColumns)
+                            |> List.map (viewGeneratedCellsStart genLs)
+                        )
 
-        GeneratedFalling genLs ->
-            styled div
-                [ gridStyle gridRows gridColumns gridCellWidth ]
-                []
-                (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewFallingGeneratedCells genLs)
-                )
+                GeneratedFalling genLs ->
+                    styled div
+                        [ gridStyle gridRows gridColumns gridCellWidth ]
+                        []
+                        (List.range 1 (gridRows * gridColumns)
+                            |> List.map (viewFallingGeneratedCells genLs)
+                        )
 
 
 gridStyle : Int -> Int -> Float -> Css.Style
