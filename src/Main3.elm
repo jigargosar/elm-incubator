@@ -387,6 +387,27 @@ viewCell cellView =
             viewResetIdleCell idx
 
 
+cellViewToStyles cellView =
+    case cellView of
+        IdleCell _ ->
+            []
+
+        ConnectedCell _ ->
+            []
+
+        LeavingCell _ ->
+            []
+
+        EnteringStartCell _ ->
+            []
+
+        EnteringCell _ ->
+            []
+
+        ResetIdleCell _ ->
+            []
+
+
 viewEnteringStartCell : Int -> HM
 viewEnteringStartCell idx =
     viewStyledWaterCellAt
