@@ -56,8 +56,8 @@ gridIndices =
 -- Model
 
 
-type alias Model =
-    {}
+type Model
+    = Idle
 
 
 type alias Flags =
@@ -66,7 +66,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( {}
+    ( Idle
     , Cmd.none
     )
 
