@@ -49,7 +49,7 @@ simulation =
         dragSim =
             OnDragStart 9
                 :: List.map OnDragOver connected
-                |> List.map (Tuple.pair 50)
+                |> List.map (Tuple.pair 100)
     in
     []
         ++ dragSim
