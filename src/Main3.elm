@@ -1,24 +1,7 @@
 module Main3 exposing (main)
 
 import Browser
-import Css
-    exposing
-        ( displayFlex
-        , fixed
-        , height
-        , left
-        , num
-        , opacity
-        , pct
-        , position
-        , px
-        , top
-        , transforms
-        , translateY
-        , vh
-        , width
-        , zero
-        )
+import Css exposing (displayFlex, fixed, height, left, num, opacity, pct, position, px, scale, top, transforms, translateY, vh, width, zero)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
@@ -388,11 +371,11 @@ viewCell cellView =
 
         EnteringStartCell idx ->
             viewStyledWaterCellAt idx
-                [ opacity (num 0), transforms [ translateY (px -300) ], transitionNone ]
+                [ opacity (num 0), transforms [ translateY (px -300), scale 0 ], transitionNone ]
 
         EnteringCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ translateY zero ] ]
+                [ transforms [ translateY zero, scale 1 ] ]
 
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
