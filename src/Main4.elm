@@ -122,9 +122,22 @@ view _ =
         ]
 
 
-type Shape
-    = Rectangle RectangleRecord
-    | Circle CircleRecord
+
+-- Main
+
+
+main : Program Flags Model Msg
+main =
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+
+-- SVG PUBLIC API
 
 
 rect : String -> Float -> Float -> List (Shape -> Shape) -> Svg.Svg msg
@@ -144,6 +157,15 @@ circle color r fnList =
             Circle (initCircleRecord color r)
     in
     List.foldl (<|) m fnList |> renderShape
+
+
+
+-- SVG PRIVATE API
+
+
+type Shape
+    = Rectangle RectangleRecord
+    | Circle CircleRecord
 
 
 fade : Float -> Shape -> Shape
@@ -231,17 +253,3 @@ renderTransform m =
 
 opacity =
     TypedSvg.Attributes.opacity << Opacity
-
-
-
--- Main
-
-
-main : Program Flags Model Msg
-main =
-    Browser.element
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
