@@ -19,7 +19,6 @@ import Css
         , width
         , zero
         )
-import Css.Transitions as Transitions exposing (transition)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
@@ -452,12 +451,7 @@ transitionNone =
 
 
 transitionDefault =
-    transition
-        [ Transitions.transform defaultTransitionDuration
-        , Transitions.opacity defaultTransitionDuration
-        , Transitions.top defaultTransitionDuration
-        , Transitions.left defaultTransitionDuration
-        ]
+    Css.property "transition" ("all " ++ String.fromFloat defaultTransitionDuration)
 
 
 
