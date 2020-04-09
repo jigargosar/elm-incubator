@@ -64,7 +64,12 @@ type alias Idx =
 
 
 type alias Anim =
-    { scale : Float }
+    { from : Float, to : Float, duration : Int, elapsed : Int }
+
+
+initAnim : Float -> Anim
+initAnim to =
+    { from = 1, to = to, duration = 300, elapsed = 0 }
 
 
 type Model
@@ -78,11 +83,25 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
+    let
+        dragIndices =
+            [ 9, 10, 11, 12, 19, 26, 25, 24 ]
+
+        dragCmds =
+            List.foldl
+                (\idx ( offset, ms ) ->
+                    let
+                        newOffset =
+                            offset + 200
+                    in
+                    ( newOffset, delay newOffset (OnDrag idx) :: ms )
+                )
+                ( 0, [] )
+                dragIndices
+                |> Tuple.second
+    in
     ( Idle
-    , Cmd.batch
-        [ delay 100 (OnDrag 2)
-        , delay 100 (OnDrag 3)
-        ]
+    , Cmd.batch dragCmds
     )
 
 
@@ -112,10 +131,10 @@ update message model =
         OnDrag unverifiedIdx ->
             ( case ( model, validIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
-                    Dragging [ ( idx, Anim 0.5 ) ]
+                    Dragging [ ( idx, initAnim 0.5 ) ]
 
                 ( Dragging list, Just idx ) ->
-                    Dragging (( idx, Anim 0.5 ) :: list)
+                    Dragging (( idx, initAnim 0.5 ) :: list)
 
                 _ ->
                     model
@@ -182,8 +201,13 @@ renderIdx idx =
     circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx ]
 
 
+animScaleValue : Anim -> Float
+animScaleValue anim =
+    anim.to
+
+
 renderIdxAnim idx anim =
-    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale anim.scale ]
+    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (animScaleValue anim) ]
 
 
 moveToIdx idx =
