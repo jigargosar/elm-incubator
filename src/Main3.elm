@@ -1,21 +1,11 @@
 module Main3 exposing (main)
 
 import Browser
-import Css
-    exposing
-        ( fixed
-        , height
-        , num
-        , opacity
-        , position
-        , px
-        , transforms
-        , translate2
-        , width
-        )
+import Css exposing (fixed, height, hidden, num, opacity, overflow, pct, position, px, transforms, translate2, vh, width)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
+import Svg.Styled as Svg
 import Task
 
 
@@ -230,7 +220,14 @@ type alias HM =
 
 view : Model -> HM
 view m =
-    viewGrid m
+    Svg.styled Svg.svg
+        [ height (vh 100), width (pct 100), overflow hidden ]
+        []
+        [ Svg.styled Svg.foreignObject
+            [ height (pct 100), width (pct 100) ]
+            []
+            [ viewGrid m ]
+        ]
 
 
 gridColumns =
