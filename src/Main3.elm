@@ -1,5 +1,6 @@
 module Main3 exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser
 import Css exposing (displayFlex, fixed, height, left, num, opacity, pct, position, px, scale, top, transforms, translateY, vh, width, zero)
 import Html.Styled exposing (div, styled, text)
@@ -349,18 +350,36 @@ type CellView
 
 
 type Address
-    = AtGridIndex Int
-    | AtEnteringGridIndex Int
+    = AtGridIndex Idx
+    | AtEnteringGridIndex Idx
     | AtWaterCollector
 
 
-translateAddress address =
+addressToXY : Address -> ( Float, Float )
+addressToXY address =
     case address of
         AtGridIndex idx ->
-            1
+            gridIndexToPoint idx
 
-        _ ->
-            1
+        AtEnteringGridIndex idx ->
+            gridIndexToPoint idx
+                |> movePoint 0 -300
+
+        AtWaterCollector ->
+            ( gridXOffset + (gridWidth / 2), gridCellWidth )
+
+
+translateAddress : Address -> Css.Transform {}
+translateAddress address =
+    let
+        ( x, y ) =
+            addressToXY address
+    in
+    Css.translate2 (px x) (px y)
+
+
+movePoint dx dy ( x, y ) =
+    ( x + dx, y + dy )
 
 
 viewCell : CellView -> HM
@@ -401,6 +420,36 @@ viewCell cellView =
         ResetIdleCell idx ->
             viewStyledWaterCellAt idx
                 [ transitionNone ]
+
+
+gridIndexToPoint : Int -> ( Float, Float )
+gridIndexToPoint idx =
+    let
+        xi =
+            modBy gridColumns (idx - 1)
+
+        yi =
+            (idx - 1) // gridColumns
+
+        x =
+            (toFloat xi * (gridCellWidth + 1)) + gridXOffset
+
+        y =
+            (toFloat yi * (gridCellWidth + 1)) + gridYOffset
+    in
+    ( x, y )
+
+
+gridXOffset =
+    300
+
+
+gridYOffset =
+    400
+
+
+gridWidth =
+    toFloat gridColumns * (gridCellWidth + 1)
 
 
 viewStyledWaterCellAt : Int -> List Css.Style -> HM
