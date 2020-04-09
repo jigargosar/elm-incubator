@@ -387,10 +387,6 @@ movePoint dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-type TRANSFORM
-    = TRANSFORM Float Float Float
-
-
 type FADE
     = FADE Float
 
@@ -422,7 +418,16 @@ type Shape
 
 
 type alias ShapeRecord =
-    { fade : FADE, transform : TRANSFORM, fill : FILL, stroke : STROKE, styles : STYLES, transition : TRANSITION, form : Form }
+    { fade : FADE
+    , x : Float
+    , y : Float
+    , scale : Float
+    , fill : FILL
+    , stroke : STROKE
+    , styles : STYLES
+    , transition : TRANSITION
+    , form : Form
+    }
 
 
 rectangle : Float -> Float -> Shape
@@ -432,7 +437,7 @@ rectangle w h =
 
 initShape : Form -> Shape
 initShape =
-    ShapeRecord (FADE 1) (TRANSFORM 0 0 1) (FILL "none") (STROKE "none" 0) (STYLES []) INSTANT
+    ShapeRecord (FADE 1) 0 0 1 (FILL "none") (STROKE "none" 0) (STYLES []) INSTANT
         >> Shape
 
 
@@ -443,11 +448,7 @@ waterRect =
 
 move : Float -> Float -> Shape -> Shape
 move dx dy (Shape s) =
-    let
-        (TRANSFORM x y sca) =
-            s.transform
-    in
-    Shape { s | transform = TRANSFORM (x + dx) (y + dy) sca }
+    Shape { s | x = s.x + dx, y = s.y + dy }
 
 
 viewCell : CellView -> HM
