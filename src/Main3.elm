@@ -399,6 +399,14 @@ type STYLES
     = STYLES (List Css.Style)
 
 
+type FILL
+    = FILL String
+
+
+type STROKE
+    = STROKE String Float
+
+
 type TRANSITION
     = FAST
     | MEDIUM
@@ -410,7 +418,7 @@ type Form
 
 
 type Shape
-    = Shape FADE TRANSFORM STYLES TRANSITION Form
+    = Shape FADE TRANSFORM FILL STROKE STYLES TRANSITION Form
 
 
 rectangle : Float -> Float -> Shape
@@ -420,7 +428,7 @@ rectangle w h =
 
 initShape : Form -> Shape
 initShape =
-    Shape (FADE 1) (TRANSFORM 0 0 1) (STYLES []) INSTANT
+    Shape (FADE 1) (TRANSFORM 0 0 1) (FILL "none") (STROKE "none" 0) (STYLES []) INSTANT
 
 
 viewCell : CellView -> HM
