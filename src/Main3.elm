@@ -277,6 +277,11 @@ gridCellWidth =
     50
 
 
+gridCellIndices : List Int
+gridCellIndices =
+    List.range 1 (gridRows * gridColumns)
+
+
 viewGrid : Model -> HM
 viewGrid m =
     case m of
@@ -284,17 +289,13 @@ viewGrid m =
             styled div
                 []
                 []
-                (List.range 1 (gridRows * gridColumns)
-                    |> List.map viewIdleCell
-                )
+                (gridCellIndices |> List.map viewIdleCell)
 
         Dragging connected ->
             styled div
                 []
                 []
-                (List.range 1 (gridRows * gridColumns)
-                    |> List.map (viewCell connected)
-                )
+                (gridCellIndices |> List.map (viewCell connected))
 
         EndingDrag endingDragState ->
             case endingDragState of
@@ -302,25 +303,19 @@ viewGrid m =
                     styled div
                         []
                         []
-                        (List.range 1 (gridRows * gridColumns)
-                            |> List.map (viewLeavingAndFallingCell leaving falling)
-                        )
+                        (gridCellIndices |> List.map (viewLeavingAndFallingCell leaving falling))
 
                 GeneratedStart _ generated ->
                     styled div
                         []
                         []
-                        (List.range 1 (gridRows * gridColumns)
-                            |> List.map (viewGeneratedCellsStart generated)
-                        )
+                        (gridCellIndices |> List.map (viewGeneratedCellsStart generated))
 
                 GeneratedFalling _ genLs ->
                     styled div
                         []
                         []
-                        (List.range 1 (gridRows * gridColumns)
-                            |> List.map (viewFallingGeneratedCells genLs)
-                        )
+                        (gridCellIndices |> List.map (viewFallingGeneratedCells genLs))
 
 
 viewGeneratedCellsStart : List Int -> Int -> HM
