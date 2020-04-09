@@ -3,6 +3,48 @@ module Main4 exposing (main)
 import Browser
 import Browser.Events
 import Html exposing (Html)
+import Svg exposing (rect, svg)
+import Svg.Attributes exposing (fill, opacity)
+import TypedSvg.Attributes exposing (viewBox)
+import TypedSvg.Attributes.InPx exposing (height, width)
+import TypedSvg.Types exposing (Opacity(..))
+
+
+gridColumns =
+    7
+
+
+gridRows =
+    5
+
+
+minGridIdx =
+    0
+
+
+maxGridIdx =
+    (gridRows * gridColumns) - 1
+
+
+validIdx idx =
+    if clamp minGridIdx maxGridIdx idx == idx then
+        Just idx
+
+    else
+        Nothing
+
+
+gridCellWidth =
+    50
+
+
+gridIndices =
+    List.range minGridIdx maxGridIdx
+
+
+gridCellIndices : List Int
+gridCellIndices =
+    List.range 1 (gridRows * gridColumns)
 
 
 
@@ -52,14 +94,30 @@ subscriptions _ =
 -- View
 
 
+screenWidth =
+    600
+
+
+screenHeight =
+    800
+
+
+screenLeft =
+    screenWidth * -0.5
+
+
+screenTop =
+    screenHeight * -0.5
+
+
 view : Model -> Html Msg
 view _ =
-    empty
+    svg [ viewBox screenLeft screenTop screenWidth screenHeight, width screenWidth, height screenHeight ]
+        [ rect [ width screenWidth, height screenHeight, fill "orange", opacity 0.5 ] [] ]
 
 
-empty : Html msg
-empty =
-    Html.text ""
+opacity =
+    TypedSvg.Attributes.opacity << Opacity
 
 
 
