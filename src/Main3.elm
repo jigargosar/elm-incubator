@@ -347,14 +347,17 @@ viewGeneratedCellsStart : List Int -> Int -> HM
 viewGeneratedCellsStart genLs idx =
     case List.member idx genLs of
         True ->
-            viewWaterCell2 True
+            viewWaterCell
                 idx
                 [ opacity (num 0)
                 , transforms [ translateY (px -300) ]
+                , Css.property "transition" "none"
                 ]
 
         False ->
-            viewWaterCell2 True idx []
+            viewWaterCell idx
+                [ Css.property "transition" "none"
+                ]
 
 
 viewFallingGeneratedCells : List Int -> Int -> HM
@@ -435,7 +438,6 @@ viewWaterCell2 resetTransitions idx styles =
                     , Transitions.left 200
                     ]
                 )
-            :: transition []
             :: styles
         )
         []
