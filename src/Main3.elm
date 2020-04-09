@@ -1,8 +1,9 @@
 module Main3 exposing (main)
 
 import Browser
-import Css exposing (fixed, height, num, opacity, position, px, scale, transforms, width)
+import Css exposing (fixed, height, num, opacity, position, px, scale, transforms, translate, translate2, translateX, width)
 import Css.Animations as Anim
+import Css.Transitions exposing (transition)
 import Html.Styled exposing (div, styled, text)
 import List.Extra
 import Process
@@ -424,7 +425,29 @@ type alias ShapeRecord =
 
 
 drawSH (Shape s) =
-    styled div (opacity (num s.fade) :: s.styles) [] []
+    styled div
+        (opacity (num s.fade)
+            :: transforms [ translate2 (px s.x) (px s.y), scale s.scale ]
+            :: bgc s.fill
+            :: Css.property "transition"
+                ("all "
+                    ++ String.fromFloat
+                        (case s.transition of
+                            INSTANT ->
+                                0
+
+                            FAST ->
+                                fastTransitionDuration
+
+                            MEDIUM ->
+                                defaultTransitionDuration
+                        )
+                    ++ "ms"
+                )
+            :: s.styles
+        )
+        []
+        []
 
 
 rectangle : Float -> Float -> Shape
