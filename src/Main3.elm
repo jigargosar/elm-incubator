@@ -425,6 +425,10 @@ type alias ShapeRecord =
 
 
 drawSH (Shape s) =
+    let
+        (Rectangle w h) =
+            s.form
+    in
     styled div
         (opacity (num s.fade)
             :: transforms [ translate2 (px s.x) (px s.y), scale s.scale ]
@@ -444,6 +448,9 @@ drawSH (Shape s) =
                         )
                     ++ "ms"
                 )
+            :: position fixed
+            :: width (px w)
+            :: height (px h)
             :: s.styles
         )
         []
