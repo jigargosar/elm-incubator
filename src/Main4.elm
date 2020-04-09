@@ -116,6 +116,17 @@ view _ =
         [ rect [ width screenWidth, height screenHeight, fill "orange", opacity 0.5 ] [] ]
 
 
+type Rectangle
+    = Rectangle
+        { x : Float
+        , y : Float
+        , w : Float
+        , h : Float
+        , fill : String
+        , fade : Float
+        }
+
+
 opacity =
     TypedSvg.Attributes.opacity << Opacity
 
