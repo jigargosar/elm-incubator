@@ -113,8 +113,8 @@ screenTop =
 view : Model -> Html Msg
 view _ =
     svg [ viewBox screenLeft screenTop screenWidth screenHeight, width screenWidth, height screenHeight ]
-        [ rect "orange" screenWidth screenHeight [ fade 0.5 ]
-        , circle "dodgerblue" 100 [ fade 0.5 ]
+        [ rect "#ffdb99" screenWidth screenHeight []
+        , circle "#46a4ff" 100 []
         ]
 
 
