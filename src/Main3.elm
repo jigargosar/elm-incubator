@@ -389,39 +389,43 @@ movePoint dx dy ( x, y ) =
 
 viewCell : CellView -> HM
 viewCell cellView =
+    let
+        viewHelp idx styles =
+            styled div styles [] [ text (String.fromInt idx) ]
+    in
     case cellView of
         IdleCell idx ->
-            viewStyledCell idx
+            viewHelp idx
                 [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionDefault
                 ]
 
         ConnectedCell idx ->
-            viewStyledCell idx
+            viewHelp idx
                 [ waterCellStyle (AtGridIndex idx) 0.5 1
                 , transitionFast
                 ]
 
         LeavingCell idx ->
-            viewStyledCell idx
+            viewHelp idx
                 [ waterCellStyle AtWaterCollector 0.5 0
                 , transitionDefault
                 ]
 
         FallingCell fromIdx toIdx ->
-            viewStyledCell fromIdx
+            viewHelp fromIdx
                 [ waterCellStyle (AtGridIndex toIdx) 1 1
                 , transitionDefault
                 ]
 
         StartEnteringCell idx ->
-            viewStyledCell idx
+            viewHelp idx
                 [ waterCellStyle (AtGridIndexEntrance idx) 0 0
                 , transitionNone
                 ]
 
         ResetIdleCell idx ->
-            viewStyledCell idx
+            viewHelp idx
                 [ waterCellStyle (AtGridIndex idx) 1 1
                 , transitionNone
                 ]
@@ -474,14 +478,6 @@ gridYOffset =
 
 gridWidth =
     toFloat gridColumns * (gridCellWidth + 1)
-
-
-viewStyledCell : Int -> List Css.Style -> HM
-viewStyledCell idx styles =
-    styled div
-        styles
-        []
-        [ text (String.fromInt idx) ]
 
 
 defaultTransitionDuration =
