@@ -363,7 +363,7 @@ viewCell cellView =
 
         ConnectedCell idx ->
             viewStyledWaterCellAt idx
-                [ transforms [ Css.scale 0.5 ] ]
+                [ transforms [ Css.scale 0.5 ], transitionFast ]
 
         LeavingCell idx ->
             viewStyledWaterCellAt idx
@@ -417,7 +417,7 @@ defaultTransitionDuration =
 
 
 fastTransitionDuration =
-    1000
+    200
 
 
 bgc =
