@@ -379,10 +379,6 @@ viewGeneratedCellsStart genLs idx =
             viewWaterCell idx [ transitionNone ]
 
 
-transitionNone =
-    Css.property "transition" "none"
-
-
 viewFallingGeneratedCells : List Int -> Int -> HM
 viewFallingGeneratedCells genLs idx =
     case List.member idx genLs of
@@ -436,12 +432,7 @@ viewWaterCell idx styles =
             :: top (px y)
             :: position fixed
             :: opacity (num 1)
-            :: transition
-                [ Transitions.transform defaultTransitionDuration
-                , Transitions.opacity defaultTransitionDuration
-                , Transitions.top defaultTransitionDuration
-                , Transitions.left defaultTransitionDuration
-                ]
+            :: transitionDefault
             :: styles
         )
         []
@@ -454,6 +445,19 @@ defaultTransitionDuration =
 
 bgc =
     Css.property "background-color"
+
+
+transitionNone =
+    Css.property "transition" "none"
+
+
+transitionDefault =
+    transition
+        [ Transitions.transform defaultTransitionDuration
+        , Transitions.opacity defaultTransitionDuration
+        , Transitions.top defaultTransitionDuration
+        , Transitions.left defaultTransitionDuration
+        ]
 
 
 
