@@ -331,13 +331,15 @@ viewGeneratedCellsStart genLs idx =
                 idx
                 [ opacity (num 0)
                 , transforms [ translateY (px -300) ]
-                , Css.property "transition" "none"
+                , transitionNone
                 ]
 
         False ->
-            viewWaterCell idx
-                [ Css.property "transition" "none"
-                ]
+            viewWaterCell idx [ transitionNone ]
+
+
+transitionNone =
+    Css.property "transition" "none"
 
 
 viewFallingGeneratedCells : List Int -> Int -> HM
