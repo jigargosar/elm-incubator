@@ -131,12 +131,14 @@ type alias RectangleRecord =
     }
 
 
+renderRect : Rectangle -> Svg.Svg msg
 renderRect (Rectangle m) =
     rect
         [ width m.w
         , height m.h
         , fill m.fill
         , transform <| renderRectTransform m
+        , opacity m.o
         ]
         []
 
