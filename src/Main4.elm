@@ -56,8 +56,17 @@ gridIndices =
 -- Model
 
 
+type alias Idx =
+    Int
+
+
+type alias Anim =
+    { scale : Float }
+
+
 type Model
     = Idle
+    | Dragging (List ( Idx, Anim ))
 
 
 type alias Flags =
