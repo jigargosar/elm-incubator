@@ -69,7 +69,7 @@ type alias Anim =
 
 initAnim : Float -> Anim
 initAnim to =
-    { from = 1, to = to, duration = 300, elapsed = 0 }
+    { from = 1, to = to, duration = 200, elapsed = 0 }
 
 
 animProgress : Anim -> Float
