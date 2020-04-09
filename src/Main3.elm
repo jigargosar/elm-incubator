@@ -349,7 +349,6 @@ type CellView
     | LeavingCell Idx
     | FallingCell Idx Idx
     | StartEnteringCell Idx
-    | EnteringCell Idx
     | ResetIdleCell Idx
 
 
@@ -418,12 +417,6 @@ viewCell cellView =
             viewStyledCell idx
                 [ waterCellStyle (AtGridIndexEntrance idx) 0 0
                 , transitionNone
-                ]
-
-        EnteringCell idx ->
-            viewStyledCell idx
-                [ waterCellStyle (AtGridIndex idx) 1 1
-                , transitionDefault
                 ]
 
         ResetIdleCell idx ->
