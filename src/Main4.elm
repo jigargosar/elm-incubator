@@ -131,8 +131,8 @@ type alias RectangleRecord =
     }
 
 
-renderRect : Rectangle -> Svg.Svg msg
-renderRect (Rectangle m) =
+renderRect : RectangleRecord -> Svg.Svg msg
+renderRect m =
     rect
         [ width m.w
         , height m.h
