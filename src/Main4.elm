@@ -68,6 +68,11 @@ initAnim from to =
     { from = from, to = to, duration = 200, elapsed = 0 }
 
 
+animReverse : Anim -> Anim
+animReverse ({ from, to, duration, elapsed } as anim) =
+    { anim | from = to, to = from, elapsed = duration - elapsed }
+
+
 animProgress : Anim -> Float
 animProgress { from, to, duration, elapsed } =
     if from == to || duration <= 0 || elapsed >= duration then
@@ -173,7 +178,12 @@ update message model =
                     Dragging [ ( idx, initAnim 1 0.5 ) ]
 
                 ( Dragging list, Just idx ) ->
-                    Dragging (( idx, initAnim 1 0.5 ) :: list)
+                    case find (firstEq idx) list of
+                        Just ( _, anim ) ->
+                            Dragging (( idx, animReverse anim ) :: list)
+
+                        Nothing ->
+                            Dragging (( idx, initAnim 1 0.5 ) :: list)
 
                 _ ->
                     model
