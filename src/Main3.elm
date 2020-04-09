@@ -451,6 +451,11 @@ move dx dy (Shape s) =
     Shape { s | x = s.x + dx, y = s.y + dy }
 
 
+sca : Float -> Shape -> Shape
+sca sc (Shape s) =
+    Shape { s | scale = s.scale * sc }
+
+
 viewCell : CellView -> HM
 viewCell cellView =
     let
