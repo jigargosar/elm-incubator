@@ -91,13 +91,13 @@ animValue ({ from, to, duration, elapsed } as anim) =
     (to - from) * animProgress anim + from
 
 
-animTick : Anim -> Anim
-animTick ({ elapsed } as anim) =
+animTick : Float -> Anim -> Anim
+animTick delta ({ elapsed } as anim) =
     if animIsDone anim then
         anim
 
     else
-        { anim | elapsed = elapsed + 1 }
+        { anim | elapsed = elapsed + delta }
 
 
 type Model
@@ -143,7 +143,7 @@ delay ms msg =
 
 type Msg
     = NoOp
-    | Tick
+    | DeltaTick Float
     | OnDrag Idx
 
 
@@ -153,13 +153,13 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Tick ->
+        DeltaTick delta ->
             ( case model of
                 Idle ->
                     model
 
                 Dragging list ->
-                    Dragging (List.map (Tuple.mapSecond animTick) list)
+                    Dragging (List.map (Tuple.mapSecond (animTick delta)) list)
             , Cmd.none
             )
 
@@ -179,7 +179,7 @@ update message model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch [ Browser.Events.onAnimationFrame (\_ -> Tick) ]
+    Sub.batch [ Browser.Events.onAnimationFrameDelta DeltaTick ]
 
 
 
