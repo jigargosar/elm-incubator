@@ -328,10 +328,16 @@ viewEndingDragGrid endingDragState =
             viewGridCells (List.map func gridCellIndices)
 
         GeneratedStart _ generated ->
-            styled div
-                []
-                []
-                (gridCellIndices |> List.map (viewGeneratedCellsStart generated))
+            let
+                func idx =
+                    case List.member idx generated of
+                        True ->
+                            EnteringStartCell idx
+
+                        False ->
+                            ResetIdleCell idx
+            in
+            viewGridCells (List.map func gridCellIndices)
 
         GeneratedFalling _ generated ->
             styled div
