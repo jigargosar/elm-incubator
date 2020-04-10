@@ -233,6 +233,17 @@ update message model =
                 ( Idle, Just idx ) ->
                     Connecting (initConnectingState idx)
 
+                ( Dragging di vs, Just idx ) ->
+                    let
+                        ndi =
+                            if List.member idx di then
+                                List.Extra.remove idx di
+
+                            else
+                                idx :: di
+                    in
+                    Dragging ndi vs
+
                 ( Connecting d, Just idx ) ->
                     case Dict.get idx d of
                         Nothing ->
