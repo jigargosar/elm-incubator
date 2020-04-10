@@ -97,6 +97,14 @@ initCellDisconnecting =
     CellDisconnecting (Anim.initAnim 0.5 1)
 
 
+retargetCellConnecting a =
+    CellConnecting (Anim.retarget 0.5 a)
+
+
+retargetCellDisconnecting a =
+    CellDisconnecting (Anim.retarget 1 a)
+
+
 tickConnectingState : Float -> ConnectingState -> ConnectingState
 tickConnectingState delta dict =
     Dict.Extra.filterMap
@@ -225,10 +233,10 @@ update message model =
                             Dict.insert idx
                                 (case cc of
                                     CellConnecting anim ->
-                                        CellDisconnecting (Anim.retarget 1 anim)
+                                        retargetCellDisconnecting anim
 
                                     CellDisconnecting anim ->
-                                        CellConnecting (Anim.retarget 0.5 anim)
+                                        retargetCellConnecting anim
 
                                     CellConnected ->
                                         initCellDisconnecting
