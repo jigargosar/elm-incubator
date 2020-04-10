@@ -111,7 +111,7 @@ type alias Idx =
 
 type Model
     = Idle
-    | Dragging (List ( Idx, Anim ))
+    | Dragging (List ( Idx, CellAnim ))
 
 
 type alias Flags =
@@ -156,6 +156,25 @@ type Msg
     | OnDrag Idx
 
 
+type CellAnim
+    = CellAnim { scale : Anim }
+
+
+initDragAnim : CellAnim
+initDragAnim =
+    CellAnim { scale = initAnim 1 0.5 }
+
+
+tickCellAnim : Float -> CellAnim -> CellAnim
+tickCellAnim delta (CellAnim ca) =
+    CellAnim { scale = animTick delta ca.scale }
+
+
+retargetScaleTo : Float -> CellAnim -> CellAnim
+retargetScaleTo n (CellAnim ca) =
+    CellAnim { scale = animReverse ca.scale }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
@@ -168,23 +187,19 @@ update message model =
                     model
 
                 Dragging list ->
-                    Dragging (List.map (Tuple.mapSecond (animTick delta)) list)
+                    Dragging (List.map (Tuple.mapSecond (tickCellAnim delta)) list)
             , Cmd.none
             )
 
         OnDrag unverifiedIdx ->
-            let
-                initDragAnim =
-                    initAnim 1 0.5
-            in
             ( case ( model, validateIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     Dragging [ ( idx, initDragAnim ) ]
 
                 ( Dragging list, Just idx ) ->
                     case find (firstEq idx) list of
-                        Just ( _, anim ) ->
-                            Dragging (( idx, animReverse anim ) :: list)
+                        Just _ ->
+                            Dragging (List.Extra.updateIf (firstEq idx) (Tuple.mapSecond (retargetScaleTo 1)) list)
 
                         Nothing ->
                             Dragging (( idx, initDragAnim ) :: list)
@@ -237,7 +252,7 @@ view model =
                     func idx =
                         case find (firstEq idx) list of
                             Just ( _, anim ) ->
-                                renderIdxAnim idx anim
+                                renderIdxCellAnim idx anim
 
                             Nothing ->
                                 renderIdx idx
@@ -254,8 +269,8 @@ renderIdx idx =
     circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx ]
 
 
-renderIdxAnim idx anim =
-    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (animValue anim) ]
+renderIdxCellAnim idx (CellAnim ca) =
+    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (animValue ca.scale) ]
 
 
 moveToIdx idx =
