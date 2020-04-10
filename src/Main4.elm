@@ -425,26 +425,3 @@ renderTransform m =
 
 opacity =
     TypedSvg.Attributes.opacity << Opacity
-
-
-
--- Anim2
-
-
-type Anim2
-    = Anim2 Float Animation.Animation
-
-
-initAnim2 : Float -> Float -> Anim2
-initAnim2 from to =
-    Anim2 0
-        (Animation.animation 0
-            |> Animation.from from
-            |> Animation.to to
-            |> Animation.duration Anim.defaultAnimDuration
-        )
-
-
-animReverse2 : Anim2 -> Anim2
-animReverse2 (Anim2 c a) =
-    Animation.undo c a |> Anim2 c
