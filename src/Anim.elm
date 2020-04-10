@@ -1,4 +1,12 @@
-module Anim exposing (Anim, animReverse, animTick, animValue, initAnim, retarget)
+module Anim exposing
+    ( Anim
+    , animReverse
+    , animTick
+    , animValue
+    , initAnim
+    , retarget
+    , static
+    )
 
 import Anim1 as Anim1
 import Animation as A
@@ -36,3 +44,8 @@ animValue (Anim c a) =
 retarget : Float -> Anim -> Anim
 retarget to (Anim c a) =
     Anim c (A.retarget c to a)
+
+
+static : Float -> Anim
+static v =
+    A.static v |> Anim 0
