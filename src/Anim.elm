@@ -1,4 +1,11 @@
-module Anim exposing (Anim, animReverse, animTick, animValue, defaultAnimDuration, initAnim)
+module Anim exposing
+    ( Anim
+    , animReverse
+    , animTick
+    , animValue
+    , defaultAnimDuration
+    , initAnim
+    )
 
 
 defaultAnimDuration =
