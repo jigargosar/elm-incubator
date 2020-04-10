@@ -9,7 +9,6 @@ module Anim exposing
     , static
     )
 
-import Anim1 as Anim1
 import Animation as A
 
 
@@ -23,7 +22,7 @@ initAnim from to =
         (A.animation 0
             |> A.from from
             |> A.to to
-            |> A.duration Anim1.defaultAnimDuration
+            |> A.duration 1000
         )
 
 

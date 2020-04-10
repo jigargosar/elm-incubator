@@ -7,7 +7,6 @@ import Browser.Events
 import Dict exposing (Dict)
 import Dict.Extra
 import Html exposing (Html)
-import List.Extra exposing (find)
 import Process
 import Svg exposing (rect, svg)
 import Svg.Attributes as SA
@@ -73,7 +72,6 @@ type alias Idx =
 type Model
     = Idle
     | Connecting ConnectingState
-    | Dragging (List ( Idx, CellAnim ))
 
 
 type alias ConnectingState =
@@ -165,7 +163,7 @@ init _ =
                 (\idx ( offset, ms ) ->
                     let
                         newOffset =
-                            offset + 200
+                            offset + 400
                     in
                     ( newOffset, delay newOffset (OnDrag idx) :: ms )
                 )
@@ -192,25 +190,6 @@ type Msg
     | OnDrag Idx
 
 
-type CellAnim
-    = CellAnim { scale : Anim }
-
-
-initDragAnim : CellAnim
-initDragAnim =
-    CellAnim { scale = Anim.initAnim 1 0.5 }
-
-
-tickCellAnim : Float -> CellAnim -> CellAnim
-tickCellAnim delta (CellAnim ca) =
-    CellAnim { scale = Anim.animTick delta ca.scale }
-
-
-retargetScaleTo : Float -> CellAnim -> CellAnim
-retargetScaleTo n (CellAnim ca) =
-    CellAnim { scale = Anim.retarget n ca.scale }
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
@@ -221,9 +200,6 @@ update message model =
             ( case model of
                 Idle ->
                     model
-
-                Dragging list ->
-                    Dragging (List.map (Tuple.mapSecond (tickCellAnim delta)) list)
 
                 Connecting connectingState ->
                     Connecting (tickConnectingState delta connectingState)
@@ -248,25 +224,13 @@ update message model =
                                         CellDisconnecting (Anim.retarget 1 anim)
 
                                     CellDisconnecting anim ->
-                                        CellConnecting (Anim.retarget 0.1 anim)
+                                        CellConnecting (Anim.retarget 0.5 anim)
 
                                     CellConnected ->
                                         CellDisconnecting (Anim.initAnim 0.5 1)
                                 )
                                 d
                                 |> Connecting
-
-                ( Dragging list, Just idx ) ->
-                    case find (firstEq idx) list of
-                        Just _ ->
-                            Dragging
-                                (List.Extra.updateIf (firstEq idx)
-                                    (Tuple.mapSecond (retargetScaleTo 1))
-                                    list
-                                )
-
-                        Nothing ->
-                            Dragging (( idx, initDragAnim ) :: list)
 
                 _ ->
                     model
@@ -311,18 +275,6 @@ view model =
             Idle ->
                 renderBatch (List.map renderIdx gridIndices)
 
-            Dragging list ->
-                let
-                    func idx =
-                        case find (firstEq idx) list of
-                            Just ( _, anim ) ->
-                                renderIdxCellAnim idx anim
-
-                            Nothing ->
-                                renderIdx idx
-                in
-                renderBatch (List.map func gridIndices)
-
             Connecting connectingState ->
                 renderConnectingState connectingState
         ]
@@ -332,16 +284,16 @@ type alias SM =
     Svg.Svg Msg
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 firstEq expected ( actual, _ ) =
     expected == actual
 
 
 renderIdx idx =
     renderIdxWith idx []
-
-
-renderIdxCellAnim idx (CellAnim ca) =
-    renderIdxWith idx [ scale (Anim.animValue ca.scale) ]
 
 
 renderIdxWith idx with =
