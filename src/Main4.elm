@@ -88,7 +88,11 @@ type ConnectingCellState
 
 initConnectingState : Idx -> ConnectingState
 initConnectingState idx =
-    Dict.singleton idx (CellConnecting (Anim.initAnim 1 0.5))
+    Dict.singleton idx initCellConnecting
+
+
+initCellConnecting =
+    CellConnecting (Anim.initAnim 1 0.5)
 
 
 tickConnectingState : Float -> ConnectingState -> ConnectingState
@@ -230,6 +234,27 @@ update message model =
             ( case ( model, validateIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     Connecting (initConnectingState idx)
+
+                ( Connecting d, Just idx ) ->
+                    case Dict.get idx d of
+                        Nothing ->
+                            Dict.insert idx initCellConnecting d
+                                |> Connecting
+
+                        Just cc ->
+                            Dict.insert idx
+                                (case cc of
+                                    CellConnecting anim ->
+                                        CellDisconnecting (Anim.retarget 1 anim)
+
+                                    CellDisconnecting anim ->
+                                        CellConnecting (Anim.retarget 0.1 anim)
+
+                                    CellConnected ->
+                                        CellDisconnecting (Anim.initAnim 0.5 1)
+                                )
+                                d
+                                |> Connecting
 
                 ( Dragging list, Just idx ) ->
                     case find (firstEq idx) list of
