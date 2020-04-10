@@ -96,7 +96,11 @@ tickConnectingState _ =
 
 renderConnectingState : ConnectingState -> SM
 renderConnectingState _ =
-    Debug.todo "impl"
+    let
+        func idx =
+            renderIdxWith idx []
+    in
+    renderBatch (List.map func gridIndices)
 
 
 type alias Flags =
