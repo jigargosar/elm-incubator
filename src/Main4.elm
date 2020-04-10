@@ -1,7 +1,6 @@
 module Main4 exposing (main)
 
 import Anim exposing (Anim)
-import Animation
 import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
