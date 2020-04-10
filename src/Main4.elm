@@ -1,5 +1,7 @@
 module Main4 exposing (main)
 
+import Anim exposing (Anim)
+import Animation
 import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
@@ -116,17 +118,17 @@ type CellAnim
 
 initDragAnim : CellAnim
 initDragAnim =
-    CellAnim { scale = initAnim 1 0.5 }
+    CellAnim { scale = Anim.initAnim 1 0.5 }
 
 
 tickCellAnim : Float -> CellAnim -> CellAnim
 tickCellAnim delta (CellAnim ca) =
-    CellAnim { scale = animTick delta ca.scale }
+    CellAnim { scale = Anim.animTick delta ca.scale }
 
 
 retargetScaleTo : Float -> CellAnim -> CellAnim
 retargetScaleTo n (CellAnim ca) =
-    CellAnim { scale = animReverse ca.scale }
+    CellAnim { scale = Anim.animReverse ca.scale }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -224,7 +226,7 @@ renderIdx idx =
 
 
 renderIdxCellAnim idx (CellAnim ca) =
-    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (animValue ca.scale) ]
+    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (Anim.animValue ca.scale) ]
 
 
 moveToIdx idx =
@@ -426,46 +428,23 @@ opacity =
 
 
 
--- ANIM
+-- Anim2
 
 
-type alias Anim =
-    { from : Float, to : Float, duration : Float, elapsed : Float }
+type Anim2
+    = Anim2 Float Animation.Animation
 
 
-initAnim : Float -> Float -> Anim
-initAnim from to =
-    { from = from, to = to, duration = 200, elapsed = 0 }
+initAnim2 : Float -> Float -> Anim2
+initAnim2 from to =
+    Anim2 0
+        (Animation.animation 0
+            |> Animation.from from
+            |> Animation.to to
+            |> Animation.duration Anim.defaultAnimDuration
+        )
 
 
-animReverse : Anim -> Anim
-animReverse ({ from, to, duration, elapsed } as anim) =
-    { anim | from = to, to = from, elapsed = duration - elapsed }
-
-
-animProgress : Anim -> Float
-animProgress { from, to, duration, elapsed } =
-    if from == to || duration <= 0 || elapsed >= duration then
-        1
-
-    else
-        elapsed / duration
-
-
-animIsDone : Anim -> Bool
-animIsDone anim =
-    animProgress anim == 1
-
-
-animValue : Anim -> Float
-animValue ({ from, to, duration, elapsed } as anim) =
-    (to - from) * animProgress anim + from
-
-
-animTick : Float -> Anim -> Anim
-animTick delta ({ elapsed } as anim) =
-    if animIsDone anim then
-        anim
-
-    else
-        { anim | elapsed = elapsed + delta }
+animReverse2 : Anim2 -> Anim2
+animReverse2 (Anim2 c a) =
+    Animation.undo c a |> Anim2 c
