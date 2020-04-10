@@ -125,10 +125,23 @@ tickConnectingState delta dict =
 
 
 renderConnectingState : ConnectingState -> SM
-renderConnectingState _ =
+renderConnectingState dict =
     let
         func idx =
-            renderIdxWith idx []
+            case Dict.get idx dict of
+                Just cc ->
+                    case cc of
+                        CellConnected ->
+                            renderIdxWith idx [ scale 0.5 ]
+
+                        CellConnecting anim ->
+                            renderIdxWith idx [ scale (Anim.animValue anim) ]
+
+                        CellDisconnecting anim ->
+                            renderIdxWith idx [ scale (Anim.animValue anim) ]
+
+                Nothing ->
+                    renderIdx idx
     in
     renderBatch (List.map func gridIndices)
 
