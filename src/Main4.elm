@@ -105,7 +105,7 @@ tickConnectingState delta dict =
                         Just CellConnected
 
                     else
-                        Just (CellConnecting a)
+                        Just (CellConnecting na)
 
                 CellDisconnecting a ->
                     let
@@ -116,7 +116,7 @@ tickConnectingState delta dict =
                         Nothing
 
                     else
-                        Just (CellDisconnecting a)
+                        Just (CellDisconnecting na)
 
                 CellConnected ->
                     Just CellConnected
@@ -229,7 +229,7 @@ update message model =
         OnDrag unverifiedIdx ->
             ( case ( model, validateIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
-                    Dragging [ ( idx, initDragAnim ) ]
+                    Connecting (initConnectingState idx)
 
                 ( Dragging list, Just idx ) ->
                     case find (firstEq idx) list of
