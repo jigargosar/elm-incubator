@@ -30,7 +30,7 @@ maxGridIdx =
     (gridRows * gridColumns) - 1
 
 
-validIdx idx =
+validateIdx idx =
     if clamp minGridIdx maxGridIdx idx == idx then
         Just idx
 
@@ -177,7 +177,7 @@ update message model =
                 initDragAnim =
                     initAnim 1 0.5
             in
-            ( case ( model, validIdx unverifiedIdx ) of
+            ( case ( model, validateIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     Dragging [ ( idx, initDragAnim ) ]
 
