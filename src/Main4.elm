@@ -93,6 +93,10 @@ initCellConnecting =
     CellConnecting (Anim.initAnim 1 0.5)
 
 
+initCellDisconnecting =
+    CellDisconnecting (Anim.initAnim 0.5 1)
+
+
 tickConnectingState : Float -> ConnectingState -> ConnectingState
 tickConnectingState delta dict =
     Dict.Extra.filterMap
@@ -227,7 +231,7 @@ update message model =
                                         CellConnecting (Anim.retarget 0.5 anim)
 
                                     CellConnected ->
-                                        CellDisconnecting (Anim.initAnim 0.5 1)
+                                        initCellDisconnecting
                                 )
                                 d
                                 |> Connecting
