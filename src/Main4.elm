@@ -1,6 +1,6 @@
 module Main4 exposing (main)
 
-import Anim exposing (Anim)
+import Anim2 as Anim
 import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
@@ -13,6 +13,10 @@ import Task
 import TypedSvg.Attributes exposing (transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
+
+
+type alias Anim =
+    Anim.Anim2
 
 
 gridColumns =
