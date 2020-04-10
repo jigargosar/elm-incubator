@@ -82,8 +82,12 @@ module.exports = (_, config) => {
       children: false,
       modules: false,
     },
+    // stats: 'errors-only',
+    // stats: false,
     devtool: isProd ? 'source-map' : 'eval-source-map',
     devServer: {
+      // https://v4.webpack.js.org/configuration/dev-server/
+      // noInfo: true,
       proxy: {
         '/api': {
           target: 'http://localhost:3000',
