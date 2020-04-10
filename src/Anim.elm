@@ -1,54 +1,33 @@
-module Anim exposing
-    ( Anim
-    , animReverse
-    , animTick
-    , animValue
-    , defaultAnimDuration
-    , initAnim
-    )
+module Anim exposing (Anim, animReverse, animTick, animValue, initAnim)
+
+import Anim1 as Anim1
+import Animation as A
 
 
-defaultAnimDuration =
-    200
-
-
-type alias Anim =
-    { from : Float, to : Float, duration : Float, elapsed : Float }
+type Anim
+    = Anim Float A.Animation
 
 
 initAnim : Float -> Float -> Anim
 initAnim from to =
-    { from = from, to = to, duration = defaultAnimDuration, elapsed = 0 }
+    Anim 0
+        (A.animation 0
+            |> A.from from
+            |> A.to to
+            |> A.duration Anim1.defaultAnimDuration
+        )
 
 
 animReverse : Anim -> Anim
-animReverse ({ from, to, duration, elapsed } as anim) =
-    { anim | from = to, to = from, elapsed = duration - elapsed }
-
-
-animProgress : Anim -> Float
-animProgress { from, to, duration, elapsed } =
-    if from == to || duration <= 0 || elapsed >= duration then
-        1
-
-    else
-        elapsed / duration
-
-
-animIsDone : Anim -> Bool
-animIsDone anim =
-    animProgress anim == 1
-
-
-animValue : Anim -> Float
-animValue ({ from, to, duration, elapsed } as anim) =
-    (to - from) * animProgress anim + from
+animReverse (Anim c a) =
+    A.undo c a |> Anim c
 
 
 animTick : Float -> Anim -> Anim
-animTick delta ({ elapsed } as anim) =
-    if animIsDone anim then
-        anim
+animTick d (Anim c a) =
+    Anim (c + d) a
 
-    else
-        { anim | elapsed = elapsed + delta }
+
+animValue : Anim -> Float
+animValue (Anim c a) =
+    A.animate c a
