@@ -131,7 +131,7 @@ tickCellAnim delta (CellAnim ca) =
 
 retargetScaleTo : Float -> CellAnim -> CellAnim
 retargetScaleTo n (CellAnim ca) =
-    CellAnim { scale = Anim.animReverse ca.scale }
+    CellAnim { scale = Anim.retarget n ca.scale }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
