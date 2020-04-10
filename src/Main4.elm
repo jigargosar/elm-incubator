@@ -7,7 +7,6 @@ import Browser.Events
 import Dict exposing (Dict)
 import Dict.Extra
 import Html exposing (Html)
-import List.Extra exposing (find)
 import Process
 import Svg exposing (rect, svg)
 import Svg.Attributes as SA
@@ -73,11 +72,6 @@ type alias Idx =
 type Model
     = Idle
     | Connecting ConnectingState
-    | Dragging (List Idx) DraggingViewState
-
-
-type alias DraggingViewState =
-    List ( Idx, Anim )
 
 
 type alias ConnectingState =
@@ -221,10 +215,6 @@ update message model =
 
                 Connecting connectingState ->
                     Connecting (tickConnectingState delta connectingState)
-
-                Dragging di vs ->
-                    List.map (Tuple.mapSecond (Anim.animTick delta)) vs
-                        |> Dragging di
             , Cmd.none
             )
 
@@ -232,17 +222,6 @@ update message model =
             ( case ( model, validateIdx unverifiedIdx ) of
                 ( Idle, Just idx ) ->
                     Connecting (initConnectingState idx)
-
-                ( Dragging di vs, Just idx ) ->
-                    let
-                        ndi =
-                            if List.member idx di then
-                                List.Extra.remove idx di
-
-                            else
-                                idx :: di
-                    in
-                    Dragging ndi vs
 
                 ( Connecting d, Just idx ) ->
                     case Dict.get idx d of
@@ -310,24 +289,7 @@ view model =
 
             Connecting connectingState ->
                 renderConnectingState connectingState
-
-            Dragging _ draggingViewState ->
-                renderDraggingViewState draggingViewState
         ]
-
-
-renderDraggingViewState : DraggingViewState -> SM
-renderDraggingViewState vs =
-    let
-        func idx =
-            case find (firstEq idx) vs of
-                Just ( _, a ) ->
-                    renderIdxWith idx [ scale (Anim.animValue a) ]
-
-                Nothing ->
-                    renderIdx idx
-    in
-    renderBatch (List.map func gridIndices)
 
 
 type alias SM =

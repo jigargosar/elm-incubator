@@ -3,6 +3,7 @@ module Anim exposing
     , animReverse
     , animTick
     , animValue
+    , getTo
     , initAnim
     , isDone
     , retarget
@@ -54,3 +55,8 @@ static v =
 isDone : Anim -> Bool
 isDone (Anim c a) =
     A.isDone c a
+
+
+getTo : Anim -> Float
+getTo (Anim c a) =
+    A.getTo a
