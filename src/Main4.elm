@@ -4,6 +4,7 @@ import Anim as Anim
 import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
+import Dict exposing (Dict)
 import Html exposing (Html)
 import List.Extra exposing (find)
 import Process
@@ -70,7 +71,32 @@ type alias Idx =
 
 type Model
     = Idle
+    | Connecting ConnectingState
     | Dragging (List ( Idx, CellAnim ))
+
+
+type alias ConnectingState =
+    { connected : ConnectedCells
+    , disconnected : DisconnectedCells
+    }
+
+
+type alias ConnectedCells =
+    { order : List Idx, dict : Dict Idx Anim }
+
+
+type alias DisconnectedCells =
+    { dict : Dict Idx Anim }
+
+
+tickConnectingState : ConnectingState -> ConnectingState
+tickConnectingState _ =
+    Debug.todo "impl"
+
+
+renderConnectingState : ConnectingState -> SM
+renderConnectingState _ =
+    Debug.todo "impl"
 
 
 type alias Flags =
@@ -147,6 +173,9 @@ update message model =
 
                 Dragging list ->
                     Dragging (List.map (Tuple.mapSecond (tickCellAnim delta)) list)
+
+                Connecting connectingState ->
+                    Connecting (tickConnectingState connectingState)
             , Cmd.none
             )
 
@@ -208,7 +237,7 @@ view model =
         [ rect "#ffc973" screenWidth screenHeight []
         , case model of
             Idle ->
-                batch (List.map renderIdx gridIndices)
+                renderBatch (List.map renderIdx gridIndices)
 
             Dragging list ->
                 let
@@ -220,8 +249,15 @@ view model =
                             Nothing ->
                                 renderIdx idx
                 in
-                batch (List.map func gridIndices)
+                renderBatch (List.map func gridIndices)
+
+            Connecting connectingState ->
+                renderConnectingState connectingState
         ]
+
+
+type alias SM =
+    Svg.Svg Msg
 
 
 firstEq expected ( actual, _ ) =
@@ -229,11 +265,15 @@ firstEq expected ( actual, _ ) =
 
 
 renderIdx idx =
-    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx ]
+    renderIdxWith idx []
 
 
 renderIdxCellAnim idx (CellAnim ca) =
-    circle "#46a4ff" (gridCellWidth * 0.3) [ moveToIdx idx, scale (Anim.animValue ca.scale) ]
+    renderIdxWith idx [ scale (Anim.animValue ca.scale) ]
+
+
+renderIdxWith idx with =
+    circle "#46a4ff" (gridCellWidth * 0.3) (moveToIdx idx :: with)
 
 
 moveToIdx idx =
@@ -264,7 +304,8 @@ idxToXY idx =
     ( x, y )
 
 
-batch =
+renderBatch : List (Svg.Svg msg) -> Svg.Svg msg
+renderBatch =
     Svg.g []
 
 
@@ -284,6 +325,7 @@ main =
 
 
 -- SVG PUBLIC API
+--noinspection ElmUnusedSymbol
 
 
 square : String -> Float -> List (Shape -> Shape) -> Svg.Svg msg
@@ -308,6 +350,10 @@ circle color r fnList =
             Circle (initCircleRecord color r)
     in
     List.foldl (<|) m fnList |> renderShape
+
+
+
+--noinspection ElmUnusedSymbol
 
 
 fade : Float -> Shape -> Shape
