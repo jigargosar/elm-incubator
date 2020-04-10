@@ -1,6 +1,6 @@
 module Anim2 exposing (Anim2, animReverse, animTick, initAnim)
 
-import Anim
+import Anim as Anim1
 import Animation as A
 
 
@@ -14,7 +14,7 @@ initAnim from to =
         (A.animation 0
             |> A.from from
             |> A.to to
-            |> A.duration Anim.defaultAnimDuration
+            |> A.duration Anim1.defaultAnimDuration
         )
 
 
