@@ -158,7 +158,11 @@ update message model =
                 ( Dragging list, Just idx ) ->
                     case find (firstEq idx) list of
                         Just _ ->
-                            Dragging (List.Extra.updateIf (firstEq idx) (Tuple.mapSecond (retargetScaleTo 1)) list)
+                            Dragging
+                                (List.Extra.updateIf (firstEq idx)
+                                    (Tuple.mapSecond (retargetScaleTo 1))
+                                    list
+                                )
 
                         Nothing ->
                             Dragging (( idx, initDragAnim ) :: list)
