@@ -4,6 +4,7 @@ module Anim exposing
     , animTick
     , animValue
     , initAnim
+    , isDone
     , retarget
     , static
     )
@@ -49,3 +50,8 @@ retarget to (Anim c a) =
 static : Float -> Anim
 static v =
     A.static v |> Anim 0
+
+
+isDone : Anim -> Bool
+isDone (Anim c a) =
+    A.isDone c a

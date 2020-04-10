@@ -5,6 +5,7 @@ import Basics.Extra exposing (uncurry)
 import Browser
 import Browser.Events
 import Dict exposing (Dict)
+import Dict.Extra
 import Html exposing (Html)
 import List.Extra exposing (find)
 import Process
@@ -76,22 +77,51 @@ type Model
 
 
 type alias ConnectingState =
-    { connected : ConnectedCells
-    , disconnected : DisconnectedCells
-    }
+    Dict Idx ConnectingCellState
 
 
-type alias ConnectedCells =
-    { order : List Idx, dict : Dict Idx Anim }
+type ConnectingCellState
+    = CellConnecting Anim
+    | CellDisconnecting Anim
+    | CellConnected
 
 
-type alias DisconnectedCells =
-    { dict : Dict Idx Anim }
+initConnectingState : Idx -> ConnectingState
+initConnectingState idx =
+    Dict.singleton idx (CellConnecting (Anim.initAnim 1 0.5))
 
 
-tickConnectingState : ConnectingState -> ConnectingState
-tickConnectingState _ =
-    Debug.todo "impl"
+tickConnectingState : Float -> ConnectingState -> ConnectingState
+tickConnectingState delta dict =
+    Dict.Extra.filterMap
+        (\_ cc ->
+            case cc of
+                CellConnecting a ->
+                    let
+                        na =
+                            Anim.animTick delta a
+                    in
+                    if Anim.isDone na then
+                        Just CellConnected
+
+                    else
+                        Just (CellConnecting a)
+
+                CellDisconnecting a ->
+                    let
+                        na =
+                            Anim.animTick delta a
+                    in
+                    if Anim.isDone na then
+                        Nothing
+
+                    else
+                        Just (CellDisconnecting a)
+
+                CellConnected ->
+                    Just CellConnected
+        )
+        dict
 
 
 renderConnectingState : ConnectingState -> SM
@@ -179,7 +209,7 @@ update message model =
                     Dragging (List.map (Tuple.mapSecond (tickCellAnim delta)) list)
 
                 Connecting connectingState ->
-                    Connecting (tickConnectingState connectingState)
+                    Connecting (tickConnectingState delta connectingState)
             , Cmd.none
             )
 
