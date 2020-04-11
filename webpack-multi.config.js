@@ -11,6 +11,7 @@ function createConfig(outputPublicPath, entry, template, _) {
       entry: entry,
       output: {
         publicPath: outputPublicPath,
+        path: __dirname + '/dist/' + outputPublicPath,
       },
       resolve: {
         extensions: ['.js', '.elm'],
@@ -68,8 +69,8 @@ function createConfig(outputPublicPath, entry, template, _) {
 module.exports = (_, config) => {
   const c1 = createConfig(
     '/app1',
-    './src/index.js',
-    './src/index.html',
+    './src/ElmGoogleSearch/index.js',
+    './src/ElmGoogleSearch/index.html',
     config,
   )
   const c2 = createConfig(
@@ -78,5 +79,5 @@ module.exports = (_, config) => {
     './src/index.html',
     config,
   )
-  return [c2, c1]
+  return [c1, c2]
 }
