@@ -1,15 +1,16 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
-function createConfig(entry, template, config) {
+function createConfig(outputPublicPath, entry, template, _) {
   {
-    const isProd = config.mode === 'production'
+    const isProd = false
     const isElmDebuggerDisabled = false
 
     return {
+      mode: 'development',
       entry: entry,
       output: {
-        publicPath: '/',
+        publicPath: outputPublicPath,
       },
       resolve: {
         extensions: ['.js', '.elm'],
@@ -42,22 +43,22 @@ function createConfig(entry, template, config) {
           },
         ],
       },
-      stats: {
-        children: false,
-        modules: false,
-      },
+      // stats: {
+      //   children: false,
+      //   modules: false,
+      // },
       devtool: isProd ? 'source-map' : 'eval-source-map',
       devServer: {
         // https://v4.webpack.js.org/configuration/dev-server/
         // noInfo: true,
-        proxy: {
-          '/api': {
-            target: 'http://localhost:3000',
-            pathRewrite: { '^/api': '' },
-          },
-        },
-        historyApiFallback: true,
-        hot: true,
+        // proxy: {
+        //   '/api': {
+        //     target: 'http://localhost:3000',
+        //     pathRewrite: { '^/api': '' },
+        //   },
+        // },
+        historyApiFallback: false,
+        hot: false,
         overlay: true,
       },
     }
@@ -65,6 +66,17 @@ function createConfig(entry, template, config) {
 }
 
 module.exports = (_, config) => {
-  const c1 = createConfig('./src/index.js', './src/index.html', config)
-  return [c1]
+  const c1 = createConfig(
+    '/app1',
+    './src/index.js',
+    './src/index.html',
+    config,
+  )
+  const c2 = createConfig(
+    '/app2',
+    './src/index.js',
+    './src/index.html',
+    config,
+  )
+  return [c2, c1]
 }
