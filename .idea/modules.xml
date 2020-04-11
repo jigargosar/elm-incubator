@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/elm-incubator.iml" filepath="$PROJECT_DIR$/elm-incubator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/playing-with-elm-style-anim/playing-with-elm-style-anim.iml" filepath="$PROJECT_DIR$/modules/playing-with-elm-style-anim/playing-with-elm-style-anim.iml" />
     </modules>
   </component>
 </project>
