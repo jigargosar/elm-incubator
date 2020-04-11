@@ -73,5 +73,6 @@ module.exports = (_, config) => {
     './src/ElmGoogleSearch/index.html',
   )
   const c2 = createConfig('/app2', './src/index.js', './src/index.html')
-  return [c1, c2]
+  const c3 = createConfig('/app3', './elm-project-2/src/index.js', './elm-project-2/src/index.html')
+  return [c1, c2, c3]
 }
