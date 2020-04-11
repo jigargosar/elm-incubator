@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
-function createConfig(outputPublicPath, entry, template, _) {
+function createConfig(outputPublicPath, entry, template) {
   {
     const isProd = false
     const isElmDebuggerDisabled = false
@@ -71,13 +71,7 @@ module.exports = (_, config) => {
     '/app1',
     './src/ElmGoogleSearch/index.js',
     './src/ElmGoogleSearch/index.html',
-    config,
   )
-  const c2 = createConfig(
-    '/app2',
-    './src/index.js',
-    './src/index.html',
-    config,
-  )
+  const c2 = createConfig('/app2', './src/index.js', './src/index.html')
   return [c1, c2]
 }
