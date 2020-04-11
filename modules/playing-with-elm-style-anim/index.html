@@ -8,8 +8,12 @@
     <!--      rel="stylesheet"-->
     <!--    />-->
     <title>Playing With Elm Style Animations</title>
+    <script src="main.js"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="elm"></div>
   </body>
+  <script>
+    Elm.Main.init({ node: document.getElementById('elm') })
+  </script>
 </html>
