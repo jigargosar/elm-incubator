@@ -6,12 +6,12 @@ const path = require('path')
 const globby = require('globby')
 
 module.exports = (_, config) => {
-  const modules = globby.sync(['modules/*'], { onlyDirectories: true })
+  const modules = globby.sync(['*'], { onlyDirectories: true })
   console.log(modules)
   return modules.map(moduleContext => {
     return createConfig(
       moduleContext,
-      '/' + moduleContext.split('/')[1],
+      '/' + moduleContext,
       './src/index.js',
       './src/index.html',
     )
