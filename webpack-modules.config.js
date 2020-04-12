@@ -3,6 +3,21 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 const path = require('path')
 
+const globby = require('globby')
+
+module.exports = (_, config) => {
+  const modules = globby.sync(['modules/*'], { onlyDirectories: true })
+  console.log(modules)
+  return modules.map(moduleContext => {
+    return createConfig(
+      moduleContext,
+      '/' + moduleContext.split('/')[1],
+      './src/index.js',
+      './src/index.html',
+    )
+  })
+}
+
 function createConfig(contextDir, outputPublicPath, entry, template) {
   {
     console.log('arguments', arguments)
@@ -65,19 +80,4 @@ function createConfig(contextDir, outputPublicPath, entry, template) {
       },
     }
   }
-}
-
-const globby = require('globby')
-
-module.exports = (_, config) => {
-  const modules = globby.sync(['modules/*'], { onlyDirectories: true })
-  console.log(modules)
-  return modules.map(moduleContext => {
-    return createConfig(
-      moduleContext,
-      '/' + moduleContext.split('/')[1],
-      './src/index.js',
-      './src/index.html',
-    )
-  })
 }
