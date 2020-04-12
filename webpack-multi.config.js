@@ -78,7 +78,7 @@ module.exports = (_, config) => {
   )
   const c3 = createConfig(
     './modules/playing-with-elm-style-anim',
-    '/app3',
+    '/playing-with-elm-style-anim',
     './src/index.js',
     './src/index.html',
   )
