@@ -5,8 +5,11 @@ const path = require('path')
 
 const globby = require('globby')
 
-module.exports = (_, config) => {
-  const modules = globby.sync(['*'], { onlyDirectories: true })
+module.exports = () => {
+  const modules = globby.sync(['*'], {
+    onlyDirectories: true,
+    cwd: __dirname,
+  })
   console.log(modules)
   return modules.map(moduleContext => {
     return createConfig(
