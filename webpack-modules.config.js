@@ -5,19 +5,21 @@ const path = require('path')
 
 function createConfig(contextDir, outputPublicPath, entry, template) {
   {
-    console.log(arguments, arguments)
+    console.log('arguments', arguments)
     const isProd = false
     const isElmDebuggerDisabled = false
 
     const context = path.resolve(__dirname, contextDir)
-    console.log(context)
+    console.log('context', context)
+    const outputPath = path.join(__dirname, 'dist', outputPublicPath)
+
     return {
       context: context,
       mode: 'development',
       entry: entry,
       output: {
         publicPath: outputPublicPath,
-        path: path.join(__dirname, 'dist', outputPublicPath),
+        path: outputPath,
       },
       resolve: {
         extensions: ['.js', '.elm'],
