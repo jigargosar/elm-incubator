@@ -1,12 +1,17 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
-function createConfig(outputPublicPath, entry, template) {
+const path = require('path')
+
+function createConfig(contextDir, outputPublicPath, entry, template) {
   {
     const isProd = false
     const isElmDebuggerDisabled = false
 
+    const context = path.resolve(__dirname, contextDir)
+    console.log(context)
     return {
+      context: context,
       mode: 'development',
       entry: entry,
       output: {
@@ -44,20 +49,12 @@ function createConfig(outputPublicPath, entry, template) {
           },
         ],
       },
-      // stats: {
-      //   children: false,
-      //   modules: false,
-      // },
+      stats: {
+        // children: true,
+        modules: false,
+      },
       devtool: isProd ? 'source-map' : 'eval-source-map',
       devServer: {
-        // https://v4.webpack.js.org/configuration/dev-server/
-        // noInfo: true,
-        // proxy: {
-        //   '/api': {
-        //     target: 'http://localhost:3000',
-        //     pathRewrite: { '^/api': '' },
-        //   },
-        // },
         historyApiFallback: false,
         hot: false,
         overlay: true,
@@ -68,11 +65,22 @@ function createConfig(outputPublicPath, entry, template) {
 
 module.exports = (_, config) => {
   const c1 = createConfig(
+    '.',
     '/app1',
     './src/ElmGoogleSearch/index.js',
     './src/ElmGoogleSearch/index.html',
   )
-  const c2 = createConfig('/app2', './src/index.js', './src/index.html')
-  const c3 = createConfig('/app3', './elm-project-2/src/index.js', './elm-project-2/src/index.html')
+  const c2 = createConfig(
+    '.',
+    '/app2',
+    './src/index.js',
+    './src/index.html',
+  )
+  const c3 = createConfig(
+    './modules/playing-with-elm-style-anim',
+    '/app3',
+    './src/index.js',
+    './src/index.html',
+  )
   return [c1, c2, c3]
 }

@@ -7,7 +7,6 @@ open index.html
 -}
 
 import Animation exposing (Color, px, turn)
-import Animation.Messenger
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -25,7 +24,7 @@ type alias Model =
     { submenus : List Submenu
     , open : Bool
     , message : ( String, Animation.State )
-    , menu : Animation.Messenger.State Msg
+    , menu : Animation.State
     }
 
 
@@ -140,8 +139,8 @@ update message model =
 
         Animate time ->
             let
-                ( newMenu, menuCmds ) =
-                    Animation.Messenger.update time model.menu
+                newMenu =
+                    Animation.update time model.menu
 
                 newSubmenus =
                     onSubmenuStyle
@@ -158,7 +157,7 @@ update message model =
                 , submenus = newSubmenus
                 , message = ( fst model.message, messageAnim )
               }
-            , menuCmds
+            , Cmd.none
             )
 
 
