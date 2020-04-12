@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import Checkbox
+import MultiValue
 
 
 main =
-    Checkbox.main
+    MultiValue.main

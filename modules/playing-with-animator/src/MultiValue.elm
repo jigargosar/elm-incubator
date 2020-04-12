@@ -1,7 +1,7 @@
 module MultiValue exposing (main)
 
-import Browser
-import Html exposing (Html)
+import Browser exposing (Document)
+import Html exposing (Html, text)
 
 
 
@@ -47,14 +47,10 @@ subscriptions _ =
 -- View
 
 
-view : Model -> Html Msg
+view : Model -> Document Msg
 view _ =
-    empty
-
-
-empty : Html msg
-empty =
-    Html.text ""
+    Document "Multi Value Animator"
+        [ text "Hello" ]
 
 
 
@@ -63,7 +59,7 @@ empty =
 
 main : Program Flags Model Msg
 main =
-    Browser.element
+    Browser.document
         { init = init
         , view = view
         , update = update
