@@ -47,7 +47,11 @@ subscriptions _ =
 -- View
 
 
-view : Model -> Document Msg
+type alias DM =
+    Document Msg
+
+
+view : Model -> DM
 view _ =
     Document "Multi Value Animator"
         [ text "Hello" ]
