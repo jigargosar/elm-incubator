@@ -17,7 +17,7 @@ type alias Flags =
 
 
 init : Flags -> ( Model, Cmd Msg )
-init _ =
+init () =
     ( {}
     , Cmd.none
     )
@@ -53,8 +53,8 @@ type alias DM =
 
 view : Model -> DM
 view _ =
-    Document "Multi Value Animator"
-        [ text "Hello" ]
+    Document "MultiValue"
+        [ text "Hello MultiValue" ]
 
 
 
