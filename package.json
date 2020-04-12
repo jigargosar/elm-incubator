@@ -25,6 +25,7 @@
     "css-loader": "^3.4.2",
     "elm-hot": "^1.1.4",
     "elm-webpack-loader": "^6.0.1",
+    "globby": "^11.0.0",
     "html-webpack-plugin": "^4.0.3",
     "node-elm-compiler": "^5.0.4",
     "style-loader": "^1.1.3",
