@@ -20,13 +20,15 @@ module.exports = (_, config) => {
 
 function createConfig(contextDir, outputPublicPath, entry, template) {
   {
-    console.log('arguments', arguments)
+    // console.log('arguments', arguments)
     const isProd = false
     const isElmDebuggerDisabled = false
 
     const context = path.resolve(__dirname, contextDir)
-    console.log('context', context)
     const outputPath = path.join(__dirname, 'dist', outputPublicPath)
+    console.log('context', context)
+    console.log('outputPath', outputPath)
+    console.log('outputPublicPath', outputPublicPath)
 
     return {
       context: context,
