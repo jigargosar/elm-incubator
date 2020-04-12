@@ -73,7 +73,7 @@ module.exports = (_, config) => {
   return modules.map(moduleContext => {
     return createConfig(
       moduleContext,
-      moduleContext.split('/')[1],
+      '/' + moduleContext.split('/')[1],
       './src/index.js',
       './src/index.html',
     )
