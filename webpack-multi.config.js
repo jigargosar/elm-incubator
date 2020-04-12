@@ -37,6 +37,7 @@ function createConfig(contextDir, outputPublicPath, entry, template) {
               {
                 loader: 'elm-webpack-loader',
                 options: {
+                  cwd: context,
                   optimize: isProd,
                   debug: !isProd && !isElmDebuggerDisabled,
                 },
