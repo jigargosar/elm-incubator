@@ -1,14 +1,27 @@
-module Draw exposing (Op, circle, fade, move, rect, scale, square)
+module Draw exposing (Op, canvas, circle, fade, move, rect, scale, square)
 
+import Html exposing (Html)
 import Svg exposing (Svg, rect)
 import Svg.Attributes as SA
-import TypedSvg.Attributes exposing (transform)
+import TypedSvg.Attributes exposing (transform, viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
 
 
 
 -- PUBLIC API
+
+
+canvas : Float -> Float -> List (Svg msg) -> Html msg
+canvas w h =
+    let
+        x =
+            w * -0.5
+
+        y =
+            h * -0.5
+    in
+    Svg.svg [ viewBox x y w h, width w, height h ]
 
 
 square : String -> Float -> List Op -> Svg msg

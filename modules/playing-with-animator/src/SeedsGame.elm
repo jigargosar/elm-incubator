@@ -2,11 +2,9 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (circle, move, rect)
+import Draw exposing (canvas, circle, move, rect)
 import Grid exposing (GIdx)
-import Svg exposing (Svg, svg)
-import TypedSvg.Attributes exposing (viewBox)
-import TypedSvg.Attributes.InPx exposing (height, width)
+import Svg exposing (Svg)
 
 
 
@@ -69,30 +67,18 @@ type alias DM =
     Document Msg
 
 
-screenWidth =
-    600
-
-
-screenHeight =
-    800
-
-
-screenLeft =
-    screenWidth * -0.5
-
-
-screenTop =
-    screenHeight * -0.5
-
-
 view : Model -> DM
 view (M g) =
+    let
+        screenWidth =
+            600
+
+        screenHeight =
+            800
+    in
     Document "SeedsGame"
-        [ svg
-            [ viewBox screenLeft screenTop screenWidth screenHeight
-            , width screenWidth
-            , height screenHeight
-            ]
+        [ canvas screenWidth
+            screenHeight
             [ rect "#ffc973" screenWidth screenHeight []
             , renderGrid g
             ]
