@@ -141,18 +141,6 @@ renderGrid g =
         |> group
 
 
-gIdxToXY : GCtx -> GIdx -> ( Float, Float )
-gIdxToXY { cw, dx, dy } ( xi, yi ) =
-    let
-        x =
-            toFloat xi * cw + dx
-
-        y =
-            toFloat yi * cw + dy
-    in
-    ( x, y )
-
-
 group =
     Svg.g []
 
@@ -160,6 +148,11 @@ group =
 moveToGIdx : GCtx -> GIdx -> Draw.Op
 moveToGIdx ctx gIdx =
     uncurry move (gIdxToXY ctx gIdx)
+
+
+gIdxToXY : GCtx -> GIdx -> ( Float, Float )
+gIdxToXY { cw, dx, dy } ( xi, yi ) =
+    ( toFloat xi * cw + dx, toFloat yi * cw + dy )
 
 
 renderCell : GCtx -> GIdx -> Cell -> Svg.Svg msg
