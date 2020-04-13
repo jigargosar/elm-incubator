@@ -139,7 +139,7 @@ group =
     Svg.g []
 
 
-moveToGIdx gIdx g =
+moveToGIdx g gIdx =
     uncurry move (gIdxToXY gIdx g)
 
 
@@ -147,7 +147,7 @@ renderCell : Grid -> GIdx -> Cell -> Svg.Svg msg
 renderCell g gIdx cell =
     case cell of
         Water ->
-            circle "dodgerblue" (gridCellWidth * 0.25) [ moveToGIdx gIdx g ]
+            circle "dodgerblue" (gridCellWidth * 0.25) [ moveToGIdx g gIdx ]
 
 
 
