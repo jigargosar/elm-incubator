@@ -18,12 +18,12 @@ square c w =
 
 rect : String -> Float -> Float -> List Op -> Svg.Svg msg
 rect color w h ops =
-    initRectRecord color w h |> applyOps ops |> renderRectRecord
+    initRect color w h |> applyOps ops |> renderRect
 
 
 circle : String -> Float -> List Op -> Svg.Svg msg
 circle color r ops =
-    initCircleRecord color r |> applyOps ops |> renderCircleRecord
+    initCircle color r |> applyOps ops |> renderCircle
 
 
 type Op
@@ -44,16 +44,16 @@ applyOp :
     Op
     -> { a | o : Float, s : Float, x : Float, y : Float }
     -> { a | o : Float, s : Float, x : Float, y : Float }
-applyOp op =
+applyOp op ({ x, y, s } as m) =
     case op of
         Fade o ->
-            fadeRecord o
+            { m | o = o }
 
-        Move x y ->
-            moveRecord x y
+        Move dx dy ->
+            { m | x = x + dx, y = y + dy }
 
-        Scale_ s ->
-            scaleRecord s
+        Scale_ ns ->
+            { m | s = s * ns }
 
 
 fade =
@@ -72,19 +72,7 @@ scale =
 -- SVG PRIVATE API
 
 
-fadeRecord o m =
-    { m | o = o }
-
-
-moveRecord dx dy ({ x, y } as m) =
-    { m | x = x + dx, y = y + dy }
-
-
-scaleRecord ns ({ s } as m) =
-    { m | s = s * ns }
-
-
-type alias RectangleRecord =
+type alias Rect =
     { x : Float
     , y : Float
     , s : Float
@@ -95,7 +83,7 @@ type alias RectangleRecord =
     }
 
 
-type alias CircleRecord =
+type alias Circle =
     { x : Float
     , y : Float
     , s : Float
@@ -105,18 +93,18 @@ type alias CircleRecord =
     }
 
 
-initRectRecord : String -> Float -> Float -> RectangleRecord
-initRectRecord =
-    RectangleRecord 0 0 1 1
+initRect : String -> Float -> Float -> Rect
+initRect =
+    Rect 0 0 1 1
 
 
-initCircleRecord : String -> Float -> CircleRecord
-initCircleRecord =
-    CircleRecord 0 0 1 1
+initCircle : String -> Float -> Circle
+initCircle =
+    Circle 0 0 1 1
 
 
-renderRectRecord : RectangleRecord -> Svg.Svg msg
-renderRectRecord m =
+renderRect : Rect -> Svg.Svg msg
+renderRect m =
     Svg.rect
         [ width m.w
         , height m.h
@@ -127,8 +115,8 @@ renderRectRecord m =
         []
 
 
-renderCircleRecord : CircleRecord -> Svg.Svg msg
-renderCircleRecord m =
+renderCircle : Circle -> Svg.Svg msg
+renderCircle m =
     Svg.circle
         [ r m.r
         , SA.fill m.fill
