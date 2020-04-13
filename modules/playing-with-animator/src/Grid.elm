@@ -1,6 +1,7 @@
-module Grid exposing (GIdx, Grid, get, init, set, toList)
+module Grid exposing (GIdx, Grid, get, init, set, toList, wh)
 
 import Dict exposing (Dict)
+import List.Extra
 
 
 type Grid a
@@ -36,6 +37,18 @@ set gIdx a (G d) =
 
     else
         Nothing
+
+
+wh : Grid a -> ( Int, Int )
+wh (G d) =
+    Dict.keys d
+        |> List.Extra.last
+        |> Maybe.map (Tuple.mapBoth inc inc)
+        |> Maybe.withDefault ( 0, 0 )
+
+
+inc =
+    (+) 1
 
 
 toList : Grid a -> List ( GIdx, a )

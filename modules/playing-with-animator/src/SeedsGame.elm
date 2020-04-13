@@ -2,7 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (circle, rect)
+import Draw exposing (circle, move, rect)
 import Grid exposing (GIdx)
 import Svg exposing (svg)
 import TypedSvg.Attributes exposing (viewBox)
@@ -105,20 +105,49 @@ gridCellWidth =
 
 renderGrid : Grid -> Svg.Svg msg
 renderGrid g =
+    let
+        renderCellAt ( gIdx, cell ) =
+            renderCell g gIdx cell
+    in
     Grid.toList g
-        |> List.map (uncurry renderGridCellAt)
+        |> List.map renderCellAt
         |> group
+
+
+gIdxToXY : GIdx -> Grid.Grid a -> ( Float, Float )
+gIdxToXY ( xi, yi ) g =
+    let
+        ( gridWidth, gridHeight ) =
+            Grid.wh g |> Tuple.mapBoth (toFloat >> (*) gridCellWidth) (toFloat >> (*) gridCellWidth)
+
+        dx =
+            (gridWidth - gridCellWidth) * -0.5
+
+        dy =
+            (gridHeight - gridCellWidth) * -0.5
+
+        x =
+            toFloat xi * gridCellWidth + dx
+
+        y =
+            toFloat yi * gridCellWidth + dy
+    in
+    ( x, y )
 
 
 group =
     Svg.g []
 
 
-renderGridCellAt : GIdx -> Cell -> Svg.Svg msg
-renderGridCellAt gIdx cell =
+moveToGIdx gIdx g =
+    uncurry move (gIdxToXY gIdx g)
+
+
+renderCell : Grid -> GIdx -> Cell -> Svg.Svg msg
+renderCell g gIdx cell =
     case cell of
         Water ->
-            circle "dodgerblue" (gridCellWidth * 0.25) []
+            circle "dodgerblue" (gridCellWidth * 0.25) [ moveToGIdx gIdx g ]
 
 
 

@@ -1,4 +1,4 @@
-module Draw exposing (circle, fade, move, rect, scale, square)
+module Draw exposing (Op, circle, fade, move, rect, scale, square)
 
 import Svg exposing (rect)
 import Svg.Attributes as SA
