@@ -1,6 +1,6 @@
 module Draw exposing (Op, circle, fade, move, rect, scale, square)
 
-import Svg exposing (rect)
+import Svg exposing (Svg, rect)
 import Svg.Attributes as SA
 import TypedSvg.Attributes exposing (transform)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
@@ -11,17 +11,17 @@ import TypedSvg.Types exposing (Opacity(..), Transform(..))
 -- PUBLIC API
 
 
-square : String -> Float -> List Op -> Svg.Svg msg
+square : String -> Float -> List Op -> Svg msg
 square c w =
     rect c w w
 
 
-rect : String -> Float -> Float -> List Op -> Svg.Svg msg
+rect : String -> Float -> Float -> List Op -> Svg msg
 rect color w h ops =
     initRect color w h |> applyOps ops |> renderRect
 
 
-circle : String -> Float -> List Op -> Svg.Svg msg
+circle : String -> Float -> List Op -> Svg msg
 circle color r ops =
     initCircle color r |> applyOps ops |> renderCircle
 
@@ -103,7 +103,7 @@ initCircle =
     Circle 0 0 1 1
 
 
-renderRect : Rect -> Svg.Svg msg
+renderRect : Rect -> Svg msg
 renderRect m =
     Svg.rect
         [ width m.w
@@ -115,7 +115,7 @@ renderRect m =
         []
 
 
-renderCircle : Circle -> Svg.Svg msg
+renderCircle : Circle -> Svg msg
 renderCircle m =
     Svg.circle
         [ r m.r

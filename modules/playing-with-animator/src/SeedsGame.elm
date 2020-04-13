@@ -4,7 +4,7 @@ import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Draw exposing (circle, move, rect)
 import Grid exposing (GIdx)
-import Svg exposing (svg)
+import Svg exposing (Svg, svg)
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, width)
 
@@ -99,6 +99,40 @@ view (M g) =
         ]
 
 
+renderGrid : Grid -> Svg msg
+renderGrid g =
+    let
+        ctx =
+            toGCtx g
+
+        renderCellAt ( gIdx, cell ) =
+            renderCell ctx gIdx cell
+    in
+    Grid.toList g
+        |> List.map renderCellAt
+        |> group
+
+
+group : List (Svg msg) -> Svg msg
+group =
+    Svg.g []
+
+
+renderCell : GCtx -> GIdx -> Cell -> Svg msg
+renderCell ({ cw } as ctx) gIdx cell =
+    let
+        mv =
+            moveToGIdx ctx gIdx
+    in
+    case cell of
+        Water ->
+            circle "dodgerblue" (cw * 0.25) [ mv ]
+
+
+
+-- GRID CONTEXT
+
+
 type alias GCtx =
     { cw : Float
     , dx : Float
@@ -127,24 +161,6 @@ toGCtx g =
     }
 
 
-renderGrid : Grid -> Svg.Svg msg
-renderGrid g =
-    let
-        ctx =
-            toGCtx g
-
-        renderCellAt ( gIdx, cell ) =
-            renderCell ctx gIdx cell
-    in
-    Grid.toList g
-        |> List.map renderCellAt
-        |> group
-
-
-group =
-    Svg.g []
-
-
 moveToGIdx : GCtx -> GIdx -> Draw.Op
 moveToGIdx ctx gIdx =
     uncurry move (gIdxToXY ctx gIdx)
@@ -153,17 +169,6 @@ moveToGIdx ctx gIdx =
 gIdxToXY : GCtx -> GIdx -> ( Float, Float )
 gIdxToXY { cw, dx, dy } ( xi, yi ) =
     ( toFloat xi * cw + dx, toFloat yi * cw + dy )
-
-
-renderCell : GCtx -> GIdx -> Cell -> Svg.Svg msg
-renderCell ({ cw } as ctx) gIdx cell =
-    let
-        mv =
-            moveToGIdx ctx gIdx
-    in
-    case cell of
-        Water ->
-            circle "dodgerblue" (cw * 0.25) [ mv ]
 
 
 
