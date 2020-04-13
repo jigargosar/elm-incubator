@@ -115,17 +115,6 @@ initCircleRecord =
     CircleRecord 0 0 1 1
 
 
-
---renderShape : Shape -> Svg.Svg msg
---renderShape shape =
---    case shape of
---        Rectangle m ->
---            renderRectRecord m
---
---        Circle m ->
---            renderCircleRecord m
-
-
 renderRectRecord : RectangleRecord -> Svg.Svg msg
 renderRectRecord m =
     Svg.rect
