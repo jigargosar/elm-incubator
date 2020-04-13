@@ -41,14 +41,12 @@ set gIdx a (G d) =
 
 wh : Grid a -> ( Int, Int )
 wh (G d) =
-    Dict.keys d
-        |> List.Extra.last
-        |> Maybe.map (Tuple.mapBoth inc inc)
-        |> Maybe.withDefault ( 0, 0 )
+    case Dict.keys d |> List.Extra.last of
+        Just ( lx, ly ) ->
+            ( lx + 1, ly + 1 )
 
-
-inc =
-    (+) 1
+        Nothing ->
+            ( 0, 0 )
 
 
 toList : Grid a -> List ( GIdx, a )
