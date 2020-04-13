@@ -1,10 +1,10 @@
-module Grid exposing (GIdx, Grid, init)
+module Grid exposing (GIdx, Grid, get, init, set)
 
 import Dict exposing (Dict)
 
 
 type Grid a
-    = G Int Int (IdxDict a)
+    = G (IdxDict a)
 
 
 type alias IdxDict a =
@@ -19,7 +19,23 @@ init : Int -> Int -> (GIdx -> a) -> Grid a
 init w h func =
     mapWH w h (\idx -> ( idx, func idx ))
         |> Dict.fromList
-        |> G w h
+        |> G
+
+
+get : GIdx -> Grid a -> Maybe a
+get gIdx (G d) =
+    Dict.get gIdx d
+
+
+set : GIdx -> a -> Grid a -> Maybe (Grid a)
+set gIdx a (G d) =
+    if Dict.member gIdx d then
+        Dict.insert gIdx a d
+            |> G
+            |> Just
+
+    else
+        Nothing
 
 
 rangeLen : Int -> List Int
