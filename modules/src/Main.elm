@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, a, div, text)
+import Html exposing (Html, a, div, node, text)
 import Html.Attributes exposing (class, href)
 
 
@@ -55,13 +55,31 @@ type alias DM =
 view : Model -> DM
 view model =
     Document "Elm Incubator"
-        [ div [ class "f4 pv2" ] [ text "Elm Incubator Modules" ]
+        [ styleSheet
+        , div [ class "f4 pv2" ] [ text "Elm Incubator Modules" ]
         , div [] (List.map vm model.modules)
         ]
 
 
 vm string =
     div [] [ a [ href string ] [ text string ] ]
+
+
+styleSheet =
+    node "style"
+        []
+        [ text styleSheetContent
+        ]
+
+
+styleSheetContent : String
+styleSheetContent =
+    """
+        body {
+            max-width: 30em;
+            margin: 0 auto;
+        }
+    """
 
 
 
