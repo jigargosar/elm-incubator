@@ -1,4 +1,16 @@
-module Draw exposing (Op, canvas, circle, fade, move, rect, scale, square)
+module Draw exposing
+    ( canvas
+    , square, rect, circle
+    , Op, fade, move, scale
+    )
+
+{-|
+
+@docs canvas
+@docs square, rect, circle
+@docs Op, fade, move, scale
+
+-}
 
 import Html exposing (Html)
 import Html.Attributes exposing (style)
