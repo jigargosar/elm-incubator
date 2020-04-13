@@ -7,11 +7,12 @@ const globby = require('globby')
 
 module.exports = () => {
   const modules = globby.sync(['*'], {
+    gitignore: true,
     onlyDirectories: true,
     cwd: __dirname,
   })
   console.log(modules)
-  return modules.map(moduleContext => {
+  const modulesConfig = modules.map(moduleContext => {
     return createConfig(
       moduleContext,
       '/' + moduleContext,
@@ -19,6 +20,8 @@ module.exports = () => {
       './src/index.html',
     )
   })
+  const indexConfig = createConfig('.', '/', './index.js', 'index.html')
+  return [indexConfig, ...modulesConfig]
 }
 
 function createConfig(contextDir, outputPublicPath, entry, template) {
@@ -73,10 +76,11 @@ function createConfig(contextDir, outputPublicPath, entry, template) {
           },
         ],
       },
-      stats: {
-        // children: true,
-        modules: false,
-      },
+      // stats: {
+      //   // children: true,
+      //   modules: false,
+      // },
+      stats: 'errors-only',
       devtool: isProd ? 'source-map' : 'eval-source-map',
       devServer: {
         historyApiFallback: false,
