@@ -1,4 +1,4 @@
-module Grid exposing (Grid, init)
+module Grid exposing (GIdx, Grid, init)
 
 import Dict exposing (Dict)
 
