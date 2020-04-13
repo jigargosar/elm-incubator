@@ -164,9 +164,13 @@ moveToGIdx ctx gIdx =
 
 renderCell : GCtx -> GIdx -> Cell -> Svg.Svg msg
 renderCell ({ cw } as ctx) gIdx cell =
+    let
+        mv =
+            moveToGIdx ctx gIdx
+    in
     case cell of
         Water ->
-            circle "dodgerblue" (cw * 0.25) [ moveToGIdx ctx gIdx ]
+            circle "dodgerblue" (cw * 0.25) [ mv ]
 
 
 
