@@ -118,7 +118,7 @@ renderGridCellAt : GIdx -> Cell -> Svg.Svg msg
 renderGridCellAt gIdx cell =
     case cell of
         Water ->
-            circle "dodgerblue" (gridCellWidth * 0.3) []
+            circle "dodgerblue" (gridCellWidth * 0.25) []
 
 
 
