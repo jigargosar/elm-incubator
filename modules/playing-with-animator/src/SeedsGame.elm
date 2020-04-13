@@ -99,24 +99,19 @@ view (M g) =
         ]
 
 
-gridCellWidth =
-    50
+type alias GCtx =
+    { cw : Float
+    , dx : Float
+    , dy : Float
+    }
 
 
-renderGrid : Grid -> Svg.Svg msg
-renderGrid g =
+toGCtx : Grid -> GCtx
+toGCtx g =
     let
-        renderCellAt ( gIdx, cell ) =
-            renderCell g gIdx cell
-    in
-    Grid.toList g
-        |> List.map renderCellAt
-        |> group
+        gridCellWidth =
+            50
 
-
-gIdxToXY : GIdx -> Grid.Grid a -> ( Float, Float )
-gIdxToXY ( xi, yi ) g =
-    let
         ( gridWidth, gridHeight ) =
             Grid.wh g |> Tuple.mapBoth (toFloat >> (*) gridCellWidth) (toFloat >> (*) gridCellWidth)
 
@@ -125,12 +120,35 @@ gIdxToXY ( xi, yi ) g =
 
         dy =
             (gridHeight - gridCellWidth) * -0.5
+    in
+    { cw = gridCellWidth
+    , dx = dx
+    , dy = dy
+    }
 
+
+renderGrid : Grid -> Svg.Svg msg
+renderGrid g =
+    let
+        ctx =
+            toGCtx g
+
+        renderCellAt ( gIdx, cell ) =
+            renderCell ctx gIdx cell
+    in
+    Grid.toList g
+        |> List.map renderCellAt
+        |> group
+
+
+gIdxToXY : GCtx -> GIdx -> ( Float, Float )
+gIdxToXY { cw, dx, dy } ( xi, yi ) =
+    let
         x =
-            toFloat xi * gridCellWidth + dx
+            toFloat xi * cw + dx
 
         y =
-            toFloat yi * gridCellWidth + dy
+            toFloat yi * cw + dy
     in
     ( x, y )
 
@@ -139,15 +157,16 @@ group =
     Svg.g []
 
 
-moveToGIdx g gIdx =
-    uncurry move (gIdxToXY gIdx g)
+moveToGIdx : GCtx -> GIdx -> Draw.Op
+moveToGIdx ctx gIdx =
+    uncurry move (gIdxToXY ctx gIdx)
 
 
-renderCell : Grid -> GIdx -> Cell -> Svg.Svg msg
-renderCell g gIdx cell =
+renderCell : GCtx -> GIdx -> Cell -> Svg.Svg msg
+renderCell ({ cw } as ctx) gIdx cell =
     case cell of
         Water ->
-            circle "dodgerblue" (gridCellWidth * 0.25) [ moveToGIdx g gIdx ]
+            circle "dodgerblue" (cw * 0.25) [ moveToGIdx ctx gIdx ]
 
 
 
