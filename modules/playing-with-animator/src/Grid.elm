@@ -8,14 +8,14 @@ type Grid a
 
 
 type alias IdxDict a =
-    Dict Idx a
+    Dict GIdx a
 
 
-type alias Idx =
+type alias GIdx =
     ( Int, Int )
 
 
-init : Int -> Int -> (Idx -> a) -> Grid a
+init : Int -> Int -> (GIdx -> a) -> Grid a
 init w h func =
     mapWH w h (\idx -> ( idx, func idx ))
         |> Dict.fromList
@@ -27,6 +27,6 @@ rangeLen len =
     List.range 0 (len - 1)
 
 
-mapWH : Int -> Int -> (Idx -> a) -> List a
+mapWH : Int -> Int -> (GIdx -> a) -> List a
 mapWH w h func =
     rangeLen h |> List.concatMap (\y -> rangeLen w |> List.map (\x -> func ( x, y )))
