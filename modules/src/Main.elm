@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, a, div, node, text)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (class, href, style)
 
 
 
@@ -62,7 +62,14 @@ view model =
 
 
 vm string =
-    div [] [ a [ href string ] [ text string ] ]
+    div [ class "pv2" ]
+        [ a
+            [ href string
+            , class "f5 ttc"
+            , style "color" "rgba(43, 43, 43)"
+            ]
+            [ text (String.replace "-" " " string) ]
+        ]
 
 
 styleSheet =
