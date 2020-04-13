@@ -57,11 +57,11 @@ view model =
     Document "Elm Incubator"
         [ styleSheet
         , div [ class "f4 pv2" ] [ text "Elm Incubator Modules" ]
-        , div [] (List.map vm model.modules)
+        , div [] (List.map viewLink model.modules)
         ]
 
 
-vm string =
+viewLink string =
     div [ class "pv2" ]
         [ a
             [ href string
