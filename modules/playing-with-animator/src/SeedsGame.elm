@@ -11,8 +11,14 @@ import Svg exposing (Svg)
 -- Model
 
 
-type Model
-    = M Grid
+type alias Model =
+    { window : Window
+    , grid : Grid
+    }
+
+
+type alias Window =
+    { width : Float, height : Float }
 
 
 type alias Grid =
@@ -29,12 +35,12 @@ type Cell
 
 
 type alias Flags =
-    ()
+    { window : Window }
 
 
 init : Flags -> ( Model, Cmd Msg )
-init () =
-    ( M initialGrid
+init f =
+    ( Model f.window initialGrid
     , Cmd.none
     )
 
@@ -68,19 +74,19 @@ type alias DM =
 
 
 view : Model -> DM
-view (M g) =
+view model =
     let
-        screenWidth =
-            600
+        w =
+            model.window.width
 
-        screenHeight =
-            800
+        h =
+            model.window.height
     in
     Document "SeedsGame"
-        [ canvas screenWidth
-            screenHeight
-            [ rect "#ffc973" screenWidth screenHeight []
-            , renderGrid g
+        [ canvas w
+            h
+            [ rect "#ffc973" w h []
+            , renderGrid model.grid
             ]
         ]
 

@@ -1,6 +1,7 @@
 module Draw exposing (Op, canvas, circle, fade, move, rect, scale, square)
 
 import Html exposing (Html)
+import Html.Attributes exposing (style)
 import Svg exposing (Svg, rect)
 import Svg.Attributes as SA
 import TypedSvg.Attributes exposing (transform, viewBox)
@@ -21,7 +22,7 @@ canvas w h =
         y =
             h * -0.5
     in
-    Svg.svg [ viewBox x y w h, width w, height h ]
+    Svg.svg [ viewBox x y w h, width w, height h, style "display" "flex" ]
 
 
 square : String -> Float -> List Op -> Svg msg
