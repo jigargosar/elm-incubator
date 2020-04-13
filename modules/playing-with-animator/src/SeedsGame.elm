@@ -1,15 +1,33 @@
 module SeedsGame exposing (main)
 
 import Browser exposing (Document)
+import Draw exposing (rect)
+import Grid
 import Html exposing (Html, text)
+import Svg exposing (svg)
+import TypedSvg.Attributes exposing (viewBox)
+import TypedSvg.Attributes.InPx exposing (height, width)
 
 
 
 -- Model
 
 
-type alias Model =
-    {}
+type Model
+    = M Grid
+
+
+type alias Grid =
+    Grid.Grid Cell
+
+
+initialGrid : Grid
+initialGrid =
+    Grid.init 7 5 (\_ -> Water)
+
+
+type Cell
+    = Water
 
 
 type alias Flags =
@@ -18,7 +36,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
+    ( M initialGrid
     , Cmd.none
     )
 
@@ -51,10 +69,32 @@ type alias DM =
     Document Msg
 
 
+screenWidth =
+    600
+
+
+screenHeight =
+    800
+
+
+screenLeft =
+    screenWidth * -0.5
+
+
+screenTop =
+    screenHeight * -0.5
+
+
 view : Model -> DM
-view _ =
+view (M g) =
     Document "SeedsGame"
-        [ text "Hello SeedsGame" ]
+        [ svg
+            [ viewBox screenLeft screenTop screenWidth screenHeight
+            , width screenWidth
+            , height screenHeight
+            ]
+            [ rect "#ffc973" screenWidth screenHeight [] ]
+        ]
 
 
 

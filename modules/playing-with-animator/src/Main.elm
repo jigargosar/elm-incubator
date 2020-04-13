@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import MultiValue
+import SeedsGame
 
 
 main =
-    MultiValue.main
+    SeedsGame.main
