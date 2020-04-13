@@ -1,9 +1,9 @@
 module SeedsGame exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (rect)
-import Grid
-import Html exposing (Html, text)
+import Draw exposing (circle, rect)
+import Grid exposing (GIdx)
 import Svg exposing (svg)
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, width)
@@ -93,8 +93,32 @@ view (M g) =
             , width screenWidth
             , height screenHeight
             ]
-            [ rect "#ffc973" screenWidth screenHeight [] ]
+            [ rect "#ffc973" screenWidth screenHeight []
+            , renderGrid g
+            ]
         ]
+
+
+gridCellWidth =
+    50
+
+
+renderGrid : Grid -> Svg.Svg msg
+renderGrid g =
+    Grid.toList g
+        |> List.map (uncurry renderGridCellAt)
+        |> group
+
+
+group =
+    Svg.g []
+
+
+renderGridCellAt : GIdx -> Cell -> Svg.Svg msg
+renderGridCellAt gIdx cell =
+    case cell of
+        Water ->
+            circle "dodgerblue" (gridCellWidth * 0.3) []
 
 
 

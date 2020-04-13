@@ -1,4 +1,4 @@
-module Grid exposing (GIdx, Grid, get, init, set)
+module Grid exposing (GIdx, Grid, get, init, set, toList)
 
 import Dict exposing (Dict)
 
@@ -36,6 +36,11 @@ set gIdx a (G d) =
 
     else
         Nothing
+
+
+toList : Grid a -> List ( GIdx, a )
+toList (G d) =
+    Dict.toList d
 
 
 rangeLen : Int -> List Int
