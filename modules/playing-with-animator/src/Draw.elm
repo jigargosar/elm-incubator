@@ -18,28 +18,18 @@ square c w =
 
 rect : String -> Float -> Float -> List Op -> Svg.Svg msg
 rect color w h ops =
-    applyOpsAndRender ops <| Rectangle (initRectRecord color w h)
+    initRectRecord color w h |> applyOps ops |> renderRectRecord
 
 
 circle : String -> Float -> List Op -> Svg.Svg msg
 circle color r ops =
-    applyOpsAndRender ops <| Circle (initCircleRecord color r)
+    initCircleRecord color r |> applyOps ops |> renderCircleRecord
 
 
 type Op
     = Fade Float
     | Move Float Float
     | Scale_ Float
-
-
-applyOpsAndRender : List Op -> Shape -> Svg.Svg msg
-applyOpsAndRender ops shape =
-    case shape of
-        Rectangle rec ->
-            applyOps ops rec |> renderRectRecord
-
-        Circle rec ->
-            applyOps ops rec |> renderCircleRecord
 
 
 applyOps :
@@ -64,38 +54,6 @@ applyOp op =
 
         Scale_ s ->
             scaleRecord s
-
-
-
---fade : Float -> Shape -> Shape
---fade o shape =
---    case shape of
---        Rectangle m ->
---            Rectangle { m | o = o }
---
---        Circle m ->
---            Circle { m | o = o }
---
---
---move : Float -> Float -> Shape -> Shape
---move dx dy shape =
---    case shape of
---        Rectangle m ->
---            Rectangle (moveRecord dx dy m)
---
---        Circle m ->
---            Circle (moveRecord dx dy m)
---
---
---scale : Float -> Shape -> Shape
---scale s shape =
---    case shape of
---        Rectangle m ->
---            Rectangle (scaleRecord s m)
---
---        Circle m ->
---            Circle (scaleRecord s m)
---
 
 
 fade =
@@ -124,11 +82,6 @@ moveRecord dx dy ({ x, y } as m) =
 
 scaleRecord ns ({ s } as m) =
     { m | s = s * ns }
-
-
-type Shape
-    = Rectangle RectangleRecord
-    | Circle CircleRecord
 
 
 type alias RectangleRecord =
