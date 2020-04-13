@@ -1,12 +1,12 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-
+const webpack = require('webpack')
 const path = require('path')
 
 const globby = require('globby')
 
 module.exports = () => {
-  const modules = globby.sync(['*'], {
+  const modules = globby.sync(['*', '!src'], {
     gitignore: true,
     onlyDirectories: true,
     cwd: __dirname,
@@ -20,11 +20,23 @@ module.exports = () => {
       './src/index.html',
     )
   })
-  const indexConfig = createConfig('.', '/', './index.js', 'index.html')
+  const indexConfig = createConfig(
+    '.',
+    '/',
+    './src/index.js',
+    'src/index.html',
+    [new webpack['EnvironmentPlugin']({ MODULE_NAMES: modules })],
+  )
   return [indexConfig, ...modulesConfig]
 }
 
-function createConfig(contextDir, outputPublicPath, entry, template) {
+function createConfig(
+  contextDir,
+  outputPublicPath,
+  entry,
+  template,
+  plugins = [],
+) {
   {
     // console.log('arguments', arguments)
     const isProd = false
@@ -52,6 +64,7 @@ function createConfig(contextDir, outputPublicPath, entry, template) {
         new HtmlWebpackPlugin({
           template: template,
         }),
+        ...plugins,
       ],
 
       module: {
