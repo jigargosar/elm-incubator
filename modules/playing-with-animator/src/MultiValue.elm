@@ -76,7 +76,7 @@ update message model =
                 | checked =
                     -- (6) - Here we're adding a new state to our timeline.
                     model.checked
-                        |> Animator.go Animator.slowly (List.Extra.setAt idx bool (Animator.current model.checked))
+                        |> Animator.go Animator.verySlowly (List.Extra.setAt idx bool (Animator.current model.checked))
               }
             , Cmd.none
             )
@@ -114,7 +114,7 @@ viewCheckbox checkedA idx isChecked =
                     Animator.at 1
 
                 else
-                    Animator.at 0.5
+                    Animator.at 0.1
         , onClick (CheckIdx idx (not isChecked))
         , class "f4 pa2"
         ]
