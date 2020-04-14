@@ -65,6 +65,7 @@ type Msg
     | Foo
 
 
+cellToggleConnected : Cell -> Cell
 cellToggleConnected (Cell cs s) =
     Cell
         (case cs of
