@@ -99,8 +99,13 @@ update message model =
 
         Foo l c r ->
             ( modelToggleConnected c model
-            , Process.sleep 1000 |> Task.perform (always <| Foo l c r)
+            , loop l c r
             )
+
+
+loop : List GIdx -> GIdx -> List GIdx -> Cmd Msg
+loop l c r =
+    Process.sleep 1000 |> Task.perform (always <| Foo l c r)
 
 
 subscriptions : Model -> Sub Msg
