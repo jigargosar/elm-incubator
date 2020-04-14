@@ -63,7 +63,23 @@ init f =
 type Msg
     = NoOp
     | Foo
-    | Bar
+
+
+cellToggleConnected (Cell cs s) =
+    Cell
+        (case cs of
+            CS_Connected ->
+                CS_Idle
+
+            CS_Idle ->
+                CS_Connected
+        )
+        s
+
+
+gridToggleConnected : GIdx -> Grid -> Maybe Grid
+gridToggleConnected idx =
+    Grid.mapIdx idx cellToggleConnected
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -75,16 +91,7 @@ update message model =
         Foo ->
             ( { model
                 | grid =
-                    Grid.set ( 0, 0 ) (Cell CS_Connected Water) model.grid
-                        |> Maybe.withDefault model.grid
-              }
-            , Process.sleep 1000 |> Task.perform (always Bar)
-            )
-
-        Bar ->
-            ( { model
-                | grid =
-                    Grid.set ( 0, 0 ) (Cell CS_Idle Water) model.grid
+                    gridToggleConnected ( 0, 0 ) model.grid
                         |> Maybe.withDefault model.grid
               }
             , Process.sleep 1000 |> Task.perform (always Foo)
