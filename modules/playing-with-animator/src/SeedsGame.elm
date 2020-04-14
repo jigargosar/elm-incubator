@@ -68,6 +68,29 @@ moveGIdx dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
+moveGIdxIn : FourD -> GIdx -> GIdx
+moveGIdxIn fourD =
+    case fourD of
+        Up ->
+            moveGIdx 0 -1
+
+        Down ->
+            moveGIdx 0 1
+
+        Left ->
+            moveGIdx -1 0
+
+        Right ->
+            moveGIdx 1 0
+
+
+type FourD
+    = Up
+    | Down
+    | Left
+    | Right
+
+
 moveGIdxDown =
     moveGIdx 0 1
 
