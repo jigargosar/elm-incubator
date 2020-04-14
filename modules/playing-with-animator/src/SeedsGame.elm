@@ -5,7 +5,9 @@ import Browser exposing (Document)
 import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
+import Process
 import Svg exposing (Svg)
+import Task
 
 
 
@@ -51,7 +53,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , Cmd.none
+    , Process.sleep 1000 |> Task.perform (always Foo)
     )
 
 
@@ -61,6 +63,7 @@ init f =
 
 type Msg
     = NoOp
+    | Foo
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -68,6 +71,13 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        Foo ->
+            ( { model
+                | grid = Grid.set ( 0, 0 ) (Cell CS_Connected Water) model.grid |> Maybe.withDefault model.grid
+              }
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
@@ -128,17 +138,17 @@ renderCS cs =
             [ scale 0.5 ]
 
         CS_Idle ->
-            [ scale 1 ]
+            []
 
 
 renderCS2 : CS -> List Draw.Op
 renderCS2 cs =
     case cs of
         CS_Connected ->
-            [ fade 1, scale 2 ]
+            [ fade 0, scale 2 ]
 
         CS_Idle ->
-            [ fade 0, scale 1 ]
+            []
 
 
 renderSprite : Float -> Sprite -> Svg msg
@@ -178,16 +188,6 @@ toGCtx g =
     , dx = dx
     , dy = dy
     }
-
-
-moveToGIdx : GCtx -> GIdx -> Draw.Op
-moveToGIdx ctx gIdx =
-    uncurry move (gIdxToXY ctx gIdx)
-
-
-gIdxToXY : GCtx -> GIdx -> ( Float, Float )
-gIdxToXY { cw, dx, dy } ( xi, yi ) =
-    ( toFloat xi * cw + dx, toFloat yi * cw + dy )
 
 
 
