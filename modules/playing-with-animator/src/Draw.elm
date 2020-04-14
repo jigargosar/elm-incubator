@@ -16,7 +16,7 @@ module Draw exposing
 import Html exposing (Html)
 import Html.Attributes
 import Svg exposing (Svg, rect)
-import Svg.Attributes as SA
+import Svg.Attributes
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
@@ -153,9 +153,9 @@ renderRect m =
     Svg.rect
         [ width m.w
         , height m.h
-        , SA.fill m.fill
         , renderStyles
-            [ transform <| renderRectTransform m
+            [ fill m.fill
+            , transform <| renderRectTransform m
             , opacity m.o
             ]
         ]
@@ -166,9 +166,9 @@ renderCircle : Circle -> Svg msg
 renderCircle m =
     Svg.circle
         [ r m.r
-        , SA.fill m.fill
         , renderStyles
-            [ transform <| renderTransform m
+            [ fill m.fill
+            , transform <| renderTransform m
             , opacity m.o
             ]
         ]
@@ -188,24 +188,20 @@ renderGroup children m =
 
 renderStyles : List ( String, String ) -> Svg.Attribute msg
 renderStyles list =
-    SA.style (List.map styleTupleToString list |> String.join "")
+    Svg.Attributes.style (List.map styleTupleToString list |> String.join "")
 
 
 renderRectTransform m =
-    Translate (m.w * -0.5) (m.h * -0.5)
-        :: renderTransform m
+    Translate (m.w * -0.5) (m.h * -0.5) :: renderTransform m
 
 
 renderTransform m =
     [ Translate m.x m.y, Scale m.s m.s ]
 
 
-
---noinspection ElmUnusedSymbol
-
-
-opacityA =
-    TypedSvg.Attributes.opacity << Opacity
+fill : String -> ( String, String )
+fill =
+    Tuple.pair "fill"
 
 
 opacity : Float -> ( String, String )
