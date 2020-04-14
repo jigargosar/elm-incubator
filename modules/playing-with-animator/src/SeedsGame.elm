@@ -64,6 +64,18 @@ init f =
     )
 
 
+moveGIdx dx dy ( x, y ) =
+    ( x + dx, y + dy )
+
+
+moveGIdxDown =
+    moveGIdx 0 1
+
+
+moveGIdxRight =
+    moveGIdx 0 1
+
+
 
 -- LCR
 
