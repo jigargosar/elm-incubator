@@ -1,8 +1,7 @@
 module SeedsGame exposing (main)
 
-import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale)
+import Draw exposing (canvas, circle, fade, group, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
 import Process
