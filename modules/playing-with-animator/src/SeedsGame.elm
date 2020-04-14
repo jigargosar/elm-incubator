@@ -53,7 +53,14 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , Process.sleep 1000 |> Task.perform (always <| Foo Forth (lcrSingleton ( 0, 0 )))
+    , delay
+        (Foo Forth
+            (lcrCons ( 0, 0 )
+                [ ( 1, 0 )
+                , ( 2, 0 )
+                ]
+            )
+        )
     )
 
 
@@ -63,6 +70,10 @@ init f =
 
 lcrSingleton =
     Pivot.singleton
+
+
+lcrCons =
+    Pivot.fromCons
 
 
 lcrC =
