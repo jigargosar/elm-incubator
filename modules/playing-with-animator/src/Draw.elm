@@ -190,8 +190,11 @@ renderTransform m =
 
 
 
---opacity =
---    TypedSvg.Attributes.opacity << Opacity
+--noinspection ElmUnusedSymbol
+
+
+opacityA =
+    TypedSvg.Attributes.opacity << Opacity
 
 
 opacity =
