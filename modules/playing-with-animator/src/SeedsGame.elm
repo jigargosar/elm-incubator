@@ -36,9 +36,7 @@ type Cell
 
 
 type CS
-    = CS_Connecting
-    | CS_Connected
-    | CS_Disconnecting
+    = CS_Connected
     | CS_Idle
 
 
@@ -117,23 +115,30 @@ renderCell : GCtx -> GIdx -> Cell -> Svg msg
 renderCell { cw } _ cell =
     case cell of
         Cell cs sprite ->
-            group (renderCS cs) [ renderSprite cw sprite ]
+            group []
+                [ group (renderCS cs) [ renderSprite cw sprite ]
+                , group (renderCS2 cs) [ renderSprite cw sprite ]
+                ]
 
 
 renderCS : CS -> List Draw.Op
 renderCS cs =
     case cs of
-        CS_Connecting ->
-            [ scale 0.5 ]
-
         CS_Connected ->
             [ scale 0.5 ]
 
-        CS_Disconnecting ->
-            [ scale 1 ]
-
         CS_Idle ->
             [ scale 1 ]
+
+
+renderCS2 : CS -> List Draw.Op
+renderCS2 cs =
+    case cs of
+        CS_Connected ->
+            [ fade 1, scale 2 ]
+
+        CS_Idle ->
+            [ fade 0, scale 1 ]
 
 
 renderSprite : Float -> Sprite -> Svg msg
