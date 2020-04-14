@@ -211,7 +211,7 @@ renderRectTransform m =
 
 
 renderTransform m =
-    [ T.Translate m.x m.y, T.Scale m.s m.s ]
+    [ T.Translate m.x m.y, T.Scale m.s m.s, T.Rotate m.a 0 0 ]
 
 
 fill : String -> ( String, String )
@@ -251,13 +251,16 @@ transformToString xform =
 
         num f =
             String.fromFloat f
+
+        deg f =
+            String.fromFloat f ++ "deg"
     in
     case xform of
         T.Matrix a b c d e f ->
             trNum "matrix" [ a, b, c, d, e, f ]
 
-        T.Rotate a x y ->
-            trNum "rotate" [ a, x, y ]
+        T.Rotate a _ _ ->
+            tr "rotate" [ deg a ]
 
         T.Scale x y ->
             trNum "scale" [ x, y ]
