@@ -99,7 +99,7 @@ renderGrid g =
             toGCtx g
     in
     [ DrawGrid.cells ctx.cw (renderCell ctx) g ]
-        |> group [ fade 0.2, scale 0.5, rotate 1 ]
+        |> group [ fade 1, scale 1, rotate 0 ]
 
 
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
