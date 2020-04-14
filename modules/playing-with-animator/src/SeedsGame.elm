@@ -52,7 +52,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , Process.sleep 1000 |> Task.perform (always Foo)
+    , Process.sleep 1000 |> Task.perform (always <| Foo ( 0, 0 ))
     )
 
 
@@ -62,7 +62,7 @@ init f =
 
 type Msg
     = NoOp
-    | Foo
+    | Foo GIdx
 
 
 cellToggleConnected : Cell -> Cell
@@ -89,13 +89,13 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Foo ->
+        Foo idx ->
             ( { model
                 | grid =
-                    gridToggleConnected ( 0, 0 ) model.grid
+                    gridToggleConnected idx model.grid
                         |> Maybe.withDefault model.grid
               }
-            , Process.sleep 1000 |> Task.perform (always Foo)
+            , Process.sleep 1000 |> Task.perform (always <| Foo idx)
             )
 
 
