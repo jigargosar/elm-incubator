@@ -2,7 +2,7 @@ module Draw exposing
     ( canvas
     , square, rect, circle
     , Op, fade, move, scale
-    , group
+    , group, rotate
     )
 
 {-|

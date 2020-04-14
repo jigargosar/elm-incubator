@@ -2,7 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (canvas, circle, fade, group, move, rect, scale)
+import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
 import Svg exposing (Svg)
@@ -99,7 +99,7 @@ renderGrid g =
             toGCtx g
     in
     [ DrawGrid.cells ctx.cw (renderCell ctx) g ]
-        |> group [ fade 0.2, scale 0.5 ]
+        |> group [ fade 0.2, scale 0.5, rotate 1 ]
 
 
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
