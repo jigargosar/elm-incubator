@@ -61,22 +61,27 @@ group ops list =
 type Op
     = Fade Float
     | Move Float Float
-    | Scale_ Float
+    | Scale Float
+    | Rotate Float
+
+
+type alias OpRec a =
+    { a | a : Float, o : Float, s : Float, x : Float, y : Float }
 
 
 applyOps :
     List Op
-    -> { a | o : Float, s : Float, x : Float, y : Float }
-    -> { a | o : Float, s : Float, x : Float, y : Float }
+    -> OpRec a
+    -> OpRec a
 applyOps ops record =
     List.foldl applyOp record ops
 
 
 applyOp :
     Op
-    -> { a | o : Float, s : Float, x : Float, y : Float }
-    -> { a | o : Float, s : Float, x : Float, y : Float }
-applyOp op ({ x, y, s } as m) =
+    -> OpRec a
+    -> OpRec a
+applyOp op ({ x, y, s, a } as m) =
     case op of
         Fade o ->
             { m | o = o }
@@ -84,8 +89,11 @@ applyOp op ({ x, y, s } as m) =
         Move dx dy ->
             { m | x = x + dx, y = y + dy }
 
-        Scale_ ns ->
+        Scale ns ->
             { m | s = s * ns }
+
+        Rotate da ->
+            { m | a = a + da }
 
 
 fade =
@@ -97,7 +105,11 @@ move =
 
 
 scale =
-    Scale_
+    Scale
+
+
+rotate =
+    Rotate
 
 
 
@@ -108,6 +120,7 @@ type alias Rect =
     { x : Float
     , y : Float
     , s : Float
+    , a : Float
     , o : Float
     , fill : String
     , w : Float
@@ -119,6 +132,7 @@ type alias Circle =
     { x : Float
     , y : Float
     , s : Float
+    , a : Float
     , o : Float
     , fill : String
     , r : Float
@@ -129,23 +143,24 @@ type alias Group =
     { x : Float
     , y : Float
     , s : Float
+    , a : Float
     , o : Float
     }
 
 
 initRect : String -> Float -> Float -> Rect
 initRect =
-    Rect 0 0 1 1
+    Rect 0 0 1 0 1
 
 
 initCircle : String -> Float -> Circle
 initCircle =
-    Circle 0 0 1 1
+    Circle 0 0 1 0 1
 
 
 initGroup : Group
 initGroup =
-    Group 0 0 1 1
+    Group 0 0 1 0 1
 
 
 renderRect : Rect -> Svg msg
