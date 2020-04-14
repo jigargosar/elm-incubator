@@ -14,10 +14,10 @@ module Draw exposing
 -}
 
 import Html exposing (Html)
-import Html.Attributes exposing (style)
+import Html.Attributes
 import Svg exposing (Svg, rect)
 import Svg.Attributes as SA
-import TypedSvg.Attributes exposing (transform, viewBox)
+import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types exposing (Opacity(..), Transform(..))
 
@@ -35,7 +35,7 @@ canvas w h =
         y =
             h * -0.5
     in
-    Svg.svg [ viewBox x y w h, width w, height h, style "display" "flex" ]
+    Svg.svg [ viewBox x y w h, width w, height h, Html.Attributes.style "display" "flex" ]
 
 
 square : String -> Float -> List Op -> Svg msg
@@ -154,8 +154,10 @@ renderRect m =
         [ width m.w
         , height m.h
         , SA.fill m.fill
-        , transform <| renderRectTransform m
-        , opacity m.o
+        , renderStyles
+            [ transform <| renderRectTransform m
+            , opacity m.o
+            ]
         ]
         []
 
@@ -165,8 +167,10 @@ renderCircle m =
     Svg.circle
         [ r m.r
         , SA.fill m.fill
-        , transform <| renderTransform m
-        , opacity m.o
+        , renderStyles
+            [ transform <| renderTransform m
+            , opacity m.o
+            ]
         ]
         []
 
@@ -174,10 +178,17 @@ renderCircle m =
 renderGroup : List (Svg msg) -> Group -> Svg msg
 renderGroup children m =
     Svg.g
-        [ transform <| renderTransform m
-        , opacity m.o
+        [ renderStyles
+            [ transform <| renderTransform m
+            , opacity m.o
+            ]
         ]
         children
+
+
+renderStyles : List ( String, String ) -> Svg.Attribute msg
+renderStyles list =
+    SA.style (List.map styleTupleToString list |> String.join "")
 
 
 renderRectTransform m =
@@ -197,5 +208,59 @@ opacityA =
     TypedSvg.Attributes.opacity << Opacity
 
 
-opacity =
-    Html.Attributes.style "opacity" << String.fromFloat
+opacity : Float -> ( String, String )
+opacity o =
+    ( "opacity", String.fromFloat o )
+
+
+transform : List Transform -> ( String, String )
+transform transforms =
+    ( "transform", String.join " " (List.map transformToString transforms) )
+
+
+transformToString : Transform -> String
+transformToString xform =
+    let
+        trNum name args =
+            tr name (List.map num args)
+
+        trPx name args =
+            tr name (List.map px args)
+
+        tr name args =
+            String.concat
+                [ name
+                , "("
+                , String.join "," args
+                , ")"
+                ]
+
+        px f =
+            String.fromFloat f ++ "px"
+
+        num f =
+            String.fromFloat f
+    in
+    case xform of
+        Matrix a b c d e f ->
+            trNum "matrix" [ a, b, c, d, e, f ]
+
+        Rotate a x y ->
+            trNum "rotate" [ a, x, y ]
+
+        Scale x y ->
+            trNum "scale" [ x, y ]
+
+        SkewX x ->
+            trNum "skewX" [ x ]
+
+        SkewY y ->
+            trNum "skewY" [ y ]
+
+        Translate x y ->
+            trPx "translate" [ x, y ]
+
+
+styleTupleToString : ( String, String ) -> String
+styleTupleToString ( n, v ) =
+    n ++ ":" ++ v ++ ";"
