@@ -53,7 +53,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , Process.sleep 1000 |> Task.perform (always <| Foo (lcrSingleton ( 0, 0 )))
+    , Process.sleep 1000 |> Task.perform (always <| Foo Forth (lcrSingleton ( 0, 0 )))
     )
 
 
@@ -69,13 +69,36 @@ lcrC =
     Pivot.getC
 
 
+type LCRDir
+    = Back
+    | Forth
+
+
+lcrOppDir dir =
+    case dir of
+        Back ->
+            Forth
+
+        Forth ->
+            Back
+
+
+lcrGo dir =
+    case dir of
+        Back ->
+            Pivot.goL
+
+        Forth ->
+            Pivot.goR
+
+
 
 -- Update
 
 
 type Msg
     = NoOp
-    | Foo (Pivot GIdx)
+    | Foo LCRDir (Pivot GIdx)
 
 
 cellToggleConnected : Cell -> Cell
@@ -110,8 +133,16 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Foo lcr ->
-            ( modelToggleConnected (lcrC lcr) model, delay <| Foo lcr )
+        Foo dir lcr ->
+            ( modelToggleConnected (lcrC lcr) model
+            , delay <|
+                case lcrGo dir lcr of
+                    Just nLCR ->
+                        Foo dir nLCR
+
+                    Nothing ->
+                        Foo (lcrOppDir dir) lcr
+            )
 
 
 delay msg =
