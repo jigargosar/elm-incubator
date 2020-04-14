@@ -2,7 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (canvas, circle, move, rect)
+import Draw exposing (canvas, circle, fade, move, rect)
 import DrawGrid
 import Grid exposing (GIdx)
 import Svg exposing (Svg)
@@ -105,7 +105,7 @@ renderCell : GCtx -> GIdx -> Cell -> Svg msg
 renderCell { cw } _ cell =
     case cell of
         Water ->
-            circle "dodgerblue" (cw * 0.25) []
+            circle "dodgerblue" (cw * 0.25) [ fade 0.2 ]
 
 
 

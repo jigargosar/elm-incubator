@@ -189,5 +189,10 @@ renderTransform m =
     [ Translate m.x m.y, Scale m.s m.s ]
 
 
+
+--opacity =
+--    TypedSvg.Attributes.opacity << Opacity
+
+
 opacity =
-    TypedSvg.Attributes.opacity << Opacity
+    Html.Attributes.style "opacity" << String.fromFloat
