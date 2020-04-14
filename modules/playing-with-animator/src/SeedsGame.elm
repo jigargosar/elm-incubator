@@ -83,6 +83,14 @@ gridToggleConnected idx =
     Grid.mapIdx idx cellToggleConnected
 
 
+modelToggleConnected idx model =
+    { model
+        | grid =
+            gridToggleConnected idx model.grid
+                |> Maybe.withDefault model.grid
+    }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
@@ -90,11 +98,7 @@ update message model =
             ( model, Cmd.none )
 
         Foo l c r ->
-            ( { model
-                | grid =
-                    gridToggleConnected c model.grid
-                        |> Maybe.withDefault model.grid
-              }
+            ( modelToggleConnected c model
             , Process.sleep 1000 |> Task.perform (always <| Foo l c r)
             )
 
