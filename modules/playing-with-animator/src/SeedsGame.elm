@@ -97,9 +97,6 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Foo l c (nc :: r) ->
-            ( modelToggleConnected c model, loop (c :: l) nc r )
-
         Foo l c r ->
             ( modelToggleConnected c model, loop l c r )
 
