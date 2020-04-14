@@ -2,6 +2,7 @@ module Draw exposing
     ( canvas
     , square, rect, circle
     , Op, fade, move, scale
+    , group
     )
 
 {-|
@@ -50,6 +51,11 @@ rect color w h ops =
 circle : String -> Float -> List Op -> Svg msg
 circle color r ops =
     initCircle color r |> applyOps ops |> renderCircle
+
+
+group : List Op -> List (Svg msg) -> Svg msg
+group ops list =
+    initGroup |> applyOps ops |> renderGroup list
 
 
 type Op
@@ -119,6 +125,14 @@ type alias Circle =
     }
 
 
+type alias Group =
+    { x : Float
+    , y : Float
+    , s : Float
+    , o : Float
+    }
+
+
 initRect : String -> Float -> Float -> Rect
 initRect =
     Rect 0 0 1 1
@@ -127,6 +141,11 @@ initRect =
 initCircle : String -> Float -> Circle
 initCircle =
     Circle 0 0 1 1
+
+
+initGroup : Group
+initGroup =
+    Group 0 0 1 1
 
 
 renderRect : Rect -> Svg msg
@@ -150,6 +169,15 @@ renderCircle m =
         , opacity m.o
         ]
         []
+
+
+renderGroup : List (Svg msg) -> Group -> Svg msg
+renderGroup children m =
+    Svg.g
+        [ transform <| renderTransform m
+        , opacity m.o
+        ]
+        children
 
 
 renderRectTransform m =
