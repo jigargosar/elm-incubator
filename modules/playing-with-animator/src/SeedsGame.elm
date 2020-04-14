@@ -63,6 +63,7 @@ init f =
 type Msg
     = NoOp
     | Foo
+    | Bar
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -73,9 +74,20 @@ update message model =
 
         Foo ->
             ( { model
-                | grid = Grid.set ( 0, 0 ) (Cell CS_Connected Water) model.grid |> Maybe.withDefault model.grid
+                | grid =
+                    Grid.set ( 0, 0 ) (Cell CS_Connected Water) model.grid
+                        |> Maybe.withDefault model.grid
               }
-            , Cmd.none
+            , Process.sleep 1000 |> Task.perform (always Bar)
+            )
+
+        Bar ->
+            ( { model
+                | grid =
+                    Grid.set ( 0, 0 ) (Cell CS_Idle Water) model.grid
+                        |> Maybe.withDefault model.grid
+              }
+            , Process.sleep 1000 |> Task.perform (always Foo)
             )
 
 
