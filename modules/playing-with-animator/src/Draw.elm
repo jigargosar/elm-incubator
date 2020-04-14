@@ -19,7 +19,7 @@ import Svg exposing (Svg, rect)
 import Svg.Attributes
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
-import TypedSvg.Types exposing (Opacity(..), Transform(..))
+import TypedSvg.Types as T
 
 
 
@@ -97,7 +97,7 @@ move =
 
 
 scale =
-    Scale
+    Scale_
 
 
 
@@ -192,11 +192,11 @@ renderStyles list =
 
 
 renderRectTransform m =
-    Translate (m.w * -0.5) (m.h * -0.5) :: renderTransform m
+    T.Translate (m.w * -0.5) (m.h * -0.5) :: renderTransform m
 
 
 renderTransform m =
-    [ Translate m.x m.y, Scale m.s m.s ]
+    [ T.Translate m.x m.y, T.Scale m.s m.s ]
 
 
 fill : String -> ( String, String )
@@ -209,12 +209,12 @@ opacity o =
     ( "opacity", String.fromFloat o )
 
 
-transform : List Transform -> ( String, String )
+transform : List T.Transform -> ( String, String )
 transform transforms =
     ( "transform", String.join " " (List.map transformToString transforms) )
 
 
-transformToString : Transform -> String
+transformToString : T.Transform -> String
 transformToString xform =
     let
         trNum name args =
@@ -238,22 +238,22 @@ transformToString xform =
             String.fromFloat f
     in
     case xform of
-        Matrix a b c d e f ->
+        T.Matrix a b c d e f ->
             trNum "matrix" [ a, b, c, d, e, f ]
 
-        Rotate a x y ->
+        T.Rotate a x y ->
             trNum "rotate" [ a, x, y ]
 
-        Scale x y ->
+        T.Scale x y ->
             trNum "scale" [ x, y ]
 
-        SkewX x ->
+        T.SkewX x ->
             trNum "skewX" [ x ]
 
-        SkewY y ->
+        T.SkewY y ->
             trNum "skewY" [ y ]
 
-        Translate x y ->
+        T.Translate x y ->
             trPx "translate" [ x, y ]
 
 
