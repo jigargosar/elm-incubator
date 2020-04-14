@@ -3,6 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Draw exposing (canvas, circle, move, rect)
+import DrawGrid
 import Grid exposing (GIdx)
 import Svg exposing (Svg)
 
@@ -96,29 +97,15 @@ renderGrid g =
     let
         ctx =
             toGCtx g
-
-        renderCellAt ( gIdx, cell ) =
-            renderCell ctx gIdx cell
     in
-    Grid.toList g
-        |> List.map renderCellAt
-        |> group
-
-
-group : List (Svg msg) -> Svg msg
-group =
-    Svg.g []
+    DrawGrid.cells ctx.cw (renderCell ctx) g
 
 
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
-renderCell ({ cw } as ctx) gIdx cell =
-    let
-        mv =
-            moveToGIdx ctx gIdx
-    in
+renderCell { cw } _ cell =
     case cell of
         Water ->
-            circle "dodgerblue" (cw * 0.25) [ mv ]
+            circle "dodgerblue" (cw * 0.25) []
 
 
 
