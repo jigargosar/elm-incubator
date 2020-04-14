@@ -1,9 +1,11 @@
 module SeedsGame exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Draw exposing (canvas, circle, fade, group, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
+import List.Extra
 import Pivot exposing (Pivot)
 import Process
 import Svg exposing (Svg)
@@ -55,13 +57,14 @@ init f =
     ( Model f.window initialGrid
     , delay
         (Foo Forth
-            (lcrCons ( 0, 0 )
-                [ ( 1, 0 )
-                , ( 2, 0 )
-                ]
-            )
+            (uncurry lcrCons (foo ( 0, 0 ) [ Right, Right, Right, Down, Down, Left, Left ]))
         )
     )
+
+
+foo : GIdx -> List FourD -> ( GIdx, List GIdx )
+foo start fourDS =
+    ( start, List.Extra.scanl moveGIdxIn start fourDS |> List.drop 1 )
 
 
 moveGIdx dx dy ( x, y ) =
