@@ -203,7 +203,12 @@ renderGroup children m =
 
 renderStyles : List ( String, String ) -> Svg.Attribute msg
 renderStyles list =
-    Svg.Attributes.style (List.map styleTupleToString list |> String.join "")
+    Svg.Attributes.style
+        ([ ( "transition", "all 500ms" ) ]
+            ++ list
+            |> List.map styleTupleToString
+            |> String.join ""
+        )
 
 
 renderRectTransform m =
