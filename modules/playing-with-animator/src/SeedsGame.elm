@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import Draw exposing (canvas, circle, fade, group, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
+import Pivot exposing (Pivot)
 import Process
 import Svg exposing (Svg)
 import Task
@@ -52,8 +53,20 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , Process.sleep 1000 |> Task.perform (always <| Foo [] ( 0, 0 ) [])
+    , Process.sleep 1000 |> Task.perform (always <| Foo (lcrSingleton ( 0, 0 )))
     )
+
+
+
+-- LCR
+
+
+lcrSingleton =
+    Pivot.singleton
+
+
+lcrC =
+    Pivot.getC
 
 
 
@@ -62,7 +75,7 @@ init f =
 
 type Msg
     = NoOp
-    | Foo (List GIdx) GIdx (List GIdx)
+    | Foo (Pivot GIdx)
 
 
 cellToggleConnected : Cell -> Cell
@@ -97,13 +110,12 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Foo l c r ->
-            ( modelToggleConnected c model, loop l c r )
+        Foo lcr ->
+            ( modelToggleConnected (lcrC lcr) model, delay <| Foo lcr )
 
 
-loop : List GIdx -> GIdx -> List GIdx -> Cmd Msg
-loop l c r =
-    Process.sleep 1000 |> Task.perform (always <| Foo l c r)
+delay msg =
+    Process.sleep 1000 |> Task.perform (always msg)
 
 
 subscriptions : Model -> Sub Msg
