@@ -28,10 +28,14 @@ type alias Grid =
 
 initialGrid : Grid
 initialGrid =
-    Grid.init 7 5 (\_ -> Water)
+    Grid.init 7 5 (\_ -> Cell Water)
 
 
 type Cell
+    = Cell Sprite
+
+
+type Sprite
     = Water
 
 
@@ -105,6 +109,13 @@ renderGrid g =
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
 renderCell { cw } _ cell =
     case cell of
+        Cell sprite ->
+            renderSprite cw sprite
+
+
+renderSprite : Float -> Sprite -> Svg msg
+renderSprite cw sprite =
+    case sprite of
         Water ->
             circle "dodgerblue" (cw * 0.25) [ fade 1 ]
 
