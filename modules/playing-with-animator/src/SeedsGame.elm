@@ -28,11 +28,18 @@ type alias Grid =
 
 initialGrid : Grid
 initialGrid =
-    Grid.init 7 5 (\_ -> Cell Water)
+    Grid.init 7 5 (\_ -> Cell CS_Idle Water)
 
 
 type Cell
-    = Cell Sprite
+    = Cell CS Sprite
+
+
+type CS
+    = CS_Connecting
+    | CS_Connected
+    | CS_Disconnecting
+    | CS_Idle
 
 
 type Sprite
@@ -109,8 +116,24 @@ renderGrid g =
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
 renderCell { cw } _ cell =
     case cell of
-        Cell sprite ->
-            renderSprite cw sprite
+        Cell cs sprite ->
+            group (renderCS cs) [ renderSprite cw sprite ]
+
+
+renderCS : CS -> List Draw.Op
+renderCS cs =
+    case cs of
+        CS_Connecting ->
+            [ scale 0.5 ]
+
+        CS_Connected ->
+            [ scale 0.5 ]
+
+        CS_Disconnecting ->
+            [ scale 1 ]
+
+        CS_Idle ->
+            [ scale 1 ]
 
 
 renderSprite : Float -> Sprite -> Svg msg
