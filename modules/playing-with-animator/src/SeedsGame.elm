@@ -59,13 +59,17 @@ init f =
     ( Model f.window initialGrid
     , delay
         (Foo Forth
-            (uncurry lcrCons (foo ( 0, 0 ) [ Right, Right, Right, Down, Down, Left, Left ]))
+            (lcrFromNEList (makeGridIndices ( 0, 0 ) [ Right, Right, Right, Down, Down, Left, Left ]))
         )
     )
 
 
-foo : GIdx -> List FourD -> ( GIdx, List GIdx )
-foo start fourDS =
+type alias NEList a =
+    ( a, List a )
+
+
+makeGridIndices : GIdx -> List FourD -> NEList GIdx
+makeGridIndices start fourDS =
     ( start, List.Extra.scanl moveGIdxIn start fourDS |> List.drop 1 )
 
 
@@ -104,8 +108,8 @@ lcrSingleton =
     Pivot.singleton
 
 
-lcrCons =
-    Pivot.fromCons
+lcrFromNEList =
+    uncurry Pivot.fromCons
 
 
 lcrC =
