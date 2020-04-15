@@ -34,7 +34,20 @@ type alias Grid =
 
 initialGrid : Grid
 initialGrid =
-    Grid.init 7 5 (\_ -> Cell CS_Idle Water)
+    let
+        wallIndices =
+            [ ( 1, 1 ), ( 2, 1 ) ]
+    in
+    Grid.init
+        7
+        5
+        (\i ->
+            if List.member i wallIndices then
+                Cell CS_Static Wall
+
+            else
+                Cell CS_Idle Water
+        )
 
 
 type Cell
