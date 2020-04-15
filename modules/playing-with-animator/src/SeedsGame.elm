@@ -3,7 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Cons exposing (Cons)
-import Draw exposing (canvas, circle, group, move, rect, square)
+import Draw exposing (canvas, circle, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
@@ -259,18 +259,30 @@ view model =
 
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
-    let
-        renderCell ctx gi (Cell tile) =
-            renderTile ctx.cw [ moveToGI ctx gi ] tile
-    in
     case seedGrid of
         Idle grid ->
+            gridToListWithCtx renderIdleCell grid
+                |> group []
+
+        Connecting ciCons grid ->
+            let
+                renderCell ctx gi =
+                    if Cons.member gi ciCons then
+                        renderConnectedCell ctx gi
+
+                    else
+                        renderIdleCell ctx gi
+            in
             gridToListWithCtx renderCell grid
                 |> group []
 
-        Connecting _ grid ->
-            gridToListWithCtx renderCell grid
-                |> group []
+
+renderIdleCell ctx gi (Cell tile) =
+    renderTile ctx.cw [ moveToGI ctx gi ] tile
+
+
+renderConnectedCell ctx gi (Cell tile) =
+    renderTile ctx.cw [ moveToGI ctx gi, scale 0.6 ] tile
 
 
 renderTile : Float -> List Draw.Op -> Tile -> Svg msg
