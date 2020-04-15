@@ -29,7 +29,7 @@ type alias Window =
 
 type SeedGrid
     = Idle (Grid Cell)
-    | Connecting (Grid Cell)
+    | Connecting (List GIdx) (Grid Cell)
 
 
 initialGrid : SeedGrid
@@ -283,7 +283,7 @@ view model =
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     case seedGrid of
-        Connecting grid ->
+        Connecting _ grid ->
             let
                 ctx =
                     toGCtx grid
