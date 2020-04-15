@@ -2,7 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (canvas, circle, fade, group, rect, rotate, scale)
+import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
 import Html exposing (div, text)
@@ -44,6 +44,7 @@ type Cell
 type CS
     = CS_Connected
     | CS_Idle
+    | CS_MovingToWaterCollector
 
 
 type Sprite
@@ -153,6 +154,9 @@ cellToggleConnected (Cell cs s) =
 
             CS_Idle ->
                 CS_Connected
+
+            CS_MovingToWaterCollector ->
+                CS_MovingToWaterCollector
         )
         s
 
@@ -255,6 +259,13 @@ renderCS cs =
         CS_Idle ->
             []
 
+        CS_MovingToWaterCollector ->
+            [ fade 0, scale 0.5, moveToWaterCollector ]
+
+
+moveToWaterCollector =
+    move 0 -100
+
 
 renderCS2 : CS -> List Draw.Op
 renderCS2 cs =
@@ -263,6 +274,9 @@ renderCS2 cs =
             [ fade 0, scale 2 ]
 
         CS_Idle ->
+            []
+
+        CS_MovingToWaterCollector ->
             []
 
 
