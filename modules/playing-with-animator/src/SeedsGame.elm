@@ -5,7 +5,6 @@ import Browser exposing (Document)
 import Draw exposing (canvas, circle, group, move, rect, square)
 import Grid exposing (GI, Grid)
 import List.Extra
-import Pivot exposing (Pivot)
 import Process
 import Svg exposing (Svg)
 import Task
@@ -66,27 +65,16 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , delay
-        (Foo Forth
-            (lcrFromCons
-                (makeGICons
-                    ( 1, 1 )
-                    [ giRight
-                    , giRight
-                    , giRight
-                    , giDown
-                    , giDown
-                    , giLeft
-                    , giLeft
-                    ]
-                )
-            )
-        )
+    , Cmd.none
     )
 
 
 type alias Cons a =
     ( a, List a )
+
+
+
+--noinspection ElmUnusedSymbol
 
 
 makeGICons start fns =
@@ -97,12 +85,20 @@ moveGI dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 giUp =
     moveGI 0 -1
 
 
 giDown =
     moveGI 0 1
+
+
+
+--noinspection ElmUnusedSymbol
 
 
 giLeft =
@@ -114,103 +110,11 @@ giRight =
 
 
 
--- LCR
-
-
-lcrFromCons =
-    uncurry Pivot.fromCons
-
-
-lcrC =
-    Pivot.getC
-
-
-type LCRDir
-    = Back
-    | Forth
-
-
-
---lcrOppDir dir =
---    case dir of
---        Back ->
---            Forth
---
---        Forth ->
---            Back
---
-
-
-lcrGo dir =
-    case dir of
-        Back ->
-            Pivot.goL
-
-        Forth ->
-            Pivot.goR
-
-
-
 -- Update
 
 
 type Msg
     = NoOp
-    | Foo LCRDir (Pivot GI)
-    | Collect
-    | FallIdle
-
-
-
---gridStartConnecting : GI -> SeedGrid -> Maybe SeedGrid
---gridStartConnecting gi seedGrid =
---    case seedGrid of
---        SG grid ->
---            Nothing
---        Idle grid ->
---            Nothing
---
-
-
-gridToggleConnected : GI -> SeedGrid -> Maybe SeedGrid
-gridToggleConnected _ _ =
-    Nothing
-
-
-gridCollectConnected : SeedGrid -> SeedGrid
-gridCollectConnected =
-    identity
-
-
-gridFallIdle : SeedGrid -> SeedGrid
-gridFallIdle =
-    identity
-
-
-modelToggleConnected idx model =
-    { model
-        | grid =
-            gridToggleConnected idx model.grid
-                |> Maybe.withDefault model.grid
-    }
-
-
-modelCollectConnected model =
-    { model
-        | grid =
-            gridCollectConnected model.grid
-    }
-
-
-modelFallIdle model =
-    { model
-        | grid =
-            gridFallIdle model.grid
-    }
-
-
-mapGridMaybe fun model =
-    { model | grid = fun model.grid |> Maybe.withDefault model.grid }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -219,22 +123,9 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Collect ->
-            ( modelCollectConnected model, delay FallIdle )
 
-        Foo dir lcr ->
-            ( modelToggleConnected (lcrC lcr) model
-            , delay <|
-                case lcrGo dir lcr of
-                    Just nLCR ->
-                        Foo dir nLCR
 
-                    Nothing ->
-                        Collect
-            )
-
-        FallIdle ->
-            ( modelFallIdle model, Cmd.none )
+--noinspection ElmUnusedSymbol
 
 
 delay msg =
