@@ -258,7 +258,7 @@ update message model =
             ( model, Cmd.none )
 
         Collect ->
-            ( modelCollectConnected model, Cmd.none )
+            ( modelCollectConnected model, delay FallIdle )
 
         Foo dir lcr ->
             ( modelToggleConnected (lcrC lcr) model
