@@ -4,8 +4,6 @@ import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Draw exposing (canvas, circle, group, move, rect, square)
 import Grid exposing (GIdx, Grid)
-import Html exposing (div, text)
-import Html.Attributes as A
 import List.Extra
 import Pivot exposing (Pivot)
 import Process
