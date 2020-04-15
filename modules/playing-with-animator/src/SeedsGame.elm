@@ -269,10 +269,7 @@ view model =
             model.window.height
     in
     Document "SeedsGame"
-        [ div [ A.id "un-caught-error-container", A.class "fixed absolute--fill z-max" ]
-            [ text "Uncaught error" ]
-            |> always (text "")
-        , canvas w
+        [ canvas w
             h
             [ rect "#ffc973" w h []
             , renderGrid model.grid
