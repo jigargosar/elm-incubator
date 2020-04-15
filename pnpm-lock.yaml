@@ -1,5 +1,6 @@
 dependencies:
   hyperapp: 2.0.4
+  panic-overlay: 1.0.42
   ramda: 0.27.0
   sanctuary: 3.0.0
   sanctuary-def: 0.21.1
@@ -393,6 +394,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
+  /as-table/1.0.55:
+    dependencies:
+      printable-characters: 1.0.42
+    dev: false
+    resolution:
+      integrity: sha512-xvsWESUJn0JN421Xb9MQw6AsMHRCUknCe0Wjlxvjud80mU4E6hQf1A6NzQKcYNmYw62MfzEtXc+badstZP3JpQ==
   /asn1.js/4.10.1:
     dependencies:
       bn.js: 4.11.8
@@ -1041,6 +1048,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
+  /data-uri-to-buffer/2.0.2:
+    dev: false
+    resolution:
+      integrity: sha512-ND9qDTLc6diwj+Xe5cdAgVTbLVdXbtxTJRXRhli8Mowuaan+0EJOtdqJ0QCHNSSPyoXGx9HX2/VMnKeC34AChA==
   /debug/2.6.9:
     dependencies:
       ms: 2.0.0
@@ -1790,6 +1801,13 @@ packages:
       node: 6.* || 8.* || >= 10.*
     resolution:
       integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
+  /get-source/1.0.42:
+    dependencies:
+      data-uri-to-buffer: 2.0.2
+      source-map: 0.6.1
+    dev: false
+    resolution:
+      integrity: sha512-uM5xCIG5w2meVbiZaID4ajH6J8OfApqhlKXtZwsS/IIM9PLb0b2kc5sRdy78yEDfxsIYEWNk0OVxai6OpDCExA==
   /get-stream/4.1.0:
     dependencies:
       pump: 3.0.0
@@ -3195,6 +3213,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
+  /panic-overlay/1.0.42:
+    dependencies:
+      stacktracey: 1.2.127
+    dev: false
+    resolution:
+      integrity: sha512-b5t6i9gs4i6T+Qr82jg0GVOoOcMSLoEokuBHdA0mNlI9yWTEvCcea9pq64GftgZgBvGZOyX2MF2eovGjD7EB8Q==
   /parallel-transform/1.2.0:
     dependencies:
       cyclist: 1.0.1
@@ -3450,6 +3474,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-X0+HyPkeWuPzuoerTPXgOxoX8aM=
+  /printable-characters/1.0.42:
+    dev: false
+    resolution:
+      integrity: sha1-Pxjpd6m9jrN/zE/1ZZ176Qhos9g=
   /process-nextick-args/2.0.1:
     dev: true
     resolution:
@@ -4087,7 +4115,6 @@ packages:
     resolution:
       integrity: sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
   /source-map/0.6.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -4151,6 +4178,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
+  /stacktracey/1.2.127:
+    dependencies:
+      as-table: 1.0.55
+      get-source: 1.0.42
+    dev: false
+    resolution:
+      integrity: sha512-tj3BObW/adLIAQGGQ0flRTADrCv6KQ4VgncUO8NrQ7pk/H6pGMtXxQLjZYw66eqPDTC1DHtnBwGSmG+Wx/D/kg==
   /static-extend/0.1.2:
     dependencies:
       define-property: 0.2.5
@@ -4926,6 +4960,7 @@ specifiers:
   html-webpack-plugin: ^4.0.3
   hyperapp: ^2.0.4
   node-elm-compiler: ^5.0.4
+  panic-overlay: ^1.0.42
   ramda: ^0.27.0
   sanctuary: ^3.0.0
   sanctuary-def: ^0.21.1

@@ -5,6 +5,8 @@ import Browser exposing (Document)
 import Draw exposing (canvas, circle, fade, group, rect, rotate, scale)
 import DrawGrid
 import Grid exposing (GIdx)
+import Html exposing (div, text)
+import Html.Attributes as A
 import List.Extra
 import Pivot exposing (Pivot)
 import Process
@@ -221,7 +223,8 @@ view model =
             model.window.height
     in
     Document "SeedsGame"
-        [ canvas w
+        [ div [ A.id "un-caught-error-container", A.class "fixed absolute--fill z-max" ] [ text "Uncaught error" ]
+        , canvas w
             h
             [ rect "#ffc973" w h []
             , renderGrid model.grid

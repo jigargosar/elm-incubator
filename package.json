@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "hyperapp": "^2.0.4",
+    "panic-overlay": "^1.0.42",
     "ramda": "^0.27.0",
     "sanctuary": "^3.0.0",
     "sanctuary-def": "^0.21.1",

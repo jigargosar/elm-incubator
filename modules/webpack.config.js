@@ -94,10 +94,14 @@ function createConfig(
       //   modules: false,
       // },
       stats: 'errors-only',
-      devtool: isProd ? 'source-map' : 'eval-source-map',
+      // devtool: isProd ? 'source-map' : 'eval-source-map',
+
+      // https://github.com/xpl/panic-overlay/blob/master/demo/webpack-vanilla/webpack.config.js
+      // devtool: 'source-map',
+      devtool: 'cheap-module-source-map',
       devServer: {
         historyApiFallback: false,
-        hot: false,
+        hot: true,
         overlay: true,
       },
     }
