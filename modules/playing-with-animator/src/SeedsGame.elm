@@ -190,13 +190,31 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , schedule
-        ([ ( 1, 1 )
-         , ( 1, 1 )
-         ]
-            |> List.map ToggleConnecting
-        )
+    , schedule connectPath1
     )
+
+
+connectPath1 : List Msg
+connectPath1 =
+    List.Extra.scanl (<|)
+        ( 1, 1 )
+        [ giDown
+        , giLeft
+        , identity
+        , giRight >> giRight
+        , giRight
+        , giUp
+        , giUp
+        , giRight
+        , giRight
+        , giDown
+        , giDown
+        , giDown
+        , giDown
+        , giLeft
+        , giLeft
+        ]
+        |> List.map ToggleConnecting
 
 
 
@@ -230,13 +248,17 @@ mapGridMaybe f m =
 --noinspection ElmUnusedSymbol
 
 
-delay msg =
-    Process.sleep 100 |> Task.perform (always msg)
+defaultDelay =
+    100
+
+
+delayN n msg =
+    Process.sleep n |> Task.perform (always msg)
 
 
 schedule : List b -> Cmd b
 schedule =
-    List.indexedMap (\i msg -> Process.sleep (toFloat i * 100) |> Task.perform (always msg))
+    List.indexedMap (\i -> delayN (toFloat i * defaultDelay))
         >> Cmd.batch
 
 
