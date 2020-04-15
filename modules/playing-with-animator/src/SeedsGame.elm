@@ -96,14 +96,6 @@ type FourD
     | Right
 
 
-moveGIdxDown =
-    moveGIdx 0 1
-
-
-moveGIdxRight =
-    moveGIdx 0 1
-
-
 
 -- LCR
 
