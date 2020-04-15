@@ -224,6 +224,7 @@ view model =
     in
     Document "SeedsGame"
         [ div [ A.id "un-caught-error-container", A.class "fixed absolute--fill z-max" ] [ text "Uncaught error" ]
+            |> always (text "")
         , canvas w
             h
             [ rect "#ffc973" w h []
