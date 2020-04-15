@@ -29,6 +29,7 @@ type alias Window =
 
 type SeedGrid
     = SG (Grid.Grid Cell)
+    | Idle (Grid.Grid Cell)
 
 
 initialGrid : SeedGrid
@@ -169,6 +170,17 @@ type Msg
     | FallIdle
 
 
+
+--gridStartConnecting : GIdx -> SeedGrid -> Maybe SeedGrid
+--gridStartConnecting gIdx seedGrid =
+--    case seedGrid of
+--        SG grid ->
+--            Nothing
+--        Idle grid ->
+--            Nothing
+--
+
+
 gridToggleConnected : GIdx -> SeedGrid -> Maybe SeedGrid
 gridToggleConnected _ _ =
     Nothing
@@ -269,17 +281,31 @@ view model =
 
 
 renderGrid : SeedGrid -> Svg msg
-renderGrid (SG g) =
-    let
-        ctx =
-            toGCtx g
+renderGrid seedGrid =
+    case seedGrid of
+        SG grid ->
+            let
+                ctx =
+                    toGCtx grid
 
-        drawCellAt ( gIdx, cell ) =
-            renderCell ctx gIdx cell
-    in
-    Grid.toList g
-        |> List.map drawCellAt
-        |> group []
+                drawCellAt ( gIdx, cell ) =
+                    renderCell ctx gIdx cell
+            in
+            Grid.toList grid
+                |> List.map drawCellAt
+                |> group []
+
+        Idle grid ->
+            let
+                ctx =
+                    toGCtx grid
+
+                drawCellAt ( gIdx, cell ) =
+                    renderCell ctx gIdx cell
+            in
+            Grid.toList grid
+                |> List.map drawCellAt
+                |> group []
 
 
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
