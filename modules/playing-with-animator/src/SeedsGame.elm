@@ -48,6 +48,24 @@ initialGrid =
         |> Idle
 
 
+startConnecting : GI -> SeedGrid -> Maybe SeedGrid
+startConnecting gi seedGrid =
+    case seedGrid of
+        Idle grid ->
+            case Grid.get gi grid of
+                Just (Cell Water) ->
+                    Connecting ( gi, [] ) grid |> Just
+
+                Just (Cell Wall) ->
+                    Nothing
+
+                Nothing ->
+                    Nothing
+
+        Connecting _ _ ->
+            Nothing
+
+
 type Cell
     = Cell Tile
 
@@ -122,6 +140,7 @@ giRight =
 
 type Msg
     = NoOp
+    | StartConnecting GI
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -129,6 +148,13 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        StartConnecting gi ->
+            ( mapGridMaybe (startConnecting gi) model, Cmd.none )
+
+
+mapGridMaybe f m =
+    { m | grid = f m.grid |> Maybe.withDefault m.grid }
 
 
 
