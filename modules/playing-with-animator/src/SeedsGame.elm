@@ -2,8 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale, square)
-import DrawGrid
+import Draw exposing (canvas, circle, group, move, rect, square)
 import Grid exposing (GIdx, Grid)
 import Html exposing (div, text)
 import Html.Attributes as A
@@ -139,13 +138,15 @@ type LCRDir
     | Forth
 
 
-lcrOppDir dir =
-    case dir of
-        Back ->
-            Forth
 
-        Forth ->
-            Back
+--lcrOppDir dir =
+--    case dir of
+--        Back ->
+--            Forth
+--
+--        Forth ->
+--            Back
+--
 
 
 lcrGo dir =
@@ -169,8 +170,8 @@ type Msg
 
 
 gridToggleConnected : GIdx -> SeedGrid -> Maybe SeedGrid
-gridToggleConnected idx =
-    always Nothing
+gridToggleConnected _ _ =
+    Nothing
 
 
 gridCollectConnected : SeedGrid -> SeedGrid
