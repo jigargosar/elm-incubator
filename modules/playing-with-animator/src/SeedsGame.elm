@@ -296,25 +296,6 @@ renderGrid seedGrid =
                 |> group []
 
 
-gridToListWithCtx : (GCtx -> GIdx -> a -> b) -> Grid a -> List b
-gridToListWithCtx func grid =
-    let
-        ctx =
-            toGCtx grid
-    in
-    Grid.toListBy (func ctx) grid
-
-
-moveToGIdx : GCtx -> GIdx -> Draw.Op
-moveToGIdx ctx gIdx =
-    uncurry move (gIdxToXY ctx gIdx)
-
-
-gIdxToXY : GCtx -> GIdx -> ( Float, Float )
-gIdxToXY { cw, dx, dy } ( xi, yi ) =
-    ( toFloat xi * cw + dx, toFloat yi * cw + dy )
-
-
 renderTile : Float -> List Draw.Op -> Tile -> Svg msg
 renderTile cw ops tile =
     case tile of
@@ -355,6 +336,25 @@ toGCtx g =
     , dx = dx
     , dy = dy
     }
+
+
+gridToListWithCtx : (GCtx -> GIdx -> a -> b) -> Grid a -> List b
+gridToListWithCtx func grid =
+    let
+        ctx =
+            toGCtx grid
+    in
+    Grid.toListBy (func ctx) grid
+
+
+moveToGIdx : GCtx -> GIdx -> Draw.Op
+moveToGIdx ctx gIdx =
+    uncurry move (gIdxToXY ctx gIdx)
+
+
+gIdxToXY : GCtx -> GIdx -> ( Float, Float )
+gIdxToXY { cw, dx, dy } ( xi, yi ) =
+    ( toFloat xi * cw + dx, toFloat yi * cw + dy )
 
 
 
