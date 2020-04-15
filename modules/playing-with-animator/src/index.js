@@ -1,5 +1,3 @@
-require('panic-overlay')
-
 require('tachyons')
 
 require('./Main.elm')['Elm']['Main']['init']({

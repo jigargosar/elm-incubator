@@ -51,7 +51,7 @@ function createConfig(
     return {
       context: context,
       mode: 'development',
-      entry: entry,
+      entry: ['panic-overlay', entry],
       output: {
         publicPath: outputPublicPath,
         path: outputPath,
