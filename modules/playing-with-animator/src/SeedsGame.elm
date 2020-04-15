@@ -377,8 +377,8 @@ renderConnectedCell ctx gi (Cell tile) =
 
 
 renderLeavingCell : GCtx -> GI -> Cell -> Svg msg
-renderLeavingCell ctx gi (Cell tile) =
-    group [ moveToGI ctx gi, scale 0.6 ] [ renderTile ctx tile ]
+renderLeavingCell ctx _ (Cell tile) =
+    group [ move 0 -300, scale 0.1 ] [ renderTile ctx tile ]
 
 
 renderTile : GCtx -> Tile -> Svg msg
