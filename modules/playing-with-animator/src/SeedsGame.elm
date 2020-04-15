@@ -298,10 +298,26 @@ renderGrid seedGrid =
     in
     case seedGrid of
         Idle grid ->
-            renderGridHelp grid
+            let
+                renderCell ctx gIdx cell =
+                    case cell of
+                        Cell tile ->
+                            renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
+            in
+            gridToListWithCtx renderCell grid
+                |> group []
 
         Connecting _ grid ->
             renderGridHelp grid
+
+
+gridToListWithCtx : (GCtx -> GIdx -> a -> b) -> Grid a -> List b
+gridToListWithCtx func grid =
+    let
+        ctx =
+            toGCtx grid
+    in
+    Grid.toListBy (func ctx) grid
 
 
 moveToGIdx : GCtx -> GIdx -> Draw.Op
