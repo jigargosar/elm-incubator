@@ -186,7 +186,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , Cmd.none
+    , delay (StartConnecting ( 1, 1 ))
     )
 
 
