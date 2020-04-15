@@ -28,7 +28,7 @@ type alias Window =
 
 
 type SeedGrid
-    = SG (Grid.Grid Cell)
+    = Connecting (Grid.Grid Cell)
     | Idle (Grid.Grid Cell)
 
 
@@ -49,7 +49,7 @@ initialGrid =
             else
                 Cell Water
         )
-        |> SG
+        |> Idle
 
 
 type Cell
@@ -283,7 +283,7 @@ view model =
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     case seedGrid of
-        SG grid ->
+        Connecting grid ->
             let
                 ctx =
                     toGCtx grid
