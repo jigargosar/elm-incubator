@@ -77,6 +77,7 @@ firstOf =
     Maybe.Extra.oneOf
 
 
+addConnecting : GI -> SeedGrid -> Maybe SeedGrid
 addConnecting gi seedGrid =
     case seedGrid of
         Idle _ ->
@@ -90,16 +91,16 @@ addConnecting gi seedGrid =
                 Nothing
 
 
+removeConnecting _ _ =
+    Nothing
+
+
 giAreAdj ( x1, y1 ) ( x2, y2 ) =
     let
         ( dxa, dya ) =
             ( abs (x1 - x2), abs (y1 - y2) )
     in
     (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
-
-
-removeConnecting _ _ =
-    Nothing
 
 
 type Cell
