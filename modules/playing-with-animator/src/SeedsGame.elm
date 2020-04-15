@@ -86,6 +86,19 @@ toggleConnecting gi =
         ]
 
 
+startCollecting : SeedGrid -> Maybe SeedGrid
+startCollecting seedGrid =
+    case seedGrid of
+        Idle _ ->
+            Nothing
+
+        Connecting cons grid ->
+            Collecting (TransitionState cons []) grid |> Just
+
+        Collecting _ _ ->
+            Nothing
+
+
 firstOf =
     Maybe.Extra.oneOf
 
@@ -206,7 +219,10 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , schedule (connectPath1 |> always connectPath2)
+    , schedule
+        ((connectPath1 |> always connectPath2)
+            ++ [ StartCollecting ]
+        )
     )
 
 
@@ -259,6 +275,7 @@ type Msg
     = NoOp
     | StartConnecting GI
     | ToggleConnecting GI
+    | StartCollecting
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -272,6 +289,9 @@ update message model =
 
         ToggleConnecting gi ->
             ( mapGridMaybe (toggleConnecting gi) model, Cmd.none )
+
+        StartCollecting ->
+            ( mapGridMaybe startCollecting model, Cmd.none )
 
 
 mapGridMaybe f m =
