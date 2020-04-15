@@ -314,18 +314,22 @@ view model =
 
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
-    let
-        ( renderCell, grid_ ) =
-            case seedGrid of
-                Idle grid ->
-                    ( renderIdleCell, grid )
+    case seedGrid of
+        Idle grid ->
+            gridToListWithCtx renderIdleCell grid
+                |> group []
 
-                Connecting ciCons grid ->
-                    ( renderConnectingCell ciCons, grid )
-    in
-    group [] (gridToListWithCtx renderCell grid_)
+        Connecting ciCons grid ->
+            gridToListWithCtx (renderConnectingCell ciCons) grid
+                |> group []
 
 
+gridToListWithCtx : (GCtx -> GI -> a -> b) -> Grid a -> List b
+gridToListWithCtx func grid =
+    Grid.toListBy (func (toGCtx grid)) grid
+
+
+renderConnectingCell : Cons GI -> GCtx -> GI -> Cell -> Svg msg
 renderConnectingCell ciCons ctx gi =
     if Cons.member gi ciCons then
         renderConnectedCell ctx gi
@@ -382,15 +386,6 @@ toGCtx g =
     , dx = dx
     , dy = dy
     }
-
-
-gridToListWithCtx : (GCtx -> GI -> a -> b) -> Grid a -> List b
-gridToListWithCtx func grid =
-    let
-        ctx =
-            toGCtx grid
-    in
-    Grid.toListBy (func ctx) grid
 
 
 moveToGI : GCtx -> GI -> Draw.Op
