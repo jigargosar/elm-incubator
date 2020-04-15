@@ -53,10 +53,10 @@ initialGrid =
 
 
 type Cell
-    = Cell Sprite
+    = Cell Tile
 
 
-type Sprite
+type Tile
     = Water
     | Wall
 
@@ -290,8 +290,8 @@ renderGrid seedGrid =
 
                 renderCell ( gIdx, cell ) =
                     case cell of
-                        Cell sprite ->
-                            renderSprite ctx.cw [ moveToGIdx ctx gIdx ] sprite
+                        Cell tile ->
+                            renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
             in
             Grid.toList grid
                 |> List.map renderCell
@@ -315,9 +315,9 @@ gIdxToXY { cw, dx, dy } ( xi, yi ) =
     ( toFloat xi * cw + dx, toFloat yi * cw + dy )
 
 
-renderSprite : Float -> List Draw.Op -> Sprite -> Svg msg
-renderSprite cw ops sprite =
-    case sprite of
+renderTile : Float -> List Draw.Op -> Tile -> Svg msg
+renderTile cw ops tile =
+    case tile of
         Water ->
             circle "dodgerblue" (cw * 0.25) ops
 
