@@ -1,6 +1,6 @@
-module Grid exposing (GIdx, Grid, get, init, map, mapIdx, set, toList, wh)
+module Grid exposing (GIdx, Grid, get, init, map, mapIdx, set, toList, toListBy, wh)
 
-import Basics.Extra exposing (flip)
+import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
 import List.Extra
 
@@ -64,6 +64,11 @@ wh (G d) =
 toList : Grid a -> List ( GIdx, a )
 toList (G d) =
     Dict.toList d
+
+
+toListBy : (GIdx -> a -> b) -> Grid a -> List b
+toListBy func =
+    toList >> List.map (uncurry func)
 
 
 rangeLen : Int -> List Int

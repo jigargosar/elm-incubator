@@ -288,13 +288,12 @@ renderGrid seedGrid =
                 ctx =
                     toGCtx grid
 
-                renderCell ( gIdx, cell ) =
+                renderCell gIdx cell =
                     case cell of
                         Cell tile ->
                             renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
             in
-            Grid.toList grid
-                |> List.map renderCell
+            Grid.toListBy renderCell grid
                 |> group []
     in
     case seedGrid of
