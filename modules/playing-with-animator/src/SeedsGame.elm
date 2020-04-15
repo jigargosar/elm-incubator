@@ -4,7 +4,7 @@ import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale, square)
 import DrawGrid
-import Grid exposing (GIdx)
+import Grid exposing (GIdx, Grid)
 import Html exposing (div, text)
 import Html.Attributes as A
 import List.Extra
@@ -20,7 +20,7 @@ import Task
 
 type alias Model =
     { window : Window
-    , grid : Grid
+    , grid : SeedGrid
     }
 
 
@@ -28,11 +28,11 @@ type alias Window =
     { width : Float, height : Float }
 
 
-type alias Grid =
-    Grid.Grid Cell
+type SeedGrid
+    = SG (Grid.Grid Cell)
 
 
-initialGrid : Grid
+initialGrid : SeedGrid
 initialGrid =
     let
         wallIndices =
@@ -44,23 +44,16 @@ initialGrid =
         5
         (\i ->
             if List.member i wallIndices then
-                Cell CS_Static Wall
+                Cell Wall
 
             else
-                Cell CS_Idle Water
+                Cell Water
         )
+        |> SG
 
 
 type Cell
-    = Cell CS Sprite
-
-
-type CS
-    = CS_Connected
-    | CS_Idle
-    | CS_Static
-    | CS_MovingToWaterCollector
-    | CS_IdleFallingTo GIdx
+    = Cell Sprite
 
 
 type Sprite
@@ -175,97 +168,19 @@ type Msg
     | FallIdle
 
 
-cellToggleConnected : Cell -> Cell
-cellToggleConnected (Cell cs s) =
-    Cell
-        (case cs of
-            CS_Connected ->
-                CS_Idle
-
-            CS_Idle ->
-                CS_Connected
-
-            CS_MovingToWaterCollector ->
-                CS_MovingToWaterCollector
-
-            CS_IdleFallingTo gIdx ->
-                CS_IdleFallingTo gIdx
-
-            CS_Static ->
-                CS_Static
-        )
-        s
-
-
-cellCollectConnect : Cell -> Cell
-cellCollectConnect (Cell cs s) =
-    Cell
-        (case cs of
-            CS_Connected ->
-                CS_MovingToWaterCollector
-
-            CS_Idle ->
-                CS_Idle
-
-            CS_MovingToWaterCollector ->
-                CS_MovingToWaterCollector
-
-            CS_IdleFallingTo gIdx ->
-                CS_IdleFallingTo gIdx
-
-            CS_Static ->
-                CS_Static
-        )
-        s
-
-
-gridToggleConnected : GIdx -> Grid -> Maybe Grid
+gridToggleConnected : GIdx -> SeedGrid -> Maybe SeedGrid
 gridToggleConnected idx =
-    Grid.mapIdx idx cellToggleConnected
+    always Nothing
 
 
-gridCollectConnected : Grid -> Grid
+gridCollectConnected : SeedGrid -> SeedGrid
 gridCollectConnected =
-    Grid.map (always cellCollectConnect)
+    identity
 
 
-gridFallIdle : Grid -> Grid
-gridFallIdle g =
-    let
-        getHolesBelow i holesCt wallsCt otherCt =
-            let
-                newI =
-                    moveGIdxInDir Down i
-            in
-            case Grid.get newI g of
-                Just (Cell CS_MovingToWaterCollector _) ->
-                    getHolesBelow newI (holesCt + 1) wallsCt otherCt
-
-                Just (Cell CS_Static _) ->
-                    getHolesBelow newI holesCt (wallsCt + 1) otherCt
-
-                Just _ ->
-                    getHolesBelow newI holesCt wallsCt (otherCt + 1)
-
-                Nothing ->
-                    holesCt + wallsCt - otherCt
-
-        func i ((Cell cs s) as cell) =
-            if cs == CS_Idle then
-                let
-                    holesCt =
-                        getHolesBelow i 0 0 0
-                in
-                if holesCt > 0 then
-                    Cell (CS_IdleFallingTo (moveGIdx 0 (holesCt + 1) i)) s
-
-                else
-                    cell
-
-            else
-                cell
-    in
-    Grid.map func g
+gridFallIdle : SeedGrid -> SeedGrid
+gridFallIdle =
+    identity
 
 
 modelToggleConnected idx model =
@@ -352,66 +267,37 @@ view model =
         ]
 
 
-renderGrid : Grid -> Svg msg
-renderGrid g =
+renderGrid : SeedGrid -> Svg msg
+renderGrid (SG g) =
     let
         ctx =
             toGCtx g
+
+        drawCellAt ( gIdx, cell ) =
+            renderCell ctx gIdx cell
     in
-    [ DrawGrid.cellsWithConfig ctx.cw (renderCell ctx) g ]
-        |> group [ fade 1, scale 1, rotate 0 ]
+    Grid.toList g
+        |> List.map drawCellAt
+        |> group []
 
 
-renderCell : GCtx -> DrawGrid.Config -> GIdx -> Cell -> Svg msg
-renderCell { cw } conf gIdx cell =
+renderCell : GCtx -> GIdx -> Cell -> Svg msg
+renderCell ctx gIdx cell =
     case cell of
-        Cell cs sprite ->
+        Cell sprite ->
             group []
-                [ renderSprite cw (renderCS conf gIdx cs) sprite
-                , renderSprite cw (renderCS2 conf gIdx cs) sprite
+                [ renderSprite ctx.cw [ moveToGIdx ctx gIdx ] sprite
                 ]
 
 
-renderCS : DrawGrid.Config -> GIdx -> CS -> List Draw.Op
-renderCS conf gIdx cs =
-    case cs of
-        CS_Connected ->
-            [ conf.move gIdx, scale 0.5 ]
-
-        CS_Idle ->
-            [ conf.move gIdx ]
-
-        CS_MovingToWaterCollector ->
-            [ moveToWaterCollector, fade 0.1, scale 0.1 ]
-
-        CS_IdleFallingTo toGIdx ->
-            [ conf.move toGIdx ]
-
-        CS_Static ->
-            [ conf.move gIdx ]
+moveToGIdx : GCtx -> GIdx -> Draw.Op
+moveToGIdx ctx gIdx =
+    uncurry move (gIdxToXY ctx gIdx)
 
 
-moveToWaterCollector =
-    move 0 -300
-
-
-renderCS2 : DrawGrid.Config -> GIdx -> CS -> List Draw.Op
-renderCS2 conf gIdx cs =
-    case cs of
-        CS_Connected ->
-            [ conf.move gIdx, fade 0, scale 2 ]
-
-        CS_Idle ->
-            [ conf.move gIdx ]
-
-        CS_MovingToWaterCollector ->
-            [ conf.move gIdx, fade 0.1 ]
-
-        CS_IdleFallingTo toGIdx ->
-            [ conf.move toGIdx ]
-
-        CS_Static ->
-            [ conf.move gIdx ]
+gIdxToXY : GCtx -> GIdx -> ( Float, Float )
+gIdxToXY { cw, dx, dy } ( xi, yi ) =
+    ( toFloat xi * cw + dx, toFloat yi * cw + dy )
 
 
 renderSprite : Float -> List Draw.Op -> Sprite -> Svg msg
@@ -435,7 +321,7 @@ type alias GCtx =
     }
 
 
-toGCtx : Grid -> GCtx
+toGCtx : Grid a -> GCtx
 toGCtx g =
     let
         gridCellWidth =
