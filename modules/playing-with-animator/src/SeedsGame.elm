@@ -13,22 +13,21 @@ import Task
 
 
 
--- Model
-
-
-type alias Model =
-    { window : Window
-    , grid : SeedGrid
-    }
-
-
-type alias Window =
-    { width : Float, height : Float }
+-- SEED GRID
 
 
 type SeedGrid
     = Idle (Grid Cell)
     | Connecting (Cons GI) (Grid Cell)
+
+
+type Cell
+    = Cell Tile
+
+
+type Tile
+    = Water
+    | Wall
 
 
 initialGrid : SeedGrid
@@ -118,13 +117,18 @@ giAreAdj ( x1, y1 ) ( x2, y2 ) =
     (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
 
 
-type Cell
-    = Cell Tile
+
+-- Model
 
 
-type Tile
-    = Water
-    | Wall
+type alias Model =
+    { window : Window
+    , grid : SeedGrid
+    }
+
+
+type alias Window =
+    { width : Float, height : Float }
 
 
 type alias Flags =
