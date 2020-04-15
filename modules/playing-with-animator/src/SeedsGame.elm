@@ -3,7 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Cons exposing (Cons)
-import Draw exposing (canvas, circle, group, move, rect, scale, square)
+import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
@@ -398,7 +398,7 @@ renderConnectedCell ctx gi (Cell tile) =
 
 renderLeavingCell : GCtx -> GI -> Cell -> Svg msg
 renderLeavingCell ctx _ (Cell tile) =
-    group [ move 0 -300, scale 0.1 ] [ renderTile ctx tile ]
+    group [ move 0 -300, scale 0.1, fade 0.1 ] [ renderTile ctx tile ]
 
 
 renderTile : GCtx -> Tile -> Svg msg
