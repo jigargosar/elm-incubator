@@ -143,6 +143,7 @@ lcrGo dir =
 type Msg
     = NoOp
     | Foo LCRDir (Pivot GIdx)
+    | Collect
 
 
 cellToggleConnected : Cell -> Cell
@@ -161,9 +162,30 @@ cellToggleConnected (Cell cs s) =
         s
 
 
+cellCollectConnect : Cell -> Cell
+cellCollectConnect (Cell cs s) =
+    Cell
+        (case cs of
+            CS_Connected ->
+                CS_MovingToWaterCollector
+
+            CS_Idle ->
+                CS_Idle
+
+            CS_MovingToWaterCollector ->
+                CS_MovingToWaterCollector
+        )
+        s
+
+
 gridToggleConnected : GIdx -> Grid -> Maybe Grid
 gridToggleConnected idx =
     Grid.mapIdx idx cellToggleConnected
+
+
+gridCollectConnected : Grid -> Grid
+gridCollectConnected =
+    Grid.map (always cellCollectConnect)
 
 
 modelToggleConnected idx model =
@@ -174,11 +196,21 @@ modelToggleConnected idx model =
     }
 
 
+modelCollectConnected model =
+    { model
+        | grid =
+            gridCollectConnected model.grid
+    }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        Collect ->
+            ( modelCollectConnected model, Cmd.none )
 
         Foo dir lcr ->
             ( modelToggleConnected (lcrC lcr) model
@@ -188,7 +220,7 @@ update message model =
                         Foo dir nLCR
 
                     Nothing ->
-                        Foo (lcrOppDir dir) lcr
+                        Collect
             )
 
 
@@ -260,11 +292,11 @@ renderCS cs =
             []
 
         CS_MovingToWaterCollector ->
-            [ fade 0, scale 0.5, moveToWaterCollector ]
+            [ fade 0.1, scale 0.5, moveToWaterCollector ]
 
 
 moveToWaterCollector =
-    move 0 -100
+    move 0 -300
 
 
 renderCS2 : CS -> List Draw.Op
@@ -277,7 +309,7 @@ renderCS2 cs =
             []
 
         CS_MovingToWaterCollector ->
-            []
+            [ fade 0.1 ]
 
 
 renderSprite : Float -> Sprite -> Svg msg

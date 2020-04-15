@@ -1,4 +1,4 @@
-module Grid exposing (GIdx, Grid, get, init, mapIdx, set, toList, wh)
+module Grid exposing (GIdx, Grid, get, init, map, mapIdx, set, toList, wh)
 
 import Basics.Extra exposing (flip)
 import Dict exposing (Dict)
@@ -44,6 +44,11 @@ mapIdx : GIdx -> (a -> a) -> Grid a -> Maybe (Grid a)
 mapIdx i fun g =
     get i g
         |> Maybe.andThen (fun >> flip (set i) g)
+
+
+map : (GIdx -> a -> b) -> Grid a -> Grid b
+map fun (G d) =
+    Dict.map fun d |> G
 
 
 wh : Grid a -> ( Int, Int )
