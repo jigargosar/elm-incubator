@@ -19,6 +19,13 @@ import Task
 type SeedGrid
     = Idle (Grid Cell)
     | Connecting (Cons GI) (Grid Cell)
+    | Collecting TransitionState (Grid Cell)
+
+
+type alias TransitionState =
+    { leaving : Cons GI
+    , falling : List ( GI, GI )
+    }
 
 
 type Cell
@@ -66,6 +73,9 @@ startConnecting gi seedGrid =
         Connecting _ _ ->
             Nothing
 
+        Collecting _ _ ->
+            Nothing
+
 
 toggleConnecting : GI -> SeedGrid -> Maybe SeedGrid
 toggleConnecting gi =
@@ -93,6 +103,9 @@ addConnecting gi seedGrid =
             else
                 Nothing
 
+        Collecting _ _ ->
+            Nothing
+
 
 removeConnecting : GI -> SeedGrid -> Maybe SeedGrid
 removeConnecting gi seedGrid =
@@ -111,6 +124,9 @@ removeConnecting gi seedGrid =
 
             else
                 Nothing
+
+        Collecting _ _ ->
+            Nothing
 
 
 
@@ -323,6 +339,18 @@ renderGrid seedGrid =
             gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
 
+        Collecting { leaving, falling } grid ->
+            let
+                renderCell ctx gi =
+                    if Cons.member gi leaving then
+                        renderLeavingCell ctx gi
+
+                    else
+                        renderIdleCell ctx gi
+            in
+            gridToListWithCtx renderCell grid
+                |> group []
+
 
 gridToListWithCtx : (GCtx -> GI -> a -> b) -> Grid a -> List b
 gridToListWithCtx func grid =
@@ -345,6 +373,11 @@ renderIdleCell ctx gi (Cell tile) =
 
 renderConnectedCell : GCtx -> GI -> Cell -> Svg msg
 renderConnectedCell ctx gi (Cell tile) =
+    group [ moveToGI ctx gi, scale 0.6 ] [ renderTile ctx tile ]
+
+
+renderLeavingCell : GCtx -> GI -> Cell -> Svg msg
+renderLeavingCell ctx gi (Cell tile) =
     group [ moveToGI ctx gi, scale 0.6 ] [ renderTile ctx tile ]
 
 
