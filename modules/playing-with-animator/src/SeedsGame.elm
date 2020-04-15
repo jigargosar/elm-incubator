@@ -216,6 +216,10 @@ modelFallIdle model =
     }
 
 
+mapGridMaybe fun model =
+    { model | grid = fun model.grid |> Maybe.withDefault model.grid }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
