@@ -59,17 +59,17 @@ init f =
     ( Model f.window initialGrid
     , delay
         (Foo Forth
-            (lcrFromNEList (makeGridIndices ( 0, 0 ) [ Right, Right, Right, Down, Down, Left, Left ]))
+            (lcrFromNEList (makeGIdxCons ( 0, 0 ) [ Right, Right, Right, Down, Down, Left, Left ]))
         )
     )
 
 
-type alias NEList a =
+type alias Cons a =
     ( a, List a )
 
 
-makeGridIndices : GIdx -> List FourD -> NEList GIdx
-makeGridIndices start fourDS =
+makeGIdxCons : GIdx -> List FourD -> Cons GIdx
+makeGIdxCons start fourDS =
     ( start, List.Extra.scanl moveGIdxIn start fourDS |> List.drop 1 )
 
 
