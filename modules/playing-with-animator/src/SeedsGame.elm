@@ -33,7 +33,7 @@ initialGrid : SeedGrid
 initialGrid =
     let
         wallIndices =
-            [ ( 2, 1 ), ( 5, 1 ), ( 2, 3 ), ( 5, 3 ) ]
+            [ ( 2, 1 ), ( 4, 1 ), ( 2, 3 ), ( 4, 3 ) ]
     in
     Grid.init
         7
