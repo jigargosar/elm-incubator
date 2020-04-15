@@ -189,7 +189,7 @@ update message model =
 
 
 delay msg =
-    Process.sleep 50 |> Task.perform (always msg)
+    Process.sleep 100 |> Task.perform (always msg)
 
 
 subscriptions : Model -> Sub Msg
