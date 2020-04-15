@@ -320,16 +320,16 @@ renderGrid seedGrid =
                 |> group []
 
         Connecting ciCons grid ->
-            let
-                renderCell ctx gi =
-                    if Cons.member gi ciCons then
-                        renderConnectedCell ctx gi
-
-                    else
-                        renderIdleCell ctx gi
-            in
-            gridToListWithCtx renderCell grid
+            gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
+
+
+renderConnectingCell ciCons ctx gi =
+    if Cons.member gi ciCons then
+        renderConnectedCell ctx gi
+
+    else
+        renderIdleCell ctx gi
 
 
 renderIdleCell ctx gi (Cell tile) =
