@@ -2,9 +2,11 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
+import Cons exposing (Cons)
 import Draw exposing (canvas, circle, group, move, rect, square)
 import Grid exposing (GI, Grid)
 import List.Extra
+import Maybe.Extra
 import Process
 import Svg exposing (Svg)
 import Task
@@ -54,7 +56,7 @@ startConnecting gi seedGrid =
         Idle grid ->
             case Grid.get gi grid of
                 Just (Cell Water) ->
-                    Connecting ( gi, [] ) grid |> Just
+                    Connecting (Cons.singleton gi) grid |> Just
 
                 Just (Cell Wall) ->
                     Nothing
@@ -64,6 +66,32 @@ startConnecting gi seedGrid =
 
         Connecting _ _ ->
             Nothing
+
+
+toggleConnecting : GI -> SeedGrid -> Maybe SeedGrid
+toggleConnecting gi =
+    firstOf [ addConnecting gi, removeConnecting gi ]
+
+
+firstOf =
+    Maybe.Extra.oneOf
+
+
+addConnecting gi seedGrid =
+    case seedGrid of
+        Idle _ ->
+            Nothing
+
+        Connecting cons grid ->
+            if Cons.member gi cons then
+                Nothing
+
+            else
+                Nothing
+
+
+removeConnecting _ _ =
+    Nothing
 
 
 type Cell
@@ -84,10 +112,6 @@ init f =
     ( Model f.window initialGrid
     , Cmd.none
     )
-
-
-type alias Cons a =
-    ( a, List a )
 
 
 
@@ -141,6 +165,7 @@ giRight =
 type Msg
     = NoOp
     | StartConnecting GI
+    | ToggleConnecting GI
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -151,6 +176,9 @@ update message model =
 
         StartConnecting gi ->
             ( mapGridMaybe (startConnecting gi) model, Cmd.none )
+
+        ToggleConnecting gi ->
+            ( mapGridMaybe (toggleConnecting gi) model, Cmd.none )
 
 
 mapGridMaybe f m =
