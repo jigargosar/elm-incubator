@@ -314,14 +314,16 @@ view model =
 
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
-    case seedGrid of
-        Idle grid ->
-            gridToListWithCtx renderIdleCell grid
-                |> group []
+    let
+        ( renderCell, grid_ ) =
+            case seedGrid of
+                Idle grid ->
+                    ( renderIdleCell, grid )
 
-        Connecting ciCons grid ->
-            gridToListWithCtx (renderConnectingCell ciCons) grid
-                |> group []
+                Connecting ciCons grid ->
+                    ( renderConnectingCell ciCons, grid )
+    in
+    group [] (gridToListWithCtx renderCell grid_)
 
 
 renderConnectingCell ciCons ctx gi =
