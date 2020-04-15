@@ -205,7 +205,8 @@ renderStyles : List ( String, String ) -> Svg.Attribute msg
 renderStyles list =
     Svg.Attributes.style
         ([ ( "transition", "all 500ms" )
-         , ( "transition", "none" )
+
+         --, ( "transition", "none" )
          ]
             ++ list
             |> List.map styleTupleToString
