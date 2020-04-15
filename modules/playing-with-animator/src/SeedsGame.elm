@@ -355,7 +355,7 @@ renderTile { cw } tile =
             circle "dodgerblue" (cw * 0.25) []
 
         Wall ->
-            square "brown" (cw * 0.8) []
+            square "brown" (cw * 0.7) []
 
 
 
