@@ -68,8 +68,9 @@ init f =
     ( Model f.window initialGrid
     , delay
         (Foo Forth
-            (lcrFromNEList
-                (makeGICons ( 1, 1 )
+            (lcrFromCons
+                (makeGICons
+                    ( 1, 1 )
                     [ giRight
                     , giRight
                     , giRight
@@ -116,7 +117,7 @@ giRight =
 -- LCR
 
 
-lcrFromNEList =
+lcrFromCons =
     uncurry Pivot.fromCons
 
 
