@@ -91,8 +91,23 @@ addConnecting gi seedGrid =
                 Nothing
 
 
-removeConnecting _ _ =
-    Nothing
+removeConnecting : GI -> SeedGrid -> Maybe SeedGrid
+removeConnecting gi seedGrid =
+    case seedGrid of
+        Idle _ ->
+            Nothing
+
+        Connecting ciCons grid ->
+            if Cons.head ciCons == gi then
+                case Cons.maybeTail ciCons of
+                    Nothing ->
+                        Idle grid |> Just
+
+                    Just nciCons ->
+                        Connecting nciCons grid |> Just
+
+            else
+                Nothing
 
 
 giAreAdj ( x1, y1 ) ( x2, y2 ) =
