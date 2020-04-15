@@ -77,7 +77,18 @@ init f =
     ( Model f.window initialGrid
     , delay
         (Foo Forth
-            (lcrFromNEList (makeGIdxCons ( 1, 1 ) [ Right, Right, Right, Down, Down, Left, Left ]))
+            (lcrFromNEList
+                (makeGIdxCons ( 1, 1 )
+                    [ Right
+                    , Right
+                    , Right
+                    , Down
+                    , Down
+                    , Left
+                    , Left
+                    ]
+                )
+            )
         )
     )
 
@@ -221,26 +232,32 @@ gridCollectConnected =
 gridFallIdle : Grid -> Grid
 gridFallIdle g =
     let
-        getHolesBelow i holesCt =
+        getHolesBelow i holesCt wallsCt otherCt =
             let
                 newI =
                     moveGIdxInDir Down i
             in
             case Grid.get newI g of
                 Just (Cell CS_MovingToWaterCollector _) ->
-                    getHolesBelow newI (holesCt + 1)
+                    getHolesBelow newI (holesCt + 1) wallsCt otherCt
 
-                _ ->
-                    holesCt
+                Just (Cell CS_Static _) ->
+                    getHolesBelow newI holesCt (wallsCt + 1) otherCt
+
+                Just _ ->
+                    getHolesBelow newI holesCt wallsCt (otherCt + 1)
+
+                Nothing ->
+                    holesCt + wallsCt - otherCt
 
         func i ((Cell cs s) as cell) =
             if cs == CS_Idle then
                 let
-                    holes =
-                        getHolesBelow i 0
+                    holesCt =
+                        getHolesBelow i 0 0 0
                 in
-                if holes > 0 then
-                    Cell (CS_IdleFallingTo (moveGIdx 0 holes i)) s
+                if holesCt > 0 then
+                    Cell (CS_IdleFallingTo (moveGIdx 0 (holesCt + 1) i)) s
 
                 else
                     cell
