@@ -288,11 +288,13 @@ renderGrid seedGrid =
                 ctx =
                     toGCtx grid
 
-                renderCellHelp ( gIdx, cell ) =
-                    renderCell ctx gIdx cell
+                renderCell ( gIdx, cell ) =
+                    case cell of
+                        Cell sprite ->
+                            renderSprite ctx.cw [ moveToGIdx ctx gIdx ] sprite
             in
             Grid.toList grid
-                |> List.map renderCellHelp
+                |> List.map renderCell
                 |> group []
     in
     case seedGrid of
@@ -301,15 +303,6 @@ renderGrid seedGrid =
 
         Connecting _ grid ->
             renderGridHelp grid
-
-
-renderCell : GCtx -> GIdx -> Cell -> Svg msg
-renderCell ctx gIdx cell =
-    case cell of
-        Cell sprite ->
-            group []
-                [ renderSprite ctx.cw [ moveToGIdx ctx gIdx ] sprite
-                ]
 
 
 moveToGIdx : GCtx -> GIdx -> Draw.Op
