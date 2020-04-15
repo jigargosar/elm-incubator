@@ -77,7 +77,7 @@ init f =
     ( Model f.window initialGrid
     , delay
         (Foo Forth
-            (lcrFromNEList (makeGIdxCons ( 0, 0 ) [ Right, Right, Right, Down, Down, Left, Left ]))
+            (lcrFromNEList (makeGIdxCons ( 1, 1 ) [ Right, Right, Right, Down, Down, Left, Left ]))
         )
     )
 
