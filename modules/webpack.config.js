@@ -99,6 +99,7 @@ function createConfig(
       // https://github.com/xpl/panic-overlay/blob/master/demo/webpack-vanilla/webpack.config.js
       // devtool: 'source-map',
       devtool: 'cheap-module-source-map',
+      node: { fs: 'empty' },
       devServer: {
         historyApiFallback: false,
         hot: true,

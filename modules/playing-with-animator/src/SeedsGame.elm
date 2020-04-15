@@ -213,6 +213,9 @@ view model =
 
         h =
             model.window.height
+
+        _ =
+            modBy -10 21 |> Debug.log "debug"
     in
     Document "SeedsGame"
         [ div [ A.id "un-caught-error-container", A.class "fixed absolute--fill z-max" ]
