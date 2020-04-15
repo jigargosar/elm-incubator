@@ -1,4 +1,4 @@
-module DrawGrid exposing (cells)
+module DrawGrid exposing (Config, cells, cellsWithConfig)
 
 import Basics.Extra exposing (uncurry)
 import Draw exposing (group, move)
@@ -15,6 +15,29 @@ cells cw func g =
         drawCellAt ( gIdx, cell ) =
             [ func gIdx cell ]
                 |> group [ moveToGIdx ctx gIdx ]
+    in
+    Grid.toList g
+        |> List.map drawCellAt
+        |> group []
+
+
+type alias Config =
+    { move : GIdx -> Draw.Op
+    }
+
+
+cellsWithConfig : Float -> (Config -> GIdx -> a -> Svg msg) -> Grid a -> Svg msg
+cellsWithConfig cw func g =
+    let
+        ctx =
+            toGCtx cw g
+
+        config =
+            { move = moveToGIdx ctx
+            }
+
+        drawCellAt ( gIdx, cell ) =
+            func config gIdx cell
     in
     Grid.toList g
         |> List.map drawCellAt
