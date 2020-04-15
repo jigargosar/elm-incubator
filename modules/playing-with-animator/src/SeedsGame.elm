@@ -27,7 +27,7 @@ type alias Window =
 
 type SeedGrid
     = Idle (Grid Cell)
-    | Connecting (List GI) (Grid Cell)
+    | Connecting (Cons GI) (Grid Cell)
 
 
 initialGrid : SeedGrid
@@ -35,7 +35,7 @@ initialGrid =
     let
         wallIndices =
             [ ( 1, 1 ), ( 2, 1 ) ]
-                |> List.map (moveGIdxInDir Down >> moveGIdxInDir Right)
+                |> List.map (giDown >> giRight)
     in
     Grid.init
         7
@@ -69,14 +69,14 @@ init f =
     , delay
         (Foo Forth
             (lcrFromNEList
-                (makeGIdxCons ( 1, 1 )
-                    [ Right
-                    , Right
-                    , Right
-                    , Down
-                    , Down
-                    , Left
-                    , Left
+                (makeGICons ( 1, 1 )
+                    [ giRight
+                    , giRight
+                    , giRight
+                    , giDown
+                    , giDown
+                    , giLeft
+                    , giLeft
                     ]
                 )
             )
@@ -88,36 +88,28 @@ type alias Cons a =
     ( a, List a )
 
 
-makeGIdxCons : GI -> List FourD -> Cons GI
-makeGIdxCons start fourDS =
-    ( start, List.Extra.scanl moveGIdxInDir start fourDS |> List.drop 1 )
+makeGICons start fns =
+    ( start, List.Extra.scanl (<|) start fns |> List.drop 1 )
 
 
-moveGIdx dx dy ( x, y ) =
+moveGI dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-moveGIdxInDir : FourD -> GI -> GI
-moveGIdxInDir fourD =
-    case fourD of
-        Up ->
-            moveGIdx 0 -1
-
-        Down ->
-            moveGIdx 0 1
-
-        Left ->
-            moveGIdx -1 0
-
-        Right ->
-            moveGIdx 1 0
+giUp =
+    moveGI 0 -1
 
 
-type FourD
-    = Up
-    | Down
-    | Left
-    | Right
+giDown =
+    moveGI 0 1
+
+
+giLeft =
+    moveGI -1 0
+
+
+giRight =
+    moveGI 1 0
 
 
 
@@ -284,7 +276,7 @@ renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     let
         renderCell ctx gi (Cell tile) =
-            renderTile ctx.cw [ moveToGIdx ctx gi ] tile
+            renderTile ctx.cw [ moveToGI ctx gi ] tile
     in
     case seedGrid of
         Idle grid ->
@@ -347,8 +339,8 @@ gridToListWithCtx func grid =
     Grid.toListBy (func ctx) grid
 
 
-moveToGIdx : GCtx -> GI -> Draw.Op
-moveToGIdx ctx gi =
+moveToGI : GCtx -> GI -> Draw.Op
+moveToGI ctx gi =
     uncurry move (gIdxToXY ctx gi)
 
 
