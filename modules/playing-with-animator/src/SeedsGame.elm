@@ -33,8 +33,7 @@ initialGrid : SeedGrid
 initialGrid =
     let
         wallIndices =
-            [ ( 1, 1 ), ( 2, 1 ) ]
-                |> List.map (giDown >> giRight)
+            [ ( 2, 2 ), ( 4, 2 ) ]
     in
     Grid.init
         7
@@ -93,6 +92,10 @@ giUp =
     moveGI 0 -1
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 giDown =
     moveGI 0 1
 
@@ -103,6 +106,10 @@ giDown =
 
 giLeft =
     moveGI -1 0
+
+
+
+--noinspection ElmUnusedSymbol
 
 
 giRight =
