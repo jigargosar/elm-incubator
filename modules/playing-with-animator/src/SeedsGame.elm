@@ -83,14 +83,14 @@ addConnecting gi seedGrid =
             Nothing
 
         Connecting ciCons grid ->
-            if areGIAdjacent gi (Cons.head ciCons) && not (Cons.member gi ciCons) then
+            if giAreAdj gi (Cons.head ciCons) && not (Cons.member gi ciCons) then
                 Connecting (Cons.push gi ciCons) grid |> Just
 
             else
                 Nothing
 
 
-areGIAdjacent ( x1, y1 ) ( x2, y2 ) =
+giAreAdj ( x1, y1 ) ( x2, y2 ) =
     let
         ( dxa, dya ) =
             ( abs (x1 - x2), abs (y1 - y2) )
