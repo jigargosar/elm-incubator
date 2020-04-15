@@ -144,6 +144,7 @@ type Msg
     = NoOp
     | Foo LCRDir (Pivot GIdx)
     | Collect
+    | FallIdle
 
 
 cellToggleConnected : Cell -> Cell
@@ -188,6 +189,11 @@ gridCollectConnected =
     Grid.map (always cellCollectConnect)
 
 
+gridFallIdle : Grid -> Grid
+gridFallIdle =
+    Grid.map (always identity)
+
+
 modelToggleConnected idx model =
     { model
         | grid =
@@ -200,6 +206,13 @@ modelCollectConnected model =
     { model
         | grid =
             gridCollectConnected model.grid
+    }
+
+
+modelFallIdle model =
+    { model
+        | grid =
+            gridFallIdle model.grid
     }
 
 
@@ -222,6 +235,9 @@ update message model =
                     Nothing ->
                         Collect
             )
+
+        FallIdle ->
+            ( modelFallIdle model, Cmd.none )
 
 
 delay msg =
