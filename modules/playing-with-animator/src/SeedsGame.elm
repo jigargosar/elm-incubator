@@ -82,12 +82,20 @@ addConnecting gi seedGrid =
         Idle _ ->
             Nothing
 
-        Connecting cons grid ->
-            if Cons.member gi cons then
-                Nothing
+        Connecting ciCons grid ->
+            if areGIAdjcent gi (Cons.head ciCons) && not (Cons.member gi ciCons) then
+                Connecting (Cons.push gi ciCons) grid |> Just
 
             else
                 Nothing
+
+
+areGIAdjcent ( x1, y1 ) ( x2, y2 ) =
+    let
+        ( dxa, dya ) =
+            ( abs (x1 - x2), abs (y1 - y2) )
+    in
+    (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
 
 
 removeConnecting _ _ =
