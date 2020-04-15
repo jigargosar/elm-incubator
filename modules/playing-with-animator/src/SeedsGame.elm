@@ -190,7 +190,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init f =
     ( Model f.window initialGrid
-    , schedule connectPath1
+    , schedule (connectPath1 |> always connectPath2)
     )
 
 
@@ -213,6 +213,24 @@ connectPath1 =
         , giDown
         , giLeft
         , giLeft
+        ]
+        |> List.map ToggleConnecting
+
+
+connectPath2 : List Msg
+connectPath2 =
+    List.Extra.scanl (<|)
+        ( 1, 1 )
+        [ giDown
+        , giDown
+        , giDown
+        , giRight
+        , giRight
+        , giRight
+        , giRight
+        , giUp
+        , giUp
+        , giUp
         ]
         |> List.map ToggleConnecting
 
