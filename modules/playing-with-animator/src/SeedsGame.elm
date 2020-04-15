@@ -267,7 +267,8 @@ view model =
             model.window.height
     in
     Document "SeedsGame"
-        [ canvas w
+        [ canvas
+            w
             h
             [ rect "#ffc973" w h []
             , renderGrid model.grid
