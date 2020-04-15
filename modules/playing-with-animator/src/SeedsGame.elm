@@ -268,48 +268,48 @@ renderGrid g =
         ctx =
             toGCtx g
     in
-    [ DrawGrid.cells ctx.cw (renderCell ctx) g ]
+    [ DrawGrid.cellsWithConfig ctx.cw (renderCell ctx) g ]
         |> group [ fade 1, scale 1, rotate 0 ]
 
 
-renderCell : GCtx -> GIdx -> Cell -> Svg msg
-renderCell { cw } _ cell =
+renderCell : GCtx -> DrawGrid.Config -> GIdx -> Cell -> Svg msg
+renderCell { cw } conf gIdx cell =
     case cell of
         Cell cs sprite ->
             group []
-                [ group (renderCS cs) [ renderSprite cw sprite ]
-                , group (renderCS2 cs) [ renderSprite cw sprite ]
+                [ group (renderCS conf gIdx cs) [ renderSprite cw sprite ]
+                , group (renderCS2 conf gIdx cs) [ renderSprite cw sprite ]
                 ]
 
 
-renderCS : CS -> List Draw.Op
-renderCS cs =
+renderCS : DrawGrid.Config -> GIdx -> CS -> List Draw.Op
+renderCS conf gIdx cs =
     case cs of
         CS_Connected ->
-            [ scale 0.5 ]
+            [ conf.move gIdx, scale 0.5 ]
 
         CS_Idle ->
-            []
+            [ conf.move gIdx ]
 
         CS_MovingToWaterCollector ->
-            [ fade 0.1, scale 0.5, moveToWaterCollector ]
+            [ fade 0.1, scale 0.1, moveToWaterCollector ]
 
 
 moveToWaterCollector =
     move 0 -300
 
 
-renderCS2 : CS -> List Draw.Op
-renderCS2 cs =
+renderCS2 : DrawGrid.Config -> GIdx -> CS -> List Draw.Op
+renderCS2 conf gIdx cs =
     case cs of
         CS_Connected ->
-            [ fade 0, scale 2 ]
+            [ conf.move gIdx, fade 0, scale 2 ]
 
         CS_Idle ->
-            []
+            [ conf.move gIdx ]
 
         CS_MovingToWaterCollector ->
-            [ fade 0.1 ]
+            [ conf.move gIdx, fade 0.1 ]
 
 
 renderSprite : Float -> Sprite -> Svg msg
