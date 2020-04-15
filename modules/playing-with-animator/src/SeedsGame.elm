@@ -2,7 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale)
+import Draw exposing (canvas, circle, fade, group, move, rect, rotate, scale, square)
 import DrawGrid
 import Grid exposing (GIdx)
 import Html exposing (div, text)
@@ -51,6 +51,7 @@ type CS
 
 type Sprite
     = Water
+    | Wall
 
 
 type alias Flags =
@@ -387,6 +388,9 @@ renderSprite cw ops sprite =
     case sprite of
         Water ->
             circle "dodgerblue" (cw * 0.25) ops
+
+        Wall ->
+            square "brown" (cw * 0.8) ops
 
 
 
