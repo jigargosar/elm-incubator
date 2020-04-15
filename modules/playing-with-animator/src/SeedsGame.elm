@@ -333,21 +333,21 @@ renderGrid seedGrid =
 
 
 renderIdleCell ctx gi (Cell tile) =
-    renderTile ctx.cw [ moveToGI ctx gi ] tile
+    group [ moveToGI ctx gi ] [ renderTile ctx.cw tile ]
 
 
 renderConnectedCell ctx gi (Cell tile) =
-    renderTile ctx.cw [ moveToGI ctx gi, scale 0.6 ] tile
+    group [ moveToGI ctx gi, scale 0.6 ] [ renderTile ctx.cw tile ]
 
 
-renderTile : Float -> List Draw.Op -> Tile -> Svg msg
-renderTile cw ops tile =
+renderTile : Float -> Tile -> Svg msg
+renderTile cw tile =
     case tile of
         Water ->
-            circle "dodgerblue" (cw * 0.25) ops
+            circle "dodgerblue" (cw * 0.25) []
 
         Wall ->
-            square "brown" (cw * 0.8) ops
+            square "brown" (cw * 0.8) []
 
 
 
