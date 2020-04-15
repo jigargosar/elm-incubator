@@ -292,7 +292,7 @@ renderCS conf gIdx cs =
             [ conf.move gIdx ]
 
         CS_MovingToWaterCollector ->
-            [ fade 0.1, scale 0.1, moveToWaterCollector ]
+            [ moveToWaterCollector, fade 0.1, scale 0.1 ]
 
 
 moveToWaterCollector =
