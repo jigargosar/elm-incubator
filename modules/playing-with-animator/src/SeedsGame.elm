@@ -45,6 +45,7 @@ type CS
     = CS_Connected
     | CS_Idle
     | CS_MovingToWaterCollector
+    | CS_IdleFallingTo GIdx
 
 
 type Sprite
@@ -159,6 +160,9 @@ cellToggleConnected (Cell cs s) =
 
             CS_MovingToWaterCollector ->
                 CS_MovingToWaterCollector
+
+            CS_IdleFallingTo gIdx ->
+                CS_IdleFallingTo gIdx
         )
         s
 
@@ -175,6 +179,9 @@ cellCollectConnect (Cell cs s) =
 
             CS_MovingToWaterCollector ->
                 CS_MovingToWaterCollector
+
+            CS_IdleFallingTo gIdx ->
+                CS_IdleFallingTo gIdx
         )
         s
 
@@ -310,6 +317,9 @@ renderCS conf gIdx cs =
         CS_MovingToWaterCollector ->
             [ moveToWaterCollector, fade 0.1, scale 0.1 ]
 
+        CS_IdleFallingTo toGIdx ->
+            [ conf.move toGIdx ]
+
 
 moveToWaterCollector =
     move 0 -300
@@ -326,6 +336,9 @@ renderCS2 conf gIdx cs =
 
         CS_MovingToWaterCollector ->
             [ conf.move gIdx, fade 0.1 ]
+
+        CS_IdleFallingTo toGIdx ->
+            [ conf.move toGIdx ]
 
 
 renderSprite : Float -> List Draw.Op -> Sprite -> Svg msg
