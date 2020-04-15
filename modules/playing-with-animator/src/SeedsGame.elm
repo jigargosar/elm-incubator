@@ -28,8 +28,8 @@ type alias Window =
 
 
 type SeedGrid
-    = Connecting (Grid Cell)
-    | Idle (Grid Cell)
+    = Idle (Grid Cell)
+    | Connecting (Grid Cell)
 
 
 initialGrid : SeedGrid
