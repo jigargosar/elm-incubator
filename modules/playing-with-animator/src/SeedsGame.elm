@@ -283,32 +283,17 @@ view model =
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     let
-        renderGridHelp grid =
-            let
-                ctx =
-                    toGCtx grid
-
-                renderCell gIdx cell =
-                    case cell of
-                        Cell tile ->
-                            renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
-            in
-            Grid.toListBy renderCell grid
-                |> group []
+        renderCell ctx gIdx (Cell tile) =
+            renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
     in
     case seedGrid of
         Idle grid ->
-            let
-                renderCell ctx gIdx cell =
-                    case cell of
-                        Cell tile ->
-                            renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
-            in
             gridToListWithCtx renderCell grid
                 |> group []
 
         Connecting _ grid ->
-            renderGridHelp grid
+            gridToListWithCtx renderCell grid
+                |> group []
 
 
 gridToListWithCtx : (GCtx -> GIdx -> a -> b) -> Grid a -> List b
