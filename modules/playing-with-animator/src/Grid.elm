@@ -1,4 +1,4 @@
-module Grid exposing (GIdx, Grid, get, init, map, mapIdx, set, toList, toListBy, wh)
+module Grid exposing (GI, Grid, get, init, map, mapIdx, set, toList, toListBy, wh)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
@@ -10,26 +10,26 @@ type Grid a
 
 
 type alias IdxDict a =
-    Dict GIdx a
+    Dict GI a
 
 
-type alias GIdx =
+type alias GI =
     ( Int, Int )
 
 
-init : Int -> Int -> (GIdx -> a) -> Grid a
+init : Int -> Int -> (GI -> a) -> Grid a
 init w h func =
     mapWH w h (\idx -> ( idx, func idx ))
         |> Dict.fromList
         |> G
 
 
-get : GIdx -> Grid a -> Maybe a
+get : GI -> Grid a -> Maybe a
 get gIdx (G d) =
     Dict.get gIdx d
 
 
-set : GIdx -> a -> Grid a -> Maybe (Grid a)
+set : GI -> a -> Grid a -> Maybe (Grid a)
 set gIdx a (G d) =
     if Dict.member gIdx d then
         Dict.insert gIdx a d
@@ -40,13 +40,13 @@ set gIdx a (G d) =
         Nothing
 
 
-mapIdx : GIdx -> (a -> a) -> Grid a -> Maybe (Grid a)
+mapIdx : GI -> (a -> a) -> Grid a -> Maybe (Grid a)
 mapIdx i fun g =
     get i g
         |> Maybe.andThen (fun >> flip (set i) g)
 
 
-map : (GIdx -> a -> b) -> Grid a -> Grid b
+map : (GI -> a -> b) -> Grid a -> Grid b
 map fun (G d) =
     Dict.map fun d |> G
 
@@ -61,12 +61,12 @@ wh (G d) =
             ( 0, 0 )
 
 
-toList : Grid a -> List ( GIdx, a )
+toList : Grid a -> List ( GI, a )
 toList (G d) =
     Dict.toList d
 
 
-toListBy : (GIdx -> a -> b) -> Grid a -> List b
+toListBy : (GI -> a -> b) -> Grid a -> List b
 toListBy func =
     toList >> List.map (uncurry func)
 
@@ -76,6 +76,6 @@ rangeLen len =
     List.range 0 (len - 1)
 
 
-mapWH : Int -> Int -> (GIdx -> a) -> List a
+mapWH : Int -> Int -> (GI -> a) -> List a
 mapWH w h func =
     rangeLen h |> List.concatMap (\y -> rangeLen w |> List.map (\x -> func ( x, y )))

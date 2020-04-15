@@ -3,7 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Draw exposing (canvas, circle, group, move, rect, square)
-import Grid exposing (GIdx, Grid)
+import Grid exposing (GI, Grid)
 import List.Extra
 import Pivot exposing (Pivot)
 import Process
@@ -27,7 +27,7 @@ type alias Window =
 
 type SeedGrid
     = Idle (Grid Cell)
-    | Connecting (List GIdx) (Grid Cell)
+    | Connecting (List GI) (Grid Cell)
 
 
 initialGrid : SeedGrid
@@ -88,7 +88,7 @@ type alias Cons a =
     ( a, List a )
 
 
-makeGIdxCons : GIdx -> List FourD -> Cons GIdx
+makeGIdxCons : GI -> List FourD -> Cons GI
 makeGIdxCons start fourDS =
     ( start, List.Extra.scanl moveGIdxInDir start fourDS |> List.drop 1 )
 
@@ -97,7 +97,7 @@ moveGIdx dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-moveGIdxInDir : FourD -> GIdx -> GIdx
+moveGIdxInDir : FourD -> GI -> GI
 moveGIdxInDir fourD =
     case fourD of
         Up ->
@@ -163,7 +163,7 @@ lcrGo dir =
 
 type Msg
     = NoOp
-    | Foo LCRDir (Pivot GIdx)
+    | Foo LCRDir (Pivot GI)
     | Collect
     | FallIdle
 
@@ -179,7 +179,7 @@ type Msg
 --
 
 
-gridToggleConnected : GIdx -> SeedGrid -> Maybe SeedGrid
+gridToggleConnected : GI -> SeedGrid -> Maybe SeedGrid
 gridToggleConnected _ _ =
     Nothing
 
@@ -334,7 +334,7 @@ toGCtx g =
     }
 
 
-gridToListWithCtx : (GCtx -> GIdx -> a -> b) -> Grid a -> List b
+gridToListWithCtx : (GCtx -> GI -> a -> b) -> Grid a -> List b
 gridToListWithCtx func grid =
     let
         ctx =
@@ -343,12 +343,12 @@ gridToListWithCtx func grid =
     Grid.toListBy (func ctx) grid
 
 
-moveToGIdx : GCtx -> GIdx -> Draw.Op
+moveToGIdx : GCtx -> GI -> Draw.Op
 moveToGIdx ctx gIdx =
     uncurry move (gIdxToXY ctx gIdx)
 
 
-gIdxToXY : GCtx -> GIdx -> ( Float, Float )
+gIdxToXY : GCtx -> GI -> ( Float, Float )
 gIdxToXY { cw, dx, dy } ( xi, yi ) =
     ( toFloat xi * cw + dx, toFloat yi * cw + dy )
 
