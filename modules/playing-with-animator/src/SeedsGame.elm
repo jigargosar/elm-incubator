@@ -72,15 +72,15 @@ type alias Cons a =
 
 makeGIdxCons : GIdx -> List FourD -> Cons GIdx
 makeGIdxCons start fourDS =
-    ( start, List.Extra.scanl moveGIdxIn start fourDS |> List.drop 1 )
+    ( start, List.Extra.scanl moveGIdxInDir start fourDS |> List.drop 1 )
 
 
 moveGIdx dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-moveGIdxIn : FourD -> GIdx -> GIdx
-moveGIdxIn fourD =
+moveGIdxInDir : FourD -> GIdx -> GIdx
+moveGIdxInDir fourD =
     case fourD of
         Up ->
             moveGIdx 0 -1
@@ -197,8 +197,36 @@ gridCollectConnected =
 
 
 gridFallIdle : Grid -> Grid
-gridFallIdle =
-    Grid.map (always identity)
+gridFallIdle g =
+    let
+        getHolesBelow i holesCt =
+            let
+                newI =
+                    moveGIdxInDir Down i
+            in
+            case Grid.get newI g of
+                Just (Cell CS_MovingToWaterCollector _) ->
+                    getHolesBelow newI (holesCt + 1)
+
+                _ ->
+                    holesCt
+
+        func i ((Cell cs s) as cell) =
+            if cs == CS_Idle then
+                let
+                    holes =
+                        getHolesBelow i 0
+                in
+                if holes > 0 then
+                    Cell (CS_IdleFallingTo (moveGIdx 0 holes i)) s
+
+                else
+                    cell
+
+            else
+                cell
+    in
+    Grid.map func g
 
 
 modelToggleConnected idx model =
