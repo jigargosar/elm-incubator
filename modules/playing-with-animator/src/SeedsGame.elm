@@ -37,6 +37,7 @@ initialGrid =
     let
         wallIndices =
             [ ( 1, 1 ), ( 2, 1 ) ]
+                |> List.map (moveGIdxInDir Down >> moveGIdxInDir Right)
     in
     Grid.init
         7
