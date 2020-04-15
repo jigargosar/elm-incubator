@@ -109,6 +109,10 @@ removeConnecting gi seedGrid =
                 Nothing
 
 
+
+-- GRID INDEX HELPERS
+
+
 giAreAdj ( x1, y1 ) ( x2, y2 ) =
     let
         ( dxa, dya ) =
@@ -117,29 +121,8 @@ giAreAdj ( x1, y1 ) ( x2, y2 ) =
     (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
 
 
-
--- Model
-
-
-type alias Model =
-    { window : Window
-    , grid : SeedGrid
-    }
-
-
-type alias Window =
-    { width : Float, height : Float }
-
-
-type alias Flags =
-    { window : Window }
-
-
-init : Flags -> ( Model, Cmd Msg )
-init f =
-    ( Model f.window initialGrid
-    , Cmd.none
-    )
+moveGI dx dy ( x, y ) =
+    ( x + dx, y + dy )
 
 
 
@@ -148,10 +131,6 @@ init f =
 
 makeGICons start fns =
     ( start, List.Extra.scanl (<|) start fns |> List.drop 1 )
-
-
-moveGI dx dy ( x, y ) =
-    ( x + dx, y + dy )
 
 
 
@@ -184,6 +163,31 @@ giLeft =
 
 giRight =
     moveGI 1 0
+
+
+
+-- Model
+
+
+type alias Model =
+    { window : Window
+    , grid : SeedGrid
+    }
+
+
+type alias Window =
+    { width : Float, height : Float }
+
+
+type alias Flags =
+    { window : Window }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init f =
+    ( Model f.window initialGrid
+    , Cmd.none
+    )
 
 
 
