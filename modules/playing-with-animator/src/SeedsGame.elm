@@ -277,8 +277,8 @@ renderCell { cw } conf gIdx cell =
     case cell of
         Cell cs sprite ->
             group []
-                [ group (renderCS conf gIdx cs) [ renderSprite cw sprite ]
-                , group (renderCS2 conf gIdx cs) [ renderSprite cw sprite ]
+                [ renderSprite cw (renderCS conf gIdx cs) sprite
+                , renderSprite cw (renderCS2 conf gIdx cs) sprite
                 ]
 
 
@@ -312,11 +312,11 @@ renderCS2 conf gIdx cs =
             [ conf.move gIdx, fade 0.1 ]
 
 
-renderSprite : Float -> Sprite -> Svg msg
-renderSprite cw sprite =
+renderSprite : Float -> List Draw.Op -> Sprite -> Svg msg
+renderSprite cw ops sprite =
     case sprite of
         Water ->
-            circle "dodgerblue" (cw * 0.25) [ fade 1 ]
+            circle "dodgerblue" (cw * 0.25) ops
 
 
 
