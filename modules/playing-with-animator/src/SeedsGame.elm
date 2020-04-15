@@ -282,30 +282,25 @@ view model =
 
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
+    let
+        renderGridHelp grid =
+            let
+                ctx =
+                    toGCtx grid
+
+                renderCellHelp ( gIdx, cell ) =
+                    renderCell ctx gIdx cell
+            in
+            Grid.toList grid
+                |> List.map renderCellHelp
+                |> group []
+    in
     case seedGrid of
         Idle grid ->
-            let
-                ctx =
-                    toGCtx grid
-
-                drawCellAt ( gIdx, cell ) =
-                    renderCell ctx gIdx cell
-            in
-            Grid.toList grid
-                |> List.map drawCellAt
-                |> group []
+            renderGridHelp grid
 
         Connecting _ grid ->
-            let
-                ctx =
-                    toGCtx grid
-
-                drawCellAt ( gIdx, cell ) =
-                    renderCell ctx gIdx cell
-            in
-            Grid.toList grid
-                |> List.map drawCellAt
-                |> group []
+            renderGridHelp grid
 
 
 renderCell : GCtx -> GIdx -> Cell -> Svg msg
