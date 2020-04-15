@@ -169,8 +169,8 @@ type Msg
 
 
 
---gridStartConnecting : GIdx -> SeedGrid -> Maybe SeedGrid
---gridStartConnecting gIdx seedGrid =
+--gridStartConnecting : GI -> SeedGrid -> Maybe SeedGrid
+--gridStartConnecting gi seedGrid =
 --    case seedGrid of
 --        SG grid ->
 --            Nothing
@@ -279,8 +279,8 @@ view model =
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     let
-        renderCell ctx gIdx (Cell tile) =
-            renderTile ctx.cw [ moveToGIdx ctx gIdx ] tile
+        renderCell ctx gi (Cell tile) =
+            renderTile ctx.cw [ moveToGIdx ctx gi ] tile
     in
     case seedGrid of
         Idle grid ->
@@ -344,8 +344,8 @@ gridToListWithCtx func grid =
 
 
 moveToGIdx : GCtx -> GI -> Draw.Op
-moveToGIdx ctx gIdx =
-    uncurry move (gIdxToXY ctx gIdx)
+moveToGIdx ctx gi =
+    uncurry move (gIdxToXY ctx gi)
 
 
 gIdxToXY : GCtx -> GI -> ( Float, Float )
