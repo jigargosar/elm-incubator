@@ -283,7 +283,7 @@ view model =
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     case seedGrid of
-        Connecting _ grid ->
+        Idle grid ->
             let
                 ctx =
                     toGCtx grid
@@ -295,7 +295,7 @@ renderGrid seedGrid =
                 |> List.map drawCellAt
                 |> group []
 
-        Idle grid ->
+        Connecting _ grid ->
             let
                 ctx =
                     toGCtx grid
