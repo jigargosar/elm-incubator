@@ -338,10 +338,12 @@ renderConnectingCell ciCons ctx gi =
         renderIdleCell ctx gi
 
 
+renderIdleCell : GCtx -> GI -> Cell -> Svg msg
 renderIdleCell ctx gi (Cell tile) =
     group [ moveToGI ctx gi ] [ renderTile ctx tile ]
 
 
+renderConnectedCell : GCtx -> GI -> Cell -> Svg msg
 renderConnectedCell ctx gi (Cell tile) =
     group [ moveToGI ctx gi, scale 0.6 ] [ renderTile ctx tile ]
 
