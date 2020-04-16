@@ -190,21 +190,6 @@ type Msg
     | StartCollecting
 
 
-isCellAtGIConnectible : GI -> Grid Cell -> Bool
-isCellAtGIConnectible gi grid =
-    case Grid.get gi grid of
-        Just (Cell tile) ->
-            case tile of
-                Water ->
-                    True
-
-                Wall ->
-                    False
-
-        Nothing ->
-            False
-
-
 areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
 areCellAtIndicesConnectionCompatible ia ib grid =
     Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
@@ -218,9 +203,36 @@ canConnectTo gi connectedIndices grid =
         && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
 
 
-initConnecting : GI -> Grid Cell -> SeedGrid
-initConnecting gi grid =
-    Connecting (Cons.singleton gi) grid
+tryStartConnectingAt : GI -> Grid Cell -> Maybe SeedGrid
+tryStartConnectingAt =
+    let
+        initConnecting : GI -> Grid Cell -> SeedGrid
+        initConnecting gi grid =
+            Connecting (Cons.singleton gi) grid
+
+        canStartConnectionAtGI : GI -> Grid Cell -> Bool
+        canStartConnectionAtGI gi grid =
+            case Grid.get gi grid of
+                Just (Cell tile) ->
+                    case tile of
+                        Water ->
+                            True
+
+                        Wall ->
+                            False
+
+                Nothing ->
+                    False
+    in
+    justWhen2 canStartConnectionAtGI initConnecting
+
+
+justWhen2 pred func v1 v2 =
+    if pred v1 v2 then
+        Just (func v1 v2)
+
+    else
+        Nothing
 
 
 pushConnectingGI : GI -> Cons GI -> Grid Cell -> SeedGrid
@@ -232,22 +244,20 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model.grid ) of
         ( StartConnecting gi, Idle grid ) ->
-            if isCellAtGIConnectible gi grid then
-                ( setGrid (initConnecting gi grid) model
-                , Cmd.none
-                )
+            case tryStartConnectingAt gi grid of
+                Just ng ->
+                    ( setGrid ng model, Cmd.none )
 
-            else
-                ( model, Cmd.none )
+                Nothing ->
+                    ( model, Cmd.none )
 
         ( ToggleConnecting gi, Idle grid ) ->
-            if isCellAtGIConnectible gi grid then
-                ( setGrid (initConnecting gi grid) model
-                , Cmd.none
-                )
+            case tryStartConnectingAt gi grid of
+                Just ng ->
+                    ( setGrid ng model, Cmd.none )
 
-            else
-                ( model, Cmd.none )
+                Nothing ->
+                    ( model, Cmd.none )
 
         ( ToggleConnecting gi, Connecting connectedIndices grid ) ->
             if canConnectTo gi connectedIndices grid then
