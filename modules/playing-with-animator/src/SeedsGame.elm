@@ -234,8 +234,8 @@ startConnecting =
         initConnecting gi grid =
             GridConnecting (Cons.singleton gi) grid
 
-        canStartConnectionAtGI : GI -> Grid Cell -> Bool
-        canStartConnectionAtGI gi grid =
+        canStartConnectionAt : GI -> Grid Cell -> Bool
+        canStartConnectionAt gi grid =
             case Grid.get gi grid of
                 Just (Cell tile) ->
                     case tile of
@@ -247,16 +247,15 @@ startConnecting =
 
                 Nothing ->
                     False
+
+        do gi grid =
+            if canStartConnectionAt gi grid then
+                Just (initConnecting gi grid)
+
+            else
+                Nothing
     in
-    justWhen2 canStartConnectionAtGI initConnecting
-
-
-justWhen2 pred func v1 v2 =
-    if pred v1 v2 then
-        Just (func v1 v2)
-
-    else
-        Nothing
+    do
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
