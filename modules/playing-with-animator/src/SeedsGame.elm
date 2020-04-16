@@ -56,8 +56,71 @@ initialGrid =
         |> GridIdle
 
 
+areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
+areCellAtIndicesConnectionCompatible ia ib grid =
+    Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
+        |> Maybe.withDefault False
 
--- GRID INDEX HELPERS
+
+pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
+pushInConnectedIndices gi connectedIndices grid =
+    let
+        canPush =
+            isAdjacentTo gi (Cons.head connectedIndices)
+                && not (Cons.member gi connectedIndices)
+                && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
+    in
+    if canPush then
+        Just
+            (GridConnecting (Cons.push gi connectedIndices) grid)
+
+    else
+        Nothing
+
+
+popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
+popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
+    case Cons.maybeTail connectedIndices of
+        Nothing ->
+            Nothing
+
+        Just connectedIndicesTail ->
+            if Cons.head connectedIndicesTail == gi then
+                Just (GridConnecting connectedIndicesTail grid)
+
+            else
+                Nothing
+
+
+startConnecting : GI -> Grid Cell -> Maybe SeedGrid
+startConnecting =
+    let
+        initConnecting : GI -> Grid Cell -> SeedGrid
+        initConnecting gi grid =
+            GridConnecting (Cons.singleton gi) grid
+
+        canStartConnectionAt : GI -> Grid Cell -> Bool
+        canStartConnectionAt gi grid =
+            case Grid.get gi grid of
+                Just (Cell tile) ->
+                    case tile of
+                        Water ->
+                            True
+
+                        Wall ->
+                            False
+
+                Nothing ->
+                    False
+
+        do gi grid =
+            if canStartConnectionAt gi grid then
+                Just (initConnecting gi grid)
+
+            else
+                Nothing
+    in
+    do
 
 
 isAdjacentTo ( x1, y1 ) ( x2, y2 ) =
@@ -68,48 +131,24 @@ isAdjacentTo ( x1, y1 ) ( x2, y2 ) =
     (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
 
 
-moveGI dx dy ( x, y ) =
+giMove dx dy ( x, y ) =
     ( x + dx, y + dy )
 
 
-
---noinspection ElmUnusedSymbol
-
-
-makeGICons start fns =
-    ( start, List.Extra.scanl (<|) start fns |> List.drop 1 )
-
-
-
---noinspection ElmUnusedSymbol
-
-
 giUp =
-    moveGI 0 -1
-
-
-
---noinspection ElmUnusedSymbol
+    giMove 0 -1
 
 
 giDown =
-    moveGI 0 1
-
-
-
---noinspection ElmUnusedSymbol
+    giMove 0 1
 
 
 giLeft =
-    moveGI -1 0
-
-
-
---noinspection ElmUnusedSymbol
+    giMove -1 0
 
 
 giRight =
-    moveGI 1 0
+    giMove 1 0
 
 
 
@@ -189,73 +228,6 @@ type Msg
     = StartConnecting GI
     | ToggleConnecting GI
     | StartCollecting
-
-
-areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
-areCellAtIndicesConnectionCompatible ia ib grid =
-    Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
-        |> Maybe.withDefault False
-
-
-pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
-pushInConnectedIndices gi connectedIndices grid =
-    let
-        canPush =
-            isAdjacentTo gi (Cons.head connectedIndices)
-                && not (Cons.member gi connectedIndices)
-                && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
-    in
-    if canPush then
-        Just
-            (GridConnecting (Cons.push gi connectedIndices) grid)
-
-    else
-        Nothing
-
-
-popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
-popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
-    case Cons.maybeTail connectedIndices of
-        Nothing ->
-            Nothing
-
-        Just connectedIndicesTail ->
-            if Cons.head connectedIndicesTail == gi then
-                Just (GridConnecting connectedIndicesTail grid)
-
-            else
-                Nothing
-
-
-startConnecting : GI -> Grid Cell -> Maybe SeedGrid
-startConnecting =
-    let
-        initConnecting : GI -> Grid Cell -> SeedGrid
-        initConnecting gi grid =
-            GridConnecting (Cons.singleton gi) grid
-
-        canStartConnectionAt : GI -> Grid Cell -> Bool
-        canStartConnectionAt gi grid =
-            case Grid.get gi grid of
-                Just (Cell tile) ->
-                    case tile of
-                        Water ->
-                            True
-
-                        Wall ->
-                            False
-
-                Nothing ->
-                    False
-
-        do gi grid =
-            if canStartConnectionAt gi grid then
-                Just (initConnecting gi grid)
-
-            else
-                Nothing
-    in
-    do
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
