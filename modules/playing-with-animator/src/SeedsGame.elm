@@ -370,6 +370,9 @@ update2 message model =
             else
                 ( model, Cmd.none )
 
+        ( StartCollecting, Connecting connectedIndices grid ) ->
+            ( setGrid (Collecting (TransitionState connectedIndices []) grid) model, Cmd.none )
+
         _ ->
             let
                 _ =
