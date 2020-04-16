@@ -294,8 +294,70 @@ update message model =
             ( mapGridMaybe startCollecting model, Cmd.none )
 
 
+canStartConnectingAt : GI -> Grid Cell -> Bool
+canStartConnectingAt gi grid =
+    case Grid.get gi grid of
+        Just (Cell tile) ->
+            case tile of
+                Water ->
+                    True
+
+                Wall ->
+                    False
+
+        Nothing ->
+            False
+
+
+initConnecting : GI -> Grid Cell -> SeedGrid
+initConnecting gi grid =
+    Connecting (Cons.singleton gi) grid
+
+
+update2 : Msg -> Model -> ( Model, Cmd Msg )
+update2 message model =
+    case ( message, model.grid ) of
+        ( StartConnecting gi, Idle grid ) ->
+            if canStartConnectingAt gi grid then
+                ( setGrid (initConnecting gi grid) model
+                , Cmd.none
+                )
+
+            else
+                ( model, Cmd.none )
+
+        ( ToggleConnecting gi, Idle grid ) ->
+            if canStartConnectingAt gi grid then
+                ( setGrid (initConnecting gi grid) model
+                , Cmd.none
+                )
+
+            else
+                ( model, Cmd.none )
+
+        _ ->
+            let
+                _ =
+                    Debug.log "ignoring msg" message
+            in
+            ( model, Cmd.none )
+
+
+
+--( mapGridMaybe (startConnecting gi) model, Cmd.none )
+--ToggleConnecting gi ->
+--    ( mapGridMaybe (toggleConnecting gi) model, Cmd.none )
+--
+--StartCollecting ->
+--    ( mapGridMaybe startCollecting model, Cmd.none )
+
+
 mapGridMaybe f m =
     { m | grid = f m.grid |> Maybe.withDefault m.grid }
+
+
+setGrid grid model =
+    { model | grid = grid }
 
 
 
