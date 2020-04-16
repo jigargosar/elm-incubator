@@ -6,6 +6,7 @@ import Cons exposing (Cons)
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
+import Maybe.Extra
 import Process
 import Svg exposing (Svg)
 import Task
@@ -16,8 +17,8 @@ import Task
 
 
 type SeedGrid
-    = Idle (Grid Cell)
-    | Connecting (Cons GI) (Grid Cell)
+    = GridIdle (Grid Cell)
+    | GridConnecting (Cons GI) (Grid Cell)
     | Collecting TransitionState (Grid Cell)
 
 
@@ -52,7 +53,7 @@ initialGrid =
             else
                 Cell Water
         )
-        |> Idle
+        |> GridIdle
 
 
 
@@ -196,19 +197,42 @@ areCellAtIndicesConnectionCompatible ia ib grid =
         |> Maybe.withDefault False
 
 
-canConnectTo : GI -> Cons GI -> Grid Cell -> Bool
-canConnectTo gi connectedIndices grid =
-    isAdjacentTo gi (Cons.head connectedIndices)
-        && not (Cons.member gi connectedIndices)
-        && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
+pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
+pushInConnectedIndices gi connectedIndices grid =
+    let
+        canPush =
+            isAdjacentTo gi (Cons.head connectedIndices)
+                && not (Cons.member gi connectedIndices)
+                && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
+    in
+    if canPush then
+        Just
+            (GridConnecting (Cons.push gi connectedIndices) grid)
+
+    else
+        Nothing
 
 
-tryStartConnectingAt : GI -> Grid Cell -> Maybe SeedGrid
-tryStartConnectingAt =
+popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
+popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
+    case Cons.maybeTail connectedIndices of
+        Nothing ->
+            Nothing
+
+        Just connectedIndicesTail ->
+            if Cons.head connectedIndicesTail == gi then
+                Just (GridConnecting connectedIndicesTail grid)
+
+            else
+                Nothing
+
+
+startConnecting : GI -> Grid Cell -> Maybe SeedGrid
+startConnecting =
     let
         initConnecting : GI -> Grid Cell -> SeedGrid
         initConnecting gi grid =
-            Connecting (Cons.singleton gi) grid
+            GridConnecting (Cons.singleton gi) grid
 
         canStartConnectionAtGI : GI -> Grid Cell -> Bool
         canStartConnectionAtGI gi grid =
@@ -235,48 +259,40 @@ justWhen2 pred func v1 v2 =
         Nothing
 
 
-pushConnectingGI : GI -> Cons GI -> Grid Cell -> SeedGrid
-pushConnectingGI gi connectedIndices grid =
-    Connecting (Cons.push gi connectedIndices) grid
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model.grid ) of
-        ( StartConnecting gi, Idle grid ) ->
-            case tryStartConnectingAt gi grid of
+        ( StartConnecting gi, GridIdle grid ) ->
+            case startConnecting gi grid of
                 Just ng ->
                     ( setGrid ng model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, Idle grid ) ->
-            case tryStartConnectingAt gi grid of
+        ( ToggleConnecting gi, GridIdle grid ) ->
+            case startConnecting gi grid of
                 Just ng ->
                     ( setGrid ng model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, Connecting connectedIndices grid ) ->
-            if canConnectTo gi connectedIndices grid then
-                ( setGrid (pushConnectingGI gi connectedIndices grid) model
-                , Cmd.none
-                )
+        ( ToggleConnecting gi, GridConnecting connectedIndices grid ) ->
+            case
+                Maybe.Extra.oneOf
+                    [ pushInConnectedIndices gi connectedIndices
+                    , popFromConnectedIndicesIfSecondLast gi connectedIndices
+                    ]
+                    grid
+            of
+                Just ng ->
+                    ( setGrid ng model, Cmd.none )
 
-            else if Cons.head connectedIndices == gi then
-                case Cons.maybeTail connectedIndices of
-                    Just nci ->
-                        ( setGrid (Connecting nci grid) model, Cmd.none )
+                Nothing ->
+                    ( model, Cmd.none )
 
-                    Nothing ->
-                        ( setGrid (Idle grid) model, Cmd.none )
-
-            else
-                ( model, Cmd.none )
-
-        ( StartCollecting, Connecting connectedIndices grid ) ->
+        ( StartCollecting, GridConnecting connectedIndices grid ) ->
             ( setGrid (Collecting (TransitionState connectedIndices []) grid) model, Cmd.none )
 
         _ ->
@@ -344,11 +360,11 @@ view model =
 renderGrid : SeedGrid -> Svg msg
 renderGrid seedGrid =
     case seedGrid of
-        Idle grid ->
+        GridIdle grid ->
             gridToListWithCtx renderIdleCell grid
                 |> group []
 
-        Connecting ciCons grid ->
+        GridConnecting ciCons grid ->
             gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
 
