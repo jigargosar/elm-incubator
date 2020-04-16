@@ -110,7 +110,7 @@ addConnecting gi seedGrid =
             Nothing
 
         Connecting ciCons grid ->
-            if giAreAdj gi (Cons.head ciCons) && not (Cons.member gi ciCons) then
+            if isAdjacentTo gi (Cons.head ciCons) && not (Cons.member gi ciCons) then
                 Connecting (Cons.push gi ciCons) grid |> Just
 
             else
@@ -146,7 +146,7 @@ removeConnecting gi seedGrid =
 -- GRID INDEX HELPERS
 
 
-giAreAdj ( x1, y1 ) ( x2, y2 ) =
+isAdjacentTo ( x1, y1 ) ( x2, y2 ) =
     let
         ( dxa, dya ) =
             ( abs (x1 - x2), abs (y1 - y2) )
@@ -294,8 +294,8 @@ update message model =
             ( mapGridMaybe startCollecting model, Cmd.none )
 
 
-canStartConnectingAt : GI -> Grid Cell -> Bool
-canStartConnectingAt gi grid =
+isCellAtGIConnectible : GI -> Grid Cell -> Bool
+isCellAtGIConnectible gi grid =
     case Grid.get gi grid of
         Just (Cell tile) ->
             case tile of
@@ -309,16 +309,34 @@ canStartConnectingAt gi grid =
             False
 
 
+areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
+areCellAtIndicesConnectionCompatible ia ib grid =
+    Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
+        |> Maybe.withDefault False
+
+
+canConnectTo : GI -> Cons GI -> Grid Cell -> Bool
+canConnectTo gi connectedIndices grid =
+    isAdjacentTo gi (Cons.head connectedIndices)
+        && not (Cons.member gi connectedIndices)
+        && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
+
+
 initConnecting : GI -> Grid Cell -> SeedGrid
 initConnecting gi grid =
     Connecting (Cons.singleton gi) grid
+
+
+pushConnectingGI : GI -> Cons GI -> Grid Cell -> SeedGrid
+pushConnectingGI gi connectedIndices grid =
+    Connecting (Cons.push gi connectedIndices) grid
 
 
 update2 : Msg -> Model -> ( Model, Cmd Msg )
 update2 message model =
     case ( message, model.grid ) of
         ( StartConnecting gi, Idle grid ) ->
-            if canStartConnectingAt gi grid then
+            if isCellAtGIConnectible gi grid then
                 ( setGrid (initConnecting gi grid) model
                 , Cmd.none
                 )
@@ -327,8 +345,17 @@ update2 message model =
                 ( model, Cmd.none )
 
         ( ToggleConnecting gi, Idle grid ) ->
-            if canStartConnectingAt gi grid then
+            if isCellAtGIConnectible gi grid then
                 ( setGrid (initConnecting gi grid) model
+                , Cmd.none
+                )
+
+            else
+                ( model, Cmd.none )
+
+        ( ToggleConnecting gi, Connecting connectedIndices grid ) ->
+            if canConnectTo gi connectedIndices grid then
+                ( setGrid (pushConnectingGI gi connectedIndices grid) model
                 , Cmd.none
                 )
 
