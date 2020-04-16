@@ -264,7 +264,9 @@ update message model =
                     ( model, Cmd.none )
 
         ( StartCollecting, GridConnecting connectedIndices grid ) ->
-            ( setGrid (Collecting (TransitionState connectedIndices []) grid) model, Cmd.none )
+            ( setGrid (Collecting (TransitionState connectedIndices []) grid) model
+            , Cmd.none
+            )
 
         _ ->
             let
