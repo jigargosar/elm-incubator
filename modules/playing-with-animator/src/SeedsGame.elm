@@ -6,7 +6,6 @@ import Cons exposing (Cons)
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
-import Maybe.Extra
 import Process
 import Svg exposing (Svg)
 import Task
@@ -54,92 +53,6 @@ initialGrid =
                 Cell Water
         )
         |> Idle
-
-
-startConnecting : GI -> SeedGrid -> Maybe SeedGrid
-startConnecting gi seedGrid =
-    case seedGrid of
-        Idle grid ->
-            case Grid.get gi grid of
-                Just (Cell Water) ->
-                    Connecting (Cons.singleton gi) grid |> Just
-
-                Just (Cell Wall) ->
-                    Nothing
-
-                Nothing ->
-                    Nothing
-
-        Connecting _ _ ->
-            Nothing
-
-        Collecting _ _ ->
-            Nothing
-
-
-toggleConnecting : GI -> SeedGrid -> Maybe SeedGrid
-toggleConnecting gi =
-    firstOf
-        [ startConnecting gi
-        , addConnecting gi
-        , removeConnecting gi
-        ]
-
-
-startCollecting : SeedGrid -> Maybe SeedGrid
-startCollecting seedGrid =
-    case seedGrid of
-        Idle _ ->
-            Nothing
-
-        Connecting cons grid ->
-            Collecting (TransitionState cons []) grid |> Just
-
-        Collecting _ _ ->
-            Nothing
-
-
-firstOf =
-    Maybe.Extra.oneOf
-
-
-addConnecting : GI -> SeedGrid -> Maybe SeedGrid
-addConnecting gi seedGrid =
-    case seedGrid of
-        Idle _ ->
-            Nothing
-
-        Connecting ciCons grid ->
-            if isAdjacentTo gi (Cons.head ciCons) && not (Cons.member gi ciCons) then
-                Connecting (Cons.push gi ciCons) grid |> Just
-
-            else
-                Nothing
-
-        Collecting _ _ ->
-            Nothing
-
-
-removeConnecting : GI -> SeedGrid -> Maybe SeedGrid
-removeConnecting gi seedGrid =
-    case seedGrid of
-        Idle _ ->
-            Nothing
-
-        Connecting ciCons grid ->
-            if Cons.head ciCons == gi then
-                case Cons.maybeTail ciCons of
-                    Nothing ->
-                        Idle grid |> Just
-
-                    Just nciCons ->
-                        Connecting nciCons grid |> Just
-
-            else
-                Nothing
-
-        Collecting _ _ ->
-            Nothing
 
 
 
@@ -272,26 +185,9 @@ connectPath2 =
 
 
 type Msg
-    = NoOp
-    | StartConnecting GI
+    = StartConnecting GI
     | ToggleConnecting GI
     | StartCollecting
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
-    case message of
-        NoOp ->
-            ( model, Cmd.none )
-
-        StartConnecting gi ->
-            ( mapGridMaybe (startConnecting gi) model, Cmd.none )
-
-        ToggleConnecting gi ->
-            ( mapGridMaybe (toggleConnecting gi) model, Cmd.none )
-
-        StartCollecting ->
-            ( mapGridMaybe startCollecting model, Cmd.none )
 
 
 isCellAtGIConnectible : GI -> Grid Cell -> Bool
@@ -332,8 +228,8 @@ pushConnectingGI gi connectedIndices grid =
     Connecting (Cons.push gi connectedIndices) grid
 
 
-update2 : Msg -> Model -> ( Model, Cmd Msg )
-update2 message model =
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message model =
     case ( message, model.grid ) of
         ( StartConnecting gi, Idle grid ) ->
             if isCellAtGIConnectible gi grid then
@@ -379,19 +275,6 @@ update2 message model =
                     Debug.log "ignoring msg" message
             in
             ( model, Cmd.none )
-
-
-
---( mapGridMaybe (startConnecting gi) model, Cmd.none )
---ToggleConnecting gi ->
---    ( mapGridMaybe (toggleConnecting gi) model, Cmd.none )
---
---StartCollecting ->
---    ( mapGridMaybe startCollecting model, Cmd.none )
-
-
-mapGridMaybe f m =
-    { m | grid = f m.grid |> Maybe.withDefault m.grid }
 
 
 setGrid grid model =
