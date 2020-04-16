@@ -359,6 +359,14 @@ update2 message model =
                 , Cmd.none
                 )
 
+            else if Cons.head connectedIndices == gi then
+                case Cons.maybeTail connectedIndices of
+                    Just nci ->
+                        ( setGrid (Connecting nci grid) model, Cmd.none )
+
+                    Nothing ->
+                        ( setGrid (Idle grid) model, Cmd.none )
+
             else
                 ( model, Cmd.none )
 
