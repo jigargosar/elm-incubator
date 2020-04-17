@@ -306,6 +306,21 @@ computeFalling emptyIndices grid =
     []
 
 
+computeFallingHelp : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
+computeFallingHelp emptyIndices grid falling =
+    case List.sort emptyIndices |> List.reverse of
+        [] ->
+            falling
+
+        destIdx :: remainingEmpty ->
+            case firstMovableCellIdxAbove destIdx remainingEmpty grid of
+                Nothing ->
+                    computeFallingHelp remainingEmpty grid falling
+
+                Just srcIdx ->
+                    computeFallingHelp (srcIdx :: remainingEmpty) grid (( srcIdx, destIdx ) :: falling)
+
+
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
 firstMovableCellIdxAbove gi emptyIndices grid =
     let
