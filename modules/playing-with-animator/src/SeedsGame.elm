@@ -30,6 +30,16 @@ type ConnectingState
     | ConnectingAtLeastTwo GI (List GI)
 
 
+initConnectingStateFromList : List GI -> ConnectingState
+initConnectingStateFromList list =
+    case list of
+        [] ->
+            ConnectingSingle
+
+        h :: t ->
+            ConnectingAtLeastTwo h t
+
+
 type alias CollectingState =
     { leaving : Cons GI
     , falling : List ( GI, GI )
@@ -66,10 +76,16 @@ initialGrid =
     SeedsGrid grid GridIdle
 
 
-areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
-areCellAtIndicesConnectionCompatible ia ib grid =
+areCellsAtIndicesConnectable : GI -> GI -> Grid Cell -> Bool
+areCellsAtIndicesConnectable ia ib grid =
     Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
         |> Maybe.withDefault False
+
+
+areConnectable : GI -> GI -> Grid Cell -> Bool
+areConnectable aa bb grid =
+    areCellsAtIndicesConnectable aa bb grid
+        && isAdjacentTo aa bb
 
 
 startConnecting : GI -> Grid Cell -> Maybe SeedsGrid
@@ -229,10 +245,7 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
                     ( model, Cmd.none )
 
         ( ToggleConnecting gi, GridConnecting lastGI ConnectingSingle ) ->
-            if
-                isAdjacentTo gi lastGI
-                    && areCellAtIndicesConnectionCompatible gi lastGI grid
-            then
+            if areConnectable gi lastGI grid then
                 ( setGridState
                     (GridConnecting gi (ConnectingAtLeastTwo lastGI [])
                         |> SeedsGrid grid
@@ -246,29 +259,15 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
 
         ( ToggleConnecting gi, GridConnecting lastGI (ConnectingAtLeastTwo secondLast remaining) ) ->
             if gi == secondLast then
-                case remaining of
-                    [] ->
-                        ( setGridState
-                            (GridConnecting secondLast ConnectingSingle
-                                |> SeedsGrid grid
-                            )
-                            model
-                        , Cmd.none
-                        )
+                ( setGridState
+                    (GridConnecting secondLast (initConnectingStateFromList remaining)
+                        |> SeedsGrid grid
+                    )
+                    model
+                , Cmd.none
+                )
 
-                    thirdLast :: newRemaining ->
-                        ( setGridState
-                            (GridConnecting secondLast (ConnectingAtLeastTwo thirdLast newRemaining)
-                                |> SeedsGrid grid
-                            )
-                            model
-                        , Cmd.none
-                        )
-
-            else if
-                isAdjacentTo gi lastGI
-                    && areCellAtIndicesConnectionCompatible gi lastGI grid
-            then
+            else if areConnectable gi lastGI grid then
                 ( setGridState
                     (GridConnecting gi (ConnectingAtLeastTwo lastGI (secondLast :: remaining))
                         |> SeedsGrid grid
