@@ -64,7 +64,7 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
 
 
 type alias CollectingState =
-    { leaving : Cons GI
+    { leaving : List GI
     , falling : List ( GI, GI )
     }
 
@@ -249,9 +249,8 @@ gotoConnecting cs =
     gotoGridState (GridConnecting cs)
 
 
-gotoCollecting : Cons GI -> List ( GI, GI ) -> Return
 gotoCollecting a b =
-    gotoGridState (GridCollecting (initCollectingState a b))
+    gotoGridState (GridCollecting (CollectingState a b))
 
 
 customUpdate : Msg -> Model -> Return
@@ -289,7 +288,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartCollecting ->
             case gs of
                 GridConnecting (ConnectingState lastGI ((_ :: _) as list)) ->
-                    gotoCollecting (Cons.cons lastGI list) []
+                    gotoCollecting (lastGI :: list) []
 
                 _ ->
                     Stay
@@ -387,7 +386,7 @@ renderGrid (SeedsGrid grid gs) =
         GridCollecting { leaving, falling } ->
             let
                 renderCell ctx gi =
-                    if Cons.member gi leaving then
+                    if List.member gi leaving then
                         renderLeavingCell ctx gi
 
                     else
