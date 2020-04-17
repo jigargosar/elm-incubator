@@ -73,6 +73,21 @@ areConnectable aa bb grid =
         && isAdjacentTo aa bb
 
 
+canStartConnectionAt : GI -> Grid Cell -> Bool
+canStartConnectionAt gi grid =
+    case Grid.get gi grid of
+        Just (Cell tile) ->
+            case tile of
+                Water ->
+                    True
+
+                Wall ->
+                    False
+
+        Nothing ->
+            False
+
+
 startConnecting : GI -> Grid Cell -> Maybe SeedsGrid
 startConnecting =
     let
@@ -80,20 +95,6 @@ startConnecting =
         initConnecting gi grid =
             GridConnecting gi []
                 |> SeedsGrid grid
-
-        canStartConnectionAt : GI -> Grid Cell -> Bool
-        canStartConnectionAt gi grid =
-            case Grid.get gi grid of
-                Just (Cell tile) ->
-                    case tile of
-                        Water ->
-                            True
-
-                        Wall ->
-                            False
-
-                Nothing ->
-                    False
 
         do gi grid =
             if canStartConnectionAt gi grid then
@@ -222,11 +223,11 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartConnecting gi ->
             case gs of
                 GridIdle ->
-                    case startConnecting gi grid of
-                        Just ng ->
-                            SetSeedsGrid ng
+                    case canStartConnectionAt gi grid of
+                        True ->
+                            SetGridState (GridConnecting gi [])
 
-                        Nothing ->
+                        False ->
                             Stay
 
                 _ ->
@@ -235,11 +236,11 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         ToggleConnecting gi ->
             case gs of
                 GridIdle ->
-                    case startConnecting gi grid of
-                        Just ng ->
-                            SetSeedsGrid ng
+                    case canStartConnectionAt gi grid of
+                        True ->
+                            SetGridState (GridConnecting gi [])
 
-                        Nothing ->
+                        False ->
                             Stay
 
                 GridConnecting lastGI remaining ->
