@@ -196,8 +196,7 @@ connectPath2 =
 
 
 type Msg
-    = StartConnecting GI
-    | ToggleConnecting GI
+    = ToggleConnecting GI
     | StartCollecting
 
 
@@ -223,19 +222,6 @@ setCollecting a b =
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
-        StartConnecting gi ->
-            case gs of
-                GridIdle ->
-                    case canStartConnectionAt gi grid of
-                        True ->
-                            setConnecting gi []
-
-                        False ->
-                            Stay
-
-                _ ->
-                    Stay
-
         ToggleConnecting gi ->
             case gs of
                 GridIdle ->
