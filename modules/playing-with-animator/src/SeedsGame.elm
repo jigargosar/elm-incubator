@@ -210,6 +210,63 @@ type Msg
     | StartCollecting
 
 
+type Return
+    = SetGridState GridState
+    | SetSeedsGrid SeedsGrid
+    | Stay
+
+
+customUpdate : Msg -> Model -> Return
+customUpdate message (Model _ (SeedsGrid grid gs)) =
+    case message of
+        StartConnecting gi ->
+            case gs of
+                GridIdle ->
+                    case startConnecting gi grid of
+                        Just ng ->
+                            SetSeedsGrid ng
+
+                        Nothing ->
+                            Stay
+
+                _ ->
+                    Stay
+
+        ToggleConnecting gi ->
+            case gs of
+                GridIdle ->
+                    case startConnecting gi grid of
+                        Just ng ->
+                            SetSeedsGrid ng
+
+                        Nothing ->
+                            Stay
+
+                GridConnecting lastGI remaining ->
+                    if areConnectable gi lastGI grid && not (List.member gi remaining) then
+                        SetGridState
+                            (GridConnecting gi (lastGI :: remaining))
+
+                    else if List.head remaining == Just gi then
+                        SetGridState
+                            (GridConnecting gi (List.drop 1 remaining))
+
+                    else
+                        Stay
+
+                _ ->
+                    Stay
+
+        StartCollecting ->
+            case gs of
+                GridConnecting lastGI ((_ :: _) as list) ->
+                    SetGridState
+                        (GridCollecting (CollectingState (Cons.cons lastGI list) []))
+
+                _ ->
+                    Stay
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message ((Model _ (SeedsGrid grid gs)) as model) =
     case message of
