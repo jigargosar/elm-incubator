@@ -301,9 +301,41 @@ computeFalling : List GI -> Grid Cell -> List ( GI, GI )
 computeFalling emptyIndices grid =
     let
         _ =
-            Grid.map
+            1
     in
     []
+
+
+firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
+firstMovableCellIdxAbove gi emptyIndices grid =
+    let
+        ngi =
+            giUp gi
+
+        nonEmptyIdx =
+            List.member gi emptyIndices
+                |> not
+    in
+    case Grid.get ngi grid of
+        Just cell ->
+            if nonEmptyIdx && isCellMovable cell then
+                Just ngi
+
+            else
+                firstMovableCellIdxAbove ngi emptyIndices grid
+
+        Nothing ->
+            Nothing
+
+
+isCellMovable : Cell -> Bool
+isCellMovable (Cell s) =
+    case s of
+        Water ->
+            True
+
+        Wall ->
+            False
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
