@@ -308,6 +308,8 @@ computeFallingHelp emptyIndices grid falling =
         [] ->
             falling
 
+        --|> List.reverse
+        --|> List.take 1
         destIdx :: remainingEmpty ->
             case firstMovableCellIdxAbove destIdx remainingEmpty grid of
                 Nothing ->
@@ -317,6 +319,14 @@ computeFallingHelp emptyIndices grid falling =
                     computeFallingHelp (srcIdx :: remainingEmpty) grid (( srcIdx, destIdx ) :: falling)
 
 
+isMovableAt gi emptyIndices grid =
+    not (List.member gi emptyIndices)
+        && (Grid.get gi grid
+                |> Maybe.map isCellMovable
+                |> Maybe.withDefault False
+           )
+
+
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
 firstMovableCellIdxAbove gi emptyIndices grid =
     let
@@ -324,7 +334,7 @@ firstMovableCellIdxAbove gi emptyIndices grid =
             giUp gi
 
         nonEmptyIdx =
-            List.member gi emptyIndices
+            List.member ngi emptyIndices
                 |> not
     in
     case Grid.get ngi grid of
