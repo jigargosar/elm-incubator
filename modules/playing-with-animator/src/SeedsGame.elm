@@ -212,60 +212,68 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message ((Model _ (SeedsGrid grid gs)) as model) =
-    case ( message, gs ) of
-        ( StartConnecting gi, GridIdle ) ->
-            case startConnecting gi grid of
-                Just ng ->
-                    ( setGridState ng model, Cmd.none )
+    case message of
+        StartConnecting gi ->
+            case gs of
+                GridIdle ->
+                    case startConnecting gi grid of
+                        Just ng ->
+                            ( setGridState ng model, Cmd.none )
 
-                Nothing ->
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                _ ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridIdle ) ->
-            case startConnecting gi grid of
-                Just ng ->
-                    ( setGridState ng model, Cmd.none )
+        ToggleConnecting gi ->
+            case gs of
+                GridIdle ->
+                    case startConnecting gi grid of
+                        Just ng ->
+                            ( setGridState ng model, Cmd.none )
 
-                Nothing ->
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                GridConnecting lastGI remaining ->
+                    if areConnectable gi lastGI grid && not (List.member gi remaining) then
+                        ( setGridState
+                            (GridConnecting gi (lastGI :: remaining)
+                                |> SeedsGrid grid
+                            )
+                            model
+                        , Cmd.none
+                        )
+
+                    else if List.head remaining == Just gi then
+                        ( setGridState
+                            (GridConnecting gi (List.drop 1 remaining)
+                                |> SeedsGrid grid
+                            )
+                            model
+                        , Cmd.none
+                        )
+
+                    else
+                        ( model, Cmd.none )
+
+                _ ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridConnecting lastGI remaining ) ->
-            if areConnectable gi lastGI grid && not (List.member gi remaining) then
-                ( setGridState
-                    (GridConnecting gi (lastGI :: remaining)
-                        |> SeedsGrid grid
+        StartCollecting ->
+            case gs of
+                GridConnecting lastGI ((_ :: _) as list) ->
+                    ( setGridState
+                        (GridCollecting (CollectingState (Cons.cons lastGI list) [])
+                            |> SeedsGrid grid
+                        )
+                        model
+                    , Cmd.none
                     )
-                    model
-                , Cmd.none
-                )
 
-            else if List.head remaining == Just gi then
-                ( setGridState
-                    (GridConnecting gi (List.drop 1 remaining)
-                        |> SeedsGrid grid
-                    )
-                    model
-                , Cmd.none
-                )
-
-            else
-                ( model, Cmd.none )
-
-        ( StartCollecting, GridConnecting lastGI ((_ :: _) as list) ) ->
-            ( setGridState
-                (GridCollecting (CollectingState (Cons.cons lastGI list) [])
-                    |> SeedsGrid grid
-                )
-                model
-            , Cmd.none
-            )
-
-        _ ->
-            let
-                _ =
-                    Debug.log "ignoring msg" message
-            in
-            ( model, Cmd.none )
+                _ ->
+                    ( model, Cmd.none )
 
 
 setGridState : SeedsGrid -> Model -> Model
