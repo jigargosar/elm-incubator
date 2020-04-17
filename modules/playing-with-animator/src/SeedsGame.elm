@@ -88,24 +88,6 @@ canStartConnectionAt gi grid =
             False
 
 
-startConnecting : GI -> Grid Cell -> Maybe SeedsGrid
-startConnecting =
-    let
-        initConnecting : GI -> Grid Cell -> SeedsGrid
-        initConnecting gi grid =
-            GridConnecting gi []
-                |> SeedsGrid grid
-
-        do gi grid =
-            if canStartConnectionAt gi grid then
-                Just (initConnecting gi grid)
-
-            else
-                Nothing
-    in
-    do
-
-
 isAdjacentTo ( x1, y1 ) ( x2, y2 ) =
     let
         ( dxa, dya ) =
@@ -213,7 +195,6 @@ type Msg
 
 type Return
     = SetGridState GridState
-    | SetSeedsGrid SeedsGrid
     | Stay
 
 
@@ -277,9 +258,6 @@ update message model =
     case return of
         SetGridState gridState ->
             ( setGridState gridState model, Cmd.none )
-
-        SetSeedsGrid seedsGrid ->
-            ( setSeedsGrid seedsGrid model, Cmd.none )
 
         Stay ->
             ( model, Cmd.none )
