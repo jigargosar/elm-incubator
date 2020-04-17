@@ -6,7 +6,6 @@ import Cons exposing (Cons)
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
-import Maybe.Extra
 import Process
 import Svg exposing (Svg)
 import Task
@@ -313,18 +312,6 @@ update message ((State _ (GridState grid gs)) as model) =
             else
                 ( model, Cmd.none )
 
-        --case
-        --    Maybe.Extra.oneOf
-        --        [ pushInConnectedIndices gi connectedIndices
-        --        , popFromConnectedIndicesIfSecondLast gi connectedIndices
-        --        ]
-        --        grid
-        --of
-        --    Just ng ->
-        --        ( setGridState ng model, Cmd.none )
-        --
-        --    Nothing ->
-        --        ( model, Cmd.none )
         ( StartCollecting, GridConnecting lastGI (GridConnectingAtLeastTwo secondLastGI remainingGI) ) ->
             ( setGridState
                 (GridCollecting (TransitionState (Cons.cons lastGI (secondLastGI :: remainingGI)) [])
