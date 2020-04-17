@@ -375,18 +375,21 @@ type alias DM =
 view : Model -> DM
 view model =
     let
+        { window, grid } =
+            model
+
         w =
-            model.window.width
+            window.width
 
         h =
-            model.window.height
+            window.height
     in
     Document "SeedsGame"
         [ canvas
             w
             h
             [ rect "#ffc973" w h []
-            , renderGrid model.grid
+            , renderGrid grid
             ]
         ]
 
