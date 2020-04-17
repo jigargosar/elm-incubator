@@ -30,14 +30,47 @@ type ConnectingState
     = ConnectingState GI (List GI)
 
 
-initCollectingState =
-    CollectingState
+extendConnection : GI -> Grid Cell -> ConnectingState -> Maybe ConnectingState
+extendConnection gi grid (ConnectingState lastGI remaining) =
+    if areConnectable gi lastGI grid && not (List.member gi remaining) then
+        Just (ConnectingState gi (lastGI :: remaining))
+
+    else
+        Nothing
+
+
+startConnection : GI -> Grid Cell -> Maybe ConnectingState
+startConnection gi grid =
+    case canStartConnectionAt gi grid of
+        True ->
+            Just (ConnectingState gi [])
+
+        False ->
+            Nothing
+
+
+shrinkConnection : GI -> ConnectingState -> Maybe ConnectingState
+shrinkConnection gi (ConnectingState _ oldRemaining) =
+    case oldRemaining of
+        [] ->
+            Nothing
+
+        last :: newRemaining ->
+            if last == gi then
+                Just (ConnectingState last newRemaining)
+
+            else
+                Nothing
 
 
 type alias CollectingState =
     { leaving : Cons GI
     , falling : List ( GI, GI )
     }
+
+
+initCollectingState =
+    CollectingState
 
 
 type Cell
@@ -219,39 +252,6 @@ gotoConnecting cs =
 gotoCollecting : Cons GI -> List ( GI, GI ) -> Return
 gotoCollecting a b =
     gotoGridState (GridCollecting (initCollectingState a b))
-
-
-extendConnection : GI -> Grid Cell -> ConnectingState -> Maybe ConnectingState
-extendConnection gi grid (ConnectingState lastGI remaining) =
-    if areConnectable gi lastGI grid && not (List.member gi remaining) then
-        Just (ConnectingState gi (lastGI :: remaining))
-
-    else
-        Nothing
-
-
-startConnection : GI -> Grid Cell -> Maybe ConnectingState
-startConnection gi grid =
-    case canStartConnectionAt gi grid of
-        True ->
-            Just (ConnectingState gi [])
-
-        False ->
-            Nothing
-
-
-shrinkConnection : GI -> ConnectingState -> Maybe ConnectingState
-shrinkConnection gi (ConnectingState _ oldRemaining) =
-    case oldRemaining of
-        [] ->
-            Nothing
-
-        last :: newRemaining ->
-            if last == gi then
-                Just (ConnectingState last newRemaining)
-
-            else
-                Nothing
 
 
 customUpdate : Msg -> Model -> Return
