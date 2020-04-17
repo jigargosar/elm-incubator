@@ -157,7 +157,7 @@ giRight =
 
 type alias Model =
     { window : Window
-    , grid : GridState
+    , gs : GridState
     }
 
 
@@ -237,7 +237,7 @@ type Update
 
 onMsg : Msg -> Model -> ( Model, Cmd Msg )
 onMsg message model =
-    case onGridStateMsg message model.grid of
+    case onGridStateMsg message model.gs of
         SetGridState gridState ->
             ( setGrid gridState model, Cmd.none )
 
@@ -292,7 +292,7 @@ onGridStateMsg message gridState =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
-    case ( message, model.grid ) of
+    case ( message, model.gs ) of
         ( StartConnecting gi, GridIdle grid ) ->
             case startConnecting gi grid of
                 Just ng ->
@@ -338,7 +338,7 @@ update message model =
 
 setGrid : GridState -> Model -> Model
 setGrid grid model =
-    { model | grid = grid }
+    { model | gs = grid }
 
 
 
@@ -375,7 +375,7 @@ type alias DM =
 view : Model -> DM
 view model =
     let
-        { window, grid } =
+        { window, gs } =
             model
 
         w =
@@ -389,7 +389,7 @@ view model =
             w
             h
             [ rect "#ffc973" w h []
-            , renderGrid grid
+            , renderGrid gs
             ]
         ]
 
