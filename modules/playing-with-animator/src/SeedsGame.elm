@@ -327,8 +327,12 @@ computeFallingHelp emptyIndices grid falling =
 
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
 firstMovableCellIdxAbove gi____ emptyIndices grid =
-    case Grid.entryAbove gi____ grid of
-        Just ( gi, cell ) ->
+    let
+        gi =
+            giUp gi____
+    in
+    case Grid.get gi grid of
+        Just cell ->
             if
                 not (List.member gi emptyIndices)
                     && isCellMovable cell
