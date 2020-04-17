@@ -15,11 +15,11 @@ import Task
 -- SEED GRID
 
 
+type SeedsGrid
+    = SeedsGrid (Grid Cell) GridState
+
+
 type GridState
-    = GridState (Grid Cell) GridSubState
-
-
-type GridSubState
     = GridIdle
     | GridConnecting GI GridConnectingSubState
     | GridCollecting TransitionState
@@ -45,7 +45,7 @@ type Tile
     | Wall
 
 
-initialGrid : GridState
+initialGrid : SeedsGrid
 initialGrid =
     let
         wallIndices =
@@ -63,7 +63,7 @@ initialGrid =
                         Cell Water
                 )
     in
-    GridState grid GridIdle
+    SeedsGrid grid GridIdle
 
 
 areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
@@ -72,13 +72,13 @@ areCellAtIndicesConnectionCompatible ia ib grid =
         |> Maybe.withDefault False
 
 
-startConnecting : GI -> Grid Cell -> Maybe GridState
+startConnecting : GI -> Grid Cell -> Maybe SeedsGrid
 startConnecting =
     let
-        initConnecting : GI -> Grid Cell -> GridState
+        initConnecting : GI -> Grid Cell -> SeedsGrid
         initConnecting gi grid =
             GridConnecting gi GridConnectingSingle
-                |> GridState grid
+                |> SeedsGrid grid
 
         canStartConnectionAt : GI -> Grid Cell -> Bool
         canStartConnectionAt gi grid =
@@ -136,8 +136,8 @@ giRight =
 -- Model
 
 
-type State
-    = State Window GridState
+type Model
+    = Model Window SeedsGrid
 
 
 type alias Window =
@@ -148,9 +148,9 @@ type alias Flags =
     { window : Window }
 
 
-init : Flags -> ( State, Cmd Msg )
+init : Flags -> ( Model, Cmd Msg )
 init f =
-    ( State f.window initialGrid
+    ( Model f.window initialGrid
     , schedule
         ((connectPath1 |> always connectPath2)
             ++ [ StartCollecting ]
@@ -209,8 +209,8 @@ type Msg
     | StartCollecting
 
 
-update : Msg -> State -> ( State, Cmd Msg )
-update message ((State _ (GridState grid gs)) as model) =
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message ((Model _ (SeedsGrid grid gs)) as model) =
     case ( message, gs ) of
         ( StartConnecting gi, GridIdle ) ->
             case startConnecting gi grid of
@@ -235,7 +235,7 @@ update message ((State _ (GridState grid gs)) as model) =
             then
                 ( setGridState
                     (GridConnecting gi (GridConnectingAtLeastTwo lastGI [])
-                        |> GridState grid
+                        |> SeedsGrid grid
                     )
                     model
                 , Cmd.none
@@ -250,7 +250,7 @@ update message ((State _ (GridState grid gs)) as model) =
                     [] ->
                         ( setGridState
                             (GridConnecting secondLast GridConnectingSingle
-                                |> GridState grid
+                                |> SeedsGrid grid
                             )
                             model
                         , Cmd.none
@@ -259,7 +259,7 @@ update message ((State _ (GridState grid gs)) as model) =
                     thirdLast :: newRemaining ->
                         ( setGridState
                             (GridConnecting secondLast (GridConnectingAtLeastTwo thirdLast newRemaining)
-                                |> GridState grid
+                                |> SeedsGrid grid
                             )
                             model
                         , Cmd.none
@@ -271,7 +271,7 @@ update message ((State _ (GridState grid gs)) as model) =
             then
                 ( setGridState
                     (GridConnecting gi (GridConnectingAtLeastTwo lastGI (secondLast :: remaining))
-                        |> GridState grid
+                        |> SeedsGrid grid
                     )
                     model
                 , Cmd.none
@@ -283,7 +283,7 @@ update message ((State _ (GridState grid gs)) as model) =
         ( StartCollecting, GridConnecting lastGI (GridConnectingAtLeastTwo secondLastGI remainingGI) ) ->
             ( setGridState
                 (GridCollecting (TransitionState (Cons.cons lastGI (secondLastGI :: remainingGI)) [])
-                    |> GridState grid
+                    |> SeedsGrid grid
                 )
                 model
             , Cmd.none
@@ -297,9 +297,9 @@ update message ((State _ (GridState grid gs)) as model) =
             ( model, Cmd.none )
 
 
-setGridState : GridState -> State -> State
-setGridState gs (State win _) =
-    State win gs
+setGridState : SeedsGrid -> Model -> Model
+setGridState gs (Model win _) =
+    Model win gs
 
 
 
@@ -320,7 +320,7 @@ schedule =
         >> Cmd.batch
 
 
-subscriptions : State -> Sub Msg
+subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch []
 
@@ -333,8 +333,8 @@ type alias DM =
     Document Msg
 
 
-view : State -> DM
-view (State window gs) =
+view : Model -> DM
+view (Model window gs) =
     let
         w =
             window.width
@@ -352,8 +352,8 @@ view (State window gs) =
         ]
 
 
-renderGrid : GridState -> Svg msg
-renderGrid (GridState grid gs) =
+renderGrid : SeedsGrid -> Svg msg
+renderGrid (SeedsGrid grid gs) =
     case gs of
         GridIdle ->
             gridToListWithCtx renderIdleCell grid
@@ -470,7 +470,7 @@ gIdxToXY { cw, dx, dy } ( xi, yi ) =
 -- Main
 
 
-main : Program Flags State Msg
+main : Program Flags Model Msg
 main =
     Browser.document
         { init = init
