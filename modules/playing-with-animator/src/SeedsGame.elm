@@ -16,7 +16,7 @@ import Task
 -- SEED GRID
 
 
-type SeedGrid
+type GridState
     = GridIdle (Grid Cell)
     | GridConnecting (Cons GI) (Grid Cell)
     | Collecting TransitionState (Grid Cell)
@@ -37,7 +37,7 @@ type Tile
     | Wall
 
 
-initialGrid : SeedGrid
+initialGrid : GridState
 initialGrid =
     let
         wallIndices =
@@ -62,7 +62,7 @@ areCellAtIndicesConnectionCompatible ia ib grid =
         |> Maybe.withDefault False
 
 
-pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
+pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe GridState
 pushInConnectedIndices gi connectedIndices grid =
     let
         canPush =
@@ -78,7 +78,7 @@ pushInConnectedIndices gi connectedIndices grid =
         Nothing
 
 
-popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe SeedGrid
+popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe GridState
 popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
     case Cons.maybeTail connectedIndices of
         Nothing ->
@@ -92,10 +92,10 @@ popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
                 Nothing
 
 
-startConnecting : GI -> Grid Cell -> Maybe SeedGrid
+startConnecting : GI -> Grid Cell -> Maybe GridState
 startConnecting =
     let
-        initConnecting : GI -> Grid Cell -> SeedGrid
+        initConnecting : GI -> Grid Cell -> GridState
         initConnecting gi grid =
             GridConnecting (Cons.singleton gi) grid
 
@@ -157,7 +157,7 @@ giRight =
 
 type alias Model =
     { window : Window
-    , grid : SeedGrid
+    , grid : GridState
     }
 
 
@@ -228,6 +228,66 @@ type Msg
     = StartConnecting GI
     | ToggleConnecting GI
     | StartCollecting
+
+
+type Update
+    = SetGridState GridState
+    | Stay
+
+
+onMsg : Msg -> Model -> ( Model, Cmd Msg )
+onMsg message model =
+    case onGridStateMsg message model.grid of
+        SetGridState gridState ->
+            ( setGrid gridState model, Cmd.none )
+
+        Stay ->
+            ( model, Cmd.none )
+
+
+onGridStateMsg : Msg -> GridState -> Update
+onGridStateMsg message gridState =
+    case ( message, gridState ) of
+        ( StartConnecting gi, GridIdle grid ) ->
+            case startConnecting gi grid of
+                Just ng ->
+                    SetGridState ng
+
+                Nothing ->
+                    Stay
+
+        ( ToggleConnecting gi, GridIdle grid ) ->
+            case startConnecting gi grid of
+                Just ng ->
+                    SetGridState ng
+
+                Nothing ->
+                    Stay
+
+        ( ToggleConnecting gi, GridConnecting connectedIndices grid ) ->
+            case
+                Maybe.Extra.oneOf
+                    [ pushInConnectedIndices gi connectedIndices
+                    , popFromConnectedIndicesIfSecondLast gi connectedIndices
+                    ]
+                    grid
+            of
+                Just ng ->
+                    SetGridState ng
+
+                Nothing ->
+                    Stay
+
+        ( StartCollecting, GridConnecting connectedIndices grid ) ->
+            Collecting (TransitionState connectedIndices []) grid
+                |> SetGridState
+
+        _ ->
+            let
+                _ =
+                    Debug.log "ignoring msg" message
+            in
+            Stay
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -330,7 +390,7 @@ view model =
         ]
 
 
-renderGrid : SeedGrid -> Svg msg
+renderGrid : GridState -> Svg msg
 renderGrid seedGrid =
     case seedGrid of
         GridIdle grid ->
