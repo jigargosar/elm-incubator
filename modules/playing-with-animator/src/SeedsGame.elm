@@ -21,8 +21,12 @@ type SeedsGrid
 
 type GridState
     = GridIdle
-    | GridConnecting GI (List GI)
+    | GridConnecting ConnectingState
     | GridCollecting CollectingState
+
+
+type ConnectingState
+    = ConnectingState GI (List GI)
 
 
 type alias CollectingState =
@@ -204,7 +208,12 @@ gotoGridState =
 
 gotoConnecting : GI -> List GI -> Return
 gotoConnecting gi list =
-    gotoGridState (GridConnecting gi list)
+    gotoGridState (GridConnecting (ConnectingState gi list))
+
+
+enterConnecting : GI -> Return
+enterConnecting gi =
+    gotoConnecting gi []
 
 
 gotoCollecting : Cons GI -> List ( GI, GI ) -> Return
@@ -220,7 +229,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            gotoConnecting gi []
+                            enterConnecting gi
 
                         False ->
                             Stay
@@ -233,12 +242,12 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            gotoConnecting gi []
+                            enterConnecting gi
 
                         False ->
                             Stay
 
-                GridConnecting lastGI remaining ->
+                GridConnecting (ConnectingState lastGI remaining) ->
                     if areConnectable gi lastGI grid && not (List.member gi remaining) then
                         gotoConnecting gi (lastGI :: remaining)
 
@@ -253,7 +262,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
 
         StartCollecting ->
             case gs of
-                GridConnecting lastGI ((_ :: _) as list) ->
+                GridConnecting (ConnectingState lastGI ((_ :: _) as list)) ->
                     gotoCollecting (Cons.cons lastGI list) []
 
                 _ ->
@@ -341,7 +350,7 @@ renderGrid (SeedsGrid grid gs) =
             gridToListWithCtx renderIdleCell grid
                 |> group []
 
-        GridConnecting gi giList ->
+        GridConnecting (ConnectingState gi giList) ->
             let
                 ciCons =
                     Cons.cons gi giList
