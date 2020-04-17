@@ -319,14 +319,6 @@ computeFallingHelp emptyIndices grid falling =
                     computeFallingHelp (srcIdx :: remainingEmpty) grid (( srcIdx, destIdx ) :: falling)
 
 
-isMovableAt gi emptyIndices grid =
-    not (List.member gi emptyIndices)
-        && (Grid.get gi grid
-                |> Maybe.map isCellMovable
-                |> Maybe.withDefault False
-           )
-
-
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
 firstMovableCellIdxAbove gi emptyIndices grid =
     let
