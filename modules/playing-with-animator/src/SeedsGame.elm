@@ -202,6 +202,16 @@ gotoGridState =
     SetGridState
 
 
+gotoConnecting : GI -> List GI -> Return
+gotoConnecting gi list =
+    gotoGridState (GridConnecting gi list)
+
+
+gotoCollecting : Cons GI -> List ( GI, GI ) -> Return
+gotoCollecting a b =
+    gotoGridState (GridCollecting (CollectingState a b))
+
+
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
@@ -210,7 +220,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            gotoGridState (GridConnecting gi [])
+                            gotoConnecting gi []
 
                         False ->
                             Stay
@@ -223,19 +233,17 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            gotoGridState (GridConnecting gi [])
+                            gotoConnecting gi []
 
                         False ->
                             Stay
 
                 GridConnecting lastGI remaining ->
                     if areConnectable gi lastGI grid && not (List.member gi remaining) then
-                        gotoGridState
-                            (GridConnecting gi (lastGI :: remaining))
+                        gotoConnecting gi (lastGI :: remaining)
 
                     else if List.head remaining == Just gi then
-                        SetGridState
-                            (GridConnecting gi (List.drop 1 remaining))
+                        gotoConnecting gi (List.drop 1 remaining)
 
                     else
                         Stay
@@ -246,8 +254,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartCollecting ->
             case gs of
                 GridConnecting lastGI ((_ :: _) as list) ->
-                    gotoGridState
-                        (GridCollecting (CollectingState (Cons.cons lastGI list) []))
+                    gotoCollecting (Cons.cons lastGI list) []
 
                 _ ->
                     Stay
