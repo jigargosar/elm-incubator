@@ -383,9 +383,15 @@ renderGrid (SeedsGrid grid gs) =
             let
                 renderCell ctx gi =
                     let
+                        --maybeFallingToIdx =
+                        --    List.Extra.find (Tuple.first >> (==) gi) falling
+                        --        |> Maybe.map Tuple.second
                         maybeFallingToIdx =
-                            List.Extra.find (Tuple.first >> (==) gi) falling
-                                |> Maybe.map Tuple.second
+                            if gi == ( 1, 0 ) then
+                                Just ( 1, 4 )
+
+                            else
+                                Nothing
                     in
                     case maybeFallingToIdx of
                         Just to ->
