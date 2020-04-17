@@ -22,8 +22,13 @@ type GridState
 
 type GridSubState
     = GridIdle
-    | GridConnecting (Cons GI)
+    | GridConnecting GI GridConnectingSubState
     | GridCollecting TransitionState
+
+
+type GridConnectingSubState
+    = GridConnectingSingle
+    | GridConnectingAtLeastTwo GI (List GI)
 
 
 type alias TransitionState =
@@ -68,37 +73,36 @@ areCellAtIndicesConnectionCompatible ia ib grid =
         |> Maybe.withDefault False
 
 
-pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe GridState
-pushInConnectedIndices gi connectedIndices grid =
-    let
-        canPush =
-            isAdjacentTo gi (Cons.head connectedIndices)
-                && not (Cons.member gi connectedIndices)
-                && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
-    in
-    if canPush then
-        GridConnecting (Cons.push gi connectedIndices)
-            |> GridState grid
-            |> Just
 
-    else
-        Nothing
-
-
-popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe GridState
-popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
-    case Cons.maybeTail connectedIndices of
-        Nothing ->
-            Nothing
-
-        Just connectedIndicesTail ->
-            if Cons.head connectedIndicesTail == gi then
-                GridConnecting connectedIndicesTail
-                    |> GridState grid
-                    |> Just
-
-            else
-                Nothing
+--pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe GridState
+--pushInConnectedIndices gi connectedIndices grid =
+--    let
+--        canPush =
+--            isAdjacentTo gi (Cons.head connectedIndices)
+--                && not (Cons.member gi connectedIndices)
+--                && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
+--    in
+--    if canPush then
+--        GridConnecting (Cons.push gi connectedIndices)
+--            |> GridState grid
+--            |> Just
+--
+--    else
+--        Nothing
+--popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe GridState
+--popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
+--    case Cons.maybeTail connectedIndices of
+--        Nothing ->
+--            Nothing
+--
+--        Just connectedIndicesTail ->
+--            if Cons.head connectedIndicesTail == gi then
+--                GridConnecting connectedIndicesTail
+--                    |> GridState grid
+--                    |> Just
+--
+--            else
+--                Nothing
 
 
 startConnecting : GI -> Grid Cell -> Maybe GridState
@@ -106,7 +110,7 @@ startConnecting =
     let
         initConnecting : GI -> Grid Cell -> GridState
         initConnecting gi grid =
-            GridConnecting (Cons.singleton gi)
+            GridConnecting gi GridConnectingSingle
                 |> GridState grid
 
         canStartConnectionAt : GI -> Grid Cell -> Bool
@@ -257,22 +261,76 @@ update message ((State _ (GridState grid gs)) as model) =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridConnecting connectedIndices ) ->
-            case
-                Maybe.Extra.oneOf
-                    [ pushInConnectedIndices gi connectedIndices
-                    , popFromConnectedIndicesIfSecondLast gi connectedIndices
-                    ]
-                    grid
-            of
-                Just ng ->
-                    ( setGridState ng model, Cmd.none )
+        ( ToggleConnecting gi, GridConnecting lastGI GridConnectingSingle ) ->
+            if
+                isAdjacentTo gi lastGI
+                    && areCellAtIndicesConnectionCompatible gi lastGI grid
+            then
+                ( setGridState
+                    (GridConnecting gi (GridConnectingAtLeastTwo lastGI [])
+                        |> GridState grid
+                    )
+                    model
+                , Cmd.none
+                )
 
-                Nothing ->
-                    ( model, Cmd.none )
+            else
+                ( model, Cmd.none )
 
-        ( StartCollecting, GridConnecting connectedIndices ) ->
-            ( setGridState (GridCollecting (TransitionState connectedIndices []) |> GridState grid) model
+        ( ToggleConnecting gi, GridConnecting lastGI (GridConnectingAtLeastTwo secondLast remaining) ) ->
+            if gi == secondLast then
+                case remaining of
+                    [] ->
+                        ( setGridState
+                            (GridConnecting secondLast GridConnectingSingle
+                                |> GridState grid
+                            )
+                            model
+                        , Cmd.none
+                        )
+
+                    thirdLast :: newRemaining ->
+                        ( setGridState
+                            (GridConnecting secondLast (GridConnectingAtLeastTwo thirdLast newRemaining)
+                                |> GridState grid
+                            )
+                            model
+                        , Cmd.none
+                        )
+
+            else if
+                isAdjacentTo gi lastGI
+                    && areCellAtIndicesConnectionCompatible gi lastGI grid
+            then
+                ( setGridState
+                    (GridConnecting gi (GridConnectingAtLeastTwo lastGI (secondLast :: remaining))
+                        |> GridState grid
+                    )
+                    model
+                , Cmd.none
+                )
+
+            else
+                ( model, Cmd.none )
+
+        --case
+        --    Maybe.Extra.oneOf
+        --        [ pushInConnectedIndices gi connectedIndices
+        --        , popFromConnectedIndicesIfSecondLast gi connectedIndices
+        --        ]
+        --        grid
+        --of
+        --    Just ng ->
+        --        ( setGridState ng model, Cmd.none )
+        --
+        --    Nothing ->
+        --        ( model, Cmd.none )
+        ( StartCollecting, GridConnecting lastGI (GridConnectingAtLeastTwo secondLastGI remainingGI) ) ->
+            ( setGridState
+                (GridCollecting (TransitionState (Cons.cons lastGI (secondLastGI :: remainingGI)) [])
+                    |> GridState grid
+                )
+                model
             , Cmd.none
             )
 
@@ -346,7 +404,16 @@ renderGrid (GridState grid gs) =
             gridToListWithCtx renderIdleCell grid
                 |> group []
 
-        GridConnecting ciCons ->
+        GridConnecting gi gridConnectingSS ->
+            let
+                ciCons =
+                    case gridConnectingSS of
+                        GridConnectingSingle ->
+                            Cons.singleton gi
+
+                        GridConnectingAtLeastTwo gi2 list ->
+                            Cons.cons gi (gi2 :: list)
+            in
             gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
 
