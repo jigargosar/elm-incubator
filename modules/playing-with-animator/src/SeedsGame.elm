@@ -25,10 +25,6 @@ type GridState
     | GridCollecting CollectingState
 
 
-initGridConnecting gi =
-    GridConnecting gi []
-
-
 type alias CollectingState =
     { leaving : Cons GI
     , falling : List ( GI, GI )
@@ -202,6 +198,10 @@ type Return
     | Stay
 
 
+gotoGridState =
+    SetGridState
+
+
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
@@ -210,7 +210,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            SetGridState (initGridConnecting gi)
+                            gotoGridState (GridConnecting gi [])
 
                         False ->
                             Stay
@@ -223,14 +223,14 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            SetGridState (initGridConnecting gi)
+                            gotoGridState (GridConnecting gi [])
 
                         False ->
                             Stay
 
                 GridConnecting lastGI remaining ->
                     if areConnectable gi lastGI grid && not (List.member gi remaining) then
-                        SetGridState
+                        gotoGridState
                             (GridConnecting gi (lastGI :: remaining))
 
                     else if List.head remaining == Just gi then
@@ -246,7 +246,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartCollecting ->
             case gs of
                 GridConnecting lastGI ((_ :: _) as list) ->
-                    SetGridState
+                    gotoGridState
                         (GridCollecting (CollectingState (Cons.cons lastGI list) []))
 
                 _ ->
