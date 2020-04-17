@@ -308,8 +308,6 @@ computeFallingHelp emptyIndices grid falling =
         [] ->
             falling
 
-        --|> List.reverse
-        --|> List.take 1
         destIdx :: remainingEmpty ->
             case firstMovableCellIdxAbove destIdx remainingEmpty grid of
                 Nothing ->
