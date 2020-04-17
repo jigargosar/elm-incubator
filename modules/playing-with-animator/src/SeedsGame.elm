@@ -21,23 +21,8 @@ type SeedsGrid
 
 type GridState
     = GridIdle
-    | GridConnecting GI ConnectingState
+    | GridConnecting GI (List GI)
     | GridCollecting CollectingState
-
-
-type ConnectingState
-    = ConnectingSingle
-    | ConnectingAtLeastTwo GI (List GI)
-
-
-initConnectingStateFromList : List GI -> ConnectingState
-initConnectingStateFromList list =
-    case list of
-        [] ->
-            ConnectingSingle
-
-        h :: t ->
-            ConnectingAtLeastTwo h t
 
 
 type alias CollectingState =
@@ -93,7 +78,7 @@ startConnecting =
     let
         initConnecting : GI -> Grid Cell -> SeedsGrid
         initConnecting gi grid =
-            GridConnecting gi ConnectingSingle
+            GridConnecting gi []
                 |> SeedsGrid grid
 
         canStartConnectionAt : GI -> Grid Cell -> Bool
@@ -244,10 +229,19 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridConnecting lastGI ConnectingSingle ) ->
-            if areConnectable gi lastGI grid then
+        ( ToggleConnecting gi, GridConnecting lastGI remaining ) ->
+            if areConnectable gi lastGI grid && not (List.member gi remaining) then
                 ( setGridState
-                    (GridConnecting gi (ConnectingAtLeastTwo lastGI [])
+                    (GridConnecting gi (lastGI :: remaining)
+                        |> SeedsGrid grid
+                    )
+                    model
+                , Cmd.none
+                )
+
+            else if List.head remaining == Just gi then
+                ( setGridState
+                    (GridConnecting gi (List.drop 1 remaining)
                         |> SeedsGrid grid
                     )
                     model
@@ -257,31 +251,9 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
             else
                 ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridConnecting lastGI (ConnectingAtLeastTwo secondLast remaining) ) ->
-            if gi == secondLast then
-                ( setGridState
-                    (GridConnecting secondLast (initConnectingStateFromList remaining)
-                        |> SeedsGrid grid
-                    )
-                    model
-                , Cmd.none
-                )
-
-            else if areConnectable gi lastGI grid then
-                ( setGridState
-                    (GridConnecting gi (ConnectingAtLeastTwo lastGI (secondLast :: remaining))
-                        |> SeedsGrid grid
-                    )
-                    model
-                , Cmd.none
-                )
-
-            else
-                ( model, Cmd.none )
-
-        ( StartCollecting, GridConnecting lastGI (ConnectingAtLeastTwo secondLastGI remainingGI) ) ->
+        ( StartCollecting, GridConnecting lastGI ((_ :: _) as list) ) ->
             ( setGridState
-                (GridCollecting (CollectingState (Cons.cons lastGI (secondLastGI :: remainingGI)) [])
+                (GridCollecting (CollectingState (Cons.cons lastGI list) [])
                     |> SeedsGrid grid
                 )
                 model
@@ -358,15 +330,10 @@ renderGrid (SeedsGrid grid gs) =
             gridToListWithCtx renderIdleCell grid
                 |> group []
 
-        GridConnecting gi gridConnectingSS ->
+        GridConnecting gi giList ->
             let
                 ciCons =
-                    case gridConnectingSS of
-                        ConnectingSingle ->
-                            Cons.singleton gi
-
-                        ConnectingAtLeastTwo gi2 list ->
-                            Cons.cons gi (gi2 :: list)
+                    Cons.cons gi giList
             in
             gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
