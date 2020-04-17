@@ -155,8 +155,8 @@ giRight =
 -- Model
 
 
-type Model
-    = Model Window GridState
+type State
+    = State Window GridState
 
 
 type alias Window =
@@ -167,9 +167,9 @@ type alias Flags =
     { window : Window }
 
 
-init : Flags -> ( Model, Cmd Msg )
+init : Flags -> ( State, Cmd Msg )
 init f =
-    ( Model f.window initialGrid
+    ( State f.window initialGrid
     , schedule
         ((connectPath1 |> always connectPath2)
             ++ [ StartCollecting ]
@@ -233,11 +233,11 @@ type Update
     | Stay
 
 
-onMsg : Msg -> Model -> ( Model, Cmd Msg )
-onMsg message ((Model win gs) as model) =
+onMsg : Msg -> State -> ( State, Cmd Msg )
+onMsg message ((State win gs) as model) =
     case onGridStateMsg message gs of
         SetGridState gridState ->
-            ( Model win gridState, Cmd.none )
+            ( State win gridState, Cmd.none )
 
         Stay ->
             ( model, Cmd.none )
@@ -288,8 +288,8 @@ onGridStateMsg message gridState =
             Stay
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model _ gs) as model) =
+update : Msg -> State -> ( State, Cmd Msg )
+update message ((State _ gs) as model) =
     case ( message, gs ) of
         ( StartConnecting gi, GridIdle grid ) ->
             case startConnecting gi grid of
@@ -334,9 +334,9 @@ update message ((Model _ gs) as model) =
             ( model, Cmd.none )
 
 
-setGrid : GridState -> Model -> Model
-setGrid gs (Model win _) =
-    Model win gs
+setGrid : GridState -> State -> State
+setGrid gs (State win _) =
+    State win gs
 
 
 
@@ -357,7 +357,7 @@ schedule =
         >> Cmd.batch
 
 
-subscriptions : Model -> Sub Msg
+subscriptions : State -> Sub Msg
 subscriptions _ =
     Sub.batch []
 
@@ -370,8 +370,8 @@ type alias DM =
     Document Msg
 
 
-view : Model -> DM
-view (Model window gs) =
+view : State -> DM
+view (State window gs) =
     let
         w =
             window.width
@@ -498,7 +498,7 @@ gIdxToXY { cw, dx, dy } ( xi, yi ) =
 -- Main
 
 
-main : Program Flags Model Msg
+main : Program Flags State Msg
 main =
     Browser.document
         { init = init
