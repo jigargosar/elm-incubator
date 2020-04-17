@@ -21,16 +21,16 @@ type SeedsGrid
 
 type GridState
     = GridIdle
-    | GridConnecting GI GridConnectingSubState
-    | GridCollecting TransitionState
+    | GridConnecting GI ConnectingState
+    | GridCollecting CollectingState
 
 
-type GridConnectingSubState
-    = GridConnectingSingle
-    | GridConnectingAtLeastTwo GI (List GI)
+type ConnectingState
+    = ConnectingSingle
+    | ConnectingAtLeastTwo GI (List GI)
 
 
-type alias TransitionState =
+type alias CollectingState =
     { leaving : Cons GI
     , falling : List ( GI, GI )
     }
@@ -77,7 +77,7 @@ startConnecting =
     let
         initConnecting : GI -> Grid Cell -> SeedsGrid
         initConnecting gi grid =
-            GridConnecting gi GridConnectingSingle
+            GridConnecting gi ConnectingSingle
                 |> SeedsGrid grid
 
         canStartConnectionAt : GI -> Grid Cell -> Bool
@@ -228,13 +228,13 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridConnecting lastGI GridConnectingSingle ) ->
+        ( ToggleConnecting gi, GridConnecting lastGI ConnectingSingle ) ->
             if
                 isAdjacentTo gi lastGI
                     && areCellAtIndicesConnectionCompatible gi lastGI grid
             then
                 ( setGridState
-                    (GridConnecting gi (GridConnectingAtLeastTwo lastGI [])
+                    (GridConnecting gi (ConnectingAtLeastTwo lastGI [])
                         |> SeedsGrid grid
                     )
                     model
@@ -244,12 +244,12 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
             else
                 ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GridConnecting lastGI (GridConnectingAtLeastTwo secondLast remaining) ) ->
+        ( ToggleConnecting gi, GridConnecting lastGI (ConnectingAtLeastTwo secondLast remaining) ) ->
             if gi == secondLast then
                 case remaining of
                     [] ->
                         ( setGridState
-                            (GridConnecting secondLast GridConnectingSingle
+                            (GridConnecting secondLast ConnectingSingle
                                 |> SeedsGrid grid
                             )
                             model
@@ -258,7 +258,7 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
 
                     thirdLast :: newRemaining ->
                         ( setGridState
-                            (GridConnecting secondLast (GridConnectingAtLeastTwo thirdLast newRemaining)
+                            (GridConnecting secondLast (ConnectingAtLeastTwo thirdLast newRemaining)
                                 |> SeedsGrid grid
                             )
                             model
@@ -270,7 +270,7 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
                     && areCellAtIndicesConnectionCompatible gi lastGI grid
             then
                 ( setGridState
-                    (GridConnecting gi (GridConnectingAtLeastTwo lastGI (secondLast :: remaining))
+                    (GridConnecting gi (ConnectingAtLeastTwo lastGI (secondLast :: remaining))
                         |> SeedsGrid grid
                     )
                     model
@@ -280,9 +280,9 @@ update message ((Model _ (SeedsGrid grid gs)) as model) =
             else
                 ( model, Cmd.none )
 
-        ( StartCollecting, GridConnecting lastGI (GridConnectingAtLeastTwo secondLastGI remainingGI) ) ->
+        ( StartCollecting, GridConnecting lastGI (ConnectingAtLeastTwo secondLastGI remainingGI) ) ->
             ( setGridState
-                (GridCollecting (TransitionState (Cons.cons lastGI (secondLastGI :: remainingGI)) [])
+                (GridCollecting (CollectingState (Cons.cons lastGI (secondLastGI :: remainingGI)) [])
                     |> SeedsGrid grid
                 )
                 model
@@ -363,10 +363,10 @@ renderGrid (SeedsGrid grid gs) =
             let
                 ciCons =
                     case gridConnectingSS of
-                        GridConnectingSingle ->
+                        ConnectingSingle ->
                             Cons.singleton gi
 
-                        GridConnectingAtLeastTwo gi2 list ->
+                        ConnectingAtLeastTwo gi2 list ->
                             Cons.cons gi (gi2 :: list)
             in
             gridToListWithCtx (renderConnectingCell ciCons) grid
