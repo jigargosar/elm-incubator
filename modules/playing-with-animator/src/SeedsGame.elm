@@ -382,11 +382,21 @@ renderGrid (SeedsGrid grid gs) =
         GridCollecting { leaving, falling } ->
             let
                 renderCell ctx gi =
-                    if List.member gi leaving then
-                        renderLeavingCell ctx gi
+                    let
+                        maybeFallingToIdx =
+                            List.Extra.find (Tuple.first >> (==) gi) falling
+                                |> Maybe.map Tuple.second
+                    in
+                    case maybeFallingToIdx of
+                        Just to ->
+                            renderIdleCell ctx gi
 
-                    else
-                        renderIdleCell ctx gi
+                        Nothing ->
+                            if List.member gi leaving then
+                                renderLeavingCell ctx gi
+
+                            else
+                                renderIdleCell ctx gi
             in
             gridToListWithCtx renderCell grid
                 |> group []
