@@ -21,9 +21,9 @@ type GridState
 
 
 type GridSubState
-    = GSS_Idle
-    | GSS_Connecting (Cons GI)
-    | GSS_Collecting TransitionState
+    = GridIdle
+    | GridConnecting (Cons GI)
+    | GridCollecting TransitionState
 
 
 type alias TransitionState =
@@ -59,7 +59,7 @@ initialGrid =
                         Cell Water
                 )
     in
-    GridState grid GSS_Idle
+    GridState grid GridIdle
 
 
 areCellAtIndicesConnectionCompatible : GI -> GI -> Grid Cell -> Bool
@@ -77,7 +77,7 @@ pushInConnectedIndices gi connectedIndices grid =
                 && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
     in
     if canPush then
-        GSS_Connecting (Cons.push gi connectedIndices)
+        GridConnecting (Cons.push gi connectedIndices)
             |> GridState grid
             |> Just
 
@@ -93,7 +93,7 @@ popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
 
         Just connectedIndicesTail ->
             if Cons.head connectedIndicesTail == gi then
-                GSS_Connecting connectedIndicesTail
+                GridConnecting connectedIndicesTail
                     |> GridState grid
                     |> Just
 
@@ -106,7 +106,7 @@ startConnecting =
     let
         initConnecting : GI -> Grid Cell -> GridState
         initConnecting gi grid =
-            GSS_Connecting (Cons.singleton gi)
+            GridConnecting (Cons.singleton gi)
                 |> GridState grid
 
         canStartConnectionAt : GI -> Grid Cell -> Bool
@@ -238,71 +238,10 @@ type Msg
     | StartCollecting
 
 
-type Update
-    = SetGridState GridState
-    | Stay
-
-
-onMsg : Msg -> State -> ( State, Cmd Msg )
-onMsg message ((State win gs) as model) =
-    case onGridStateMsg message gs of
-        SetGridState gridState ->
-            ( State win gridState, Cmd.none )
-
-        Stay ->
-            ( model, Cmd.none )
-
-
-onGridStateMsg : Msg -> GridState -> Update
-onGridStateMsg message (GridState grid gss) =
-    case ( message, gss ) of
-        ( StartConnecting gi, GSS_Idle ) ->
-            case startConnecting gi grid of
-                Just ng ->
-                    SetGridState ng
-
-                Nothing ->
-                    Stay
-
-        ( ToggleConnecting gi, GSS_Idle ) ->
-            case startConnecting gi grid of
-                Just ng ->
-                    SetGridState ng
-
-                Nothing ->
-                    Stay
-
-        ( ToggleConnecting gi, GSS_Connecting connectedIndices ) ->
-            case
-                Maybe.Extra.oneOf
-                    [ pushInConnectedIndices gi connectedIndices
-                    , popFromConnectedIndicesIfSecondLast gi connectedIndices
-                    ]
-                    grid
-            of
-                Just ng ->
-                    SetGridState ng
-
-                Nothing ->
-                    Stay
-
-        ( StartCollecting, GSS_Connecting connectedIndices ) ->
-            GSS_Collecting (TransitionState connectedIndices [])
-                |> GridState grid
-                |> SetGridState
-
-        _ ->
-            let
-                _ =
-                    Debug.log "ignoring msg" message
-            in
-            Stay
-
-
 update : Msg -> State -> ( State, Cmd Msg )
 update message ((State _ (GridState grid gs)) as model) =
     case ( message, gs ) of
-        ( StartConnecting gi, GSS_Idle ) ->
+        ( StartConnecting gi, GridIdle ) ->
             case startConnecting gi grid of
                 Just ng ->
                     ( setGridState ng model, Cmd.none )
@@ -310,7 +249,7 @@ update message ((State _ (GridState grid gs)) as model) =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GSS_Idle ) ->
+        ( ToggleConnecting gi, GridIdle ) ->
             case startConnecting gi grid of
                 Just ng ->
                     ( setGridState ng model, Cmd.none )
@@ -318,7 +257,7 @@ update message ((State _ (GridState grid gs)) as model) =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( ToggleConnecting gi, GSS_Connecting connectedIndices ) ->
+        ( ToggleConnecting gi, GridConnecting connectedIndices ) ->
             case
                 Maybe.Extra.oneOf
                     [ pushInConnectedIndices gi connectedIndices
@@ -332,8 +271,8 @@ update message ((State _ (GridState grid gs)) as model) =
                 Nothing ->
                     ( model, Cmd.none )
 
-        ( StartCollecting, GSS_Connecting connectedIndices ) ->
-            ( setGridState (GSS_Collecting (TransitionState connectedIndices []) |> GridState grid) model
+        ( StartCollecting, GridConnecting connectedIndices ) ->
+            ( setGridState (GridCollecting (TransitionState connectedIndices []) |> GridState grid) model
             , Cmd.none
             )
 
@@ -401,17 +340,17 @@ view (State window gs) =
 
 
 renderGrid : GridState -> Svg msg
-renderGrid (GridState grid gss) =
-    case gss of
-        GSS_Idle ->
+renderGrid (GridState grid gs) =
+    case gs of
+        GridIdle ->
             gridToListWithCtx renderIdleCell grid
                 |> group []
 
-        GSS_Connecting ciCons ->
+        GridConnecting ciCons ->
             gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
 
-        GSS_Collecting { leaving, falling } ->
+        GridCollecting { leaving, falling } ->
             let
                 renderCell ctx gi =
                     if Cons.member gi leaving then
