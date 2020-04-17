@@ -206,13 +206,9 @@ type Return
     | Stay
 
 
+gotoGridState : GridState -> Return
 gotoGridState =
     SetGridState
-
-
-gotoConnecting2 : GI -> List GI -> Return
-gotoConnecting2 gi list =
-    gotoConnecting (ConnectingState gi list)
 
 
 gotoConnecting : ConnectingState -> Return
@@ -225,16 +221,6 @@ gotoCollecting a b =
     gotoGridState (GridCollecting (initCollectingState a b))
 
 
-canExtendConnectionToCellAt : GI -> Grid Cell -> ConnectingState -> Bool
-canExtendConnectionToCellAt gi grid (ConnectingState lastGI remaining) =
-    areConnectable gi lastGI grid && not (List.member gi remaining)
-
-
-isSecondLastConnectionIndex : GI -> ConnectingState -> Bool
-isSecondLastConnectionIndex gi (ConnectingState _ remaining) =
-    List.head remaining == Just gi
-
-
 extendConnection : GI -> Grid Cell -> ConnectingState -> Maybe ConnectingState
 extendConnection gi grid (ConnectingState lastGI remaining) =
     if areConnectable gi lastGI grid && not (List.member gi remaining) then
@@ -244,13 +230,28 @@ extendConnection gi grid (ConnectingState lastGI remaining) =
         Nothing
 
 
-shrinkConnection : GI -> ConnectingState -> Maybe ConnectingState
-shrinkConnection gi (ConnectingState lastGI remaining) =
-    if List.head remaining == Just gi then
-        Just (ConnectingState gi (List.drop 1 remaining))
+startConnection : GI -> Grid Cell -> Maybe ConnectingState
+startConnection gi grid =
+    case canStartConnectionAt gi grid of
+        True ->
+            Just (ConnectingState gi [])
 
-    else
-        Nothing
+        False ->
+            Nothing
+
+
+shrinkConnection : GI -> ConnectingState -> Maybe ConnectingState
+shrinkConnection gi (ConnectingState _ oldRemaining) =
+    case oldRemaining of
+        [] ->
+            Nothing
+
+        last :: newRemaining ->
+            if last == gi then
+                Just (ConnectingState last newRemaining)
+
+            else
+                Nothing
 
 
 customUpdate : Msg -> Model -> Return
@@ -259,11 +260,11 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         ToggleConnecting gi ->
             case gs of
                 GridIdle ->
-                    case canStartConnectionAt gi grid of
-                        True ->
-                            gotoConnecting2 gi []
+                    case startConnection gi grid of
+                        Just cs ->
+                            gotoConnecting cs
 
-                        False ->
+                        Nothing ->
                             Stay
 
                 GridConnecting connectingState ->
