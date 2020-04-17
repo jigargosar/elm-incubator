@@ -72,38 +72,6 @@ areCellAtIndicesConnectionCompatible ia ib grid =
         |> Maybe.withDefault False
 
 
-
---pushInConnectedIndices : GI -> Cons GI -> Grid Cell -> Maybe GridState
---pushInConnectedIndices gi connectedIndices grid =
---    let
---        canPush =
---            isAdjacentTo gi (Cons.head connectedIndices)
---                && not (Cons.member gi connectedIndices)
---                && areCellAtIndicesConnectionCompatible gi (Cons.head connectedIndices) grid
---    in
---    if canPush then
---        GridConnecting (Cons.push gi connectedIndices)
---            |> GridState grid
---            |> Just
---
---    else
---        Nothing
---popFromConnectedIndicesIfSecondLast : GI -> Cons GI -> Grid Cell -> Maybe GridState
---popFromConnectedIndicesIfSecondLast gi connectedIndices grid =
---    case Cons.maybeTail connectedIndices of
---        Nothing ->
---            Nothing
---
---        Just connectedIndicesTail ->
---            if Cons.head connectedIndicesTail == gi then
---                GridConnecting connectedIndicesTail
---                    |> GridState grid
---                    |> Just
---
---            else
---                Nothing
-
-
 startConnecting : GI -> Grid Cell -> Maybe GridState
 startConnecting =
     let
