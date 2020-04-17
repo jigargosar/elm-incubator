@@ -336,6 +336,7 @@ update message model =
             ( model, Cmd.none )
 
 
+setGrid : GridState -> Model -> Model
 setGrid grid model =
     { model | grid = grid }
 
