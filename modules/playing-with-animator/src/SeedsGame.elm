@@ -389,7 +389,7 @@ renderGrid (SeedsGrid grid gs) =
                     in
                     case maybeFallingToIdx of
                         Just to ->
-                            renderIdleCell ctx gi
+                            renderIdleCell ctx to
 
                         Nothing ->
                             if List.member gi leaving then
