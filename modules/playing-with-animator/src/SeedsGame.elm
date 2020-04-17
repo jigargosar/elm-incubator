@@ -320,22 +320,21 @@ computeFallingHelp emptyIndices grid falling =
 
 
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
-firstMovableCellIdxAbove gi emptyIndices grid =
+firstMovableCellIdxAbove gi____ emptyIndices grid =
     let
-        ngi =
-            giUp gi
-
-        nonEmptyIdx =
-            List.member ngi emptyIndices
-                |> not
+        gi =
+            giUp gi____
     in
-    case Grid.get ngi grid of
+    case Grid.get gi grid of
         Just cell ->
-            if nonEmptyIdx && isCellMovable cell then
-                Just ngi
+            if
+                not (List.member gi emptyIndices)
+                    && isCellMovable cell
+            then
+                Just gi
 
             else
-                firstMovableCellIdxAbove ngi emptyIndices grid
+                firstMovableCellIdxAbove gi emptyIndices grid
 
         Nothing ->
             Nothing
