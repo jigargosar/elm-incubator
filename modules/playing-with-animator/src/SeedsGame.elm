@@ -25,6 +25,10 @@ type GridState
     | GridCollecting CollectingState
 
 
+initGridConnecting gi =
+    GridConnecting gi []
+
+
 type alias CollectingState =
     { leaving : Cons GI
     , falling : List ( GI, GI )
@@ -206,7 +210,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            SetGridState (GridConnecting gi [])
+                            SetGridState (initGridConnecting gi)
 
                         False ->
                             Stay
@@ -219,7 +223,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            SetGridState (GridConnecting gi [])
+                            SetGridState (initGridConnecting gi)
 
                         False ->
                             Stay
