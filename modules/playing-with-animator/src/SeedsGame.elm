@@ -69,10 +69,6 @@ type alias CollectingState =
     }
 
 
-initCollectingState =
-    CollectingState
-
-
 type Cell
     = Cell Tile
 
