@@ -1,4 +1,4 @@
-module Grid exposing (GI, Grid, get, indices, init, map, mapIdx, set, toList, toListBy, wh)
+module Grid exposing (GI, Grid, entryAbove, get, indices, init, map, mapIdx, set, toList, toListBy, wh)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
@@ -27,6 +27,36 @@ init w h func =
 get : GI -> Grid a -> Maybe a
 get gIdx (G d) =
     Dict.get gIdx d
+
+
+getEntry : GI -> Grid a -> Maybe ( GI, a )
+getEntry gi =
+    get gi >> Maybe.map (Tuple.pair gi)
+
+
+giMove dx dy ( x, y ) =
+    ( x + dx, y + dy )
+
+
+giUp =
+    giMove 0 -1
+
+
+giDown =
+    giMove 0 1
+
+
+giLeft =
+    giMove -1 0
+
+
+giRight =
+    giMove 1 0
+
+
+entryAbove : GI -> Grid a -> Maybe ( GI, a )
+entryAbove gi =
+    getEntry (giUp gi)
 
 
 set : GI -> a -> Grid a -> Maybe (Grid a)

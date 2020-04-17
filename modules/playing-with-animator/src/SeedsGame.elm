@@ -313,20 +313,22 @@ computeFallingHelp emptyIndices grid falling =
         destIdx :: remainingEmpty ->
             case firstMovableCellIdxAbove destIdx remainingEmpty grid of
                 Nothing ->
-                    computeFallingHelp remainingEmpty grid falling
+                    computeFallingHelp
+                        remainingEmpty
+                        grid
+                        falling
 
                 Just srcIdx ->
-                    computeFallingHelp (srcIdx :: remainingEmpty) grid (( srcIdx, destIdx ) :: falling)
+                    computeFallingHelp
+                        (srcIdx :: remainingEmpty)
+                        grid
+                        (( srcIdx, destIdx ) :: falling)
 
 
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
 firstMovableCellIdxAbove gi____ emptyIndices grid =
-    let
-        gi =
-            giUp gi____
-    in
-    case Grid.get gi grid of
-        Just cell ->
+    case Grid.entryAbove gi____ grid of
+        Just ( gi, cell ) ->
             if
                 not (List.member gi emptyIndices)
                     && isCellMovable cell
