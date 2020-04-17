@@ -245,8 +245,8 @@ gotoConnecting cs =
     gotoGridState (GridConnecting cs)
 
 
-gotoCollecting a b =
-    gotoGridState (GridCollecting (CollectingState a b))
+gotoCollecting cs =
+    gotoGridState (GridCollecting cs)
 
 
 customUpdate : Msg -> Model -> Return
@@ -284,10 +284,26 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartCollecting ->
             case gs of
                 GridConnecting (ConnectingState lastGI ((_ :: _) as list)) ->
-                    gotoCollecting (lastGI :: list) []
+                    let
+                        leaving =
+                            lastGI :: list
+
+                        falling =
+                            computeFalling leaving grid
+                    in
+                    gotoCollecting { leaving = leaving, falling = falling }
 
                 _ ->
                     Stay
+
+
+computeFalling : List GI -> Grid Cell -> List ( GI, GI )
+computeFalling emptyIndices grid =
+    let
+        _ =
+            Grid.map
+    in
+    []
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
