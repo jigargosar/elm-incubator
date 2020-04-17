@@ -209,9 +209,14 @@ gotoGridState =
     SetGridState
 
 
-gotoConnecting : GI -> List GI -> Return
-gotoConnecting gi list =
-    gotoGridState (GridConnecting (ConnectingState gi list))
+gotoConnecting2 : GI -> List GI -> Return
+gotoConnecting2 gi list =
+    gotoConnecting (ConnectingState gi list)
+
+
+gotoConnecting : ConnectingState -> Return
+gotoConnecting cs =
+    gotoGridState (GridConnecting cs)
 
 
 gotoCollecting : Cons GI -> List ( GI, GI ) -> Return
@@ -224,6 +229,11 @@ canExtendConnectionToCellAt gi grid (ConnectingState lastGI remaining) =
     areConnectable gi lastGI grid && not (List.member gi remaining)
 
 
+isSecondLastConnectionIndex : GI -> ConnectingState -> Bool
+isSecondLastConnectionIndex gi (ConnectingState _ remaining) =
+    List.head remaining == Just gi
+
+
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
@@ -232,17 +242,17 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 GridIdle ->
                     case canStartConnectionAt gi grid of
                         True ->
-                            gotoConnecting gi []
+                            gotoConnecting2 gi []
 
                         False ->
                             Stay
 
                 GridConnecting ((ConnectingState lastGI remaining) as connectingState) ->
                     if canExtendConnectionToCellAt gi grid connectingState then
-                        gotoConnecting gi (lastGI :: remaining)
+                        gotoConnecting2 gi (lastGI :: remaining)
 
-                    else if List.head remaining == Just gi then
-                        gotoConnecting gi (List.drop 1 remaining)
+                    else if isSecondLastConnectionIndex gi connectingState then
+                        gotoConnecting2 gi (List.drop 1 remaining)
 
                     else
                         Stay
