@@ -299,11 +299,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
 
 computeFalling : List GI -> Grid Cell -> List ( GI, GI )
 computeFalling emptyIndices grid =
-    let
-        _ =
-            1
-    in
-    []
+    computeFallingHelp emptyIndices grid []
 
 
 computeFallingHelp : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
