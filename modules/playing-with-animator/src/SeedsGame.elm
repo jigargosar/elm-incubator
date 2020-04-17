@@ -269,74 +269,30 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model _ (SeedsGrid grid gs)) as model) =
-    case message of
-        StartConnecting gi ->
-            case gs of
-                GridIdle ->
-                    case startConnecting gi grid of
-                        Just ng ->
-                            ( setGridState ng model, Cmd.none )
+update message model =
+    let
+        return =
+            customUpdate message model
+    in
+    case return of
+        SetGridState gridState ->
+            ( setGridState gridState model, Cmd.none )
 
-                        Nothing ->
-                            ( model, Cmd.none )
+        SetSeedsGrid seedsGrid ->
+            ( setSeedsGrid seedsGrid model, Cmd.none )
 
-                _ ->
-                    ( model, Cmd.none )
-
-        ToggleConnecting gi ->
-            case gs of
-                GridIdle ->
-                    case startConnecting gi grid of
-                        Just ng ->
-                            ( setGridState ng model, Cmd.none )
-
-                        Nothing ->
-                            ( model, Cmd.none )
-
-                GridConnecting lastGI remaining ->
-                    if areConnectable gi lastGI grid && not (List.member gi remaining) then
-                        ( setGridState
-                            (GridConnecting gi (lastGI :: remaining)
-                                |> SeedsGrid grid
-                            )
-                            model
-                        , Cmd.none
-                        )
-
-                    else if List.head remaining == Just gi then
-                        ( setGridState
-                            (GridConnecting gi (List.drop 1 remaining)
-                                |> SeedsGrid grid
-                            )
-                            model
-                        , Cmd.none
-                        )
-
-                    else
-                        ( model, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        StartCollecting ->
-            case gs of
-                GridConnecting lastGI ((_ :: _) as list) ->
-                    ( setGridState
-                        (GridCollecting (CollectingState (Cons.cons lastGI list) [])
-                            |> SeedsGrid grid
-                        )
-                        model
-                    , Cmd.none
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
+        Stay ->
+            ( model, Cmd.none )
 
 
-setGridState : SeedsGrid -> Model -> Model
-setGridState gs (Model win _) =
+setSeedsGrid : SeedsGrid -> Model -> Model
+setSeedsGrid gs (Model win _) =
     Model win gs
+
+
+setGridState : GridState -> Model -> Model
+setGridState gridState ((Model _ (SeedsGrid grid _)) as model) =
+    setSeedsGrid (SeedsGrid grid gridState) model
 
 
 
