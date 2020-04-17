@@ -6,6 +6,7 @@ import Cons exposing (Cons)
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
+import Maybe.Extra
 import Process
 import Svg exposing (Svg)
 import Task
@@ -234,6 +235,24 @@ isSecondLastConnectionIndex gi (ConnectingState _ remaining) =
     List.head remaining == Just gi
 
 
+extendConnection : GI -> Grid Cell -> ConnectingState -> Maybe ConnectingState
+extendConnection gi grid (ConnectingState lastGI remaining) =
+    if areConnectable gi lastGI grid && not (List.member gi remaining) then
+        Just (ConnectingState gi (lastGI :: remaining))
+
+    else
+        Nothing
+
+
+shrinkConnection : GI -> ConnectingState -> Maybe ConnectingState
+shrinkConnection gi (ConnectingState lastGI remaining) =
+    if List.head remaining == Just gi then
+        Just (ConnectingState gi (List.drop 1 remaining))
+
+    else
+        Nothing
+
+
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
@@ -247,15 +266,21 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                         False ->
                             Stay
 
-                GridConnecting ((ConnectingState lastGI remaining) as connectingState) ->
-                    if canExtendConnectionToCellAt gi grid connectingState then
-                        gotoConnecting2 gi (lastGI :: remaining)
+                GridConnecting connectingState ->
+                    let
+                        maybeNextConnectingState =
+                            Maybe.Extra.oneOf
+                                [ extendConnection gi grid
+                                , shrinkConnection gi
+                                ]
+                                connectingState
+                    in
+                    case maybeNextConnectingState of
+                        Just ncs ->
+                            gotoConnecting ncs
 
-                    else if isSecondLastConnectionIndex gi connectingState then
-                        gotoConnecting2 gi (List.drop 1 remaining)
-
-                    else
-                        Stay
+                        Nothing ->
+                            Stay
 
                 _ ->
                     Stay
