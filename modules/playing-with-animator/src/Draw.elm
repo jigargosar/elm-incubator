@@ -100,8 +100,8 @@ applyOp op ({ x, y, s, a } as m) =
         Transition trans ->
             { m | trans = trans }
 
-        Class class ->
-            { m | classes = class :: m.classes }
+        Class cn ->
+            { m | classes = cn :: m.classes }
 
 
 fade =
