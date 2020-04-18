@@ -485,13 +485,12 @@ renderGrid (SeedsGrid grid gs) =
 
         GridLeavingFalling { leaving, falling } ->
             let
+                fallingToIdxOf fromIdx =
+                    List.Extra.find (Tuple.first >> (==) fromIdx) falling
+                        |> Maybe.map Tuple.second
+
                 renderCell idx =
-                    let
-                        maybeFallingToIdx =
-                            List.Extra.find (Tuple.first >> (==) idx) falling
-                                |> Maybe.map Tuple.second
-                    in
-                    case maybeFallingToIdx of
+                    case fallingToIdxOf idx of
                         Just to ->
                             renderIdleCell ctx to
 
