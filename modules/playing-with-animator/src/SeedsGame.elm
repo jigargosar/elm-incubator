@@ -2,6 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
+import Dict
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
@@ -485,15 +486,14 @@ renderGrid (SeedsGrid grid gs) =
 
         GridLeavingFalling { leaving, falling } ->
             let
-                fallingToIdxOf fromIdx =
-                    List.Extra.find (Tuple.first >> (==) fromIdx) falling
-                        |> Maybe.map Tuple.second
+                fallingFromToDict =
+                    Dict.fromList falling
 
                 isLeaving idx =
                     List.member idx leaving
 
                 renderCell idx =
-                    case fallingToIdxOf idx of
+                    case Dict.get idx fallingFromToDict of
                         Just to ->
                             renderIdleCell ctx to
 
