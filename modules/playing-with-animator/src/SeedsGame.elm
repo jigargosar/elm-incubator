@@ -592,12 +592,12 @@ renderGeneratedStart ctx gi (Cell tile) =
 
 renderConnectedCell : GCtx -> GI -> Cell -> Svg msg
 renderConnectedCell ctx gi (Cell tile) =
-    group [ moveToGI ctx gi, scale 0.6 ] [ renderTile ctx tile ]
+    group [ moveToGI ctx gi, scale 0.8 ] [ renderTile ctx tile ]
 
 
 renderLeavingCell : GCtx -> GI -> Cell -> Svg msg
 renderLeavingCell ctx _ (Cell tile) =
-    group [ move 0 -300, scale 0.1, fade 0.1, transition "all 500ms ease-in" ] [ renderTile ctx tile ]
+    group [ move 0 -400, scale 0.2, fade 0, transition "all 500ms ease-in" ] [ renderTile ctx tile ]
 
 
 renderTile : GCtx -> Tile -> Svg msg
