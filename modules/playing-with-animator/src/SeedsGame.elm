@@ -254,6 +254,20 @@ init f =
     )
 
 
+schedule : List b -> Cmd b
+schedule =
+    List.indexedMap (\i -> delayN (toFloat i * defaultDelay))
+        >> Cmd.batch
+
+
+defaultDelay =
+    100
+
+
+delayN n msg =
+    Process.sleep n |> Task.perform (always msg)
+
+
 connectPath1 : List Msg
 connectPath1 =
     List.Extra.scanl (<|)
@@ -304,41 +318,6 @@ type Msg
     | StartCollecting
 
 
-type Return
-    = SetGridState GridState
-    | Stay
-
-
-gotoGridState : GridState -> Return
-gotoGridState =
-    SetGridState
-
-
-gotoConnecting : ConnectingState -> Return
-gotoConnecting cs =
-    gotoGridState (GridConnecting cs)
-
-
-maybeGoto : (a -> Return) -> Maybe a -> Return
-maybeGoto func maybeVal =
-    case maybeVal of
-        Nothing ->
-            Stay
-
-        Just val ->
-            func val
-
-
-maybeGotoConnecting : Maybe ConnectingState -> Return
-maybeGotoConnecting =
-    maybeGoto gotoConnecting
-
-
-gotoLeavingFalling : LeavingFallingState -> Return
-gotoLeavingFalling lf =
-    gotoGridState (GridLeavingFalling lf)
-
-
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
@@ -377,6 +356,41 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
+type Return
+    = SetGridState GridState
+    | Stay
+
+
+gotoGridState : GridState -> Return
+gotoGridState =
+    SetGridState
+
+
+gotoConnecting : ConnectingState -> Return
+gotoConnecting cs =
+    gotoGridState (GridConnecting cs)
+
+
+maybeGoto : (a -> Return) -> Maybe a -> Return
+maybeGoto func maybeVal =
+    case maybeVal of
+        Nothing ->
+            Stay
+
+        Just val ->
+            func val
+
+
+maybeGotoConnecting : Maybe ConnectingState -> Return
+maybeGotoConnecting =
+    maybeGoto gotoConnecting
+
+
+gotoLeavingFalling : LeavingFallingState -> Return
+gotoLeavingFalling lf =
+    gotoGridState (GridLeavingFalling lf)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     let
@@ -399,24 +413,6 @@ setSeedsGrid gs (Model win _) =
 setGridState : GridState -> Model -> Model
 setGridState gridState ((Model _ (SeedsGrid grid _)) as model) =
     setSeedsGrid (SeedsGrid grid gridState) model
-
-
-
---noinspection ElmUnusedSymbol
-
-
-defaultDelay =
-    100
-
-
-delayN n msg =
-    Process.sleep n |> Task.perform (always msg)
-
-
-schedule : List b -> Cmd b
-schedule =
-    List.indexedMap (\i -> delayN (toFloat i * defaultDelay))
-        >> Cmd.batch
 
 
 subscriptions : Model -> Sub Msg
