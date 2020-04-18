@@ -63,10 +63,11 @@ type Op
     | Move Float Float
     | Scale Float
     | Rotate Float
+    | Transition String
 
 
 type alias OpRec a =
-    { a | a : Float, o : Float, s : Float, x : Float, y : Float }
+    { a | a : Float, o : Float, s : Float, trans : String, x : Float, y : Float }
 
 
 applyOps :
@@ -94,6 +95,9 @@ applyOp op ({ x, y, s, a } as m) =
 
         Rotate da ->
             { m | a = a + da }
+
+        Transition trans ->
+            { m | trans = trans }
 
 
 fade =
