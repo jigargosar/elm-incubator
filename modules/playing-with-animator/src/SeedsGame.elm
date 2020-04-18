@@ -458,12 +458,25 @@ renderGrid (SeedsGrid grid gs) =
             gridToListWithCtx renderIdleCell grid
                 |> group []
 
-        GridConnecting (ConnectingState gi giList) ->
+        GridConnecting cs ->
             let
-                ciCons =
-                    Cons.cons gi giList
+                connectedIndices =
+                    case cs of
+                        ConnectingState lastIdx remainingIdx ->
+                            lastIdx :: remainingIdx
+
+                isConnected i =
+                    List.member i connectedIndices
+
+                renderCell : GCtx -> GI -> Cell -> Svg msg
+                renderCell ctx gi =
+                    if isConnected gi then
+                        renderConnectedCell ctx gi
+
+                    else
+                        renderIdleCell ctx gi
             in
-            gridToListWithCtx (renderConnectingCell ciCons) grid
+            gridToListWithCtx renderCell grid
                 |> group []
 
         GridLeavingFalling { leaving, falling } ->
@@ -492,15 +505,6 @@ renderGrid (SeedsGrid grid gs) =
 gridToListWithCtx : (GCtx -> GI -> a -> b) -> Grid a -> List b
 gridToListWithCtx func grid =
     Grid.toListBy (func (toGCtx grid)) grid
-
-
-renderConnectingCell : Cons GI -> GCtx -> GI -> Cell -> Svg msg
-renderConnectingCell ciCons ctx gi =
-    if Cons.member gi ciCons then
-        renderConnectedCell ctx gi
-
-    else
-        renderIdleCell ctx gi
 
 
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
