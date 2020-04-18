@@ -20,6 +20,15 @@ type SeedsGrid
     = SeedsGrid (Grid Cell) GridState
 
 
+type Cell
+    = Cell Tile
+
+
+type Tile
+    = Water
+    | Wall
+
+
 type GridState
     = GridIdle
     | GridConnecting ConnectingState
@@ -160,19 +169,6 @@ entriesAbove si g =
                )
         )
         si
-
-
-
--- CELL
-
-
-type Cell
-    = Cell Tile
-
-
-type Tile
-    = Water
-    | Wall
 
 
 
