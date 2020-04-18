@@ -325,8 +325,8 @@ update message model =
             customUpdate message model
     in
     case return of
-        SetGridState gridState ->
-            ( setGridState gridState model, Cmd.none )
+        SetGridState gridState cmd ->
+            ( setGridState gridState model, cmd )
 
         Stay ->
             ( model, Cmd.none )
@@ -352,7 +352,7 @@ subscriptions _ =
 
 
 type Return
-    = SetGridState GridState
+    = SetGridState GridState (Cmd Msg)
     | Stay
 
 
@@ -405,8 +405,8 @@ maybeGoto func maybeVal =
 
 
 gotoGridState : GridState -> Return
-gotoGridState =
-    SetGridState
+gotoGridState state =
+    SetGridState state Cmd.none
 
 
 gotoConnecting : ConnectingState -> Return
