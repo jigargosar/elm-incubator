@@ -3,7 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Dict exposing (Dict)
-import Draw exposing (canvas, circle, fade, group, move, noTransition, rect, scale, square, transition)
+import Draw exposing (canvas, circle, class, fade, group, move, noTransition, rect, scale, square, transition)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
@@ -429,7 +429,9 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         ContinueGenerating ->
             case gs of
                 GridGeneratingStart transition ->
-                    SetGridState (GridGenerating transition) (delayN (defaultDelay * 10) StopGenerating)
+                    SetGridState
+                        (GridGenerating transition)
+                        (delayN (defaultDelay * 10) StopGenerating |> always Cmd.none)
 
                 _ ->
                     Stay
@@ -551,7 +553,7 @@ renderGrid (SeedsGrid grid gs) =
             let
                 renderCell idx =
                     if Set.member idx generated then
-                        renderGeneratedCell ctx idx
+                        renderGeneratedStart ctx idx
 
                     else
                         renderIdleCellInstant ctx idx
@@ -559,7 +561,7 @@ renderGrid (SeedsGrid grid gs) =
             renderGridCellsWith renderCell
 
         GridGenerating _ ->
-            renderGridCellsWith (renderIdleBounceIn ctx)
+            renderGridCellsWith (renderGeneratedEnd ctx)
 
 
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
@@ -572,14 +574,20 @@ renderIdleCellInstant ctx gi (Cell tile) =
     group [ moveToGI ctx gi, noTransition ] [ renderTile ctx tile ]
 
 
-renderIdleBounceIn : GCtx -> GI -> Cell -> Svg msg
-renderIdleBounceIn ctx gi (Cell tile) =
-    group [ moveToGI ctx gi, transition "all 500ms cubic-bezier(0.0, 0.0, 0.72, 1.25)" ] [ renderTile ctx tile ]
+renderGeneratedEnd : GCtx -> GI -> Cell -> Svg msg
+renderGeneratedEnd ctx gi (Cell tile) =
+    group
+        [ moveToGI ctx gi
+        , transition "all 500ms cubic-bezier(0.59, 0.87, 0.5, 1.31)"
+        , transition "all 500ms "
+        , transition "all 500ms cubic-bezier(0.5, 1.5, 0.5, 1.5), opacity 500ms cubic-bezier(0.55, 0.06, 0.68, 0.19)"
+        ]
+        [ renderTile ctx tile ]
 
 
-renderGeneratedCell : GCtx -> GI -> Cell -> Svg msg
-renderGeneratedCell ctx gi (Cell tile) =
-    group [ moveToGI ctx gi, move 0 -300, fade 0, noTransition ] [ renderTile ctx tile ]
+renderGeneratedStart : GCtx -> GI -> Cell -> Svg msg
+renderGeneratedStart ctx gi (Cell tile) =
+    group [ moveToGI ctx gi, move 0 -100, fade 0.5, scale 1, noTransition ] [ renderTile ctx tile ]
 
 
 renderConnectedCell : GCtx -> GI -> Cell -> Svg msg
