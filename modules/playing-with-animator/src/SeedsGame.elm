@@ -26,8 +26,37 @@ type GridState
     | GridLeavingFalling LeavingFallingState
 
 
+
+-- CONNECTING STATE HELPERS
+
+
 type ConnectingState
     = ConnectingState GI (List GI)
+
+
+startConnection : GI -> Grid Cell -> Maybe ConnectingState
+startConnection gi grid =
+    case canStartConnectionAt gi grid of
+        True ->
+            Just (ConnectingState gi [])
+
+        False ->
+            Nothing
+
+
+canStartConnectionAt : GI -> Grid Cell -> Bool
+canStartConnectionAt gi grid =
+    case Grid.get gi grid of
+        Just (Cell tile) ->
+            case tile of
+                Water ->
+                    True
+
+                Wall ->
+                    False
+
+        Nothing ->
+            False
 
 
 extendConnection : GI -> Grid Cell -> ConnectingState -> Maybe ConnectingState
@@ -39,14 +68,15 @@ extendConnection gi grid (ConnectingState lastGI remaining) =
         Nothing
 
 
-startConnection : GI -> Grid Cell -> Maybe ConnectingState
-startConnection gi grid =
-    case canStartConnectionAt gi grid of
-        True ->
-            Just (ConnectingState gi [])
+areConnectable : GI -> GI -> Grid Cell -> Bool
+areConnectable aa bb grid =
+    areCellsAtIndicesConnectable aa bb grid && isAdjacentTo aa bb
 
-        False ->
-            Nothing
+
+areCellsAtIndicesConnectable : GI -> GI -> Grid Cell -> Bool
+areCellsAtIndicesConnectable ia ib grid =
+    Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
+        |> Maybe.withDefault False
 
 
 shrinkConnection : GI -> ConnectingState -> Maybe ConnectingState
@@ -63,10 +93,77 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
                 Nothing
 
 
+
+-- COMPUTE FALLING INDICES : List (from,to)
+
+
 type alias LeavingFallingState =
     { leaving : List GI
     , falling : List ( GI, GI )
     }
+
+
+computeFalling : Grid Cell -> List GI -> List ( GI, GI )
+computeFalling grid =
+    let
+        firstMovableIdxAbove : GI -> List GI -> Maybe GI
+        firstMovableIdxAbove startIdx emptyIndices =
+            entriesAbove startIdx grid
+                |> List.Extra.find
+                    (\( idx, cell ) ->
+                        not (List.member idx emptyIndices) && isCellMovable cell
+                    )
+                |> Maybe.map Tuple.first
+
+        nextFalling emptyIndices =
+            case unconsMax emptyIndices of
+                Nothing ->
+                    Nothing
+
+                Just ( destIdx, pendingEmptyIndices ) ->
+                    case firstMovableIdxAbove destIdx pendingEmptyIndices of
+                        Nothing ->
+                            nextFalling pendingEmptyIndices
+
+                        Just srcIdx ->
+                            Just
+                                ( ( srcIdx, destIdx )
+                                , srcIdx :: pendingEmptyIndices
+                                )
+    in
+    List.Extra.unfoldr nextFalling
+
+
+isCellMovable : Cell -> Bool
+isCellMovable (Cell s) =
+    case s of
+        Water ->
+            True
+
+        Wall ->
+            False
+
+
+unconsMax : List comparable -> Maybe ( comparable, List comparable )
+unconsMax l =
+    List.maximum l
+        |> Maybe.map (\m -> ( m, List.Extra.remove m l ))
+
+
+entriesAbove : GI -> Grid a -> List ( GI, a )
+entriesAbove si g =
+    List.Extra.unfoldr
+        (upOf
+            >> (\i ->
+                    Grid.get i g
+                        |> Maybe.map (\c -> ( ( i, c ), i ))
+               )
+        )
+        si
+
+
+
+-- CELL
 
 
 type Cell
@@ -76,6 +173,42 @@ type Cell
 type Tile
     = Water
     | Wall
+
+
+
+-- GRID INDEX HELPERS
+
+
+isAdjacentTo ( x1, y1 ) ( x2, y2 ) =
+    let
+        ( dxa, dya ) =
+            ( abs (x1 - x2), abs (y1 - y2) )
+    in
+    (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
+
+
+moveGIBy dx dy ( x, y ) =
+    ( x + dx, y + dy )
+
+
+upOf =
+    moveGIBy 0 -1
+
+
+downOf =
+    moveGIBy 0 1
+
+
+leftOf =
+    moveGIBy -1 0
+
+
+rightOf =
+    moveGIBy 1 0
+
+
+
+-- INITIAL GRID
 
 
 initialGrid : SeedsGrid
@@ -97,61 +230,6 @@ initialGrid =
                 )
     in
     SeedsGrid grid GridIdle
-
-
-areCellsAtIndicesConnectable : GI -> GI -> Grid Cell -> Bool
-areCellsAtIndicesConnectable ia ib grid =
-    Maybe.map2 (==) (Grid.get ia grid) (Grid.get ib grid)
-        |> Maybe.withDefault False
-
-
-areConnectable : GI -> GI -> Grid Cell -> Bool
-areConnectable aa bb grid =
-    areCellsAtIndicesConnectable aa bb grid
-        && isAdjacentTo aa bb
-
-
-canStartConnectionAt : GI -> Grid Cell -> Bool
-canStartConnectionAt gi grid =
-    case Grid.get gi grid of
-        Just (Cell tile) ->
-            case tile of
-                Water ->
-                    True
-
-                Wall ->
-                    False
-
-        Nothing ->
-            False
-
-
-isAdjacentTo ( x1, y1 ) ( x2, y2 ) =
-    let
-        ( dxa, dya ) =
-            ( abs (x1 - x2), abs (y1 - y2) )
-    in
-    (dxa == 0 && dya == 1) || (dxa == 1 && dya == 0)
-
-
-giMove dx dy ( x, y ) =
-    ( x + dx, y + dy )
-
-
-giUp =
-    giMove 0 -1
-
-
-giDown =
-    giMove 0 1
-
-
-giLeft =
-    giMove -1 0
-
-
-giRight =
-    giMove 1 0
 
 
 
@@ -184,21 +262,21 @@ connectPath1 : List Msg
 connectPath1 =
     List.Extra.scanl (<|)
         ( 1, 1 )
-        [ giDown
-        , giLeft
+        [ downOf
+        , leftOf
         , identity
-        , giRight >> giRight
-        , giRight
-        , giUp
-        , giUp
-        , giRight
-        , giRight
-        , giDown
-        , giDown
-        , giDown
-        , giDown
-        , giLeft
-        , giLeft
+        , rightOf >> rightOf
+        , rightOf
+        , upOf
+        , upOf
+        , rightOf
+        , rightOf
+        , downOf
+        , downOf
+        , downOf
+        , downOf
+        , leftOf
+        , leftOf
         ]
         |> List.map ToggleConnecting
 
@@ -207,16 +285,16 @@ connectPath2 : List Msg
 connectPath2 =
     List.Extra.scanl (<|)
         ( 1, 1 )
-        [ giDown
-        , giDown
-        , giDown
-        , giRight
-        , giRight
-        , giRight
-        , giRight
-        , giUp
-        , giUp
-        , giUp
+        [ downOf
+        , downOf
+        , downOf
+        , rightOf
+        , rightOf
+        , rightOf
+        , rightOf
+        , upOf
+        , upOf
+        , upOf
         ]
         |> List.map ToggleConnecting
 
@@ -301,69 +379,6 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
 
                 _ ->
                     Stay
-
-
-
--- COMPUTE FALLING INDICES : List (from,to)
-
-
-computeFalling : Grid Cell -> List GI -> List ( GI, GI )
-computeFalling grid =
-    let
-        firstMovableIdxAbove : GI -> List GI -> Maybe GI
-        firstMovableIdxAbove startIdx emptyIndices =
-            entriesAbove startIdx grid
-                |> List.Extra.find
-                    (\( idx, cell ) ->
-                        not (List.member idx emptyIndices) && isCellMovable cell
-                    )
-                |> Maybe.map Tuple.first
-
-        nextFalling emptyIndices =
-            case unconsMax emptyIndices of
-                Nothing ->
-                    Nothing
-
-                Just ( destIdx, pendingEmptyIndices ) ->
-                    case firstMovableIdxAbove destIdx pendingEmptyIndices of
-                        Nothing ->
-                            nextFalling pendingEmptyIndices
-
-                        Just srcIdx ->
-                            Just
-                                ( ( srcIdx, destIdx )
-                                , srcIdx :: pendingEmptyIndices
-                                )
-    in
-    List.Extra.unfoldr nextFalling
-
-
-isCellMovable : Cell -> Bool
-isCellMovable (Cell s) =
-    case s of
-        Water ->
-            True
-
-        Wall ->
-            False
-
-
-unconsMax : List comparable -> Maybe ( comparable, List comparable )
-unconsMax l =
-    List.maximum l
-        |> Maybe.map (\m -> ( m, List.Extra.remove m l ))
-
-
-entriesAbove : GI -> Grid a -> List ( GI, a )
-entriesAbove si g =
-    List.Extra.unfoldr
-        (giUp
-            >> (\i ->
-                    Grid.get i g
-                        |> Maybe.map (\c -> ( ( i, c ), i ))
-               )
-        )
-        si
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
