@@ -303,11 +303,15 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
 
 computeFalling : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
 computeFalling emptyIndices grid falling =
-    case List.sort emptyIndices |> List.reverse of
-        [] ->
+    case List.maximum emptyIndices of
+        Nothing ->
             falling
 
-        destIdx :: remainingEmpty ->
+        Just destIdx ->
+            let
+                remainingEmpty =
+                    List.Extra.remove destIdx emptyIndices
+            in
             case firstMovableCellIdxAbove destIdx remainingEmpty grid of
                 Nothing ->
                     computeFalling
