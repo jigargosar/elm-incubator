@@ -3,7 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Dict exposing (Dict)
-import Draw exposing (canvas, circle, fade, group, move, noTransition, rect, scale, square)
+import Draw exposing (canvas, circle, fade, group, move, noTransition, rect, scale, square, transition)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
@@ -34,6 +34,7 @@ type GridState
     = GridIdle
     | GridConnecting ConnectingState
     | GridLeavingFalling TransitionState
+    | GridGeneratingStart TransitionState
     | GridGenerating TransitionState
 
 
@@ -320,6 +321,7 @@ type Msg
     = ToggleConnecting GI
     | StartCollecting
     | StartGenerating
+    | ContinueGenerating
     | StopGenerating
 
 
@@ -419,6 +421,14 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartGenerating ->
             case gs of
                 GridLeavingFalling transition ->
+                    SetGridState (GridGeneratingStart transition) (delayN 1 ContinueGenerating)
+
+                _ ->
+                    Stay
+
+        ContinueGenerating ->
+            case gs of
+                GridGeneratingStart transition ->
                     SetGridState (GridGenerating transition) (delayN (defaultDelay * 10) StopGenerating)
 
                 _ ->
@@ -537,7 +547,7 @@ renderGrid (SeedsGrid grid gs) =
             in
             renderGridCellsWith renderCell
 
-        GridGenerating { generated } ->
+        GridGeneratingStart { generated } ->
             let
                 renderCell idx =
                     if Set.member idx generated then
@@ -548,6 +558,9 @@ renderGrid (SeedsGrid grid gs) =
             in
             renderGridCellsWith renderCell
 
+        GridGenerating _ ->
+            renderGridCellsWith (renderIdleBounceIn ctx)
+
 
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
 renderIdleCell ctx gi (Cell tile) =
@@ -557,6 +570,11 @@ renderIdleCell ctx gi (Cell tile) =
 renderIdleCellInstant : GCtx -> GI -> Cell -> Svg msg
 renderIdleCellInstant ctx gi (Cell tile) =
     group [ moveToGI ctx gi, noTransition ] [ renderTile ctx tile ]
+
+
+renderIdleBounceIn : GCtx -> GI -> Cell -> Svg msg
+renderIdleBounceIn ctx gi (Cell tile) =
+    group [ moveToGI ctx gi, transition "all 500ms cubic-bezier(0.0, 0.0, 0.72, 1.25)" ] [ renderTile ctx tile ]
 
 
 renderGeneratedCell : GCtx -> GI -> Cell -> Svg msg

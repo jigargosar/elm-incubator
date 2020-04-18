@@ -2,7 +2,7 @@ module Draw exposing
     ( canvas
     , square, rect, circle
     , Op, fade, move, scale
-    , group, noTransition, rotate
+    , group, noTransition, rotate, transition
     )
 
 {-|
@@ -16,7 +16,7 @@ module Draw exposing
 import Html exposing (Html)
 import Html.Attributes
 import Svg exposing (Svg, rect)
-import Svg.Attributes
+import Svg.Attributes exposing (class)
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types as T
@@ -64,10 +64,11 @@ type Op
     | Scale Float
     | Rotate Float
     | Transition String
+    | Class String
 
 
 type alias OpRec a =
-    { a | a : Float, o : Float, s : Float, trans : String, x : Float, y : Float }
+    { a | a : Float, classes : List String, o : Float, s : Float, trans : String, x : Float, y : Float }
 
 
 applyOps :
@@ -99,6 +100,9 @@ applyOp op ({ x, y, s, a } as m) =
         Transition trans ->
             { m | trans = trans }
 
+        Class class ->
+            { m | classes = class :: m.classes }
+
 
 fade =
     Fade
@@ -120,6 +124,10 @@ noTransition =
     Transition "none"
 
 
+transition =
+    Transition
+
+
 
 -- SVG PRIVATE API
 
@@ -131,6 +139,7 @@ type alias Rect =
     , a : Float
     , o : Float
     , trans : String
+    , classes : List String
     , fill : String
     , w : Float
     , h : Float
@@ -144,6 +153,7 @@ type alias Circle =
     , a : Float
     , o : Float
     , trans : String
+    , classes : List String
     , fill : String
     , r : Float
     }
@@ -156,22 +166,23 @@ type alias Group =
     , a : Float
     , o : Float
     , trans : String
+    , classes : List String
     }
 
 
 initRect : String -> Float -> Float -> Rect
 initRect =
-    Rect 0 0 1 0 1 defaultTransition
+    Rect 0 0 1 0 1 defaultTransition []
 
 
 initCircle : String -> Float -> Circle
 initCircle =
-    Circle 0 0 1 0 1 defaultTransition
+    Circle 0 0 1 0 1 defaultTransition []
 
 
 initGroup : Group
 initGroup =
-    Group 0 0 1 0 1 defaultTransition
+    Group 0 0 1 0 1 defaultTransition []
 
 
 renderRect : Rect -> Svg msg
@@ -179,17 +190,22 @@ renderRect m =
     Svg.rect
         [ width m.w
         , height m.h
+        , class (renderClasses m.classes)
         , renderStyles
             [ fill m.fill
             , transform <| renderRectTransform m
             , opacity m.o
-            , transition m.trans
+            , renderTransition m.trans
             ]
         ]
         []
 
 
-transition =
+renderClasses =
+    List.reverse >> String.join " "
+
+
+renderTransition =
     Tuple.pair "transition"
 
 
@@ -197,11 +213,12 @@ renderCircle : Circle -> Svg msg
 renderCircle m =
     Svg.circle
         [ r m.r
+        , class (renderClasses m.classes)
         , renderStyles
             [ fill m.fill
             , transform <| renderTransform m
             , opacity m.o
-            , transition m.trans
+            , renderTransition m.trans
             ]
         ]
         []
@@ -210,10 +227,11 @@ renderCircle m =
 renderGroup : List (Svg msg) -> Group -> Svg msg
 renderGroup children m =
     Svg.g
-        [ renderStyles
+        [ class (renderClasses m.classes)
+        , renderStyles
             [ transform <| renderTransform m
             , opacity m.o
-            , transition m.trans
+            , renderTransition m.trans
             ]
         ]
         children
