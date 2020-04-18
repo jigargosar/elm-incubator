@@ -301,20 +301,41 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
+unconsMax : List comparable -> Maybe ( comparable, List comparable )
+unconsMax l =
+    List.maximum l
+        |> Maybe.map (\m -> ( m, List.Extra.remove m l ))
+
+
 computeFalling : Grid Cell -> List GI -> List ( GI, GI )
 computeFalling grid =
     let
+        entriesAbove : GI -> List ( GI, Cell )
+        entriesAbove =
+            List.Extra.unfoldr
+                (giUp
+                    >> (\i ->
+                            Grid.get i grid
+                                |> Maybe.map (\c -> ( ( i, c ), i ))
+                       )
+                )
+
+        firstMovableIdxAbove : GI -> List GI -> Maybe GI
+        firstMovableIdxAbove startIdx emptyIndices =
+            entriesAbove startIdx
+                |> List.Extra.find
+                    (\( idx, cell ) ->
+                        not (List.member idx emptyIndices) && isCellMovable cell
+                    )
+                |> Maybe.map Tuple.first
+
         func emptyIndices =
-            case List.maximum emptyIndices of
+            case unconsMax emptyIndices of
                 Nothing ->
                     Nothing
 
-                Just destIdx ->
-                    let
-                        remainingEmpty =
-                            List.Extra.remove destIdx emptyIndices
-                    in
-                    case firstMovableCellIdxAbove destIdx remainingEmpty grid of
+                Just ( destIdx, remainingEmpty ) ->
+                    case firstMovableIdxAbove destIdx remainingEmpty of
                         Nothing ->
                             func remainingEmpty
 
@@ -325,27 +346,6 @@ computeFalling grid =
                                 )
     in
     List.Extra.unfoldr func
-
-
-firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
-firstMovableCellIdxAbove gi____ emptyIndices grid =
-    let
-        gi =
-            giUp gi____
-    in
-    case Grid.get gi grid of
-        Just cell ->
-            if
-                not (List.member gi emptyIndices)
-                    && isCellMovable cell
-            then
-                Just gi
-
-            else
-                firstMovableCellIdxAbove gi emptyIndices grid
-
-        Nothing ->
-            Nothing
 
 
 isCellMovable : Cell -> Bool
