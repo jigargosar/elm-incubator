@@ -301,6 +301,31 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
+cf grid =
+    let
+        func ei =
+            case List.maximum ei of
+                Nothing ->
+                    Nothing
+
+                Just destIdx ->
+                    let
+                        remainingEmpty =
+                            List.Extra.remove destIdx ei
+                    in
+                    case firstMovableCellIdxAbove destIdx remainingEmpty grid of
+                        Nothing ->
+                            func remainingEmpty
+
+                        Just srcIdx ->
+                            Just
+                                ( ( srcIdx, destIdx )
+                                , srcIdx :: remainingEmpty
+                                )
+    in
+    List.Extra.unfoldr func
+
+
 computeFalling : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
 computeFalling emptyIndices grid falling =
     case List.maximum emptyIndices of
