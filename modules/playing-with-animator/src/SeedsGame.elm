@@ -303,6 +303,10 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
+
+-- COMPUTE FALLING INDICES : List (from,to)
+
+
 computeFalling : Grid Cell -> List GI -> List ( GI, GI )
 computeFalling grid =
     let
