@@ -293,7 +293,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                             lastGI :: list
 
                         falling =
-                            computeFalling leaving grid []
+                            computeFalling grid leaving
                     in
                     gotoCollecting { leaving = leaving, falling = falling }
 
@@ -301,17 +301,18 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
-cf grid =
+computeFalling : Grid Cell -> List GI -> List ( GI, GI )
+computeFalling grid =
     let
-        func ei =
-            case List.maximum ei of
+        func emptyIndices =
+            case List.maximum emptyIndices of
                 Nothing ->
                     Nothing
 
                 Just destIdx ->
                     let
                         remainingEmpty =
-                            List.Extra.remove destIdx ei
+                            List.Extra.remove destIdx emptyIndices
                     in
                     case firstMovableCellIdxAbove destIdx remainingEmpty grid of
                         Nothing ->
@@ -324,31 +325,6 @@ cf grid =
                                 )
     in
     List.Extra.unfoldr func
-
-
-computeFalling : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
-computeFalling emptyIndices grid falling =
-    case List.maximum emptyIndices of
-        Nothing ->
-            falling
-
-        Just destIdx ->
-            let
-                remainingEmpty =
-                    List.Extra.remove destIdx emptyIndices
-            in
-            case firstMovableCellIdxAbove destIdx remainingEmpty grid of
-                Nothing ->
-                    computeFalling
-                        remainingEmpty
-                        grid
-                        falling
-
-                Just srcIdx ->
-                    computeFalling
-                        (srcIdx :: remainingEmpty)
-                        grid
-                        (( srcIdx, destIdx ) :: falling)
 
 
 firstMovableCellIdxAbove : GI -> List GI -> Grid Cell -> Maybe GI
