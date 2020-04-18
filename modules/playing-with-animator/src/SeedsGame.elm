@@ -293,7 +293,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                             lastGI :: list
 
                         falling =
-                            computeFalling leaving grid
+                            computeFalling leaving grid []
                     in
                     gotoCollecting { leaving = leaving, falling = falling }
 
@@ -301,13 +301,8 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
-computeFalling : List GI -> Grid Cell -> List ( GI, GI )
-computeFalling emptyIndices grid =
-    computeFallingHelp emptyIndices grid []
-
-
-computeFallingHelp : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
-computeFallingHelp emptyIndices grid falling =
+computeFalling : List GI -> Grid Cell -> List ( GI, GI ) -> List ( GI, GI )
+computeFalling emptyIndices grid falling =
     case List.sort emptyIndices |> List.reverse of
         [] ->
             falling
@@ -315,13 +310,13 @@ computeFallingHelp emptyIndices grid falling =
         destIdx :: remainingEmpty ->
             case firstMovableCellIdxAbove destIdx remainingEmpty grid of
                 Nothing ->
-                    computeFallingHelp
+                    computeFalling
                         remainingEmpty
                         grid
                         falling
 
                 Just srcIdx ->
-                    computeFallingHelp
+                    computeFalling
                         (srcIdx :: remainingEmpty)
                         grid
                         (( srcIdx, destIdx ) :: falling)
