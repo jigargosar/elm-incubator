@@ -457,13 +457,11 @@ renderGrid (SeedsGrid grid gs) =
             toGCtx grid
 
         renderGridCellsWith renderCell =
-            Grid.toListBy renderCell grid
-                |> group []
+            group [] (Grid.toListBy renderCell grid)
     in
     case gs of
         GridIdle ->
-            Grid.toListBy (renderIdleCell ctx) grid
-                |> group []
+            renderGridCellsWith (renderIdleCell ctx)
 
         GridConnecting cs ->
             let
