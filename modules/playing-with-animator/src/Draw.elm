@@ -2,7 +2,7 @@ module Draw exposing
     ( canvas
     , square, rect, circle
     , Op, fade, move, scale
-    , group, noTransition, rotate, transition
+    , class, group, noTransition, rotate, transition
     )
 
 {-|
@@ -16,7 +16,7 @@ module Draw exposing
 import Html exposing (Html)
 import Html.Attributes
 import Svg exposing (Svg, rect)
-import Svg.Attributes exposing (class)
+import Svg.Attributes as SA
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InPx exposing (height, r, width)
 import TypedSvg.Types as T
@@ -128,6 +128,10 @@ transition =
     Transition
 
 
+class =
+    Class
+
+
 
 -- SVG PRIVATE API
 
@@ -190,7 +194,7 @@ renderRect m =
     Svg.rect
         [ width m.w
         , height m.h
-        , class (renderClasses m.classes)
+        , SA.class (renderClasses m.classes)
         , renderStyles
             [ fill m.fill
             , transform <| renderRectTransform m
@@ -213,7 +217,7 @@ renderCircle : Circle -> Svg msg
 renderCircle m =
     Svg.circle
         [ r m.r
-        , class (renderClasses m.classes)
+        , SA.class (renderClasses m.classes)
         , renderStyles
             [ fill m.fill
             , transform <| renderTransform m
@@ -227,7 +231,7 @@ renderCircle m =
 renderGroup : List (Svg msg) -> Group -> Svg msg
 renderGroup children m =
     Svg.g
-        [ class (renderClasses m.classes)
+        [ SA.class (renderClasses m.classes)
         , renderStyles
             [ transform <| renderTransform m
             , opacity m.o
@@ -243,7 +247,7 @@ defaultTransition =
 
 renderStyles : List ( String, String ) -> Svg.Attribute msg
 renderStyles list =
-    Svg.Attributes.style
+    SA.style
         ([--( "transition", defaultTransition )
           --, ( "transition", "none" )
          ]
