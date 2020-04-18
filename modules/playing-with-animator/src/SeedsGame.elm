@@ -307,22 +307,24 @@ unconsMax l =
         |> Maybe.map (\m -> ( m, List.Extra.remove m l ))
 
 
+entriesAbove : GI -> Grid a -> List ( GI, a )
+entriesAbove si g =
+    List.Extra.unfoldr
+        (giUp
+            >> (\i ->
+                    Grid.get i g
+                        |> Maybe.map (\c -> ( ( i, c ), i ))
+               )
+        )
+        si
+
+
 computeFalling : Grid Cell -> List GI -> List ( GI, GI )
 computeFalling grid =
     let
-        entriesAbove : GI -> List ( GI, Cell )
-        entriesAbove =
-            List.Extra.unfoldr
-                (giUp
-                    >> (\i ->
-                            Grid.get i grid
-                                |> Maybe.map (\c -> ( ( i, c ), i ))
-                       )
-                )
-
         firstMovableIdxAbove : GI -> List GI -> Maybe GI
         firstMovableIdxAbove startIdx emptyIndices =
-            entriesAbove startIdx
+            entriesAbove startIdx grid
                 |> List.Extra.find
                     (\( idx, cell ) ->
                         not (List.member idx emptyIndices) && isCellMovable cell
