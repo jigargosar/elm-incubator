@@ -580,7 +580,7 @@ renderGeneratedEnd ctx gi (Cell tile) =
         [ moveToGI ctx gi
         , transition "all 500ms cubic-bezier(0.59, 0.87, 0.5, 1.31)"
         , transition "all 500ms "
-        , transition "all 500ms cubic-bezier(0.5, 1.5, 0.5, 1.5), opacity 500ms cubic-bezier(0.55, 0.06, 0.68, 0.19)"
+        , transition "transform 500ms cubic-bezier(0.5, 1.5, 0.5, 1.5), opacity 500ms cubic-bezier(0.55, 0.06, 0.68, 0.19)"
         ]
         [ renderTile ctx tile ]
 
