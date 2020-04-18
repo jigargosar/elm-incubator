@@ -245,6 +245,22 @@ gotoConnecting cs =
     gotoGridState (GridConnecting cs)
 
 
+maybeGoto : (a -> Return) -> Maybe a -> Return
+maybeGoto func maybeVal =
+    case maybeVal of
+        Nothing ->
+            Stay
+
+        Just val ->
+            func val
+
+
+maybeGotoConnecting : Maybe ConnectingState -> Return
+maybeGotoConnecting =
+    maybeGoto gotoConnecting
+
+
+gotoCollecting : CollectingState -> Return
 gotoCollecting cs =
     gotoGridState (GridCollecting cs)
 
@@ -255,28 +271,16 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         ToggleConnecting gi ->
             case gs of
                 GridIdle ->
-                    case startConnection gi grid of
-                        Just cs ->
-                            gotoConnecting cs
-
-                        Nothing ->
-                            Stay
+                    maybeGotoConnecting (startConnection gi grid)
 
                 GridConnecting connectingState ->
-                    let
-                        maybeNextConnectingState =
-                            Maybe.Extra.oneOf
-                                [ extendConnection gi grid
-                                , shrinkConnection gi
-                                ]
-                                connectingState
-                    in
-                    case maybeNextConnectingState of
-                        Just ncs ->
-                            gotoConnecting ncs
-
-                        Nothing ->
-                            Stay
+                    maybeGotoConnecting
+                        (Maybe.Extra.oneOf
+                            [ extendConnection gi grid
+                            , shrinkConnection gi
+                            ]
+                            connectingState
+                        )
 
                 _ ->
                     Stay
