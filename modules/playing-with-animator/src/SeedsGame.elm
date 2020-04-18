@@ -455,6 +455,10 @@ renderGrid (SeedsGrid grid gs) =
     let
         ctx =
             toGCtx grid
+
+        renderGridCellsWith renderCell =
+            Grid.toListBy renderCell grid
+                |> group []
     in
     case gs of
         GridIdle ->
@@ -479,8 +483,7 @@ renderGrid (SeedsGrid grid gs) =
                     else
                         renderIdleCell ctx idx
             in
-            Grid.toListBy renderCell grid
-                |> group []
+            renderGridCellsWith renderCell
 
         GridLeavingFalling { leaving, falling } ->
             let
@@ -501,8 +504,7 @@ renderGrid (SeedsGrid grid gs) =
                             else
                                 renderIdleCell ctx idx
             in
-            Grid.toListBy renderCell grid
-                |> group []
+            renderGridCellsWith renderCell
 
 
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
