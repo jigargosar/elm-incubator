@@ -580,7 +580,12 @@ renderGeneratedEnd ctx gi (Cell tile) =
         [ moveToGI ctx gi
         , transition "all 500ms cubic-bezier(0.59, 0.87, 0.5, 1.31)"
         , transition "all 500ms "
-        , transition "transform 500ms cubic-bezier(0.5, 1.5, 0.5, 1.5), opacity 500ms cubic-bezier(0.55, 0.06, 0.68, 0.19)"
+        , [ "transform 500ms cubic-bezier(0.5, 1.5, 0.5, 1.5)"
+          , "opacity 500ms cubic-bezier(0.55, 0.06, 0.68, 0.19)"
+          , "opacity 500ms ease-in"
+          ]
+            |> String.join ","
+            |> transition
         ]
         [ renderTile ctx tile ]
 
@@ -597,7 +602,15 @@ renderConnectedCell ctx gi (Cell tile) =
 
 renderLeavingCell : GCtx -> GI -> Cell -> Svg msg
 renderLeavingCell ctx _ (Cell tile) =
-    group [ move 0 -400, scale 0.2, fade 0, transition "all 500ms ease-in" ] [ renderTile ctx tile ]
+    group
+        [ move 0 -400
+        , scale 0.2
+        , fade 0
+        , transition "all 500ms ease-in"
+        , transition "all 500ms cubic-bezier(.84,.32,.72,.11)"
+        , transition "all 500ms cubic-bezier(1,.1,.75,1.30)"
+        ]
+        [ renderTile ctx tile ]
 
 
 renderTile : GCtx -> Tile -> Svg msg
