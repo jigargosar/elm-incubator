@@ -111,7 +111,7 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
 type alias TransitionState =
     { leaving : Set GI
     , falling : Dict GI GI
-    , generated : List GI
+    , generated : Set GI
     }
 
 
@@ -401,14 +401,14 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                         newFilled =
                             Dict.values falling |> Set.fromList
 
-                        genIndices =
+                        generated =
                             Set.diff (Set.union newEmpty leaving) newFilled
                     in
                     SetGridState
                         (GridLeavingFalling
                             { leaving = leaving
                             , falling = falling
-                            , generated = Set.toList genIndices
+                            , generated = generated
                             }
                         )
                         (delayN (defaultDelay * 15) StartGenerating)
@@ -540,7 +540,7 @@ renderGrid (SeedsGrid grid gs) =
         GridGenerating { generated } ->
             let
                 renderCell idx =
-                    if List.member idx generated then
+                    if Set.member idx generated then
                         renderGeneratedCell ctx idx
 
                     else
