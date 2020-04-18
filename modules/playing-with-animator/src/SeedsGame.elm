@@ -329,23 +329,23 @@ computeFalling grid =
                     )
                 |> Maybe.map Tuple.first
 
-        func emptyIndices =
+        nextFalling emptyIndices =
             case unconsMax emptyIndices of
                 Nothing ->
                     Nothing
 
-                Just ( destIdx, remainingEmpty ) ->
-                    case firstMovableIdxAbove destIdx remainingEmpty of
+                Just ( destIdx, pendingEmptyIndices ) ->
+                    case firstMovableIdxAbove destIdx pendingEmptyIndices of
                         Nothing ->
-                            func remainingEmpty
+                            nextFalling pendingEmptyIndices
 
                         Just srcIdx ->
                             Just
                                 ( ( srcIdx, destIdx )
-                                , srcIdx :: remainingEmpty
+                                , srcIdx :: pendingEmptyIndices
                                 )
     in
-    List.Extra.unfoldr func
+    List.Extra.unfoldr nextFalling
 
 
 isCellMovable : Cell -> Bool
