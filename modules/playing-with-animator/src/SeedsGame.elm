@@ -397,20 +397,21 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                             Dict.fromList falling
 
                         newEmpty =
-                            Dict.keys fallingDict
+                            Dict.keys fallingDict |> Set.fromList
 
                         newFilled =
-                            Dict.values fallingDict
+                            Dict.values fallingDict |> Set.fromList
+
+                        empty =
+                            Set.fromList leaving
 
                         genIndices =
-                            Set.fromList leaving
-                                |> Set.union (Set.fromList newEmpty)
-                                |> flip Set.diff (Set.fromList newFilled)
-                                |> Set.toList
+                            Set.diff empty newFilled
+                                |> Set.union newEmpty
                     in
                     SetGridState
-                        (GridLeavingFalling { leaving = leaving, falling = falling, generated = genIndices })
-                        (delayN (defaultDelay * 10) StartGenerating)
+                        (GridLeavingFalling { leaving = leaving, falling = falling, generated = Set.toList genIndices })
+                        (delayN (defaultDelay * 15) StartGenerating)
 
                 _ ->
                     Stay
@@ -418,7 +419,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartGenerating ->
             case gs of
                 GridLeavingFalling transition ->
-                    SetGridState (GridGenerating transition) (delayN (defaultDelay * 2) StopGenerating)
+                    SetGridState (GridGenerating transition) (delayN (defaultDelay * 10) StopGenerating)
 
                 _ ->
                     Stay
