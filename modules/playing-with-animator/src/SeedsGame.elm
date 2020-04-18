@@ -2,7 +2,6 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Cons exposing (Cons)
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
@@ -453,9 +452,13 @@ view (Model window gs) =
 
 renderGrid : SeedsGrid -> Svg msg
 renderGrid (SeedsGrid grid gs) =
+    let
+        ctx =
+            toGCtx grid
+    in
     case gs of
         GridIdle ->
-            gridToListWithCtx renderIdleCell grid
+            Grid.toListBy (renderIdleCell ctx) grid
                 |> group []
 
         GridConnecting cs ->
@@ -468,23 +471,23 @@ renderGrid (SeedsGrid grid gs) =
                 isConnected i =
                     List.member i connectedIndices
 
-                renderCell : GCtx -> GI -> Cell -> Svg msg
-                renderCell ctx gi =
-                    if isConnected gi then
-                        renderConnectedCell ctx gi
+                renderCell : GI -> Cell -> Svg msg
+                renderCell idx =
+                    if isConnected idx then
+                        renderConnectedCell ctx idx
 
                     else
-                        renderIdleCell ctx gi
+                        renderIdleCell ctx idx
             in
-            gridToListWithCtx renderCell grid
+            Grid.toListBy renderCell grid
                 |> group []
 
         GridLeavingFalling { leaving, falling } ->
             let
-                renderCell ctx gi =
+                renderCell idx =
                     let
                         maybeFallingToIdx =
-                            List.Extra.find (Tuple.first >> (==) gi) falling
+                            List.Extra.find (Tuple.first >> (==) idx) falling
                                 |> Maybe.map Tuple.second
                     in
                     case maybeFallingToIdx of
@@ -492,19 +495,14 @@ renderGrid (SeedsGrid grid gs) =
                             renderIdleCell ctx to
 
                         Nothing ->
-                            if List.member gi leaving then
-                                renderLeavingCell ctx gi
+                            if List.member idx leaving then
+                                renderLeavingCell ctx idx
 
                             else
-                                renderIdleCell ctx gi
+                                renderIdleCell ctx idx
             in
-            gridToListWithCtx renderCell grid
+            Grid.toListBy renderCell grid
                 |> group []
-
-
-gridToListWithCtx : (GCtx -> GI -> a -> b) -> Grid a -> List b
-gridToListWithCtx func grid =
-    Grid.toListBy (func (toGCtx grid)) grid
 
 
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
