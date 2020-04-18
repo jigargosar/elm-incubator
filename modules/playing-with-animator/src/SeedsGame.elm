@@ -8,7 +8,7 @@ import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
 import Process
-import Set
+import Set exposing (Set)
 import Svg exposing (Svg)
 import Task
 
@@ -109,7 +109,7 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
 
 
 type alias TransitionState =
-    { leaving : List GI
+    { leaving : Set GI
     , falling : List ( GI, GI )
     , generated : List GI
     }
@@ -385,13 +385,14 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
             case gs of
                 GridConnecting (ConnectingState lastGI ((_ :: _) as nonEmptyList)) ->
                     let
-                        leaving : List GI
                         leaving =
-                            lastGI :: nonEmptyList
+                            lastGI
+                                :: nonEmptyList
+                                |> Set.fromList
 
                         falling : List ( GI, GI )
                         falling =
-                            computeFalling grid leaving
+                            computeFalling grid (Set.toList leaving)
 
                         fallingDict =
                             Dict.fromList falling
@@ -402,11 +403,8 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                         newFilled =
                             Dict.values fallingDict |> Set.fromList
 
-                        empty =
-                            Set.fromList leaving
-
                         genIndices =
-                            Set.diff (Set.union newEmpty empty) newFilled
+                            Set.diff (Set.union newEmpty leaving) newFilled
                     in
                     SetGridState
                         (GridLeavingFalling
@@ -528,7 +526,7 @@ renderGrid (SeedsGrid grid gs) =
                     Dict.fromList falling
 
                 isLeaving idx =
-                    List.member idx leaving
+                    Set.member idx leaving
 
                 renderCell idx =
                     case Dict.get idx fallingFromToDict of
