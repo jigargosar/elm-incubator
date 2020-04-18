@@ -2,7 +2,7 @@ module Draw exposing
     ( canvas
     , square, rect, circle
     , Op, fade, move, scale
-    , group, rotate
+    , group, noTransition, rotate
     )
 
 {-|
@@ -114,6 +114,10 @@ scale =
 
 rotate =
     Rotate
+
+
+noTransition =
+    Transition "none"
 
 
 

@@ -3,7 +3,7 @@ module SeedsGame exposing (main)
 import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Dict
-import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
+import Draw exposing (canvas, circle, fade, group, move, noTransition, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
@@ -34,7 +34,7 @@ type GridState
     = GridIdle
     | GridConnecting ConnectingState
     | GridLeavingFalling TransitionState
-    | GridIdleBeforeGenerating TransitionState
+    | GridGenerating TransitionState
 
 
 
@@ -548,7 +548,7 @@ renderGrid (SeedsGrid grid gs) =
             in
             renderGridCellsWith renderCell
 
-        GridIdleBeforeGenerating { generated } ->
+        GridGenerating { generated } ->
             let
                 renderCell idx =
                     if List.member idx generated then
@@ -567,7 +567,7 @@ renderIdleCell ctx gi (Cell tile) =
 
 renderGeneratedCell : GCtx -> GI -> Cell -> Svg msg
 renderGeneratedCell ctx gi (Cell tile) =
-    group [ moveToGI ctx gi, move 0 -300, fade 0 ] [ renderTile ctx tile ]
+    group [ moveToGI ctx gi, move 0 -300, fade 0, noTransition ] [ renderTile ctx tile ]
 
 
 renderConnectedCell : GCtx -> GI -> Cell -> Svg msg
