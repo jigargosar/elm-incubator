@@ -489,13 +489,16 @@ renderGrid (SeedsGrid grid gs) =
                     List.Extra.find (Tuple.first >> (==) fromIdx) falling
                         |> Maybe.map Tuple.second
 
+                isLeaving idx =
+                    List.member idx leaving
+
                 renderCell idx =
                     case fallingToIdxOf idx of
                         Just to ->
                             renderIdleCell ctx to
 
                         Nothing ->
-                            if List.member idx leaving then
+                            if isLeaving idx then
                                 renderLeavingCell ctx idx
 
                             else
