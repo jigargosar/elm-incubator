@@ -318,6 +318,44 @@ type Msg
     | StartCollecting
 
 
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message model =
+    let
+        return =
+            customUpdate message model
+    in
+    case return of
+        SetGridState gridState ->
+            ( setGridState gridState model, Cmd.none )
+
+        Stay ->
+            ( model, Cmd.none )
+
+
+setSeedsGrid : SeedsGrid -> Model -> Model
+setSeedsGrid gs (Model win _) =
+    Model win gs
+
+
+setGridState : GridState -> Model -> Model
+setGridState gridState ((Model _ (SeedsGrid grid _)) as model) =
+    setSeedsGrid (SeedsGrid grid gridState) model
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.batch []
+
+
+
+-- CUSTOM UPDATE, i.e. using Return type
+
+
+type Return
+    = SetGridState GridState
+    | Stay
+
+
 customUpdate : Msg -> Model -> Return
 customUpdate message (Model _ (SeedsGrid grid gs)) =
     case message of
@@ -356,9 +394,14 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
-type Return
-    = SetGridState GridState
-    | Stay
+maybeGoto : (a -> Return) -> Maybe a -> Return
+maybeGoto func maybeVal =
+    case maybeVal of
+        Nothing ->
+            Stay
+
+        Just val ->
+            func val
 
 
 gotoGridState : GridState -> Return
@@ -371,16 +414,6 @@ gotoConnecting cs =
     gotoGridState (GridConnecting cs)
 
 
-maybeGoto : (a -> Return) -> Maybe a -> Return
-maybeGoto func maybeVal =
-    case maybeVal of
-        Nothing ->
-            Stay
-
-        Just val ->
-            func val
-
-
 maybeGotoConnecting : Maybe ConnectingState -> Return
 maybeGotoConnecting =
     maybeGoto gotoConnecting
@@ -389,35 +422,6 @@ maybeGotoConnecting =
 gotoLeavingFalling : LeavingFallingState -> Return
 gotoLeavingFalling lf =
     gotoGridState (GridLeavingFalling lf)
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
-    let
-        return =
-            customUpdate message model
-    in
-    case return of
-        SetGridState gridState ->
-            ( setGridState gridState model, Cmd.none )
-
-        Stay ->
-            ( model, Cmd.none )
-
-
-setSeedsGrid : SeedsGrid -> Model -> Model
-setSeedsGrid gs (Model win _) =
-    Model win gs
-
-
-setGridState : GridState -> Model -> Model
-setGridState gridState ((Model _ (SeedsGrid grid _)) as model) =
-    setSeedsGrid (SeedsGrid grid gridState) model
-
-
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.batch []
 
 
 
