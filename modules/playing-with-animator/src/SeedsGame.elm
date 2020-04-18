@@ -287,11 +287,13 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
 
         StartCollecting ->
             case gs of
-                GridConnecting (ConnectingState lastGI ((_ :: _) as list)) ->
+                GridConnecting (ConnectingState lastGI ((_ :: _) as nonEmptyList)) ->
                     let
+                        leaving : List GI
                         leaving =
-                            lastGI :: list
+                            lastGI :: nonEmptyList
 
+                        falling : List ( GI, GI )
                         falling =
                             computeFalling grid leaving
                     in
