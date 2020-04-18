@@ -303,24 +303,6 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                     Stay
 
 
-unconsMax : List comparable -> Maybe ( comparable, List comparable )
-unconsMax l =
-    List.maximum l
-        |> Maybe.map (\m -> ( m, List.Extra.remove m l ))
-
-
-entriesAbove : GI -> Grid a -> List ( GI, a )
-entriesAbove si g =
-    List.Extra.unfoldr
-        (giUp
-            >> (\i ->
-                    Grid.get i g
-                        |> Maybe.map (\c -> ( ( i, c ), i ))
-               )
-        )
-        si
-
-
 computeFalling : Grid Cell -> List GI -> List ( GI, GI )
 computeFalling grid =
     let
@@ -360,6 +342,24 @@ isCellMovable (Cell s) =
 
         Wall ->
             False
+
+
+unconsMax : List comparable -> Maybe ( comparable, List comparable )
+unconsMax l =
+    List.maximum l
+        |> Maybe.map (\m -> ( m, List.Extra.remove m l ))
+
+
+entriesAbove : GI -> Grid a -> List ( GI, a )
+entriesAbove si g =
+    List.Extra.unfoldr
+        (giUp
+            >> (\i ->
+                    Grid.get i g
+                        |> Maybe.map (\c -> ( ( i, c ), i ))
+               )
+        )
+        si
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
