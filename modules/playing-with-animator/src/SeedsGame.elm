@@ -316,6 +316,7 @@ connectPath2 =
 type Msg
     = ToggleConnecting GI
     | StartCollecting
+    | StartGenerating
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -393,6 +394,14 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                 _ ->
                     Stay
 
+        StartGenerating ->
+            case gs of
+                GridLeavingFalling { leaving, falling } ->
+                    Stay
+
+                _ ->
+                    Stay
+
 
 maybeGoto : (a -> Return) -> Maybe a -> Return
 maybeGoto func maybeVal =
@@ -421,7 +430,7 @@ maybeGotoConnecting =
 
 gotoLeavingFalling : LeavingFallingState -> Return
 gotoLeavingFalling lf =
-    gotoGridState (GridLeavingFalling lf)
+    SetGridState (GridLeavingFalling lf) (delayN defaultDelay StartGenerating)
 
 
 
