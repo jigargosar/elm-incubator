@@ -23,7 +23,7 @@ type SeedsGrid
 type GridState
     = GridIdle
     | GridConnecting ConnectingState
-    | GridCollecting CollectingState
+    | GridLeavingFalling LeavingFallingState
 
 
 type ConnectingState
@@ -63,7 +63,7 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
                 Nothing
 
 
-type alias CollectingState =
+type alias LeavingFallingState =
     { leaving : List GI
     , falling : List ( GI, GI )
     }
@@ -260,9 +260,9 @@ maybeGotoConnecting =
     maybeGoto gotoConnecting
 
 
-gotoCollecting : CollectingState -> Return
-gotoCollecting cs =
-    gotoGridState (GridCollecting cs)
+gotoLeavingFalling : LeavingFallingState -> Return
+gotoLeavingFalling lf =
+    gotoGridState (GridLeavingFalling lf)
 
 
 customUpdate : Msg -> Model -> Return
@@ -295,7 +295,7 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                         falling =
                             computeFalling grid leaving
                     in
-                    gotoCollecting { leaving = leaving, falling = falling }
+                    gotoLeavingFalling { leaving = leaving, falling = falling }
 
                 _ ->
                     Stay
@@ -449,7 +449,7 @@ renderGrid (SeedsGrid grid gs) =
             gridToListWithCtx (renderConnectingCell ciCons) grid
                 |> group []
 
-        GridCollecting { leaving, falling } ->
+        GridLeavingFalling { leaving, falling } ->
             let
                 renderCell ctx gi =
                     let
