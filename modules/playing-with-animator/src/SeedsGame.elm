@@ -33,7 +33,8 @@ type Tile
 type GridState
     = GridIdle
     | GridConnecting ConnectingState
-    | GridLeavingFalling LeavingFallingState
+    | GridLeavingFalling TransitionState
+    | GridIdleBeforeGenerating TransitionState
 
 
 
@@ -107,9 +108,10 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
 -- COMPUTE FALLING INDICES : List (from,to)
 
 
-type alias LeavingFallingState =
+type alias TransitionState =
     { leaving : List GI
     , falling : List ( GI, GI )
+    , generated : List GI
     }
 
 
@@ -389,8 +391,23 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                         falling : List ( GI, GI )
                         falling =
                             computeFalling grid leaving
+
+                        fallingDict =
+                            Dict.fromList falling
+
+                        newEmpty =
+                            Dict.keys fallingDict
+
+                        newFilled =
+                            Dict.values fallingDict
+
+                        genIndices =
+                            Set.fromList leaving
+                                |> Set.union (Set.fromList newEmpty)
+                                |> flip Set.diff (Set.fromList newFilled)
+                                |> Set.toList
                     in
-                    gotoLeavingFalling { leaving = leaving, falling = falling }
+                    gotoLeavingFalling { leaving = leaving, falling = falling, generated = genIndices }
 
                 _ ->
                     Stay
@@ -444,7 +461,7 @@ maybeGotoConnecting =
     maybeGoto gotoConnecting
 
 
-gotoLeavingFalling : LeavingFallingState -> Return
+gotoLeavingFalling : TransitionState -> Return
 gotoLeavingFalling lf =
     SetGridState (GridLeavingFalling lf) (delayN defaultDelay StartGenerating)
 
@@ -531,10 +548,26 @@ renderGrid (SeedsGrid grid gs) =
             in
             renderGridCellsWith renderCell
 
+        GridIdleBeforeGenerating { generated } ->
+            let
+                renderCell idx =
+                    if List.member idx generated then
+                        renderGeneratedCell ctx idx
+
+                    else
+                        renderIdleCell ctx idx
+            in
+            renderGridCellsWith renderCell
+
 
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
 renderIdleCell ctx gi (Cell tile) =
     group [ moveToGI ctx gi ] [ renderTile ctx tile ]
+
+
+renderGeneratedCell : GCtx -> GI -> Cell -> Svg msg
+renderGeneratedCell ctx gi (Cell tile) =
+    group [ moveToGI ctx gi, move 0 -300, fade 0 ] [ renderTile ctx tile ]
 
 
 renderConnectedCell : GCtx -> GI -> Cell -> Svg msg

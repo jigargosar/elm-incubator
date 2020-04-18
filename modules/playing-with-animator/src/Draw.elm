@@ -122,6 +122,7 @@ type alias Rect =
     , s : Float
     , a : Float
     , o : Float
+    , trans : String
     , fill : String
     , w : Float
     , h : Float
@@ -134,6 +135,7 @@ type alias Circle =
     , s : Float
     , a : Float
     , o : Float
+    , trans : String
     , fill : String
     , r : Float
     }
@@ -145,22 +147,23 @@ type alias Group =
     , s : Float
     , a : Float
     , o : Float
+    , trans : String
     }
 
 
 initRect : String -> Float -> Float -> Rect
 initRect =
-    Rect 0 0 1 0 1
+    Rect 0 0 1 0 1 defaultTransition
 
 
 initCircle : String -> Float -> Circle
 initCircle =
-    Circle 0 0 1 0 1
+    Circle 0 0 1 0 1 defaultTransition
 
 
 initGroup : Group
 initGroup =
-    Group 0 0 1 0 1
+    Group 0 0 1 0 1 defaultTransition
 
 
 renderRect : Rect -> Svg msg
@@ -172,9 +175,14 @@ renderRect m =
             [ fill m.fill
             , transform <| renderRectTransform m
             , opacity m.o
+            , transition m.trans
             ]
         ]
         []
+
+
+transition =
+    Tuple.pair "transition"
 
 
 renderCircle : Circle -> Svg msg
@@ -185,6 +193,7 @@ renderCircle m =
             [ fill m.fill
             , transform <| renderTransform m
             , opacity m.o
+            , transition m.trans
             ]
         ]
         []
@@ -196,17 +205,21 @@ renderGroup children m =
         [ renderStyles
             [ transform <| renderTransform m
             , opacity m.o
+            , transition m.trans
             ]
         ]
         children
 
 
+defaultTransition =
+    "all 500ms"
+
+
 renderStyles : List ( String, String ) -> Svg.Attribute msg
 renderStyles list =
     Svg.Attributes.style
-        ([ ( "transition", "all 500ms" )
-
-         --, ( "transition", "none" )
+        ([--( "transition", defaultTransition )
+          --, ( "transition", "none" )
          ]
             ++ list
             |> List.map styleTupleToString
