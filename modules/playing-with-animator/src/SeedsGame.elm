@@ -1,6 +1,6 @@
 module SeedsGame exposing (main)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Dict
 import Draw exposing (canvas, circle, fade, group, move, rect, scale, square)
@@ -8,6 +8,7 @@ import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
 import Process
+import Set
 import Svg exposing (Svg)
 import Task
 
@@ -397,6 +398,21 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
         StartGenerating ->
             case gs of
                 GridLeavingFalling { leaving, falling } ->
+                    let
+                        fallingDict =
+                            Dict.fromList falling
+
+                        newEmpty =
+                            Dict.keys fallingDict
+
+                        newFilled =
+                            Dict.values fallingDict
+
+                        genIndices =
+                            Set.fromList leaving
+                                |> Set.union (Set.fromList newEmpty)
+                                |> flip Set.diff (Set.fromList newFilled)
+                    in
                     Stay
 
                 _ ->
