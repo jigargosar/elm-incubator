@@ -2,7 +2,7 @@ module SeedsGame exposing (main)
 
 import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
-import Dict
+import Dict exposing (Dict)
 import Draw exposing (canvas, circle, fade, group, move, noTransition, rect, scale, square)
 import Grid exposing (GI, Grid)
 import List.Extra
@@ -110,7 +110,7 @@ shrinkConnection gi (ConnectingState _ oldRemaining) =
 
 type alias TransitionState =
     { leaving : Set GI
-    , falling : List ( GI, GI )
+    , falling : Dict GI GI
     , generated : List GI
     }
 
@@ -390,18 +390,16 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                                 :: nonEmptyList
                                 |> Set.fromList
 
-                        falling : List ( GI, GI )
+                        falling : Dict GI GI
                         falling =
                             computeFalling grid (Set.toList leaving)
-
-                        fallingDict =
-                            Dict.fromList falling
+                                |> Dict.fromList
 
                         newEmpty =
-                            Dict.keys fallingDict |> Set.fromList
+                            Dict.keys falling |> Set.fromList
 
                         newFilled =
-                            Dict.values fallingDict |> Set.fromList
+                            Dict.values falling |> Set.fromList
 
                         genIndices =
                             Set.diff (Set.union newEmpty leaving) newFilled
@@ -522,14 +520,11 @@ renderGrid (SeedsGrid grid gs) =
 
         GridLeavingFalling { leaving, falling } ->
             let
-                fallingFromToDict =
-                    Dict.fromList falling
-
                 isLeaving idx =
                     Set.member idx leaving
 
                 renderCell idx =
-                    case Dict.get idx fallingFromToDict of
+                    case Dict.get idx falling of
                         Just to ->
                             renderIdleCell ctx to
 
