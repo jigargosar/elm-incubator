@@ -406,11 +406,15 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                             Set.fromList leaving
 
                         genIndices =
-                            Set.diff empty newFilled
-                                |> Set.union newEmpty
+                            Set.diff (Set.union newEmpty empty) newFilled
                     in
                     SetGridState
-                        (GridLeavingFalling { leaving = leaving, falling = falling, generated = Set.toList genIndices })
+                        (GridLeavingFalling
+                            { leaving = leaving
+                            , falling = falling
+                            , generated = Set.toList genIndices
+                            }
+                        )
                         (delayN (defaultDelay * 15) StartGenerating)
 
                 _ ->
@@ -547,7 +551,7 @@ renderGrid (SeedsGrid grid gs) =
                         renderGeneratedCell ctx idx
 
                     else
-                        renderIdleCell ctx idx
+                        renderIdleCellInstant ctx idx
             in
             renderGridCellsWith renderCell
 
@@ -555,6 +559,11 @@ renderGrid (SeedsGrid grid gs) =
 renderIdleCell : GCtx -> GI -> Cell -> Svg msg
 renderIdleCell ctx gi (Cell tile) =
     group [ moveToGI ctx gi ] [ renderTile ctx tile ]
+
+
+renderIdleCellInstant : GCtx -> GI -> Cell -> Svg msg
+renderIdleCellInstant ctx gi (Cell tile) =
+    group [ moveToGI ctx gi, noTransition ] [ renderTile ctx tile ]
 
 
 renderGeneratedCell : GCtx -> GI -> Cell -> Svg msg
