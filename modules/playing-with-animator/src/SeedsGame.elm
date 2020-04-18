@@ -320,6 +320,7 @@ type Msg
     = ToggleConnecting GI
     | StartCollecting
     | StartGenerating
+    | StopGenerating
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -407,30 +408,25 @@ customUpdate message (Model _ (SeedsGrid grid gs)) =
                                 |> flip Set.diff (Set.fromList newFilled)
                                 |> Set.toList
                     in
-                    gotoLeavingFalling { leaving = leaving, falling = falling, generated = genIndices }
+                    SetGridState
+                        (GridLeavingFalling { leaving = leaving, falling = falling, generated = genIndices })
+                        (delayN (defaultDelay * 10) StartGenerating)
 
                 _ ->
                     Stay
 
         StartGenerating ->
             case gs of
-                GridLeavingFalling { leaving, falling } ->
-                    let
-                        fallingDict =
-                            Dict.fromList falling
+                GridLeavingFalling transition ->
+                    SetGridState (GridGenerating transition) (delayN (defaultDelay * 2) StopGenerating)
 
-                        newEmpty =
-                            Dict.keys fallingDict
-
-                        newFilled =
-                            Dict.values fallingDict
-
-                        genIndices =
-                            Set.fromList leaving
-                                |> Set.union (Set.fromList newEmpty)
-                                |> flip Set.diff (Set.fromList newFilled)
-                    in
+                _ ->
                     Stay
+
+        StopGenerating ->
+            case gs of
+                GridGenerating _ ->
+                    SetGridState GridIdle Cmd.none
 
                 _ ->
                     Stay
@@ -459,11 +455,6 @@ gotoConnecting cs =
 maybeGotoConnecting : Maybe ConnectingState -> Return
 maybeGotoConnecting =
     maybeGoto gotoConnecting
-
-
-gotoLeavingFalling : TransitionState -> Return
-gotoLeavingFalling lf =
-    SetGridState (GridLeavingFalling lf) (delayN defaultDelay StartGenerating)
 
 
 
