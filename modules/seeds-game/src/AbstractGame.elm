@@ -15,6 +15,7 @@ type Cell
     | Empty
 
 
+initialGrid : Grid Cell
 initialGrid =
     let
         wallIndices =
