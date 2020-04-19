@@ -22,8 +22,8 @@ info (GM g) =
 
 
 makeMove : Int -> GameModel -> GameModel
-makeMove _ =
-    identity
+makeMove i (GM g) =
+    GM { g | currentTarget = g.currentTarget - i, movesLeft = g.movesLeft - 1 }
 
 
 

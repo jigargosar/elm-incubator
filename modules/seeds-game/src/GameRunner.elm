@@ -3,7 +3,7 @@ module GameRunner exposing (main)
 import AbstractGame as G
 import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (autofocus, class)
 import Html.Events exposing (onClick)
 
 
@@ -36,13 +36,13 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
+update message ((Model g) as model) =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
         MakeMove ->
-            ( model, Cmd.none )
+            ( Model (G.makeMove 10 g), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -67,6 +67,7 @@ view (Model g) =
         , div
             [ class "pa3"
             , onClick MakeMove
+            , autofocus True
             ]
             [ button [ class "ma2" ] [ text "make move" ] ]
         ]
