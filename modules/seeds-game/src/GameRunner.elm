@@ -153,7 +153,7 @@ viewGameCells cells =
 
         viewRow y ( h, t ) =
             Html.tr []
-                (Html.th [] [ text "y", text (String.fromInt y) ]
+                (Html.th [ class "code f4" ] [ text "y", text (String.fromInt y) ]
                     :: List.map viewCell (h :: t)
                 )
 
@@ -163,15 +163,15 @@ viewGameCells cells =
         viewTHead mh =
             case mh of
                 Just ( h, t ) ->
-                    Html.thead []
-                        (Html.th [] [ text "x,y" ]
+                    Html.thead [ class "code f4" ]
+                        (Html.th [] [ text "( x, y )" ]
                             :: List.indexedMap viewHeadCell (h :: t)
                         )
 
                 Nothing ->
                     text ""
     in
-    table [ class "pa3 w-100" ]
+    table [ class "pa3 w-100 " ]
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
