@@ -148,7 +148,7 @@ viewGameCells cells =
         viewCell ( _, c ) =
             Html.td []
                 [ div
-                    [ class "br3 pa3"
+                    [ class "br3 pa4"
                     , class
                         (case c of
                             G.Water ->
