@@ -38,6 +38,7 @@ type Msg
     = NoOp
     | MakeMove Int
     | PlayAnother
+    | CollectIndices (List GI)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -82,6 +83,16 @@ update message model =
 
                 Won _ ->
                     init ()
+
+        CollectIndices list ->
+            ( case model of
+                Running _ ->
+                    model
+
+                _ ->
+                    model
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
@@ -157,9 +168,9 @@ viewGameCells cells =
                             G.Wall ->
                                 "bg-light-purple white"
 
-
                             G.Empty ->
-                                ""                           )
+                                ""
+                        )
                     ]
                     --[ text (Debug.toString c) ]
                     [ div [ class "code f5" ] [ text (Debug.toString i) ] ]
