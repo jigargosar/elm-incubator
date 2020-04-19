@@ -34,13 +34,27 @@ makeMove i (GM g) =
         InvalidMove
 
     else if g.currentTarget - i <= 0 then
-        GameWon { g | currentTarget = 0, movesLeft = g.movesLeft - 1 }
+        GameWon
+            { g
+                | currentTarget = 0
+                , movesLeft = g.movesLeft - 1
+            }
 
     else if g.movesLeft == 1 then
-        GameLost { g | currentTarget = g.currentTarget - i, movesLeft = 0 }
+        GameLost
+            { g
+                | currentTarget = g.currentTarget - i
+                , movesLeft = 0
+            }
 
     else
-        NextState (GM { g | currentTarget = g.currentTarget - i, movesLeft = g.movesLeft - 1 })
+        NextState
+            (GM
+                { g
+                    | currentTarget = g.currentTarget - i
+                    , movesLeft = g.movesLeft - 1
+                }
+            )
 
 
 
