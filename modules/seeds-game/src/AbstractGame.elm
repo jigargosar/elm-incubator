@@ -20,6 +20,9 @@ initialGrid =
         wallIndices =
             [ ( 2, 1 ), ( 4, 1 ), ( 2, 3 ), ( 4, 3 ) ]
 
+        emptyIndices =
+            [ ( 3, 2 ) ]
+
         grid =
             Grid.init
                 7
@@ -27,6 +30,9 @@ initialGrid =
                 (\i ->
                     if List.member i wallIndices then
                         Wall
+
+                    else if List.member i emptyIndices then
+                        Empty
 
                     else
                         Water
