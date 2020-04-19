@@ -2,7 +2,7 @@ module AbstractGame exposing (GameModel, Info, MoveResult(..), info, initGame, m
 
 -- GAME MODEL
 
-import Grid exposing (Grid)
+import Grid exposing (GI, Grid)
 
 
 type GameModel
@@ -41,12 +41,15 @@ initGame =
 
 
 type alias Info =
-    { movesLeft : Int, currentTarget : Int }
+    { movesLeft : Int
+    , currentTarget : Int
+    , cells : List ( GI, Cell )
+    }
 
 
 info : GameModel -> Info
 info (GM g) =
-    Info g.movesLeft g.currentTarget
+    Info g.movesLeft g.currentTarget (Grid.toList g.grid)
 
 
 type MoveResult
@@ -65,12 +68,14 @@ makeMove i (GM g) =
         GameWon
             { currentTarget = 0
             , movesLeft = g.movesLeft - 1
+            , cells = Grid.toList g.grid
             }
 
     else if g.movesLeft == 1 then
         GameLost
             { currentTarget = g.currentTarget - i
             , movesLeft = 0
+            , cells = Grid.toList g.grid
             }
 
     else
