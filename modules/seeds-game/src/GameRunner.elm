@@ -57,8 +57,8 @@ view : Model -> DM
 view (Model g) =
     Document "GameRunner"
         [ div [ class "pa3" ]
-            [ viewMovesRemaining (AbstractGame.movesRemaining g)
-            , viewCurrentTarget 100
+            [ viewMovesRemaining (AbstractGame.movesLeft g)
+            , viewCurrentTarget (AbstractGame.currentTarget g)
             ]
         ]
 

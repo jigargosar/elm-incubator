@@ -1,4 +1,4 @@
-module AbstractGame exposing (GameModel, initGame, movesRemaining)
+module AbstractGame exposing (GameModel, currentTarget, initGame, movesLeft)
 
 -- GAME MODEL
 
@@ -12,9 +12,14 @@ initGame =
     GameModel
 
 
-movesRemaining : GameModel -> Int
-movesRemaining _ =
+movesLeft : GameModel -> Int
+movesLeft _ =
     5
+
+
+currentTarget : GameModel -> Int
+currentTarget _ =
+    100
 
 
 
