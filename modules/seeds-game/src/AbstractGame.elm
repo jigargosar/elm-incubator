@@ -1,4 +1,4 @@
-module AbstractGame exposing (GameModel, Info, MoveResult(..), info, initGame, makeMove)
+module AbstractGame exposing (Cell(..), GameModel, Info, MoveResult(..), info, initGame, makeMove)
 
 -- GAME MODEL
 

@@ -2,9 +2,11 @@ module GameRunner exposing (main)
 
 import AbstractGame as G
 import Browser exposing (Document)
-import Html exposing (Html, button, div, text)
+import Grid exposing (GI)
+import Html exposing (Html, button, div, table, text)
 import Html.Attributes exposing (autofocus, class)
 import Html.Events exposing (onClick)
+import List.Extra
 
 
 
@@ -140,13 +142,28 @@ viewGameInfo i =
         ]
 
 
+viewGameCells : List ( GI, G.Cell ) -> Html msg
 viewGameCells cells =
     let
         viewCell ( i, c ) =
-            div [] [ text (Debug.toString ( i, c )) ]
+            Html.td [] [ text (Debug.toString ( i, c )) ]
+
+        rows =
+            List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
+
+        viewRow y ( h, t ) =
+            Html.tr []
+                (Html.th [] [ text <| String.fromInt y ]
+                    :: List.map viewCell (h :: t)
+                )
+
+        viewTHead =
+            Html.thead []
+                [ Html.th [] [ text "x,y" ]
+                ]
     in
-    div [ class "pa3" ]
-        (List.map viewCell cells)
+    table [ class "pa3" ]
+        (viewTHead :: List.indexedMap viewRow rows)
 
 
 btn msg txt =
