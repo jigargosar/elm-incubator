@@ -14,6 +14,25 @@ import Task
 
 
 
+-- GAME MODEL
+
+
+type GameModel
+    = GameModel (Grid GameCell)
+
+
+type GameCell
+    = GameCellWall
+    | GameCellWater
+    | GameCellSeed
+
+
+gameModelConnectIndices : List GI -> GameModel -> Maybe GameModel
+gameModelConnectIndices _ =
+    Debug.todo "impl"
+
+
+
 -- SEED GRID
 
 
