@@ -132,9 +132,21 @@ type alias HM =
 
 viewGameInfo : G.Info -> HM
 viewGameInfo i =
-    div [ class "pa3" ]
-        [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
+    div []
+        [ div [ class "pa3" ]
+            [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
+            ]
+        , viewGameCells i.cells
         ]
+
+
+viewGameCells cells =
+    let
+        viewCell ( i, c ) =
+            div [] [ text (Debug.toString ( i, c )) ]
+    in
+    div [ class "pa3" ]
+        (List.map viewCell cells)
 
 
 btn msg txt =
