@@ -101,9 +101,7 @@ view model =
         (case model of
             Running g ->
                 [ div [ class "pa3" ] [ text "Game Running" ]
-                , div [ class "pa3" ]
-                    [ text (Debug.toString (G.info g))
-                    ]
+                , div [ class "pa3" ] [ text (Debug.toString (G.info g)) ]
                 , div
                     [ class "pa3"
                     ]
@@ -124,16 +122,12 @@ view model =
 
             Over info ->
                 [ div [ class "pa3" ] [ text "Game Lost" ]
-                , div [ class "pa3" ]
-                    [ text (Debug.toString info)
-                    ]
+                , div [ class "pa3" ] [ text (Debug.toString info) ]
                 ]
 
             Won info ->
                 [ div [ class "pa3" ] [ text "Game Won" ]
-                , div [ class "pa3" ]
-                    [ text (Debug.toString info)
-                    ]
+                , div [ class "pa3" ] [ text (Debug.toString info) ]
                 ]
         )
 
