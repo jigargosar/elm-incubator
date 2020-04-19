@@ -2,7 +2,9 @@ module AbstractGame exposing (Cell(..), GameModel, Info, MoveResult(..), collect
 
 -- GAME MODEL
 
+import Basics.Extra exposing (flip)
 import Grid exposing (GI, Grid)
+import List.Extra
 
 
 type GameModel
@@ -78,6 +80,27 @@ collectIndices list (GM gm) =
 
         ng =
             Grid.map makeEmpty gm.grid
+
+        func g =
+            Grid.toList g
+                |> List.reverse
+                |> List.Extra.find (Tuple.second >> (==) Empty)
+                |> Maybe.map
+                    (\( ei, _ ) ->
+                        let
+                            entriesAbove : List a
+                            entriesAbove =
+                                List.Extra.unfoldr
+                                    (flip Grid.entryAbove g
+                                        >> (\( i, c ) -> ( i, ( i, c ) ))
+                                    )
+                                    ei
+                        in
+                        List.Extra.find (Tuple.second >> (/=) Empty)
+                    )
+
+        _ =
+            List.Extra.unfoldr func ng
     in
     GM { gm | grid = ng }
 

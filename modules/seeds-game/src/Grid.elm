@@ -1,4 +1,4 @@
-module Grid exposing (GI, Grid, get, indices, init, map, mapIdx, set, toList, toListBy, wh)
+module Grid exposing (GI, Grid, entryAbove, entryAt, get, indices, init, map, mapIdx, set, toList, toListBy, wh)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
@@ -27,6 +27,16 @@ init w h func =
 get : GI -> Grid a -> Maybe a
 get gIdx (G d) =
     Dict.get gIdx d
+
+
+entryAt : GI -> Grid a -> Maybe ( GI, a )
+entryAt i =
+    get i >> Maybe.map (Tuple.pair i)
+
+
+entryAbove : GI -> Grid a -> Maybe ( GI, a )
+entryAbove =
+    Tuple.mapSecond ((+) -1) >> entryAt
 
 
 set : GI -> a -> Grid a -> Maybe (Grid a)
