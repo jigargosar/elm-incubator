@@ -58,6 +58,7 @@ view (Model g) =
     Document "GameRunner"
         [ div [ class "pa3" ]
             [ viewMovesRemaining (AbstractGame.movesRemaining g)
+            , viewCurrentTarget 100
             ]
         ]
 
@@ -66,6 +67,13 @@ viewMovesRemaining mr =
     div [ class "pa2" ]
         [ text "Moves Left: "
         , text (String.fromInt mr)
+        ]
+
+
+viewCurrentTarget t =
+    div [ class "pa2" ]
+        [ text "Collection Target: "
+        , text (String.fromInt t)
         ]
 
 
