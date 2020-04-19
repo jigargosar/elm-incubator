@@ -102,20 +102,12 @@ view model =
             Running g ->
                 [ div [ class "pa3" ] [ text "Game Running" ]
                 , div [ class "pa3" ] [ text (Debug.toString (G.info g)) ]
-                , div
-                    [ class "pa3"
-                    ]
+                , div [ class "pa3" ]
                     [ button
-                        [ class "ma2"
-                        , onClick <| MakeMove 10
-                        , autofocus True
-                        ]
+                        [ onClick <| MakeMove 10, class "ma2", autofocus True ]
                         [ text "collect 10" ]
                     , button
-                        [ class "ma2"
-                        , onClick <| MakeMove 50
-                        , autofocus True
-                        ]
+                        [ onClick <| MakeMove 50, class "ma2", autofocus True ]
                         [ text "collect 50" ]
                     ]
                 ]
