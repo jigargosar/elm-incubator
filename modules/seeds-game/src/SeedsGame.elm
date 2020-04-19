@@ -21,12 +21,16 @@ type GameModel
     = GameModel
 
 
+type GameOverModel
+    = GameOverModel
+
+
 type GameMove
     = GameMove
 
 
 type MoveResult
-    = MoveResultGameOver
+    = MoveResultGameOver GameOverModel
     | MoveResultNextState GameModel
     | MoveResultInvalidMove
 
