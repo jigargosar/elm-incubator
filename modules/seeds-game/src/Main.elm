@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import SeedsGame
+import GameRunner
 
 
 main =
-    SeedsGame.main
+    GameRunner.main

@@ -14,33 +14,6 @@ import Task
 
 
 
--- GAME MODEL
-
-
-type GameModel
-    = GameModel
-
-
-type GameOverModel
-    = GameOverModel
-
-
-type GameMove
-    = GameMove
-
-
-type MoveResult
-    = MoveResultGameOver GameOverModel
-    | MoveResultNextState GameModel
-    | MoveResultInvalidMove
-
-
-makeMove : GameMove -> GameModel -> MoveResult
-makeMove =
-    Debug.todo "impl"
-
-
-
 -- SEED GRID
 
 
