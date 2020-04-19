@@ -12,7 +12,8 @@ import Html.Events exposing (onClick)
 
 
 type Model
-    = Model G.GameModel
+    = Running G.GameModel
+    | Over G.Info
 
 
 type alias Flags =
@@ -21,7 +22,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Model G.initGame
+    ( Running G.initGame
     , Cmd.none
     )
 
@@ -36,25 +37,30 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update message ((Model g) as model) =
+update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
 
         MakeMove ->
-            let
-                _ =
-                    case G.makeMove 10 g of
-                        G.InvalidMove ->
-                            1
+            case model of
+                Running g ->
+                    let
+                        nm =
+                            case G.makeMove 10 g of
+                                G.InvalidMove ->
+                                    model
 
-                        G.GameOver info ->
-                            2
+                                G.GameOver info ->
+                                    Over info
 
-                        G.NextState gameModel ->
-                            3
-            in
-            ( model, Cmd.none )
+                                G.NextState ng ->
+                                    Running ng
+                    in
+                    ( nm, Cmd.none )
+
+                Over _ ->
+                    ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -71,18 +77,29 @@ type alias DM =
 
 
 view : Model -> DM
-view (Model g) =
+view model =
     Document "GameRunner"
-        [ div [ class "pa3" ]
-            [ text (Debug.toString (G.info g))
-            ]
-        , div
-            [ class "pa3"
-            , onClick MakeMove
-            , autofocus True
-            ]
-            [ button [ class "ma2" ] [ text "make move" ] ]
-        ]
+        (case model of
+            Running g ->
+                [ div [ class "pa3" ] [ text "Game Running" ]
+                , div [ class "pa3" ]
+                    [ text (Debug.toString (G.info g))
+                    ]
+                , div
+                    [ class "pa3"
+                    , onClick MakeMove
+                    , autofocus True
+                    ]
+                    [ button [ class "ma2" ] [ text "make move" ] ]
+                ]
+
+            Over info ->
+                [ div [ class "pa3" ] [ text "Game Over" ]
+                , div [ class "pa3" ]
+                    [ text (Debug.toString info)
+                    ]
+                ]
+        )
 
 
 
