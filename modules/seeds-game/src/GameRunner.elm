@@ -126,8 +126,15 @@ view model =
         )
 
 
-viewGameInfo info =
-    div [ class "pa3" ] [ text (Debug.toString info) ]
+type alias HM =
+    Html Msg
+
+
+viewGameInfo : G.Info -> HM
+viewGameInfo i =
+    div [ class "pa3" ]
+        [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
+        ]
 
 
 btn msg txt =
