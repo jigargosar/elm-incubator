@@ -155,7 +155,7 @@ viewGameCells cells =
                                 "bg-light-blue"
 
                             G.Wall ->
-                                "bg-light-purple"
+                                "bg-light-purple white"
 
                             G.Seed ->
                                 "brown"
