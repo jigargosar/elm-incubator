@@ -2,14 +2,42 @@ module AbstractGame exposing (GameModel, Info, MoveResult(..), info, initGame, m
 
 -- GAME MODEL
 
+import Grid exposing (Grid)
+
 
 type GameModel
-    = GM { movesLeft : Int, currentTarget : Int }
+    = GM { movesLeft : Int, currentTarget : Int, grid : Grid Cell }
+
+
+type Cell
+    = Water
+    | Wall
+    | Seed
+
+
+initialGrid =
+    let
+        wallIndices =
+            [ ( 2, 1 ), ( 4, 1 ), ( 2, 3 ), ( 4, 3 ) ]
+
+        grid =
+            Grid.init
+                7
+                5
+                (\i ->
+                    if List.member i wallIndices then
+                        Wall
+
+                    else
+                        Water
+                )
+    in
+    grid
 
 
 initGame : GameModel
 initGame =
-    GM { movesLeft = 5, currentTarget = 100 }
+    GM { movesLeft = 5, currentTarget = 100, grid = initialGrid }
 
 
 type alias Info =
@@ -35,16 +63,14 @@ makeMove i (GM g) =
 
     else if g.currentTarget - i <= 0 then
         GameWon
-            { g
-                | currentTarget = 0
-                , movesLeft = g.movesLeft - 1
+            { currentTarget = 0
+            , movesLeft = g.movesLeft - 1
             }
 
     else if g.movesLeft == 1 then
         GameLost
-            { g
-                | currentTarget = g.currentTarget - i
-                , movesLeft = 0
+            { currentTarget = g.currentTarget - i
+            , movesLeft = 0
             }
 
     else
