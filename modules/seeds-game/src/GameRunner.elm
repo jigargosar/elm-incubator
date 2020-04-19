@@ -34,7 +34,7 @@ init () =
 
 type Msg
     = NoOp
-    | MakeMove
+    | MakeMove Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -43,12 +43,12 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        MakeMove ->
+        MakeMove n ->
             case model of
                 Running g ->
                     let
                         nm =
-                            case G.makeMove 10 g of
+                            case G.makeMove n g of
                                 G.InvalidMove ->
                                     model
 
@@ -94,10 +94,20 @@ view model =
                     ]
                 , div
                     [ class "pa3"
-                    , onClick MakeMove
-                    , autofocus True
                     ]
-                    [ button [ class "ma2" ] [ text "make move" ] ]
+                    [ button
+                        [ class "ma2"
+                        , onClick <| MakeMove 10
+                        , autofocus True
+                        ]
+                        [ text "collect 10" ]
+                    , button
+                        [ class "ma2"
+                        , onClick <| MakeMove 50
+                        , autofocus True
+                        ]
+                        [ text "collect 50" ]
+                    ]
                 ]
 
             Over info ->
