@@ -1,4 +1,4 @@
-module AbstractGame exposing (Cell(..), GameModel, Info, MoveResult(..), info, initGame, makeMove)
+module AbstractGame exposing (Cell(..), GameModel, Info, MoveResult(..), collectIndices, info, initGame, makeMove)
 
 -- GAME MODEL
 
@@ -64,6 +64,22 @@ type MoveResult
     | GameLost Info
     | GameWon Info
     | NextState GameModel
+
+
+collectIndices : List GI -> GameModel -> GameModel
+collectIndices list (GM gm) =
+    let
+        makeEmpty i c =
+            if List.member i list then
+                Empty
+
+            else
+                c
+
+        ng =
+            Grid.map makeEmpty gm.grid
+    in
+    GM { gm | grid = ng }
 
 
 makeMove : Int -> GameModel -> MoveResult
