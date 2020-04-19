@@ -115,13 +115,21 @@ view model =
             Over info ->
                 [ div [ class "pa3" ] [ text "Game Lost" ]
                 , div [ class "pa3" ] [ text (Debug.toString info) ]
+                , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                 ]
 
             Won info ->
                 [ div [ class "pa3" ] [ text "Game Won" ]
                 , div [ class "pa3" ] [ text (Debug.toString info) ]
+                , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                 ]
         )
+
+
+btn msg txt =
+    button
+        [ onClick msg, class "ma2", autofocus True ]
+        [ text txt ]
 
 
 
