@@ -1,6 +1,6 @@
 module GameRunner exposing (main)
 
-import AbstractGame
+import AbstractGame as G
 import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
@@ -11,7 +11,7 @@ import Html.Attributes exposing (class)
 
 
 type Model
-    = Model AbstractGame.GameModel
+    = Model G.GameModel
 
 
 type alias Flags =
@@ -20,7 +20,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Model AbstractGame.initGame
+    ( Model G.initGame
     , Cmd.none
     )
 
@@ -57,23 +57,8 @@ view : Model -> DM
 view (Model g) =
     Document "GameRunner"
         [ div [ class "pa3" ]
-            [ viewMovesRemaining (AbstractGame.movesLeft g)
-            , viewCurrentTarget (AbstractGame.currentTarget g)
+            [ text (Debug.toString (G.info g))
             ]
-        ]
-
-
-viewMovesRemaining mr =
-    div [ class "pa2" ]
-        [ text "Moves Left: "
-        , text (String.fromInt mr)
-        ]
-
-
-viewCurrentTarget t =
-    div [ class "pa2" ]
-        [ text "Collection Target: "
-        , text (String.fromInt t)
         ]
 
 

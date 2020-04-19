@@ -1,25 +1,29 @@
-module AbstractGame exposing (GameModel, currentTarget, initGame, movesLeft)
+module AbstractGame exposing (GameModel, Info, info, initGame)
 
 -- GAME MODEL
 
 
 type GameModel
-    = GameModel
+    = GM { movesLeft : Int, currentTarget : Int }
 
 
 initGame : GameModel
 initGame =
-    GameModel
+    GM { movesLeft = 5, currentTarget = 100 }
 
 
-movesLeft : GameModel -> Int
-movesLeft _ =
-    5
+type alias Info =
+    { movesLeft : Int, currentTarget : Int }
 
 
-currentTarget : GameModel -> Int
-currentTarget _ =
-    100
+info : GameModel -> Info
+info (GM g) =
+    Info g.movesLeft g.currentTarget
+
+
+makeMove : Int -> GameModel -> GameModel
+makeMove _ =
+    identity
 
 
 
