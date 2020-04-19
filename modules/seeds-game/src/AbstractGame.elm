@@ -23,7 +23,8 @@ info (GM g) =
 
 type MoveResult
     = InvalidMove
-    | GameOver Info
+    | GameLost Info
+    | GameWon Info
     | NextState GameModel
 
 
@@ -33,7 +34,10 @@ makeMove i (GM g) =
         InvalidMove
 
     else if g.currentTarget - i <= 0 then
-        GameOver { g | currentTarget = 0, movesLeft = g.movesLeft - 1 }
+        GameWon { g | currentTarget = 0, movesLeft = g.movesLeft - 1 }
+
+    else if g.movesLeft == 1 then
+        GameLost { g | currentTarget = g.currentTarget - i, movesLeft = 0 }
 
     else
         NextState (GM { g | currentTarget = g.currentTarget - i, movesLeft = g.movesLeft - 1 })

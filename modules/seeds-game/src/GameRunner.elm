@@ -14,6 +14,7 @@ import Html.Events exposing (onClick)
 type Model
     = Running G.GameModel
     | Over G.Info
+    | Won G.Info
 
 
 type alias Flags =
@@ -51,15 +52,21 @@ update message model =
                                 G.InvalidMove ->
                                     model
 
-                                G.GameOver info ->
-                                    Over info
-
                                 G.NextState ng ->
                                     Running ng
+
+                                G.GameLost info ->
+                                    Over info
+
+                                G.GameWon info ->
+                                    Won info
                     in
                     ( nm, Cmd.none )
 
                 Over _ ->
+                    ( model, Cmd.none )
+
+                Won _ ->
                     ( model, Cmd.none )
 
 
@@ -94,7 +101,14 @@ view model =
                 ]
 
             Over info ->
-                [ div [ class "pa3" ] [ text "Game Over" ]
+                [ div [ class "pa3" ] [ text "Game Lost" ]
+                , div [ class "pa3" ]
+                    [ text (Debug.toString info)
+                    ]
+                ]
+
+            Won info ->
+                [ div [ class "pa3" ] [ text "Game Won" ]
                 , div [ class "pa3" ]
                     [ text (Debug.toString info)
                     ]
