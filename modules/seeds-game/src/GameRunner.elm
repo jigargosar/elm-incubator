@@ -101,7 +101,7 @@ view model =
         (case model of
             Running g ->
                 [ div [ class "pa3" ] [ text "Game Running" ]
-                , div [ class "pa3" ] [ text (Debug.toString (G.info g)) ]
+                , viewGameInfo (G.info g)
                 , div [ class "pa3" ]
                     [ button
                         [ onClick <| MakeMove 10, class "ma2", autofocus True ]
@@ -114,16 +114,20 @@ view model =
 
             Over info ->
                 [ div [ class "pa3" ] [ text "Game Lost" ]
-                , div [ class "pa3" ] [ text (Debug.toString info) ]
+                , viewGameInfo info
                 , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                 ]
 
             Won info ->
                 [ div [ class "pa3" ] [ text "Game Won" ]
-                , div [ class "pa3" ] [ text (Debug.toString info) ]
+                , viewGameInfo info
                 , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                 ]
         )
+
+
+viewGameInfo info =
+    div [ class "pa3" ] [ text (Debug.toString info) ]
 
 
 btn msg txt =
