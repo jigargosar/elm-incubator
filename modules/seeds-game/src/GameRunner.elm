@@ -145,25 +145,34 @@ viewGameInfo i =
 viewGameCells : List ( GI, G.Cell ) -> Html msg
 viewGameCells cells =
     let
-        viewCell ( i, c ) =
-            Html.td [] [ text (Debug.toString ( i, c )) ]
+        viewCell ( _, c ) =
+            Html.td [] [ text (Debug.toString c) ]
 
         rows =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
 
         viewRow y ( h, t ) =
             Html.tr []
-                (Html.th [] [ text <| String.fromInt y ]
+                (Html.th [] [ text "y", text (String.fromInt y) ]
                     :: List.map viewCell (h :: t)
                 )
 
-        viewTHead =
-            Html.thead []
-                [ Html.th [] [ text "x,y" ]
-                ]
+        viewHeadCell x _ =
+            Html.th [] [ text "x", text (String.fromInt x) ]
+
+        viewTHead mh =
+            case mh of
+                Just ( h, t ) ->
+                    Html.thead []
+                        (Html.th [] [ text "x,y" ]
+                            :: List.indexedMap viewHeadCell (h :: t)
+                        )
+
+                Nothing ->
+                    text ""
     in
-    table [ class "pa3" ]
-        (viewTHead :: List.indexedMap viewRow rows)
+    table [ class "pa3 w-100" ]
+        (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
 btn msg txt =
