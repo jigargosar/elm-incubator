@@ -123,6 +123,16 @@ view model =
                     , button
                         [ onClick <| MakeMove 50, class "ma2", autofocus True ]
                         [ text "collect 50" ]
+                    , btn
+                        (CollectIndices
+                            [ ( 3, 1 )
+                            , ( 2, 2 )
+                            , ( 4, 2 )
+                            , ( 3, 3 )
+                            , ( 3, 1 )
+                            ]
+                        )
+                        "collect"
                     ]
                 ]
 
