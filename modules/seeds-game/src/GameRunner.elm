@@ -35,6 +35,7 @@ init () =
 type Msg
     = NoOp
     | MakeMove Int
+    | PlayAnother
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -68,6 +69,17 @@ update message model =
 
                 Won _ ->
                     ( model, Cmd.none )
+
+        PlayAnother ->
+            case model of
+                Running _ ->
+                    ( model, Cmd.none )
+
+                Over _ ->
+                    init ()
+
+                Won _ ->
+                    init ()
 
 
 subscriptions : Model -> Sub Msg
