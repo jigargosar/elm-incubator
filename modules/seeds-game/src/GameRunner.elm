@@ -2,8 +2,9 @@ module GameRunner exposing (main)
 
 import AbstractGame as G
 import Browser exposing (Document)
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 
 
 
@@ -31,12 +32,16 @@ init () =
 
 type Msg
     = NoOp
+    | MakeMove
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         NoOp ->
+            ( model, Cmd.none )
+
+        MakeMove ->
             ( model, Cmd.none )
 
 
@@ -59,6 +64,11 @@ view (Model g) =
         [ div [ class "pa3" ]
             [ text (Debug.toString (G.info g))
             ]
+        , div
+            [ class "pa3"
+            , onClick MakeMove
+            ]
+            [ button [ class "ma2" ] [ text "make move" ] ]
         ]
 
 

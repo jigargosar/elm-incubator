@@ -1,4 +1,4 @@
-module AbstractGame exposing (GameModel, Info, info, initGame)
+module AbstractGame exposing (GameModel, Info, info, initGame, makeMove)
 
 -- GAME MODEL
 
