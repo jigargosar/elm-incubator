@@ -18,17 +18,19 @@ import Task
 
 
 type GameModel
-    = GameModel (Grid GameCell)
+    = GameModel
 
 
-type GameCell
-    = GameCellWall
-    | GameCellWater
-    | GameCellSeed
+type GameMove
+    = GameMove
 
 
-gameModelConnectIndices : List GI -> GameModel -> Maybe GameModel
-gameModelConnectIndices _ =
+type MoveResult
+    = MoveResult
+
+
+makeMove : GameMove -> GameModel -> MoveResult
+makeMove =
     Debug.todo "impl"
 
 
