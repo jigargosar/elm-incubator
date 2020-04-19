@@ -2,7 +2,8 @@ module GameRunner exposing (main)
 
 import AbstractGame
 import Browser exposing (Document)
-import Html exposing (Html, text)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
 
 
 
@@ -55,7 +56,17 @@ type alias DM =
 view : Model -> DM
 view (Model g) =
     Document "GameRunner"
-        [ text (Debug.toString g) ]
+        [ div [ class "pa3" ]
+            [ viewMovesRemaining (AbstractGame.movesRemaining g)
+            ]
+        ]
+
+
+viewMovesRemaining mr =
+    div [ class "pa2" ]
+        [ text "Moves Left: "
+        , text (String.fromInt mr)
+        ]
 
 
 

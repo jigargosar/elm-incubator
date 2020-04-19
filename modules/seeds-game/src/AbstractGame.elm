@@ -1,4 +1,4 @@
-module AbstractGame exposing (GameModel, initGame)
+module AbstractGame exposing (GameModel, initGame, movesRemaining)
 
 -- GAME MODEL
 
@@ -10,6 +10,11 @@ type GameModel
 initGame : GameModel
 initGame =
     GameModel
+
+
+movesRemaining : GameModel -> Int
+movesRemaining _ =
+    5
 
 
 
