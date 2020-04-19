@@ -4,7 +4,7 @@ import AbstractGame as G
 import Browser exposing (Document)
 import Grid exposing (GI)
 import Html exposing (Html, button, div, table, text)
-import Html.Attributes exposing (autofocus, class)
+import Html.Attributes exposing (autofocus, class, style)
 import Html.Events exposing (onClick)
 import List.Extra
 
@@ -146,32 +146,52 @@ viewGameCells : List ( GI, G.Cell ) -> Html msg
 viewGameCells cells =
     let
         viewCell ( _, c ) =
-            Html.td [] [ text (Debug.toString c) ]
+            Html.td []
+                [ div
+                    [ class "br2 pa1"
+                    , class
+                        (case c of
+                            G.Water ->
+                                "bg-light-blue"
+
+                            G.Wall ->
+                                "bg-light-purple"
+
+                            G.Seed ->
+                                "brown"
+                        )
+                    ]
+                    --[ text (Debug.toString c) ]
+                    [ text "" ]
+                ]
 
         rows =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
 
         viewRow y ( h, t ) =
             Html.tr []
-                (Html.th [ class "code f4" ] [ text "y", text (String.fromInt y) ]
+                (styledTH [ text "y", text (String.fromInt y) ]
                     :: List.map viewCell (h :: t)
                 )
 
+        styledTH =
+            Html.th [ class "code f4 pa1" ]
+
         viewHeadCell x _ =
-            Html.th [] [ text "x", text (String.fromInt x) ]
+            styledTH [ text "x", text (String.fromInt x) ]
 
         viewTHead mh =
             case mh of
                 Just ( h, t ) ->
-                    Html.thead [ class "code f4" ]
-                        (Html.th [] [ text "( x, y )" ]
+                    Html.thead []
+                        (styledTH [ text "x,y" ]
                             :: List.indexedMap viewHeadCell (h :: t)
                         )
 
                 Nothing ->
                     text ""
     in
-    table [ class "pa3 w-100 " ]
+    table [ class "pa3" ]
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
