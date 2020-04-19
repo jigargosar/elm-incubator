@@ -42,7 +42,19 @@ update message ((Model g) as model) =
             ( model, Cmd.none )
 
         MakeMove ->
-            ( Model (G.makeMove 10 g), Cmd.none )
+            let
+                _ =
+                    case G.makeMove 10 g of
+                        G.InvalidMove ->
+                            1
+
+                        G.GameOver info ->
+                            2
+
+                        G.NextState gameModel ->
+                            3
+            in
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

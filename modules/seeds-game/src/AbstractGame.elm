@@ -1,4 +1,4 @@
-module AbstractGame exposing (GameModel, Info, info, initGame, makeMove)
+module AbstractGame exposing (GameModel, Info, MoveResult(..), info, initGame, makeMove)
 
 -- GAME MODEL
 
@@ -21,9 +21,22 @@ info (GM g) =
     Info g.movesLeft g.currentTarget
 
 
-makeMove : Int -> GameModel -> GameModel
+type MoveResult
+    = InvalidMove
+    | GameOver Info
+    | NextState GameModel
+
+
+makeMove : Int -> GameModel -> MoveResult
 makeMove i (GM g) =
-    GM { g | currentTarget = g.currentTarget - i, movesLeft = g.movesLeft - 1 }
+    if i <= 0 then
+        InvalidMove
+
+    else if g.currentTarget - i <= 0 then
+        GameOver { g | currentTarget = 0, movesLeft = g.movesLeft - 1 }
+
+    else
+        NextState (GM { g | currentTarget = g.currentTarget - i, movesLeft = g.movesLeft - 1 })
 
 
 
