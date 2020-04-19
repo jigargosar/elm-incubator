@@ -26,7 +26,9 @@ type GameMove
 
 
 type MoveResult
-    = MoveResult
+    = MoveResultGameOver
+    | MoveResultNextState GameModel
+    | MoveResultInvalidMove
 
 
 makeMove : GameMove -> GameModel -> MoveResult
