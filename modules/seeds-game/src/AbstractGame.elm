@@ -12,7 +12,7 @@ type GameModel
 type Cell
     = Water
     | Wall
-    | Seed
+    | Empty
 
 
 initialGrid =

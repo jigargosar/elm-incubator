@@ -157,9 +157,9 @@ viewGameCells cells =
                             G.Wall ->
                                 "bg-light-purple white"
 
-                            G.Seed ->
-                                "brown"
-                        )
+
+                            G.Empty ->
+                                ""                           )
                     ]
                     --[ text (Debug.toString c) ]
                     [ div [ class "code f5" ] [ text (Debug.toString i) ] ]
