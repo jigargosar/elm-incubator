@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/modules/modules.iml" filepath="$PROJECT_DIR$/modules/modules.iml" />
       <module fileurl="file://$PROJECT_DIR$/modules/playing-with-animator/playing-with-animator.iml" filepath="$PROJECT_DIR$/modules/playing-with-animator/playing-with-animator.iml" />
       <module fileurl="file://$PROJECT_DIR$/modules/playing-with-elm-style-anim/playing-with-elm-style-anim.iml" filepath="$PROJECT_DIR$/modules/playing-with-elm-style-anim/playing-with-elm-style-anim.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/seeds-game/seeds-game.iml" filepath="$PROJECT_DIR$/modules/seeds-game/seeds-game.iml" />
     </modules>
   </component>
 </project>
