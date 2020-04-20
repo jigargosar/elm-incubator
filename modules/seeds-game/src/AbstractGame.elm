@@ -11,10 +11,8 @@ module AbstractGame exposing
 
 -- GAME MODEL
 
-import Basics.Extra exposing (uncurry)
 import Dict
 import Grid exposing (GI, Grid)
-import List.Extra
 
 
 type GameModel
@@ -146,14 +144,6 @@ isCellMovable cell =
             False
 
 
-lastEmpty : Grid Cell -> Maybe GI
-lastEmpty grid =
-    Grid.toDict grid
-        |> Dict.filter (\_ cell -> cell == Empty)
-        |> Dict.keys
-        |> List.maximum
-
-
 collectIndices : List GI -> GameModel -> GameModel
 collectIndices list (GM gm) =
     let
@@ -168,74 +158,6 @@ collectIndices list (GM gm) =
             Grid.map makeEmpty gm.grid
     in
     GM { gm | grid = ng }
-
-
-computeFallingIndexPairs : Grid Cell -> List ( GI, GI )
-computeFallingIndexPairs =
-    List.Extra.unfoldr
-        (\grid ->
-            findLastFallingIndexPair grid
-                |> Maybe.andThen
-                    (\( si, ei ) ->
-                        case Grid.swap si ei grid of
-                            Nothing ->
-                                Nothing
-
-                            Just swapped ->
-                                Just ( ( si, ei ), swapped )
-                    )
-        )
-
-
-findLastFallingIndexPair : Grid Cell -> Maybe ( GI, GI )
-findLastFallingIndexPair grid =
-    lastEmpty grid
-        |> Maybe.andThen
-            (\ei ->
-                findFirstMovableAbove ei grid
-                    |> Maybe.map (\si -> ( si, ei ))
-            )
-
-
-computeFallen : Grid Cell -> ( List ( GI, GI ), Grid Cell )
-computeFallen grid0 =
-    let
-        func index ( fallenPairs, grid ) =
-            case func2 index grid of
-                Nothing ->
-                    ( fallenPairs, grid )
-
-                Just ( fallen, nextGrid ) ->
-                    ( fallen :: fallenPairs, nextGrid )
-
-        func2 : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
-        func2 index grid =
-            fallingIndexPairAt index grid
-                |> Maybe.andThen
-                    (\fallen -> Grid.swapPair fallen grid |> Maybe.map (Tuple.pair fallen))
-    in
-    Grid.indices grid0 |> List.foldr func ( [], grid0 )
-
-
-fallingIndexPairAt : GI -> Grid Cell -> Maybe ( GI, GI )
-fallingIndexPairAt index grid =
-    case Grid.entryAt index grid of
-        Just ( emptyIndex, Empty ) ->
-            findFirstMovableAbove emptyIndex grid
-                |> Maybe.map (\movableIndex -> ( movableIndex, emptyIndex ))
-
-        _ ->
-            Nothing
-
-
-applyWhileJust : (a -> Maybe a) -> a -> a
-applyWhileJust func val =
-    case func val of
-        Just nextVal ->
-            applyWhileJust func nextVal
-
-        Nothing ->
-            val
 
 
 makeMove : Int -> GameModel -> MoveResult
