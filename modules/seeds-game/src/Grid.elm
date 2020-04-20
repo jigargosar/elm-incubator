@@ -1,4 +1,4 @@
-module Grid exposing (GI, Grid, entryAbove, entryAt, get, indices, init, map, mapIdx, set, toDict, toList, toListBy, wh)
+module Grid exposing (GI, Grid, entryAbove, entryAt, get, indices, init, map, mapIdx, set, swap, toDict, toList, toListBy, wh)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
@@ -64,6 +64,14 @@ map fun (G d) =
 indices : Grid a -> List GI
 indices (G d) =
     Dict.keys d
+
+
+swap : GI -> GI -> Grid a -> Maybe (Grid a)
+swap ia ib grid =
+    Maybe.map2 (\va vb -> set ia vb grid |> Maybe.andThen (set ib va))
+        (get ia grid)
+        (get ib grid)
+        |> Maybe.andThen identity
 
 
 wh : Grid a -> ( Int, Int )

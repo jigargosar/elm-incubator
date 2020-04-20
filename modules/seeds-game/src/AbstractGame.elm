@@ -157,29 +157,26 @@ collectIndices list (GM gm) =
 
         ng =
             Grid.map makeEmpty gm.grid
-
-        --func g =
-        --    Grid.toList g
-        --        |> List.reverse
-        --        |> List.Extra.find (Tuple.second >> (==) Empty)
-        --        |> Maybe.map
-        --            (\( ei, _ ) ->
-        --                let
-        --                    entriesAbove : List a
-        --                    entriesAbove =
-        --                        List.Extra.unfoldr
-        --                            (flip Grid.entryAbove g
-        --                                >> (\( i, c ) -> ( i, ( i, c ) ))
-        --                            )
-        --                            ei
-        --                in
-        --                List.Extra.find (Tuple.second >> (/=) Empty)
-        --            )
-        --
-        --_ =
-        --    List.Extra.unfoldr func ng
     in
     GM { gm | grid = ng }
+
+
+foo : Grid Cell -> List ( GI, GI )
+foo =
+    List.Extra.unfoldr
+        (\grid_ ->
+            lastEmpty grid_
+                |> Maybe.andThen (\ei -> findFirstMovableAbove ei grid_ |> Maybe.map (\si -> ( si, ei )))
+                |> Maybe.andThen
+                    (\( si, ei ) ->
+                        case Grid.swap si ei grid_ of
+                            Nothing ->
+                                Nothing
+
+                            Just swapped ->
+                                Just ( ( si, ei ), swapped )
+                    )
+        )
 
 
 makeMove : Int -> GameModel -> MoveResult
