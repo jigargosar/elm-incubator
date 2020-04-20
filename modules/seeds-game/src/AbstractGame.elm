@@ -21,11 +21,7 @@ type alias FallingAcc =
     }
 
 
-type alias FallingEntry =
-    ( ( GI, GI ), Grid Cell )
-
-
-computeFallingAt : GI -> Grid Cell -> Maybe FallingEntry
+computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
 computeFallingAt to grid =
     case Grid.get to grid of
         Just Empty ->
@@ -45,34 +41,18 @@ computeFallingAt to grid =
             Nothing
 
 
-computeFalling : FallingAcc -> ( List ( GI, GI ), Grid Cell )
-computeFalling acc =
-    case acc.pendingIndices of
-        [] ->
-            ( acc.fallenIndexPairs, acc.grid )
+computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallingIndicesAndUpdateGrid grid0 =
+    let
+        func idx (( list, grid1 ) as acc) =
+            case computeFallingAt idx grid1 of
+                Just ( item, grid2 ) ->
+                    ( item :: list, grid2 )
 
-        emptyIndex :: remaining ->
-            case Grid.get emptyIndex acc.grid of
-                Just Empty ->
-                    case findFirstMovableAbove emptyIndex acc.grid of
-                        Just movableIndex ->
-                            case Grid.swap movableIndex emptyIndex acc.grid of
-                                Just sg ->
-                                    computeFalling
-                                        { acc
-                                            | grid = sg
-                                            , fallenIndexPairs = ( movableIndex, emptyIndex ) :: acc.fallenIndexPairs
-                                            , pendingIndices = remaining
-                                        }
-
-                                Nothing ->
-                                    computeFalling { acc | pendingIndices = remaining }
-
-                        Nothing ->
-                            computeFalling { acc | pendingIndices = remaining }
-
-                _ ->
-                    computeFalling { acc | pendingIndices = remaining }
+                Nothing ->
+                    acc
+    in
+    List.foldr func ( [], grid0 ) (Grid.indices grid0)
 
 
 type GameModel
