@@ -11,7 +11,6 @@ module AbstractGame exposing
 
 -- GAME MODEL
 
-import Dict
 import Grid exposing (GI, Grid)
 
 
