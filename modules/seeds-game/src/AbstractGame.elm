@@ -61,6 +61,7 @@ type GameModel
         , currentTarget : Int
         , grid : Grid Cell
         , fallen : List ( GI, GI )
+        , left : List GI
         }
 
 
@@ -104,6 +105,7 @@ initGame =
         , currentTarget = 100
         , grid = initialGrid
         , fallen = []
+        , left = []
         }
 
 
