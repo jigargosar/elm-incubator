@@ -56,7 +56,12 @@ computeFallingIndicesAndUpdateGrid grid0 =
 
 
 type GameModel
-    = GM { movesLeft : Int, currentTarget : Int, grid : Grid Cell }
+    = GM
+        { movesLeft : Int
+        , currentTarget : Int
+        , grid : Grid Cell
+        , fallen : List ( GI, GI )
+        }
 
 
 type Cell
@@ -94,7 +99,12 @@ initialGrid =
 
 initGame : GameModel
 initGame =
-    GM { movesLeft = 5, currentTarget = 100, grid = initialGrid }
+    GM
+        { movesLeft = 5
+        , currentTarget = 100
+        , grid = initialGrid
+        , fallen = []
+        }
 
 
 type alias Info =
@@ -163,7 +173,7 @@ collectIndices list (GM gm) =
         _ =
             Debug.log "fallenIndices" fallenIndices
     in
-    GM { gm | grid = fallenGrid }
+    GM { gm | grid = fallenGrid, fallen = fallenIndices }
 
 
 makeMove : Int -> GameModel -> MoveResult
