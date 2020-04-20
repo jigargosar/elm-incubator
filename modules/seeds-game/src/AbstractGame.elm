@@ -146,17 +146,24 @@ isCellMovable cell =
 collectIndices : List GI -> GameModel -> GameModel
 collectIndices list (GM gm) =
     let
-        makeEmpty i c =
-            if List.member i list then
-                Empty
+        collectedGrid =
+            Grid.map
+                (\i c ->
+                    if List.member i list then
+                        Empty
 
-            else
-                c
+                    else
+                        c
+                )
+                gm.grid
 
-        ng =
-            Grid.map makeEmpty gm.grid
+        ( fallenIndices, fallenGrid ) =
+            computeFallingIndicesAndUpdateGrid collectedGrid
+
+        _ =
+            Debug.log "fallenIndices" fallenIndices
     in
-    GM { gm | grid = ng }
+    GM { gm | grid = fallenGrid }
 
 
 makeMove : Int -> GameModel -> MoveResult
