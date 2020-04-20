@@ -61,7 +61,7 @@ type GameModel
         , currentTarget : Int
         , grid : Grid Cell
         , fallen : List ( GI, GI )
-        , left : List GI
+        , collected : List GI
         }
 
 
@@ -105,7 +105,7 @@ initGame =
         , currentTarget = 100
         , grid = initialGrid
         , fallen = []
-        , left = []
+        , collected = []
         }
 
 
@@ -175,7 +175,7 @@ collectIndices list (GM gm) =
         _ =
             Debug.log "fallenIndices" fallenIndices
     in
-    GM { gm | grid = fallenGrid, fallen = fallenIndices }
+    GM { gm | grid = fallenGrid, fallen = fallenIndices, collected = [] }
 
 
 makeMove : Int -> GameModel -> MoveResult
