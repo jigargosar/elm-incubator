@@ -1,4 +1,4 @@
-module Grid exposing (GI, Grid, entryAbove, entryAt, get, indices, init, map, mapIdx, set, toList, toListBy, wh)
+module Grid exposing (GI, Grid, entryAbove, entryAt, get, indices, init, map, mapIdx, set, toDict, toList, toListBy, wh)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
@@ -79,6 +79,11 @@ wh (G d) =
 toList : Grid a -> List ( GI, a )
 toList (G d) =
     Dict.toList d
+
+
+toDict : Grid a -> Dict GI a
+toDict (G d) =
+    d
 
 
 toListBy : (GI -> a -> b) -> Grid a -> List b

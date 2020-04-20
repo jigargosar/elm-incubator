@@ -3,6 +3,7 @@ module AbstractGame exposing (Cell(..), GameModel, Info, MoveResult(..), collect
 -- GAME MODEL
 
 import Basics.Extra exposing (flip)
+import Dict
 import Grid exposing (GI, Grid)
 import List.Extra
 
@@ -134,6 +135,14 @@ isCellMovable cell =
 
         Empty ->
             False
+
+
+lastEmpty : Grid Cell -> Maybe GI
+lastEmpty grid =
+    Grid.toDict grid
+        |> Dict.filter (\_ cell -> cell == Empty)
+        |> Dict.keys
+        |> List.maximum
 
 
 collectIndices : List GI -> GameModel -> GameModel
