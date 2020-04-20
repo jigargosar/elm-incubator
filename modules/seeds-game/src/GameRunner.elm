@@ -185,7 +185,7 @@ viewGameCells cells =
                         )
                     ]
                     [ div
-                        [ class "code f5 o-70"
+                        [ class "code o-0 glow"
                         , class "absolute left-0"
                         ]
                         [ text (String.fromInt x ++ "," ++ String.fromInt y)
