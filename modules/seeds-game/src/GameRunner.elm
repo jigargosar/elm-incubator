@@ -184,7 +184,8 @@ viewGameCells cells =
                         )
                     ]
                     --[ text (Debug.toString c) ]
-                    [ div [ class "code f5" ] [ text (Debug.toString i) ] ]
+                    --[ div [ class "code f5" ] [ text (Debug.toString i) ] ]
+                    [ div [ class "code f5" ] [ text "" ] ]
                 ]
 
         rows =
