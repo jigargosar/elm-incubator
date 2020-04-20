@@ -113,12 +113,14 @@ type alias Info =
     { movesLeft : Int
     , currentTarget : Int
     , cells : List ( GI, Cell )
+    , fallen : List ( GI, GI )
+    , collected : List GI
     }
 
 
 info : GameModel -> Info
 info (GM g) =
-    Info g.movesLeft g.currentTarget (Grid.toList g.grid)
+    Info g.movesLeft g.currentTarget (Grid.toList g.grid) g.fallen g.collected
 
 
 type MoveResult
@@ -193,6 +195,8 @@ makeMove i (GM g) =
             { currentTarget = 0
             , movesLeft = g.movesLeft - 1
             , cells = Grid.toList g.grid
+            , fallen = []
+            , collected = []
             }
 
     else if g.movesLeft == 1 then
@@ -200,6 +204,8 @@ makeMove i (GM g) =
             { currentTarget = g.currentTarget - i
             , movesLeft = 0
             , cells = Grid.toList g.grid
+            , fallen = []
+            , collected = []
             }
 
     else
