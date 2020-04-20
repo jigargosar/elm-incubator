@@ -68,6 +68,29 @@ type MoveResult
     | NextState GameModel
 
 
+type Next s a
+    = NextSeedAndItem s a
+    | NextSeed s
+    | End
+
+
+listFromSeed : (s -> Next s a) -> s -> List a
+listFromSeed toNext =
+    let
+        func list s0 =
+            case toNext s0 of
+                NextSeedAndItem s a ->
+                    func (a :: list) s
+
+                NextSeed s ->
+                    func list s
+
+                End ->
+                    list
+    in
+    func []
+
+
 collectIndices : List GI -> GameModel -> GameModel
 collectIndices list (GM gm) =
     let
