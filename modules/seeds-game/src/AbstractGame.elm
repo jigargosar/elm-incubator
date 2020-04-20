@@ -76,47 +76,6 @@ type MoveResult
     | NextState GameModel
 
 
-
---type Next s a
---    = NextSeedAndItem s a
---    | NextSeed s
---    | End
---
---
---listFromSeed : (s -> Next s a) -> s -> List a
---listFromSeed toNext =
---    let
---        func list s0 =
---            case toNext s0 of
---                NextSeedAndItem s a ->
---                    func (a :: list) s
---
---                NextSeed s ->
---                    func list s
---
---                End ->
---                    list
---    in
---    func []
---type Find s a
---    = Continue s
---    | NotFound
---    | Found a
---
---
---find : (s -> Find s a) -> s -> Maybe a
---find func seed0 =
---    case func seed0 of
---        Continue s ->
---            find func s
---
---        NotFound ->
---            Nothing
---
---        Found a ->
---            Just a
-
-
 findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
 findFirstMovableAbove srcIndex grid =
     case Grid.entryAbove srcIndex grid of
