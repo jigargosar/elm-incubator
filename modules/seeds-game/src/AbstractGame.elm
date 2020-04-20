@@ -175,7 +175,12 @@ collectIndices list (GM gm) =
         _ =
             Debug.log "fallenIndices" fallenIndices
     in
-    GM { gm | grid = fallenGrid, fallen = fallenIndices, collected = [] }
+    GM
+        { gm
+            | grid = fallenGrid
+            , fallen = fallenIndices
+            , collected = list
+        }
 
 
 makeMove : Int -> GameModel -> MoveResult
