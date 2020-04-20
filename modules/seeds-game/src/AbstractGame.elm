@@ -1,8 +1,17 @@
-module AbstractGame exposing (Cell(..), GameModel, Info, MoveResult(..), collectIndices, info, initGame, makeMove)
+module AbstractGame exposing
+    ( Cell(..)
+    , GameModel
+    , Info
+    , MoveResult(..)
+    , collectIndices
+    , info
+    , initGame
+    , makeMove
+    )
 
 -- GAME MODEL
 
-import Basics.Extra exposing (flip)
+import Basics.Extra exposing (uncurry)
 import Dict
 import Grid exposing (GI, Grid)
 import List.Extra
@@ -186,6 +195,37 @@ findLastFallingIndexPair grid =
                 findFirstMovableAbove ei grid
                     |> Maybe.map (\si -> ( si, ei ))
             )
+
+
+computeFallen : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallen grid0 =
+    let
+        func index ( fallenPairs, grid ) =
+            case func2 index grid of
+                Nothing ->
+                    ( fallenPairs, grid )
+
+                Just ( fallen, nextGrid ) ->
+                    ( fallen :: fallenPairs, nextGrid )
+
+        func2 : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
+        func2 index grid =
+            fallingIndexPairAt index grid
+                |> Maybe.andThen
+                    (\fallen -> Grid.swapPair fallen grid |> Maybe.map (Tuple.pair fallen))
+    in
+    Grid.indices grid0 |> List.foldr func ( [], grid0 )
+
+
+fallingIndexPairAt : GI -> Grid Cell -> Maybe ( GI, GI )
+fallingIndexPairAt index grid =
+    case Grid.entryAt index grid of
+        Just ( emptyIndex, Empty ) ->
+            findFirstMovableAbove emptyIndex grid
+                |> Maybe.map (\movableIndex -> ( movableIndex, emptyIndex ))
+
+        _ ->
+            Nothing
 
 
 applyWhileJust : (a -> Maybe a) -> a -> a
