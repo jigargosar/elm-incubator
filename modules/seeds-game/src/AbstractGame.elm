@@ -14,6 +14,67 @@ module AbstractGame exposing
 import Grid exposing (GI, Grid)
 
 
+type alias FallingAcc =
+    { pendingIndices : List GI
+    , fallenIndexPairs : List ( GI, GI )
+    , grid : Grid Cell
+    }
+
+
+type alias FallingEntry =
+    ( ( GI, GI ), Grid Cell )
+
+
+computeFallingAt : GI -> Grid Cell -> Maybe FallingEntry
+computeFallingAt to grid =
+    case Grid.get to grid of
+        Just Empty ->
+            case findFirstMovableAbove to grid of
+                Just from ->
+                    case Grid.swap from to grid of
+                        Just sg ->
+                            Just ( ( from, to ), sg )
+
+                        Nothing ->
+                            Nothing
+
+                Nothing ->
+                    Nothing
+
+        _ ->
+            Nothing
+
+
+computeFalling : FallingAcc -> ( List ( GI, GI ), Grid Cell )
+computeFalling acc =
+    case acc.pendingIndices of
+        [] ->
+            ( acc.fallenIndexPairs, acc.grid )
+
+        emptyIndex :: remaining ->
+            case Grid.get emptyIndex acc.grid of
+                Just Empty ->
+                    case findFirstMovableAbove emptyIndex acc.grid of
+                        Just movableIndex ->
+                            case Grid.swap movableIndex emptyIndex acc.grid of
+                                Just sg ->
+                                    computeFalling
+                                        { acc
+                                            | grid = sg
+                                            , fallenIndexPairs = ( movableIndex, emptyIndex ) :: acc.fallenIndexPairs
+                                            , pendingIndices = remaining
+                                        }
+
+                                Nothing ->
+                                    computeFalling { acc | pendingIndices = remaining }
+
+                        Nothing ->
+                            computeFalling { acc | pendingIndices = remaining }
+
+                _ ->
+                    computeFalling { acc | pendingIndices = remaining }
+
+
 type GameModel
     = GM { movesLeft : Int, currentTarget : Int, grid : Grid Cell }
 
@@ -76,17 +137,17 @@ type MoveResult
 
 
 findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
-findFirstMovableAbove srcIndex grid =
-    case Grid.entryAbove srcIndex grid of
+findFirstMovableAbove startIndex grid =
+    case Grid.entryAbove startIndex grid of
         Nothing ->
             Nothing
 
-        Just ( nextIndex, cell ) ->
+        Just ( index, cell ) ->
             if isCellMovable cell then
-                Just nextIndex
+                Just index
 
             else
-                findFirstMovableAbove nextIndex grid
+                findFirstMovableAbove index grid
 
 
 isCellMovable : Cell -> Bool
