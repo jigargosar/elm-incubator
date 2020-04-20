@@ -167,10 +167,11 @@ viewGameInfo i =
 viewGameCells : List ( GI, G.Cell ) -> Html msg
 viewGameCells cells =
     let
-        viewCell ( i, c ) =
+        viewCell ( ( x, y ), c ) =
             Html.td []
                 [ div
-                    [ class "br3 w3 h3 flex justify-center items-center"
+                    [ class "br3 w3 h3 flex"
+                    , class "relative"
                     , class
                         (case c of
                             G.Water ->
@@ -183,9 +184,13 @@ viewGameCells cells =
                                 ""
                         )
                     ]
-                    --[ text (Debug.toString c) ]
-                    --[ div [ class "code f5" ] [ text (Debug.toString i) ] ]
-                    [ div [ class "code f5" ] [ text "" ] ]
+                    [ div
+                        [ class "code f5 o-70"
+                        , class "absolute left-0"
+                        ]
+                        [ text (String.fromInt x ++ "," ++ String.fromInt y)
+                        ]
+                    ]
                 ]
 
         rows =
