@@ -1,7 +1,9 @@
 module GameRunner exposing (main)
 
 import AbstractGame as G
+import Basics.Extra exposing (swap)
 import Browser exposing (Document)
+import Dict
 import Grid exposing (GI)
 import Html exposing (Html, button, div, table, text)
 import Html.Attributes exposing (autofocus, class, style)
@@ -160,14 +162,17 @@ viewGameInfo i =
         [ div [ class "pa3" ]
             [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
             ]
-        , viewGameCells i.cells
+        , viewGameCells i.fallen i.cells
         ]
 
 
-viewGameCells : List ( GI, G.Cell ) -> Html msg
-viewGameCells cells =
+viewGameCells : List ( GI, GI ) -> List ( GI, G.Cell ) -> Html msg
+viewGameCells fallen cells =
     let
-        viewCell ( ( x, y ), c ) =
+        fallenDict =
+            Dict.fromList (List.map swap fallen)
+
+        viewCell ( ( x, y ) as idx, c ) =
             Html.td []
                 [ div
                     [ class "br3 w3 h3 flex"
@@ -185,10 +190,16 @@ viewGameCells cells =
                         )
                     ]
                     [ div
-                        [ class "code f4 o-0 glow"
+                        [ class "code f4 o-50 glow"
                         , class "absolute pa2"
                         ]
-                        [ text (String.fromInt x ++ "," ++ String.fromInt y)
+                        [ div [] [ text (String.fromInt x ++ "," ++ String.fromInt y) ]
+                        , case Dict.get idx fallenDict of
+                            Just ( fx, fy ) ->
+                                text (String.fromInt fx ++ "," ++ String.fromInt fy)
+
+                            Nothing ->
+                                text ""
                         ]
                     ]
                 ]
