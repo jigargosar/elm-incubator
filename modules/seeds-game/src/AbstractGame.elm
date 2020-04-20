@@ -161,15 +161,14 @@ collectIndices list (GM gm) =
     GM { gm | grid = ng }
 
 
-foo : Grid Cell -> List ( GI, GI )
-foo =
+computeFallingIndexPairs : Grid Cell -> List ( GI, GI )
+computeFallingIndexPairs =
     List.Extra.unfoldr
-        (\grid_ ->
-            lastEmpty grid_
-                |> Maybe.andThen (\ei -> findFirstMovableAbove ei grid_ |> Maybe.map (\si -> ( si, ei )))
+        (\grid ->
+            findLastFallingIndexPair grid
                 |> Maybe.andThen
                     (\( si, ei ) ->
-                        case Grid.swap si ei grid_ of
+                        case Grid.swap si ei grid of
                             Nothing ->
                                 Nothing
 
@@ -177,6 +176,16 @@ foo =
                                 Just ( ( si, ei ), swapped )
                     )
         )
+
+
+findLastFallingIndexPair : Grid Cell -> Maybe ( GI, GI )
+findLastFallingIndexPair grid =
+    lastEmpty grid
+        |> Maybe.andThen
+            (\ei ->
+                findFirstMovableAbove ei grid
+                    |> Maybe.map (\si -> ( si, ei ))
+            )
 
 
 applyWhileJust : (a -> Maybe a) -> a -> a
