@@ -193,12 +193,12 @@ viewGameCells fallen cells =
                         [ class "code f4 o-50 glow"
                         , class "absolute pa2"
                         ]
-                        [ div [] [ text (String.fromInt x ++ "," ++ String.fromInt y) ]
-                        , case Dict.get idx fallenDict of
+                        [ case Dict.get idx fallenDict of
                             Just ( fx, fy ) ->
-                                text (String.fromInt fx ++ "," ++ String.fromInt fy)
+                                div [] [ text (String.fromInt fx ++ "," ++ String.fromInt fy) ]
 
                             Nothing ->
+                                --div [] [ text (String.fromInt x ++ "," ++ String.fromInt y) ]
                                 text ""
                         ]
                     ]
