@@ -179,6 +179,16 @@ foo =
         )
 
 
+applyWhileJust : (a -> Maybe a) -> a -> a
+applyWhileJust func val =
+    case func val of
+        Just nextVal ->
+            applyWhileJust func nextVal
+
+        Nothing ->
+            val
+
+
 makeMove : Int -> GameModel -> MoveResult
 makeMove i (GM g) =
     if i <= 0 then
