@@ -241,7 +241,7 @@ makeMove list (GM gm) =
             NextState
                 (GM
                     { currentTarget = gm.currentTarget - collectedCount
-                    , movesLeft = 0
+                    , movesLeft = gm.movesLeft - 1
                     , grid = fallenGrid
                     , fallen = fallenIndices
                     , collected = collectedIndices
