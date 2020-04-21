@@ -100,14 +100,7 @@ initialGrid =
         wallIndices =
             [ ( 1, 1 ), ( 4, 1 ), ( 1, 4 ), ( 4, 4 ) ]
 
-        emptyIndices =
-            []
-
-        seedIndices =
-            [ ( 3, 2 ) ]
-
         isSeedIdx ( x, y ) =
-            --List.member i seedIndices
             x == 0 || y == 0 || x == 5 || y == 5
 
         grid =
@@ -120,9 +113,6 @@ initialGrid =
 
                     else if isSeedIdx i then
                         Seed
-
-                    else if List.member i emptyIndices then
-                        Empty
 
                     else
                         Water
