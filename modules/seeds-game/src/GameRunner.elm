@@ -242,6 +242,10 @@ andThenDebugFail =
     D.andThen (Debug.log "debug" >> (\_ -> D.fail ""))
 
 
+succeedWhenPrimaryDown msg =
+    DX.when peDecoder isPrimaryDown (D.succeed msg)
+
+
 viewGameCells : Set GI -> List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
 viewGameCells sel fallen cells =
     let
@@ -249,11 +253,16 @@ viewGameCells sel fallen cells =
             Dict.fromList (List.map swap fallen)
 
         viewCell ( ( _, _ ) as idx, c ) =
+            let
+                onPointerEnter =
+                    HE.on "pointerenter"
+
+                onPointerDown =
+                    HE.on "pointerdown"
+            in
             Html.td
-                [ HE.on "pointerenter"
-                    (DX.when peDecoder isPrimaryDown (D.succeed (ToggleSelection idx)))
-                , HE.on "pointerdown"
-                    (DX.when peDecoder isPrimaryDown (D.succeed (ToggleSelection idx)))
+                [ onPointerEnter (succeedWhenPrimaryDown (ToggleSelection idx))
+                , onPointerDown (succeedWhenPrimaryDown (ToggleSelection idx))
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
