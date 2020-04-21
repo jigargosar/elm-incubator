@@ -1,4 +1,21 @@
-module Grid exposing (GI, Grid, entryAbove, entryAt, get, indices, init, map, mapIdx, set, swap, swapAndReturnPair, swapPair, toDict, toList, toListBy, wh)
+module Grid exposing
+    ( GI
+    , Grid
+    , entryAbove
+    , entryAt
+    , get
+    , indices
+    , init
+    , map
+    , mapIdx
+    , set
+    , swap
+    , swapPair
+    , toDict
+    , toList
+    , toListBy
+    , wh
+    )
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict exposing (Dict)
@@ -77,12 +94,6 @@ swap ia ib grid =
 swapPair : ( GI, GI ) -> Grid a -> Maybe (Grid a)
 swapPair pair =
     swap (Tuple.first pair) (Tuple.second pair)
-
-
-swapAndReturnPair : ( GI, GI ) -> Grid a -> Maybe ( ( GI, GI ), Grid a )
-swapAndReturnPair pair grid =
-    swapPair pair grid
-        |> Maybe.map (Tuple.pair pair)
 
 
 wh : Grid a -> ( Int, Int )
