@@ -203,6 +203,18 @@ computeCollectedIndicesAndUpdateGrid toCollectIndices grid0 =
     filterMapAccumr computeCollectedAt grid0 toCollectIndices
 
 
+fillEmptyCells : Grid Cell -> Grid Cell
+fillEmptyCells =
+    Grid.map
+        (\_ c ->
+            if c == Empty then
+                Water
+
+            else
+                c
+        )
+
+
 makeMove : List GI -> GameModel -> MoveResult
 makeMove input (GM gm) =
     if input == [] then
@@ -210,14 +222,17 @@ makeMove input (GM gm) =
 
     else
         let
-            ( collectedIndices, collectedGrid ) =
+            ( collectedIndices, collectedGrid_ ) =
                 computeCollectedIndicesAndUpdateGrid input gm.grid
 
             collectedCount =
                 List.length collectedIndices
 
-            ( fallenIndices, fallenGrid ) =
-                computeFallingIndicesAndUpdateGrid collectedGrid
+            ( fallenIndices, fallenGrid_ ) =
+                computeFallingIndicesAndUpdateGrid collectedGrid_
+
+            filledGrid =
+                fillEmptyCells fallenGrid_
 
             nextTarget =
                 gm.currentTarget - collectedCount
@@ -229,7 +244,7 @@ makeMove input (GM gm) =
             GameWon
                 { currentTarget = 0
                 , movesLeft = nextMovesLeft
-                , grid = fallenGrid
+                , grid = filledGrid
                 , fallen = fallenIndices
                 , collected = collectedIndices
                 }
@@ -238,7 +253,7 @@ makeMove input (GM gm) =
             GameLost
                 { currentTarget = nextTarget
                 , movesLeft = 0
-                , grid = fallenGrid
+                , grid = filledGrid
                 , fallen = fallenIndices
                 , collected = collectedIndices
                 }
@@ -248,7 +263,7 @@ makeMove input (GM gm) =
                 (GM
                     { currentTarget = nextTarget
                     , movesLeft = nextMovesLeft
-                    , grid = fallenGrid
+                    , grid = filledGrid
                     , fallen = fallenIndices
                     , collected = collectedIndices
                     }
