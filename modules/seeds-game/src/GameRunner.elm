@@ -216,14 +216,7 @@ viewGameCells sel cells =
                         [ class "code f4 o-50 glow"
                         , class "absolute pa2"
                         ]
-                        [--case Dict.get idx fallenDict of
-                         --    Just ( fx, fy ) ->
-                         --        div [] [ text (String.fromInt fx ++ "," ++ String.fromInt fy) ]
-                         --
-                         --    Nothing ->
-                         --        --div [] [ text (String.fromInt x ++ "," ++ String.fromInt y) ]
-                         --        text ""
-                        ]
+                        []
                     ]
                 ]
 
