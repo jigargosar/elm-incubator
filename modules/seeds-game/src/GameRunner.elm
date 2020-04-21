@@ -45,7 +45,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running (G.initGame |> G.initMoveBuilder)
+    ( Running G.initGame
     , Cmd.none
     )
 

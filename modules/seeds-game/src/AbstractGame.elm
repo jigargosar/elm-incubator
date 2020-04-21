@@ -142,7 +142,7 @@ initialGrid =
     grid
 
 
-initGame : GameModel
+initGame : MoveBuilder
 initGame =
     GM
         { movesLeft = 10
@@ -151,6 +151,7 @@ initGame =
         , grid = initialGrid
         , random = Random.initialSeed 0
         }
+        |> initMoveBuilder
 
 
 type alias Info =
