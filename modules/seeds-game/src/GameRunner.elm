@@ -12,29 +12,29 @@ import Set exposing (Set)
 
 
 type Selection
-    = Selection (Set GI)
+    = Selection (List GI)
 
 
 emptySelection =
-    Selection Set.empty
+    Selection []
 
 
-updateSelection idx bool (Selection set) =
+updateSelection idx bool (Selection list) =
     (if bool then
-        Set.insert idx set
+        idx :: List.Extra.remove idx list
 
      else
-        Set.remove idx set
+        List.Extra.remove idx list
     )
         |> Selection
 
 
-selectionToList (Selection set) =
-    Set.toList set
+selectionToList (Selection list) =
+    list
 
 
-isSelected idx (Selection set) =
-    Set.member idx set
+isSelected idx (Selection list) =
+    List.member idx list
 
 
 
