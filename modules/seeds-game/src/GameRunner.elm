@@ -11,6 +11,7 @@ import Html.Events as HE exposing (onClick)
 import Json.Decode as D exposing (Decoder)
 import Json.Decode.Extra as DX
 import List.Extra
+import PointerEvents as PE
 import Set exposing (Set)
 
 
@@ -174,78 +175,6 @@ viewGameInfo sel i =
         ]
 
 
-type alias PE =
-    { isPrimary : Bool
-    , pressure : Float
-    , target : El
-    , offsetX : Float
-    , offsetY : Float
-    , pageX : Float
-    , pageY : Float
-    }
-
-
-type alias El =
-    { offsetLeft : Float
-    , offsetTop : Float
-    , offsetWidth : Float
-    , offsetHeight : Float
-    }
-
-
-elDecoder =
-    D.map4 El
-        (D.field "offsetLeft" D.float)
-        (D.field "offsetTop" D.float)
-        (D.field "offsetWidth" D.float)
-        (D.field "offsetHeight" D.float)
-
-
-andMap =
-    D.map2 (|>)
-
-
-peDecoder : Decoder PE
-peDecoder =
-    D.succeed PE
-        |> andMap (D.field "isPrimary" D.bool)
-        |> andMap (D.field "pressure" D.float)
-        |> andMap (D.field "target" elDecoder)
-        |> andMap (D.field "offsetX" D.float)
-        |> andMap (D.field "offsetY" D.float)
-        |> andMap (D.field "pageX" D.float)
-        |> andMap (D.field "pageY" D.float)
-
-
-
---|> andThenTapLog "PE"
-
-
-isPrimaryDown : PE -> Bool
-isPrimaryDown pe =
-    pe.isPrimary && (pe.pressure >= 0.5)
-
-
-
---noinspection ElmUnusedSymbol
-
-
-andThenTapLog logMsg =
-    D.andThen (\v -> D.succeed (Debug.log logMsg v))
-
-
-
---noinspection ElmUnusedSymbol
-
-
-andThenDebugFail =
-    D.andThen (Debug.log "debug" >> (\_ -> D.fail ""))
-
-
-succeedWhenPrimaryDown msg =
-    DX.when peDecoder isPrimaryDown (D.succeed msg)
-
-
 viewGameCells : Set GI -> List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
 viewGameCells sel fallen cells =
     let
@@ -253,16 +182,9 @@ viewGameCells sel fallen cells =
             Dict.fromList (List.map swap fallen)
 
         viewCell ( ( _, _ ) as idx, c ) =
-            let
-                onPointerEnter =
-                    HE.on "pointerenter"
-
-                onPointerDown =
-                    HE.on "pointerdown"
-            in
             Html.td
-                [ onPointerEnter (succeedWhenPrimaryDown (ToggleSelection idx))
-                , onPointerDown (succeedWhenPrimaryDown (ToggleSelection idx))
+                [ PE.onPointerEnter (PE.succeedWhenPrimaryDown (ToggleSelection idx))
+                , PE.onPrimaryDown (ToggleSelection idx)
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
