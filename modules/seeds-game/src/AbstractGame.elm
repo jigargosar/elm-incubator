@@ -234,12 +234,7 @@ fillEmptyCells grid =
         |> Random.map Dict.fromList
         |> Random.map
             (\nd ->
-                Grid.map
-                    (\i c ->
-                        Dict.get i nd
-                            |> Maybe.withDefault c
-                    )
-                    grid
+                Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
             )
 
 
