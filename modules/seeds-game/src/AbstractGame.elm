@@ -95,14 +95,13 @@ filterFoldr func acc =
 -- GAME MODEL
 
 
-type GameModel
-    = GM
-        { movesLeft : Int
-        , targetSeeds : Int
-        , targetWater : Int
-        , grid : Grid Cell
-        , random : Random.Seed
-        }
+type alias GameState =
+    { movesLeft : Int
+    , targetSeeds : Int
+    , targetWater : Int
+    , grid : Grid Cell
+    , random : Random.Seed
+    }
 
 
 type Cell
@@ -142,14 +141,12 @@ initialGrid =
 initGame : MoveBuilder
 initGame =
     MoveBuilder
-        (GM
-            { movesLeft = 10
-            , targetSeeds = 35
-            , targetWater = 35
-            , grid = initialGrid
-            , random = Random.initialSeed 0
-            }
-        )
+        { movesLeft = 10
+        , targetSeeds = 35
+        , targetWater = 35
+        , grid = initialGrid
+        , random = Random.initialSeed 0
+        }
         []
 
 
@@ -162,7 +159,7 @@ type alias Info =
 
 
 info : MoveBuilder -> Info
-info (MoveBuilder (GM g) _) =
+info (MoveBuilder g _) =
     Info g.movesLeft g.targetSeeds g.targetWater g.grid
 
 
@@ -245,8 +242,8 @@ fillEmptyCells grid =
             )
 
 
-isValidStart : GI -> GameModel -> Bool
-isValidStart idx (GM gm) =
+isValidStart : GI -> GameState -> Bool
+isValidStart idx gm =
     isCellMovableAt idx gm.grid
 
 
@@ -258,11 +255,11 @@ isCellMovableAt idx grid =
 
 
 type MoveBuilder
-    = MoveBuilder GameModel (List GI)
+    = MoveBuilder GameState (List GI)
 
 
 pushIdx : GI -> MoveBuilder -> Maybe MoveBuilder
-pushIdx idx (MoveBuilder ((GM { grid }) as gm) stack) =
+pushIdx idx (MoveBuilder ({ grid } as gm) stack) =
     case stack of
         [] ->
             if isValidStart idx gm then
@@ -347,7 +344,7 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
 
 
 makeMove : MoveBuilder -> MoveResult
-makeMove (MoveBuilder (GM gm) input) =
+makeMove (MoveBuilder gm input) =
     if input == [] then
         InvalidMove
 
@@ -402,13 +399,11 @@ makeMove (MoveBuilder (GM gm) input) =
         else
             NextState
                 (MoveBuilder
-                    (GM
-                        { targetSeeds = nextTargetSeeds
-                        , targetWater = nextTargetWater
-                        , movesLeft = nextMovesLeft
-                        , grid = filledGrid
-                        , random = nextRandom
-                        }
-                    )
+                    { targetSeeds = nextTargetSeeds
+                    , targetWater = nextTargetWater
+                    , movesLeft = nextMovesLeft
+                    , grid = filledGrid
+                    , random = nextRandom
+                    }
                     []
                 )
