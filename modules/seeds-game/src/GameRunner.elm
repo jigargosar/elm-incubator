@@ -18,12 +18,32 @@ emptySelection =
     Selection []
 
 
+isAdj ( x1, y1 ) ( x2, y2 ) =
+    let
+        dx =
+            abs (x1 - x2)
+
+        dy =
+            abs (y1 - y2)
+    in
+    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
+
+
 updateSelection idx wasSelected (Selection list) =
     (if wasSelected && List.member idx list then
         List.Extra.remove idx list
 
      else if not (wasSelected && List.member idx list) then
-        idx :: list
+        case list of
+            [] ->
+                [ idx ]
+
+            last :: _ ->
+                if isAdj idx last then
+                    idx :: list
+
+                else
+                    list
 
      else
         list
