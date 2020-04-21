@@ -10,6 +10,7 @@ module AbstractGame exposing
     , isValidStart
     , makeMove
     , pushIdx
+    , toGameModel
     , toStack
     )
 
@@ -257,32 +258,42 @@ isCellMovableAt idx grid =
 
 
 type MoveBuilder
-    = MoveBuilder GameModel GI (List GI)
+    = MoveBuilder GameModel (List GI)
 
 
-initMoveBuilder : GI -> GameModel -> Maybe MoveBuilder
-initMoveBuilder idx gm =
-    if isValidStart idx gm then
-        MoveBuilder gm idx []
-            |> Just
-
-    else
-        Nothing
+initMoveBuilder : GameModel -> MoveBuilder
+initMoveBuilder gm =
+    MoveBuilder gm []
 
 
 pushIdx : GI -> MoveBuilder -> Maybe MoveBuilder
-pushIdx idx (MoveBuilder ((GM { grid }) as gm) last prevStack) =
-    if areCellsAtIndicesConnectible idx last grid then
-        MoveBuilder gm idx (last :: prevStack)
-            |> Just
+pushIdx idx (MoveBuilder ((GM { grid }) as gm) stack) =
+    case stack of
+        [] ->
+            if isValidStart idx gm then
+                MoveBuilder gm [ idx ]
+                    |> Just
 
-    else
-        Nothing
+            else
+                Nothing
+
+        last :: _ ->
+            if areCellsAtIndicesConnectible idx last grid then
+                MoveBuilder gm (idx :: stack)
+                    |> Just
+
+            else
+                Nothing
 
 
 toStack : MoveBuilder -> List GI
-toStack (MoveBuilder _ last prevStack) =
-    last :: prevStack
+toStack (MoveBuilder _ stack) =
+    stack
+
+
+toGameModel : MoveBuilder -> GameModel
+toGameModel (MoveBuilder gm _) =
+    gm
 
 
 areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
