@@ -6,11 +6,9 @@ module AbstractGame exposing
     , clearIfOnlyEq
     , info
     , initGame
-    , initMoveBuilder
     , makeMove
     , popIfSecondLastEq
     , pushIdx
-    , toGameModel
     , toStack
     )
 
@@ -143,14 +141,16 @@ initialGrid =
 
 initGame : MoveBuilder
 initGame =
-    GM
-        { movesLeft = 10
-        , targetSeeds = 35
-        , targetWater = 35
-        , grid = initialGrid
-        , random = Random.initialSeed 0
-        }
-        |> initMoveBuilder
+    MoveBuilder
+        (GM
+            { movesLeft = 10
+            , targetSeeds = 35
+            , targetWater = 35
+            , grid = initialGrid
+            , random = Random.initialSeed 0
+            }
+        )
+        []
 
 
 type alias Info =
@@ -261,11 +261,6 @@ type MoveBuilder
     = MoveBuilder GameModel (List GI)
 
 
-initMoveBuilder : GameModel -> MoveBuilder
-initMoveBuilder gm =
-    MoveBuilder gm []
-
-
 pushIdx : GI -> MoveBuilder -> Maybe MoveBuilder
 pushIdx idx (MoveBuilder ((GM { grid }) as gm) stack) =
     case stack of
@@ -317,11 +312,6 @@ popIfSecondLastEq idx (MoveBuilder gm stack) =
 toStack : MoveBuilder -> List GI
 toStack (MoveBuilder _ stack) =
     stack
-
-
-toGameModel : MoveBuilder -> GameModel
-toGameModel (MoveBuilder gm _) =
-    gm
 
 
 areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
@@ -411,12 +401,14 @@ makeMove (MoveBuilder (GM gm) input) =
 
         else
             NextState
-                (GM
-                    { targetSeeds = nextTargetSeeds
-                    , targetWater = nextTargetWater
-                    , movesLeft = nextMovesLeft
-                    , grid = filledGrid
-                    , random = nextRandom
-                    }
-                    |> initMoveBuilder
+                (MoveBuilder
+                    (GM
+                        { targetSeeds = nextTargetSeeds
+                        , targetWater = nextTargetWater
+                        , movesLeft = nextMovesLeft
+                        , grid = filledGrid
+                        , random = nextRandom
+                        }
+                    )
+                    []
                 )
