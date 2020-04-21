@@ -32,6 +32,8 @@ onPrimaryEnterAndDown msg =
 type alias PE =
     { pointerId : Int
     , pointerType : String
+    , button : Int
+    , buttons : Int
     , isPrimary : Bool
     , pressure : Float
     , target : El
@@ -67,6 +69,8 @@ peDecoder =
     D.succeed PE
         |> andMap (D.field "pointerId" D.int)
         |> andMap (D.field "pointerType" D.string)
+        |> andMap (D.field "button" D.int)
+        |> andMap (D.field "buttons" D.int)
         |> andMap (D.field "isPrimary" D.bool)
         |> andMap (D.field "pressure" D.float)
         |> andMap (D.field "target" elDecoder)
