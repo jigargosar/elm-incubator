@@ -184,9 +184,6 @@ collectIndices list (GM gm) =
 
         ( fallenIndices, fallenGrid ) =
             computeFallingIndicesAndUpdateGrid collectedGrid
-
-        _ =
-            Debug.log "fallenIndices" fallenIndices
     in
     GM
         { gm
