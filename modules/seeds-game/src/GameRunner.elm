@@ -295,7 +295,7 @@ viewCell sel ( ( _, _ ) as idx, c ) =
             , class "relative"
             , style "transform"
                 (if isSelected then
-                    "scale(0.5)"
+                    "scale(0.75)"
 
                  else
                     "scale(1)"
