@@ -75,6 +75,15 @@ flipMapAccumr func acc =
         >> swap
 
 
+filterFoldr : (a -> b -> Maybe b) -> b -> List a -> b
+filterFoldr func acc =
+    List.foldr
+        (\a b ->
+            func a b |> Maybe.withDefault b
+        )
+        acc
+
+
 
 -- GAME MODEL
 
@@ -181,16 +190,16 @@ isCellCollectible cell =
             False
 
 
-computeCollectedIndicesAndUpdateGrid : List GI -> Grid Cell -> ( List GI, Grid Cell )
+computeCollectedIndicesAndUpdateGrid : List GI -> Grid Cell -> ( Int, Grid Cell )
 computeCollectedIndicesAndUpdateGrid toCollectIndices grid0 =
     let
-        computeCollectedAt idx grid =
+        computeCollectedAt idx ( ct, grid ) =
             case Grid.get idx grid of
                 Just cell ->
                     if isCellCollectible cell then
                         case Grid.set idx Empty grid of
                             Just collectedGrid ->
-                                Just ( idx, collectedGrid )
+                                Just ( ct + 1, collectedGrid )
 
                             Nothing ->
                                 Nothing
@@ -201,7 +210,7 @@ computeCollectedIndicesAndUpdateGrid toCollectIndices grid0 =
                 Nothing ->
                     Nothing
     in
-    filterMapAccumr computeCollectedAt grid0 toCollectIndices
+    filterFoldr computeCollectedAt ( 0, grid0 ) toCollectIndices
 
 
 fillEmptyCells : Grid Cell -> Grid Cell
@@ -223,11 +232,8 @@ makeMove input (GM gm) =
 
     else
         let
-            ( collectedIndices, collectedGrid_ ) =
+            ( collectedCount, collectedGrid_ ) =
                 computeCollectedIndicesAndUpdateGrid input gm.grid
-
-            collectedCount =
-                List.length collectedIndices
 
             ( _, fallenGrid_ ) =
                 computeFallingIndicesAndUpdateGrid collectedGrid_
