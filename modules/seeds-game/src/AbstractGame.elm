@@ -7,7 +7,6 @@ module AbstractGame exposing
     , info
     , initGame
     , initMoveBuilder
-    , isValidStart
     , makeMove
     , pushIdx
     , toGameModel
