@@ -3,7 +3,6 @@ module AbstractGame exposing
     , GameModel
     , Info
     , MoveResult(..)
-    , collectIndices
     , info
     , initGame
     , makeMove
@@ -168,59 +167,83 @@ isCellMovable cell =
             False
 
 
-collectIndices : List GI -> GameModel -> GameModel
-collectIndices list (GM gm) =
-    let
-        collectedGrid =
-            Grid.map
-                (\i c ->
-                    if List.member i list then
-                        Empty
 
-                    else
-                        c
-                )
-                gm.grid
+--collectMove : List GI -> GameModel -> GameModel
+--collectMove list (GM gm) =
+--    let
+--        collectedGrid =
+--            Grid.map
+--                (\i c ->
+--                    if List.member i list then
+--                        Empty
+--
+--                    else
+--                        c
+--                )
+--                gm.grid
+--
+--        ( fallenIndices, fallenGrid ) =
+--            computeFallingIndicesAndUpdateGrid collectedGrid
+--    in
+--    GM
+--        { gm
+--            | grid = fallenGrid
+--            , fallen = fallenIndices
+--            , collected = list
+--        }
 
-        ( fallenIndices, fallenGrid ) =
-            computeFallingIndicesAndUpdateGrid collectedGrid
-    in
-    GM
-        { gm
-            | grid = fallenGrid
-            , fallen = fallenIndices
-            , collected = list
-        }
 
-
-makeMove : Int -> GameModel -> MoveResult
-makeMove i (GM g) =
-    if i <= 0 then
+makeMove : List GI -> GameModel -> MoveResult
+makeMove list (GM gm) =
+    if list == [] then
         InvalidMove
 
-    else if g.currentTarget - i <= 0 then
-        GameWon
-            { currentTarget = 0
-            , movesLeft = g.movesLeft - 1
-            , cells = Grid.toList g.grid
-            , fallen = []
-            , collected = []
-            }
-
-    else if g.movesLeft == 1 then
-        GameLost
-            { currentTarget = g.currentTarget - i
-            , movesLeft = 0
-            , cells = Grid.toList g.grid
-            , fallen = []
-            , collected = []
-            }
-
     else
-        NextState
-            (GM
-                { g
-                    | currentTarget = g.currentTarget - i
-                    , movesLeft = g.movesLeft - 1
+        let
+            ( collectedIndices, collectedGrid ) =
+                ( list
+                , Grid.map
+                    (\i c ->
+                        if List.member i list then
+                            Empty
+
+                        else
+                            c
+                    )
+                    gm.grid
+                )
+
+            collectedCount =
+                List.length collectedIndices
+
+            ( fallenIndices, fallenGrid ) =
+                computeFallingIndicesAndUpdateGrid collectedGrid
+        in
+        if gm.currentTarget - collectedCount <= 0 then
+            GameWon
+                { currentTarget = 0
+                , movesLeft = gm.movesLeft - 1
+                , cells = Grid.toList fallenGrid
+                , fallen = fallenIndices
+                , collected = collectedIndices
                 }
-            )
+
+        else if gm.movesLeft == 1 then
+            GameLost
+                { currentTarget = gm.currentTarget - collectedCount
+                , movesLeft = 0
+                , cells = Grid.toList fallenGrid
+                , fallen = fallenIndices
+                , collected = collectedIndices
+                }
+
+        else
+            NextState
+                (GM
+                    { currentTarget = gm.currentTarget - collectedCount
+                    , movesLeft = 0
+                    , grid = fallenGrid
+                    , fallen = fallenIndices
+                    , collected = collectedIndices
+                    }
+                )

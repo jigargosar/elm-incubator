@@ -89,7 +89,7 @@ update message model =
         CollectIndices list ->
             ( case model of
                 Running g ->
-                    G.collectIndices list g
+                    G.collectMove list g
                         |> Running
 
                 _ ->
