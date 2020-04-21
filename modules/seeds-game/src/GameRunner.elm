@@ -9,6 +9,7 @@ import Html exposing (Html, button, div, table, text)
 import Html.Attributes exposing (autofocus, class)
 import Html.Events exposing (onClick)
 import List.Extra
+import Set exposing (Set)
 
 
 
@@ -16,7 +17,7 @@ import List.Extra
 
 
 type Model
-    = Running G.GameModel
+    = Running (Set GI) G.GameModel
     | Over G.Info
     | Won G.Info
 
@@ -27,7 +28,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running G.initGame
+    ( Running Set.empty G.initGame
     , Cmd.none
     )
 
@@ -50,7 +51,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Running _ ->
+                Running _ _ ->
                     ( model, Cmd.none )
 
                 Over _ ->
@@ -61,7 +62,7 @@ update message model =
 
         MakeMove list ->
             case model of
-                Running g ->
+                Running _ g ->
                     let
                         nm =
                             case G.makeMove list g of
@@ -69,7 +70,7 @@ update message model =
                                     model
 
                                 G.NextState ng ->
-                                    Running ng
+                                    Running Set.empty ng
 
                                 G.GameLost info ->
                                     Over info
@@ -103,7 +104,7 @@ view : Model -> DM
 view model =
     Document "GameRunner"
         (case model of
-            Running g ->
+            Running _ g ->
                 [ div [ class "pa3" ] [ text "Game Running" ]
                 , viewGameInfo (G.info g)
                 , div [ class "pa3" ]
@@ -154,7 +155,7 @@ viewGameCells fallen cells =
         fallenDict =
             Dict.fromList (List.map swap fallen)
 
-        viewCell ( ( x, y ) as idx, c ) =
+        viewCell ( ( _, _ ) as idx, c ) =
             Html.td []
                 [ div
                     [ class "br3 w3 h3 flex"
