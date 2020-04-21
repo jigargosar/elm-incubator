@@ -242,15 +242,7 @@ viewGameCells sel fallen cells =
                     (peDecoder
                         |> D.andThen
                             (\pe ->
-                                if
-                                    pe.isPrimary
-                                        && pe.pressure
-                                        >= 0.5
-                                        && (pe.offsetX > (pe.target.offsetWidth * 0.2))
-                                        && (pe.offsetX < (pe.target.offsetWidth - pe.target.offsetWidth * 0.2))
-                                        && (pe.offsetY > (pe.target.offsetHeight * 0.2))
-                                        && (pe.offsetY < (pe.target.offsetHeight - pe.target.offsetHeight * 0.2))
-                                then
+                                if pe.isPrimary && (pe.pressure >= 0.5) then
                                     D.succeed (OnClick idx)
 
                                 else
