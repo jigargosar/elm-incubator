@@ -177,6 +177,8 @@ type alias PE =
     { isPrimary : Bool
     , pressure : Float
     , target : El
+    , offsetX : Float
+    , offsetY : Float
     }
 
 
@@ -198,10 +200,17 @@ elDecoder =
 
 peDecoder : Decoder PE
 peDecoder =
-    D.map3 PE
+    D.map5 PE
         (D.field "isPrimary" D.bool)
         (D.field "pressure" D.float)
         (D.field "target" elDecoder)
+        (D.field "offsetX" D.float)
+        (D.field "offsetY" D.float)
+        |> andThenTapLog "PE"
+
+
+andThenTapLog logMsg =
+    D.andThen (\v -> D.succeed (Debug.log logMsg v))
 
 
 
