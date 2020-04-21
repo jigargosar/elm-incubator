@@ -1,6 +1,5 @@
 module AbstractGame exposing
     ( Cell(..)
-    , GameModel
     , Info
     , MoveBuilder
     , MoveResult(..)
