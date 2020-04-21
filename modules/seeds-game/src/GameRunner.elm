@@ -165,7 +165,13 @@ viewGameInfo : Set GI -> G.Info -> HM
 viewGameInfo sel i =
     div []
         [ div [ class "pa3" ]
-            [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
+            [ text
+                (Debug.toString
+                    { movesLeft = i.movesLeft
+                    , targetSeeds = i.targetSeeds
+                    , targetWater = i.targetWater
+                    }
+                )
             ]
         , viewGameCells sel (Grid.toList i.grid)
         ]

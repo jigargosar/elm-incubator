@@ -10,7 +10,7 @@ module AbstractGame exposing
 
 -- GAME GRID
 
-import Basics.Extra exposing (swap)
+import Basics.Extra exposing (atLeast, swap)
 import Grid exposing (GI, Grid)
 import List.Extra
 
@@ -91,7 +91,8 @@ filterFoldr func acc =
 type GameModel
     = GM
         { movesLeft : Int
-        , currentTarget : Int
+        , targetSeeds : Int
+        , targetWater : Int
         , grid : Grid Cell
         }
 
@@ -134,21 +135,23 @@ initGame : GameModel
 initGame =
     GM
         { movesLeft = 5
-        , currentTarget = 100
+        , targetSeeds = 50
+        , targetWater = 50
         , grid = initialGrid
         }
 
 
 type alias Info =
     { movesLeft : Int
-    , currentTarget : Int
+    , targetSeeds : Int
+    , targetWater : Int
     , grid : Grid Cell
     }
 
 
 info : GameModel -> Info
 info (GM g) =
-    Info g.movesLeft g.currentTarget g.grid
+    Info g.movesLeft g.targetSeeds g.targetWater g.grid
 
 
 type MoveResult
@@ -160,22 +163,6 @@ type MoveResult
 
 isCellMovable : Cell -> Bool
 isCellMovable cell =
-    case cell of
-        Water ->
-            True
-
-        Seed ->
-            True
-
-        Wall ->
-            False
-
-        Empty ->
-            False
-
-
-isCellCollectible : Cell -> Bool
-isCellCollectible cell =
     case cell of
         Water ->
             True
@@ -250,30 +237,48 @@ makeMove input (GM gm) =
             filledGrid =
                 fillEmptyCells fallenGrid_
 
-            nextTarget =
-                gm.currentTarget - (ct.water + ct.seeds)
+            nextTargetSeeds =
+                gm.targetSeeds
+                    - ct.seeds
+                    |> atLeast 0
+
+            nextTargetWater =
+                gm.targetWater
+                    - ct.water
+                    |> atLeast 0
 
             nextMovesLeft =
-                gm.movesLeft - 1
+                gm.movesLeft
+                    - 1
+                    |> atLeast 0
+
+            isGameWon =
+                List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
+
+            isGameLost =
+                not isGameWon && nextMovesLeft == 0
         in
-        if nextTarget <= 0 then
+        if isGameWon then
             GameWon
-                { currentTarget = 0
+                { targetSeeds = nextTargetSeeds
+                , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
                 }
 
-        else if gm.movesLeft == 1 then
+        else if isGameLost then
             GameLost
-                { currentTarget = nextTarget
-                , movesLeft = 0
+                { targetSeeds = nextTargetSeeds
+                , targetWater = nextTargetWater
+                , movesLeft = nextMovesLeft
                 , grid = filledGrid
                 }
 
         else
             NextState
                 (GM
-                    { currentTarget = nextTarget
+                    { targetSeeds = nextTargetSeeds
+                    , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
                     , grid = filledGrid
                     }
