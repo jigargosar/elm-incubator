@@ -198,14 +198,18 @@ elDecoder =
         (D.field "offsetHeight" D.float)
 
 
+andMap =
+    D.map2 (|>)
+
+
 peDecoder : Decoder PE
 peDecoder =
-    D.map5 PE
-        (D.field "isPrimary" D.bool)
-        (D.field "pressure" D.float)
-        (D.field "target" elDecoder)
-        (D.field "offsetX" D.float)
-        (D.field "offsetY" D.float)
+    D.succeed PE
+        |> andMap (D.field "isPrimary" D.bool)
+        |> andMap (D.field "pressure" D.float)
+        |> andMap (D.field "target" elDecoder)
+        |> andMap (D.field "offsetX" D.float)
+        |> andMap (D.field "offsetY" D.float)
         |> andThenTapLog "PE"
 
 
