@@ -7,6 +7,7 @@ import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
 import Html.Events exposing (onClick)
 import List.Extra
+import Maybe.Extra
 import PointerEvents as PE
 
 
@@ -16,25 +17,27 @@ updateSelection idx wasSelected moveBuilder =
             G.toStack moveBuilder
     in
     if wasSelected && List.member idx moves then
-        ---- Remove
-        --case moves of
-        --    only :: [] ->
-        --        if only == idx then
-        --            []
-        --
-        --        else
-        --            moves
-        --
-        --    _ :: secondLast :: prevStack ->
-        --        if secondLast == idx then
-        --            secondLast :: prevStack
-        --
-        --        else
-        --            moves
-        --
-        --    _ ->
-        --        moves
-        moveBuilder
+        Maybe.Extra.oneOf [ G.clearIfOnlyEq idx ] moveBuilder
+            |> Maybe.withDefault
+                ---- Remove
+                --case moves of
+                --    only :: [] ->
+                --        if only == idx then
+                --            []
+                --
+                --        else
+                --            moves
+                --
+                --    _ :: secondLast :: prevStack ->
+                --        if secondLast == idx then
+                --            secondLast :: prevStack
+                --
+                --        else
+                --            moves
+                --
+                --    _ ->
+                --        moves
+                moveBuilder
 
     else if not wasSelected && not (List.member idx moves) then
         -- Add

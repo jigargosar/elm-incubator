@@ -4,6 +4,7 @@ module AbstractGame exposing
     , Info
     , MoveBuilder
     , MoveResult(..)
+    , clearIfOnlyEq
     , info
     , initGame
     , initMoveBuilder
@@ -282,6 +283,20 @@ pushIdx idx (MoveBuilder ((GM { grid }) as gm) stack) =
 
             else
                 Nothing
+
+
+clearIfOnlyEq : GI -> MoveBuilder -> Maybe MoveBuilder
+clearIfOnlyEq idx (MoveBuilder gm stack) =
+    case stack of
+        only :: [] ->
+            if idx == only then
+                MoveBuilder gm [] |> Just
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
 
 
 toStack : MoveBuilder -> List GI
