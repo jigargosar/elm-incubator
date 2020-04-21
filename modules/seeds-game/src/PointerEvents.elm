@@ -30,7 +30,9 @@ onPrimaryEnterAndDown msg =
 
 
 type alias PE =
-    { isPrimary : Bool
+    { pointerId : String
+    , pointerType : String
+    , isPrimary : Bool
     , pressure : Float
     , target : El
     , offsetX : Float
@@ -63,6 +65,8 @@ andMap =
 peDecoder : Decoder PE
 peDecoder =
     D.succeed PE
+        |> andMap (D.field "pointerId" D.string)
+        |> andMap (D.field "pointerType" D.string)
         |> andMap (D.field "isPrimary" D.bool)
         |> andMap (D.field "pressure" D.float)
         |> andMap (D.field "target" elDecoder)
