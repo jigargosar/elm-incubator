@@ -241,7 +241,12 @@ fillEmptyCells grid =
 
 isValidStart : GI -> GameModel -> Bool
 isValidStart idx (GM gm) =
-    Grid.get idx gm.grid
+    isCellMovableAt idx gm.grid
+
+
+isCellMovableAt : GI -> Grid Cell -> Bool
+isCellMovableAt idx grid =
+    Grid.get idx grid
         |> Maybe.map isCellMovable
         |> Maybe.withDefault False
 
