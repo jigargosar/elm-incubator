@@ -179,6 +179,8 @@ type alias PE =
     , target : El
     , offsetX : Float
     , offsetY : Float
+    , pageX : Float
+    , pageY : Float
     }
 
 
@@ -210,6 +212,8 @@ peDecoder =
         |> andMap (D.field "target" elDecoder)
         |> andMap (D.field "offsetX" D.float)
         |> andMap (D.field "offsetY" D.float)
+        |> andMap (D.field "pageX" D.float)
+        |> andMap (D.field "pageY" D.float)
         |> andThenTapLog "PE"
 
 
