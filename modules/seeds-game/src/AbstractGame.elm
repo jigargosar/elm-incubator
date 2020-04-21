@@ -38,17 +38,7 @@ computeFallingAt to grid =
 
 computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
 computeFallingIndicesAndUpdateGrid grid0 =
-    let
-        func idx grid1 =
-            case computeFallingAt idx grid1 of
-                Just ( item, grid2 ) ->
-                    ( Just item, grid2 )
-
-                Nothing ->
-                    ( Nothing, grid1 )
-    in
-    flipMapAccumr func grid0 (Grid.indices grid0)
-        |> Tuple.mapFirst (List.filterMap identity)
+    filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
 
 
 flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
