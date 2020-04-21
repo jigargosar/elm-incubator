@@ -31,6 +31,7 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
 
 updateSelection idx wasSelected (Selection list) =
     (if wasSelected && List.member idx list then
+        -- Remove
         case list of
             only :: [] ->
                 if only == idx then
@@ -50,6 +51,7 @@ updateSelection idx wasSelected (Selection list) =
                 list
 
      else if not wasSelected && not (List.member idx list) then
+        -- Add
         case list of
             [] ->
                 [ idx ]
@@ -62,6 +64,7 @@ updateSelection idx wasSelected (Selection list) =
                     list
 
      else
+        -- NoOp
         list
     )
         |> Selection
