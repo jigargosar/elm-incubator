@@ -6,7 +6,7 @@ import Browser exposing (Document)
 import Dict
 import Grid exposing (GI)
 import Html exposing (Html, button, div, table, text)
-import Html.Attributes exposing (autofocus, class)
+import Html.Attributes exposing (autofocus, class, style)
 import Html.Events as HE exposing (onClick, onMouseEnter)
 import Json.Decode as D exposing (Decoder)
 import List.Extra
@@ -94,16 +94,7 @@ update message model =
                                     model
 
                                 G.NextState ng ->
-                                    Running
-                                        (Set.fromList
-                                            [ ( 3, 1 )
-                                            , ( 2, 2 )
-                                            , ( 4, 2 )
-                                            , ( 3, 3 )
-                                            , ( 3, 1 )
-                                            ]
-                                        )
-                                        ng
+                                    Running Set.empty ng
 
                                 G.GameLost info ->
                                     Over info
@@ -220,6 +211,13 @@ viewGameCells sel fallen cells =
                 [ div
                     [ class "br3 w3 h3 flex"
                     , class "relative"
+                    , style "transform"
+                        (if Set.member idx sel then
+                            "scale(0.5)"
+
+                         else
+                            "scale(1)"
+                        )
                     , class
                         (case c of
                             G.Water ->
