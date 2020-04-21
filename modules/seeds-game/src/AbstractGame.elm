@@ -190,27 +190,36 @@ isCellCollectible cell =
             False
 
 
-collectIndices : List GI -> Grid Cell -> ( Int, Grid Cell )
+collectIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectIndices indicesToCollect grid0 =
     let
         computeCollectedAt idx ( ct, grid ) =
             case Grid.get idx grid of
                 Just cell ->
-                    if isCellCollectible cell then
-                        case Grid.set idx Empty grid of
-                            Just collectedGrid ->
-                                Just ( ct + 1, collectedGrid )
+                    let
+                        mbNewCt =
+                            case cell of
+                                Water ->
+                                    Just { ct | water = ct.water + 1 }
 
-                            Nothing ->
-                                Nothing
+                                Seed ->
+                                    Just { ct | seeds = ct.seeds + 1 }
 
-                    else
-                        Nothing
+                                Wall ->
+                                    Nothing
+
+                                Empty ->
+                                    Nothing
+
+                        mbNewGrid =
+                            Grid.set idx Empty grid
+                    in
+                    Maybe.map2 Tuple.pair mbNewCt mbNewGrid
 
                 Nothing ->
                     Nothing
     in
-    filterFoldr computeCollectedAt ( 0, grid0 ) indicesToCollect
+    filterFoldr computeCollectedAt ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
 
 
 fillEmptyCells : Grid Cell -> Grid Cell
@@ -232,7 +241,7 @@ makeMove input (GM gm) =
 
     else
         let
-            ( collectedCount, collectedGrid_ ) =
+            ( ct, collectedGrid_ ) =
                 collectIndices input gm.grid
 
             ( _, fallenGrid_ ) =
@@ -242,7 +251,7 @@ makeMove input (GM gm) =
                 fillEmptyCells fallenGrid_
 
             nextTarget =
-                gm.currentTarget - collectedCount
+                gm.currentTarget - (ct.water + ct.seeds)
 
             nextMovesLeft =
                 gm.movesLeft - 1
