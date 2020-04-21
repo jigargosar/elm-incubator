@@ -217,6 +217,18 @@ peDecoder =
         |> andThenTapLog "PE"
 
 
+whenPrimaryDown : msg -> Decoder PE -> Decoder msg
+whenPrimaryDown msg =
+    D.andThen
+        (\pe ->
+            if pe.isPrimary && (pe.pressure >= 0.5) then
+                D.succeed msg
+
+            else
+                D.fail ""
+        )
+
+
 andThenTapLog logMsg =
     D.andThen (\v -> D.succeed (Debug.log logMsg v))
 
