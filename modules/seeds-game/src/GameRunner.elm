@@ -217,16 +217,13 @@ peDecoder =
         |> andThenTapLog "PE"
 
 
-whenPrimaryDown : msg -> Decoder PE -> Decoder msg
-whenPrimaryDown msg =
-    D.andThen
-        (\pe ->
-            if pe.isPrimary && (pe.pressure >= 0.5) then
-                D.succeed msg
+whenPrimaryDown : a -> PE -> Decoder a
+whenPrimaryDown msg pe =
+    if pe.isPrimary && (pe.pressure >= 0.5) then
+        D.succeed msg
 
-            else
-                D.fail ""
-        )
+    else
+        D.fail ""
 
 
 andThenTapLog logMsg =
@@ -252,14 +249,7 @@ viewGameCells sel fallen cells =
                 [ onClick (OnClick idx)
                 , HE.on "pointerenter"
                     (peDecoder
-                        |> D.andThen
-                            (\pe ->
-                                if pe.isPrimary && (pe.pressure >= 0.5) then
-                                    D.succeed (OnClick idx)
-
-                                else
-                                    D.fail ""
-                            )
+                        |> D.andThen (whenPrimaryDown (OnClick idx))
                     )
                 ]
                 [ div
