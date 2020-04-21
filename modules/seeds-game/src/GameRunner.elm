@@ -106,7 +106,7 @@ update message model =
                                     model
 
                                 G.NextState ng ->
-                                    Running (G.initMoveBuilder ng)
+                                    Running ng
 
                                 G.GameLost info ->
                                     Over info

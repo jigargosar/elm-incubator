@@ -170,7 +170,7 @@ type MoveResult
     = InvalidMove
     | GameLost Info
     | GameWon Info
-    | NextState GameModel
+    | NextState MoveBuilder
 
 
 isCellMovable : Cell -> Bool
@@ -418,4 +418,5 @@ makeMove input (GM gm) =
                     , grid = filledGrid
                     , random = nextRandom
                     }
+                    |> initMoveBuilder
                 )
