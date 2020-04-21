@@ -171,16 +171,13 @@ viewGameInfo sel i =
         [ div [ class "pa3" ]
             [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
             ]
-        , viewGameCells sel i.fallen (Grid.toList i.grid)
+        , viewGameCells sel (Grid.toList i.grid)
         ]
 
 
-viewGameCells : Set GI -> List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
-viewGameCells sel fallen cells =
+viewGameCells : Set GI -> List ( GI, G.Cell ) -> HM
+viewGameCells sel cells =
     let
-        fallenDict =
-            Dict.fromList (List.map swap fallen)
-
         viewCell ( ( _, _ ) as idx, c ) =
             let
                 isSelected =
@@ -219,13 +216,13 @@ viewGameCells sel fallen cells =
                         [ class "code f4 o-50 glow"
                         , class "absolute pa2"
                         ]
-                        [ case Dict.get idx fallenDict of
-                            Just ( fx, fy ) ->
-                                div [] [ text (String.fromInt fx ++ "," ++ String.fromInt fy) ]
-
-                            Nothing ->
-                                --div [] [ text (String.fromInt x ++ "," ++ String.fromInt y) ]
-                                text ""
+                        [--case Dict.get idx fallenDict of
+                         --    Just ( fx, fy ) ->
+                         --        div [] [ text (String.fromInt fx ++ "," ++ String.fromInt fy) ]
+                         --
+                         --    Nothing ->
+                         --        --div [] [ text (String.fromInt x ++ "," ++ String.fromInt y) ]
+                         --        text ""
                         ]
                     ]
                 ]

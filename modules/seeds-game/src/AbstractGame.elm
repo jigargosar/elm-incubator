@@ -84,8 +84,6 @@ type GameModel
         { movesLeft : Int
         , currentTarget : Int
         , grid : Grid Cell
-        , fallen : List ( GI, GI )
-        , collected : List GI
         }
 
 
@@ -128,8 +126,6 @@ initGame =
         { movesLeft = 5
         , currentTarget = 100
         , grid = initialGrid
-        , fallen = []
-        , collected = []
         }
 
 
@@ -137,14 +133,12 @@ type alias Info =
     { movesLeft : Int
     , currentTarget : Int
     , grid : Grid Cell
-    , fallen : List ( GI, GI )
-    , collected : List GI
     }
 
 
 info : GameModel -> Info
 info (GM g) =
-    Info g.movesLeft g.currentTarget g.grid g.fallen g.collected
+    Info g.movesLeft g.currentTarget g.grid
 
 
 type MoveResult
@@ -228,7 +222,7 @@ makeMove input (GM gm) =
             collectedCount =
                 List.length collectedIndices
 
-            ( fallenIndices, fallenGrid_ ) =
+            ( _, fallenGrid_ ) =
                 computeFallingIndicesAndUpdateGrid collectedGrid_
 
             filledGrid =
@@ -245,8 +239,6 @@ makeMove input (GM gm) =
                 { currentTarget = 0
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
-                , fallen = fallenIndices
-                , collected = collectedIndices
                 }
 
         else if gm.movesLeft == 1 then
@@ -254,8 +246,6 @@ makeMove input (GM gm) =
                 { currentTarget = nextTarget
                 , movesLeft = 0
                 , grid = filledGrid
-                , fallen = fallenIndices
-                , collected = collectedIndices
                 }
 
         else
@@ -264,7 +254,5 @@ makeMove input (GM gm) =
                     { currentTarget = nextTarget
                     , movesLeft = nextMovesLeft
                     , grid = filledGrid
-                    , fallen = fallenIndices
-                    , collected = collectedIndices
                     }
                 )
