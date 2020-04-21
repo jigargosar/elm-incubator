@@ -1,7 +1,7 @@
 module AbstractGame exposing
     ( Cell(..)
+    , GameModel
     , Info
-    , MoveBuilder
     , MoveResult(..)
     , clearIfOnlyEq
     , info
@@ -138,9 +138,9 @@ initialGrid =
     grid
 
 
-initGame : MoveBuilder
+initGame : GameModel
 initGame =
-    MoveBuilder
+    GM
         { movesLeft = 10
         , targetSeeds = 35
         , targetWater = 35
@@ -158,8 +158,8 @@ type alias Info =
     }
 
 
-info : MoveBuilder -> Info
-info (MoveBuilder g _) =
+info : GameModel -> Info
+info (GM g _) =
     Info g.movesLeft g.targetSeeds g.targetWater g.grid
 
 
@@ -167,7 +167,7 @@ type MoveResult
     = InvalidMove
     | GameLost Info
     | GameWon Info
-    | NextState MoveBuilder
+    | NextState GameModel
 
 
 isCellMovable : Cell -> Bool
@@ -254,16 +254,16 @@ isCellMovableAt idx grid =
         |> Maybe.withDefault False
 
 
-type MoveBuilder
-    = MoveBuilder GameState (List GI)
+type GameModel
+    = GM GameState (List GI)
 
 
-pushIdx : GI -> MoveBuilder -> Maybe MoveBuilder
-pushIdx idx (MoveBuilder ({ grid } as gm) stack) =
+pushIdx : GI -> GameModel -> Maybe GameModel
+pushIdx idx (GM ({ grid } as gm) stack) =
     case stack of
         [] ->
             if isValidStart idx gm then
-                MoveBuilder gm [ idx ]
+                GM gm [ idx ]
                     |> Just
 
             else
@@ -271,19 +271,19 @@ pushIdx idx (MoveBuilder ({ grid } as gm) stack) =
 
         last :: _ ->
             if areCellsAtIndicesConnectible idx last grid then
-                MoveBuilder gm (idx :: stack)
+                GM gm (idx :: stack)
                     |> Just
 
             else
                 Nothing
 
 
-clearIfOnlyEq : GI -> MoveBuilder -> Maybe MoveBuilder
-clearIfOnlyEq idx (MoveBuilder gm stack) =
+clearIfOnlyEq : GI -> GameModel -> Maybe GameModel
+clearIfOnlyEq idx (GM gm stack) =
     case stack of
         only :: [] ->
             if idx == only then
-                MoveBuilder gm [] |> Just
+                GM gm [] |> Just
 
             else
                 Nothing
@@ -292,12 +292,12 @@ clearIfOnlyEq idx (MoveBuilder gm stack) =
             Nothing
 
 
-popIfSecondLastEq : GI -> MoveBuilder -> Maybe MoveBuilder
-popIfSecondLastEq idx (MoveBuilder gm stack) =
+popIfSecondLastEq : GI -> GameModel -> Maybe GameModel
+popIfSecondLastEq idx (GM gm stack) =
     case stack of
         _ :: secondLast :: prevStack ->
             if idx == secondLast then
-                MoveBuilder gm (secondLast :: prevStack) |> Just
+                GM gm (secondLast :: prevStack) |> Just
 
             else
                 Nothing
@@ -306,8 +306,8 @@ popIfSecondLastEq idx (MoveBuilder gm stack) =
             Nothing
 
 
-toStack : MoveBuilder -> List GI
-toStack (MoveBuilder _ stack) =
+toStack : GameModel -> List GI
+toStack (GM _ stack) =
     stack
 
 
@@ -343,8 +343,8 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
     (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
 
 
-makeMove : MoveBuilder -> MoveResult
-makeMove (MoveBuilder gm input) =
+makeMove : GameModel -> MoveResult
+makeMove (GM gm input) =
     if input == [] then
         InvalidMove
 
@@ -398,7 +398,7 @@ makeMove (MoveBuilder gm input) =
 
         else
             NextState
-                (MoveBuilder
+                (GM
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft

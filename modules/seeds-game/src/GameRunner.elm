@@ -34,7 +34,7 @@ updateSelection idx wasSelected moveBuilder =
 
 
 type Model
-    = Running G.MoveBuilder
+    = Running G.GameModel
     | Over G.Info
     | Won G.Info
 
