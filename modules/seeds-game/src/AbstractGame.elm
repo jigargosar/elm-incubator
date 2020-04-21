@@ -11,7 +11,9 @@ module AbstractGame exposing
 
 -- GAME MODEL
 
+import Basics.Extra exposing (swap)
 import Grid exposing (GI, Grid)
+import List.Extra
 
 
 type alias FallingAcc =
@@ -41,8 +43,8 @@ computeFallingAt to grid =
             Nothing
 
 
-computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
-computeFallingIndicesAndUpdateGrid grid0 =
+computeFallingIndicesAndUpdateGrid_ : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallingIndicesAndUpdateGrid_ grid0 =
     let
         func idx (( list, grid1 ) as acc) =
             case computeFallingAt idx grid1 of
@@ -53,6 +55,22 @@ computeFallingIndicesAndUpdateGrid grid0 =
                     acc
     in
     List.foldr func ( [], grid0 ) (Grid.indices grid0)
+
+
+computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallingIndicesAndUpdateGrid grid0 =
+    let
+        func grid1 idx =
+            case computeFallingAt idx grid1 of
+                Just ( item, grid2 ) ->
+                    ( grid2, Just item )
+
+                Nothing ->
+                    ( grid1, Nothing )
+    in
+    List.Extra.mapAccumr func grid0 (Grid.indices grid0)
+        |> swap
+        |> Tuple.mapFirst (List.filterMap identity)
 
 
 type GameModel
