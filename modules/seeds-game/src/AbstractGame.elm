@@ -167,25 +167,51 @@ isCellMovable cell =
             False
 
 
+isCellCollectible : Cell -> Bool
+isCellCollectible cell =
+    case cell of
+        Water ->
+            True
+
+        Wall ->
+            False
+
+        Empty ->
+            False
+
+
+computeCollectedIndicesAndUpdateGrid : List GI -> Grid Cell -> ( List GI, Grid Cell )
+computeCollectedIndicesAndUpdateGrid toCollectIndices grid0 =
+    let
+        computeCollectedAt idx grid =
+            case Grid.get idx grid of
+                Just cell ->
+                    if isCellCollectible cell then
+                        case Grid.set idx Empty grid of
+                            Just collectedGrid ->
+                                Just ( idx, collectedGrid )
+
+                            Nothing ->
+                                Nothing
+
+                    else
+                        Nothing
+
+                Nothing ->
+                    Nothing
+    in
+    filterMapAccumr computeCollectedAt grid0 toCollectIndices
+
+
 makeMove : List GI -> GameModel -> MoveResult
-makeMove list (GM gm) =
-    if list == [] then
+makeMove input (GM gm) =
+    if input == [] then
         InvalidMove
 
     else
         let
             ( collectedIndices, collectedGrid ) =
-                ( list
-                , Grid.map
-                    (\i c ->
-                        if List.member i list then
-                            Empty
-
-                        else
-                            c
-                    )
-                    gm.grid
-                )
+                computeCollectedIndicesAndUpdateGrid input gm.grid
 
             collectedCount =
                 List.length collectedIndices
