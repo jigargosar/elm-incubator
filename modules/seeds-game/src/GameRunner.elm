@@ -137,9 +137,9 @@ view : Model -> DM
 view model =
     Document "GameRunner"
         (case model of
-            Running _ g ->
+            Running sel g ->
                 [ div [ class "pa3" ] [ text "Game Running" ]
-                , viewGameInfo (G.info g)
+                , viewGameInfo sel (G.info g)
                 , div [ class "pa3" ]
                     [ btn
                         Collect
@@ -149,13 +149,13 @@ view model =
 
             Over info ->
                 [ div [ class "pa3" ] [ text "Game Lost" ]
-                , viewGameInfo info
+                , viewGameInfo Set.empty info
                 , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                 ]
 
             Won info ->
                 [ div [ class "pa3" ] [ text "Game Won" ]
-                , viewGameInfo info
+                , viewGameInfo Set.empty info
                 , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                 ]
         )
@@ -165,13 +165,13 @@ type alias HM =
     Html Msg
 
 
-viewGameInfo : G.Info -> HM
-viewGameInfo i =
+viewGameInfo : Set GI -> G.Info -> HM
+viewGameInfo sel i =
     div []
         [ div [ class "pa3" ]
             [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
             ]
-        , viewGameCells i.fallen (Grid.toList i.grid)
+        , viewGameCells sel i.fallen (Grid.toList i.grid)
         ]
 
 
@@ -196,8 +196,8 @@ andThenDebugFail =
     D.andThen (Debug.log "debug" >> (\_ -> D.fail ""))
 
 
-viewGameCells : List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
-viewGameCells fallen cells =
+viewGameCells : Set GI -> List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
+viewGameCells sel fallen cells =
     let
         fallenDict =
             Dict.fromList (List.map swap fallen)
