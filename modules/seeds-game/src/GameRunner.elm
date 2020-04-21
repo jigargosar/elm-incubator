@@ -19,11 +19,14 @@ emptySelection =
 
 
 updateSelection idx wasSelected (Selection list) =
-    (if wasSelected then
+    (if wasSelected && List.member idx list then
         List.Extra.remove idx list
 
+     else if not (wasSelected && List.member idx list) then
+        idx :: list
+
      else
-        idx :: List.Extra.remove idx list
+        list
     )
         |> Selection
 
