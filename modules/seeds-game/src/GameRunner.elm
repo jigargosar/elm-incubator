@@ -215,12 +215,19 @@ peDecoder =
         |> andMap (D.field "offsetY" D.float)
         |> andMap (D.field "pageX" D.float)
         |> andMap (D.field "pageY" D.float)
-        |> andThenTapLog "PE"
+
+
+
+--|> andThenTapLog "PE"
 
 
 isPrimaryDown : PE -> Bool
 isPrimaryDown pe =
     pe.isPrimary && (pe.pressure >= 0.5)
+
+
+
+--noinspection ElmUnusedSymbol
 
 
 andThenTapLog logMsg =
