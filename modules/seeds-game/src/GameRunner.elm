@@ -10,79 +10,40 @@ import List.Extra
 import PointerEvents as PE
 
 
-type Selection
-    = Selection (List GI)
-
-
-emptySelection =
-    Selection []
-
-
-isAdj ( x1, y1 ) ( x2, y2 ) =
+updateSelection idx wasSelected moveBuilder =
     let
-        dx =
-            abs (x1 - x2)
-
-        dy =
-            abs (y1 - y2)
+        moves =
+            G.toStack moveBuilder
     in
-    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
+    if wasSelected && List.member idx moves then
+        ---- Remove
+        --case moves of
+        --    only :: [] ->
+        --        if only == idx then
+        --            []
+        --
+        --        else
+        --            moves
+        --
+        --    _ :: secondLast :: prevStack ->
+        --        if secondLast == idx then
+        --            secondLast :: prevStack
+        --
+        --        else
+        --            moves
+        --
+        --    _ ->
+        --        moves
+        moveBuilder
 
-
-updateSelection idx wasSelected game (Selection moves) =
-    (if wasSelected && List.member idx moves then
-        -- Remove
-        case moves of
-            only :: [] ->
-                if only == idx then
-                    []
-
-                else
-                    moves
-
-            _ :: secondLast :: prevStack ->
-                if secondLast == idx then
-                    secondLast :: prevStack
-
-                else
-                    moves
-
-            _ ->
-                moves
-
-     else if not wasSelected && not (List.member idx moves) then
+    else if not wasSelected && not (List.member idx moves) then
         -- Add
-        case moves of
-            [] ->
-                if G.isValidStart idx game then
-                    [ idx ]
+        G.pushIdx idx moveBuilder
+            |> Maybe.withDefault moveBuilder
 
-                else
-                    moves
-
-            last :: _ ->
-                if isAdj idx last then
-                    idx :: moves
-
-                else
-                    moves
-
-     else
+    else
         -- NoOp
-        moves
-    )
-        |> Selection
-
-
-selectionToList (Selection list) =
-    list
-
-
-selectionIndexOf : GI -> Selection -> Maybe Int
-selectionIndexOf idx (Selection list) =
-    list
-        |> List.reverse
-        |> List.Extra.elemIndex idx
+        moveBuilder
 
 
 
@@ -90,7 +51,7 @@ selectionIndexOf idx (Selection list) =
 
 
 type Model
-    = Running Selection G.GameModel
+    = Running G.MoveBuilder
     | Over G.Info
     | Won G.Info
 
@@ -101,7 +62,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running emptySelection G.initGame
+    ( Running (G.initGame |> G.initMoveBuilder)
     , Cmd.none
     )
 
@@ -125,7 +86,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Running _ _ ->
+                Running _ ->
                     ( model, Cmd.none )
 
                 Over _ ->
@@ -136,10 +97,10 @@ update message model =
 
         ToggleSelection idx bool ->
             case model of
-                Running sel game ->
+                Running moveBuilder ->
                     let
                         nm =
-                            Running (updateSelection idx bool game sel) game
+                            Running (updateSelection idx bool moveBuilder)
                     in
                     ( nm, Cmd.none )
 
@@ -151,15 +112,18 @@ update message model =
 
         Collect ->
             case model of
-                Running sel g ->
+                Running moveBuilder ->
                     let
+                        g =
+                            G.toGameModel moveBuilder
+
                         nm =
-                            case G.makeMove (selectionToList sel) g of
+                            case G.makeMove (G.toStack moveBuilder) g of
                                 G.InvalidMove ->
                                     model
 
                                 G.NextState ng ->
-                                    Running emptySelection ng
+                                    Running (G.initMoveBuilder ng)
 
                                 G.GameLost info ->
                                     Over info
@@ -199,9 +163,9 @@ view model =
             }
         """ ]
             :: (case model of
-                    Running sel g ->
+                    Running moveBuilder ->
                         [ div [ class "pa3" ] [ text "Game Running" ]
-                        , viewGameInfo sel (G.info g)
+                        , viewGameInfo (G.toStack moveBuilder) (G.info (G.toGameModel moveBuilder))
                         , div [ class "pa3" ]
                             [ btn
                                 Collect
@@ -211,13 +175,13 @@ view model =
 
                     Over info ->
                         [ div [ class "pa3" ] [ text "Game Lost" ]
-                        , viewGameInfo emptySelection info
+                        , viewGameInfo [] info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
                     Won info ->
                         [ div [ class "pa3" ] [ text "Game Won" ]
-                        , viewGameInfo emptySelection info
+                        , viewGameInfo [] info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
                )
@@ -226,6 +190,10 @@ view model =
 
 type alias HM =
     Html Msg
+
+
+type alias Selection =
+    List GI
 
 
 viewGameInfo : Selection -> G.Info -> HM
@@ -282,7 +250,7 @@ viewCell : Selection -> ( GI, G.Cell ) -> HM
 viewCell sel ( ( _, _ ) as idx, c ) =
     let
         selIdx =
-            selectionIndexOf idx sel
+            List.reverse sel |> List.Extra.elemIndex idx
 
         isSelected =
             selIdx /= Nothing
