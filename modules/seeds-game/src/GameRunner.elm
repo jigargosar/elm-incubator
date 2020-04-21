@@ -66,7 +66,9 @@ selectionToList (Selection list) =
 
 selectionIndexOf : GI -> Selection -> Maybe Int
 selectionIndexOf idx (Selection list) =
-    List.Extra.elemIndex idx list
+    list
+        |> List.reverse
+        |> List.Extra.elemIndex idx
 
 
 
