@@ -98,7 +98,7 @@ initialGrid : Grid Cell
 initialGrid =
     let
         wallIndices =
-            [ ( 2, 1 ), ( 4, 1 ), ( 2, 3 ), ( 4, 3 ) ]
+            [ ( 1, 1 ), ( 4, 1 ), ( 1, 4 ), ( 4, 4 ) ]
 
         emptyIndices =
             []
@@ -106,15 +106,19 @@ initialGrid =
         seedIndices =
             [ ( 3, 2 ) ]
 
+        isSeedIdx ( x, y ) =
+            --List.member i seedIndices
+            x == 0 || y == 0 || x == 5 || y == 5
+
         grid =
             Grid.init
-                7
-                5
+                6
+                6
                 (\i ->
                     if List.member i wallIndices then
                         Wall
 
-                    else if List.member i seedIndices then
+                    else if isSeedIdx i then
                         Seed
 
                     else if List.member i emptyIndices then
