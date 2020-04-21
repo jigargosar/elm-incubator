@@ -5,7 +5,7 @@ import Basics.Extra exposing (swap)
 import Browser exposing (Document)
 import Dict
 import Grid exposing (GI)
-import Html exposing (Html, button, div, table, text)
+import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
 import Html.Events as HE exposing (onClick, onMouseEnter)
 import Json.Decode as D exposing (Decoder)
@@ -127,28 +127,35 @@ type alias DM =
 view : Model -> DM
 view model =
     Document "GameRunner"
-        (case model of
-            Running sel g ->
-                [ div [ class "pa3" ] [ text "Game Running" ]
-                , viewGameInfo sel (G.info g)
-                , div [ class "pa3" ]
-                    [ btn
-                        Collect
-                        "collect"
-                    ]
-                ]
+        (node "style" [] [ text """
+            body {
+                user-select:none;
 
-            Over info ->
-                [ div [ class "pa3" ] [ text "Game Lost" ]
-                , viewGameInfo Set.empty info
-                , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
-                ]
+            }
+        """ ]
+            :: (case model of
+                    Running sel g ->
+                        [ div [ class "pa3" ] [ text "Game Running" ]
+                        , viewGameInfo sel (G.info g)
+                        , div [ class "pa3" ]
+                            [ btn
+                                Collect
+                                "collect"
+                            ]
+                        ]
 
-            Won info ->
-                [ div [ class "pa3" ] [ text "Game Won" ]
-                , viewGameInfo Set.empty info
-                , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
-                ]
+                    Over info ->
+                        [ div [ class "pa3" ] [ text "Game Lost" ]
+                        , viewGameInfo Set.empty info
+                        , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
+                        ]
+
+                    Won info ->
+                        [ div [ class "pa3" ] [ text "Game Won" ]
+                        , viewGameInfo Set.empty info
+                        , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
+                        ]
+               )
         )
 
 
