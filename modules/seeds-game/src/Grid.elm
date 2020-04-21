@@ -7,13 +7,13 @@ module Grid exposing
     , indices
     , init
     , map
-    , mapIdx
     , set
     , swap
     , swapPair
     , toDict
     , toList
     , toListBy
+    , updateAt
     , wh
     )
 
@@ -67,8 +67,8 @@ set gIdx a (G d) =
         Nothing
 
 
-mapIdx : GI -> (a -> a) -> Grid a -> Maybe (Grid a)
-mapIdx i fun g =
+updateAt : GI -> (a -> a) -> Grid a -> Maybe (Grid a)
+updateAt i fun g =
     get i g
         |> Maybe.andThen (fun >> flip (set i) g)
 
