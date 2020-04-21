@@ -9,7 +9,7 @@ module AbstractGame exposing
     , makeMove
     )
 
--- GAME MODEL
+-- GAME GRID
 
 import Basics.Extra exposing (swap)
 import Grid exposing (GI, Grid)
@@ -41,10 +41,18 @@ computeFallingIndicesAndUpdateGrid grid0 =
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
 
 
-flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
-flipMapAccumr func acc =
-    List.Extra.mapAccumr (\a b -> func b a |> swap) acc
-        >> swap
+findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
+findFirstMovableAbove startIndex grid =
+    case Grid.entryAbove startIndex grid of
+        Nothing ->
+            Nothing
+
+        Just ( index, cell ) ->
+            if isCellMovable cell then
+                Just index
+
+            else
+                findFirstMovableAbove index grid
 
 
 filterMapAccumr : (a -> c -> Maybe ( b, c )) -> c -> List a -> ( List b, c )
@@ -60,6 +68,16 @@ filterMapAccumr func acc =
         )
         acc
         >> Tuple.mapFirst (List.filterMap identity)
+
+
+flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
+flipMapAccumr func acc =
+    List.Extra.mapAccumr (\a b -> func b a |> swap) acc
+        >> swap
+
+
+
+-- GAME MODEL
 
 
 type GameModel
@@ -135,20 +153,6 @@ type MoveResult
     | GameLost Info
     | GameWon Info
     | NextState GameModel
-
-
-findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
-findFirstMovableAbove startIndex grid =
-    case Grid.entryAbove startIndex grid of
-        Nothing ->
-            Nothing
-
-        Just ( index, cell ) ->
-            if isCellMovable cell then
-                Just index
-
-            else
-                findFirstMovableAbove index grid
 
 
 isCellMovable : Cell -> Bool
