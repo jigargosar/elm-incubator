@@ -44,7 +44,7 @@ type Msg
     = NoOp
     | PlayAnother
     | Collect
-    | ToggleSelection GI
+    | SetSelection GI Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -64,17 +64,17 @@ update message model =
                 Won _ ->
                     init ()
 
-        ToggleSelection idx ->
+        SetSelection idx bool ->
             case model of
                 Running selected g ->
                     let
                         nm =
                             Running
-                                (if Set.member idx selected then
-                                    Set.remove idx selected
+                                (if bool then
+                                    Set.insert idx selected
 
                                  else
-                                    Set.insert idx selected
+                                    Set.remove idx selected
                                 )
                                 g
                     in
@@ -182,15 +182,22 @@ viewGameCells sel fallen cells =
             Dict.fromList (List.map swap fallen)
 
         viewCell ( ( _, _ ) as idx, c ) =
+            let
+                isSelected =
+                    Set.member idx sel
+
+                selectionMsg =
+                    SetSelection idx (not isSelected)
+            in
             Html.td
-                [ PE.onPrimaryEnterAndDown (ToggleSelection idx)
-                , PE.onPrimaryDown (ToggleSelection idx)
+                [ PE.onPrimaryEnterAndDown selectionMsg
+                , PE.onPrimaryDown selectionMsg
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
                     , class "relative"
                     , style "transform"
-                        (if Set.member idx sel then
+                        (if isSelected then
                             "scale(0.5)"
 
                          else
