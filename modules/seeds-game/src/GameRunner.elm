@@ -41,6 +41,7 @@ type Msg
     = NoOp
     | PlayAnother
     | Collect
+    | OnClick GI
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -59,6 +60,28 @@ update message model =
 
                 Won _ ->
                     init ()
+
+        OnClick idx ->
+            case model of
+                Running selected g ->
+                    let
+                        nm =
+                            Running
+                                (if Set.member idx selected then
+                                    Set.remove idx selected
+
+                                 else
+                                    Set.insert idx selected
+                                )
+                                g
+                    in
+                    ( nm, Cmd.none )
+
+                Over _ ->
+                    ( model, Cmd.none )
+
+                Won _ ->
+                    ( model, Cmd.none )
 
         Collect ->
             case model of
@@ -151,14 +174,14 @@ viewGameInfo i =
         ]
 
 
-viewGameCells : List ( GI, GI ) -> List ( GI, G.Cell ) -> Html msg
+viewGameCells : List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
 viewGameCells fallen cells =
     let
         fallenDict =
             Dict.fromList (List.map swap fallen)
 
         viewCell ( ( _, _ ) as idx, c ) =
-            Html.td []
+            Html.td [ onClick (OnClick idx) ]
                 [ div
                     [ class "br3 w3 h3 flex"
                     , class "relative"
