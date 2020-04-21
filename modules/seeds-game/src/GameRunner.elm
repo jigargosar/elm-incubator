@@ -97,11 +97,8 @@ update message model =
             case model of
                 Running moveBuilder ->
                     let
-                        g =
-                            G.toGameModel moveBuilder
-
                         nm =
-                            case G.makeMove (G.toStack moveBuilder) g of
+                            case G.makeMove moveBuilder of
                                 G.InvalidMove ->
                                     model
 

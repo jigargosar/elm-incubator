@@ -356,8 +356,8 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
     (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
 
 
-makeMove : List GI -> GameModel -> MoveResult
-makeMove input (GM gm) =
+makeMove : MoveBuilder -> MoveResult
+makeMove (MoveBuilder (GM gm) input) =
     if input == [] then
         InvalidMove
 
