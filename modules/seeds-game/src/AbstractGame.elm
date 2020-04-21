@@ -16,28 +16,28 @@ import Grid exposing (GI, Grid)
 import List.Extra
 
 
-computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
-computeFallingAt to grid =
-    case Grid.get to grid of
-        Just Empty ->
-            case findFirstMovableAbove to grid of
-                Just from ->
-                    case Grid.swap from to grid of
-                        Just sg ->
-                            Just ( ( from, to ), sg )
+computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallingIndicesAndUpdateGrid grid0 =
+    let
+        computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
+        computeFallingAt to grid =
+            case Grid.get to grid of
+                Just Empty ->
+                    case findFirstMovableAbove to grid of
+                        Just from ->
+                            case Grid.swap from to grid of
+                                Just sg ->
+                                    Just ( ( from, to ), sg )
+
+                                Nothing ->
+                                    Nothing
 
                         Nothing ->
                             Nothing
 
-                Nothing ->
+                _ ->
                     Nothing
-
-        _ ->
-            Nothing
-
-
-computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
-computeFallingIndicesAndUpdateGrid grid0 =
+    in
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
 
 
