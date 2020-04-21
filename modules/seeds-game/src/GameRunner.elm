@@ -145,7 +145,7 @@ view model =
             :: (case model of
                     Running moveBuilder ->
                         [ div [ class "pa3" ] [ text "Game Running" ]
-                        , viewGameInfo (G.toStack moveBuilder) (G.info (G.toGameModel moveBuilder))
+                        , viewGameInfo (G.toStack moveBuilder) (G.info moveBuilder)
                         , div [ class "pa3" ]
                             [ btn
                                 Collect

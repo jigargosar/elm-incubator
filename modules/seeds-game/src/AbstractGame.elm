@@ -161,8 +161,8 @@ type alias Info =
     }
 
 
-info : GameModel -> Info
-info (GM g) =
+info : MoveBuilder -> Info
+info (MoveBuilder (GM g) _) =
     Info g.movesLeft g.targetSeeds g.targetWater g.grid
 
 
