@@ -43,7 +43,7 @@ type Msg
     = NoOp
     | PlayAnother
     | Collect
-    | OnClick GI
+    | ToggleSelection GI
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -63,7 +63,7 @@ update message model =
                 Won _ ->
                     init ()
 
-        OnClick idx ->
+        ToggleSelection idx ->
             case model of
                 Running selected g ->
                     let
@@ -250,11 +250,10 @@ viewGameCells sel fallen cells =
 
         viewCell ( ( _, _ ) as idx, c ) =
             Html.td
-                [ onClick (OnClick idx)
-                , HE.on "pointerenter"
-                    (DX.when peDecoder isPrimaryDown (D.succeed (OnClick idx)))
+                [ HE.on "pointerenter"
+                    (DX.when peDecoder isPrimaryDown (D.succeed (ToggleSelection idx)))
                 , HE.on "pointerdown"
-                    (DX.when peDecoder isPrimaryDown (D.succeed (OnClick idx)))
+                    (DX.when peDecoder isPrimaryDown (D.succeed (ToggleSelection idx)))
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
