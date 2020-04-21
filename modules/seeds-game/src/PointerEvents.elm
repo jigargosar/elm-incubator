@@ -74,10 +74,7 @@ peDecoder =
         |> andMap (D.field "offsetY" D.float)
         |> andMap (D.field "pageX" D.float)
         |> andMap (D.field "pageY" D.float)
-
-
-
---|> andThenTapLog "PE"
+        |> andThenTapLog "PE"
 
 
 isPrimaryDown : PE -> Bool
