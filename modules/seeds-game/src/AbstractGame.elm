@@ -5,6 +5,7 @@ module AbstractGame exposing
     , MoveResult(..)
     , info
     , initGame
+    , isValidStart
     , makeMove
     )
 
@@ -236,6 +237,13 @@ fillEmptyCells grid =
             (\nd ->
                 Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
             )
+
+
+isValidStart : GI -> GameModel -> Bool
+isValidStart idx (GM gm) =
+    Grid.get idx gm.grid
+        |> Maybe.map isCellMovable
+        |> Maybe.withDefault False
 
 
 makeMove : List GI -> GameModel -> MoveResult

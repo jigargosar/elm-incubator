@@ -29,43 +29,47 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
     (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
 
 
-updateSelection idx wasSelected (Selection list) =
-    (if wasSelected && List.member idx list then
+updateSelection idx wasSelected game (Selection moves) =
+    (if wasSelected && List.member idx moves then
         -- Remove
-        case list of
+        case moves of
             only :: [] ->
                 if only == idx then
                     []
 
                 else
-                    list
+                    moves
 
             _ :: secondLast :: prevStack ->
                 if secondLast == idx then
                     secondLast :: prevStack
 
                 else
-                    list
+                    moves
 
             _ ->
-                list
+                moves
 
-     else if not wasSelected && not (List.member idx list) then
+     else if not wasSelected && not (List.member idx moves) then
         -- Add
-        case list of
+        case moves of
             [] ->
-                [ idx ]
+                if G.isValidStart idx game then
+                    [ idx ]
+
+                else
+                    moves
 
             last :: _ ->
                 if isAdj idx last then
-                    idx :: list
+                    idx :: moves
 
                 else
-                    list
+                    moves
 
      else
         -- NoOp
-        list
+        moves
     )
         |> Selection
 
@@ -132,10 +136,10 @@ update message model =
 
         ToggleSelection idx bool ->
             case model of
-                Running sel g ->
+                Running sel game ->
                     let
                         nm =
-                            Running (updateSelection idx bool sel) g
+                            Running (updateSelection idx bool game sel) game
                     in
                     ( nm, Cmd.none )
 
