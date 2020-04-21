@@ -1,4 +1,9 @@
-module PointerEvents exposing (onPointerDown, onPointerEnter, onPrimaryDown, succeedWhenPrimaryDown)
+module PointerEvents exposing
+    ( onDown
+    , onEnter
+    , onPrimaryDown
+    , onPrimaryEnterAndDown
+    )
 
 import Html exposing (Attribute)
 import Html.Events exposing (on)
@@ -6,17 +11,22 @@ import Json.Decode as D exposing (Decoder)
 import Json.Decode.Extra as DX
 
 
-onPointerEnter =
+onEnter =
     on "pointerenter"
 
 
-onPointerDown =
+onDown =
     on "pointerdown"
 
 
 onPrimaryDown : a -> Attribute a
 onPrimaryDown msg =
-    onPointerDown (succeedWhenPrimaryDown msg)
+    onDown (succeedWhenPrimaryDown msg)
+
+
+onPrimaryEnterAndDown : a -> Attribute a
+onPrimaryEnterAndDown msg =
+    onEnter (succeedWhenPrimaryDown msg)
 
 
 type alias PE =

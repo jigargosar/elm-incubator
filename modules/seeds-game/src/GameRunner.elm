@@ -183,7 +183,7 @@ viewGameCells sel fallen cells =
 
         viewCell ( ( _, _ ) as idx, c ) =
             Html.td
-                [ PE.onPointerEnter (PE.succeedWhenPrimaryDown (ToggleSelection idx))
+                [ PE.onPrimaryEnterAndDown (ToggleSelection idx)
                 , PE.onPrimaryDown (ToggleSelection idx)
                 ]
                 [ div
