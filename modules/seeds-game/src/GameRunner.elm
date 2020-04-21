@@ -49,7 +49,7 @@ updateSelection idx wasSelected (Selection list) =
             _ ->
                 list
 
-     else if not (wasSelected && List.member idx list) then
+     else if not wasSelected && not (List.member idx list) then
         case list of
             [] ->
                 [ idx ]
