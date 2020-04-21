@@ -89,6 +89,7 @@ type GameModel
 
 type Cell
     = Water
+    | Seed
     | Wall
     | Empty
 
@@ -100,6 +101,9 @@ initialGrid =
             [ ( 2, 1 ), ( 4, 1 ), ( 2, 3 ), ( 4, 3 ) ]
 
         emptyIndices =
+            []
+
+        seedIndices =
             [ ( 3, 2 ) ]
 
         grid =
@@ -109,6 +113,9 @@ initialGrid =
                 (\i ->
                     if List.member i wallIndices then
                         Wall
+
+                    else if List.member i seedIndices then
+                        Seed
 
                     else if List.member i emptyIndices then
                         Empty
@@ -154,6 +161,9 @@ isCellMovable cell =
         Water ->
             True
 
+        Seed ->
+            True
+
         Wall ->
             False
 
@@ -165,6 +175,9 @@ isCellCollectible : Cell -> Bool
 isCellCollectible cell =
     case cell of
         Water ->
+            True
+
+        Seed ->
             True
 
         Wall ->

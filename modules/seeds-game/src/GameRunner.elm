@@ -238,6 +238,9 @@ viewCell sel ( ( _, _ ) as idx, c ) =
 
                     G.Empty ->
                         ""
+
+                    G.Seed ->
+                        "bg-light-pink white"
                 )
             ]
             [ div
