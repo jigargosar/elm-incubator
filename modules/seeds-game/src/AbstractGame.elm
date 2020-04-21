@@ -167,32 +167,6 @@ isCellMovable cell =
             False
 
 
-
---collectMove : List GI -> GameModel -> GameModel
---collectMove list (GM gm) =
---    let
---        collectedGrid =
---            Grid.map
---                (\i c ->
---                    if List.member i list then
---                        Empty
---
---                    else
---                        c
---                )
---                gm.grid
---
---        ( fallenIndices, fallenGrid ) =
---            computeFallingIndicesAndUpdateGrid collectedGrid
---    in
---    GM
---        { gm
---            | grid = fallenGrid
---            , fallen = fallenIndices
---            , collected = list
---        }
-
-
 makeMove : List GI -> GameModel -> MoveResult
 makeMove list (GM gm) =
     if list == [] then
