@@ -40,7 +40,7 @@ init () =
 type Msg
     = NoOp
     | PlayAnother
-    | MakeMove (List GI)
+    | Collect
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,17 +60,26 @@ update message model =
                 Won _ ->
                     init ()
 
-        MakeMove list ->
+        Collect ->
             case model of
-                Running _ g ->
+                Running selected g ->
                     let
                         nm =
-                            case G.makeMove list g of
+                            case G.makeMove (Set.toList selected) g of
                                 G.InvalidMove ->
                                     model
 
                                 G.NextState ng ->
-                                    Running Set.empty ng
+                                    Running
+                                        (Set.fromList
+                                            [ ( 3, 1 )
+                                            , ( 2, 2 )
+                                            , ( 4, 2 )
+                                            , ( 3, 3 )
+                                            , ( 3, 1 )
+                                            ]
+                                        )
+                                        ng
 
                                 G.GameLost info ->
                                     Over info
@@ -109,14 +118,7 @@ view model =
                 , viewGameInfo (G.info g)
                 , div [ class "pa3" ]
                     [ btn
-                        (MakeMove
-                            [ ( 3, 1 )
-                            , ( 2, 2 )
-                            , ( 4, 2 )
-                            , ( 3, 3 )
-                            , ( 3, 1 )
-                            ]
-                        )
+                        Collect
                         "collect"
                     ]
                 ]
