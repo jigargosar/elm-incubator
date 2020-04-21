@@ -9,6 +9,7 @@ import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
 import Html.Events as HE exposing (onClick, onMouseEnter)
 import Json.Decode as D exposing (Decoder)
+import Json.Decode.Extra as DX
 import List.Extra
 import Set exposing (Set)
 
@@ -217,6 +218,11 @@ peDecoder =
         |> andThenTapLog "PE"
 
 
+isPrimaryDown : PE -> Bool
+isPrimaryDown pe =
+    pe.isPrimary && (pe.pressure >= 0.5)
+
+
 whenPrimaryDown : a -> PE -> Decoder a
 whenPrimaryDown msg pe =
     if pe.isPrimary && (pe.pressure >= 0.5) then
@@ -248,9 +254,7 @@ viewGameCells sel fallen cells =
             Html.td
                 [ onClick (OnClick idx)
                 , HE.on "pointerenter"
-                    (peDecoder
-                        |> D.andThen (whenPrimaryDown (OnClick idx))
-                    )
+                    (DX.when peDecoder isPrimaryDown (D.succeed (OnClick idx)))
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
