@@ -13,6 +13,7 @@ module AbstractGame exposing
 import Basics.Extra exposing (atLeast, swap)
 import Grid exposing (GI, Grid)
 import List.Extra
+import Random
 
 
 computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
@@ -94,6 +95,7 @@ type GameModel
         , targetSeeds : Int
         , targetWater : Int
         , grid : Grid Cell
+        , random : Random.Seed
         }
 
 
@@ -138,6 +140,7 @@ initGame =
         , targetSeeds = 50
         , targetWater = 50
         , grid = initialGrid
+        , random = Random.initialSeed 0
         }
 
 
@@ -209,8 +212,8 @@ collectIndices indicesToCollect grid0 =
     filterFoldr computeCollectedAt ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
 
 
-fillEmptyCells : Grid Cell -> Grid Cell
-fillEmptyCells =
+fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
+fillEmptyCells grid =
     Grid.map
         (\_ c ->
             if c == Empty then
@@ -219,6 +222,8 @@ fillEmptyCells =
             else
                 c
         )
+        grid
+        |> Random.constant
 
 
 makeMove : List GI -> GameModel -> MoveResult
@@ -234,8 +239,8 @@ makeMove input (GM gm) =
             ( _, fallenGrid_ ) =
                 computeFallingIndicesAndUpdateGrid collectedGrid_
 
-            filledGrid =
-                fillEmptyCells fallenGrid_
+            ( filledGrid, nextRandom ) =
+                Random.step (fillEmptyCells fallenGrid_) gm.random
 
             nextTargetSeeds =
                 gm.targetSeeds
@@ -281,5 +286,6 @@ makeMove input (GM gm) =
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
                     , grid = filledGrid
+                    , random = nextRandom
                     }
                 )
