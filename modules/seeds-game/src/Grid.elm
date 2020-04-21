@@ -9,7 +9,6 @@ module Grid exposing
     , map
     , set
     , swap
-    , swapPair
     , toDict
     , toList
     , toListBy
@@ -67,6 +66,10 @@ set gIdx a (G d) =
         Nothing
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 updateAt : GI -> (a -> a) -> Grid a -> Maybe (Grid a)
 updateAt i fun g =
     get i g
@@ -91,11 +94,6 @@ swap ia ib grid =
         |> Maybe.andThen identity
 
 
-swapPair : ( GI, GI ) -> Grid a -> Maybe (Grid a)
-swapPair pair =
-    swap (Tuple.first pair) (Tuple.second pair)
-
-
 wh : Grid a -> ( Int, Int )
 wh (G d) =
     case Dict.keys d |> List.Extra.last of
@@ -109,6 +107,10 @@ wh (G d) =
 toList : Grid a -> List ( GI, a )
 toList (G d) =
     Dict.toList d
+
+
+
+--noinspection ElmUnusedSymbol
 
 
 toDict : Grid a -> Dict GI a
