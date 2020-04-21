@@ -6,7 +6,7 @@ import Browser exposing (Document)
 import Dict
 import Grid exposing (GI)
 import Html exposing (Html, button, div, table, text)
-import Html.Attributes exposing (autofocus, class, style)
+import Html.Attributes exposing (autofocus, class)
 import Html.Events exposing (onClick)
 import List.Extra
 
@@ -38,9 +38,8 @@ init () =
 
 type Msg
     = NoOp
-    | MakeMove Int
     | PlayAnother
-    | CollectIndices (List GI)
+    | MakeMove (List GI)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -49,12 +48,23 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        MakeMove n ->
+        PlayAnother ->
+            case model of
+                Running _ ->
+                    ( model, Cmd.none )
+
+                Over _ ->
+                    init ()
+
+                Won _ ->
+                    init ()
+
+        MakeMove list ->
             case model of
                 Running g ->
                     let
                         nm =
-                            case G.makeMove n g of
+                            case G.makeMove list g of
                                 G.InvalidMove ->
                                     model
 
@@ -74,28 +84,6 @@ update message model =
 
                 Won _ ->
                     ( model, Cmd.none )
-
-        PlayAnother ->
-            case model of
-                Running _ ->
-                    ( model, Cmd.none )
-
-                Over _ ->
-                    init ()
-
-                Won _ ->
-                    init ()
-
-        CollectIndices list ->
-            ( case model of
-                Running g ->
-                    G.collectMove list g
-                        |> Running
-
-                _ ->
-                    model
-            , Cmd.none
-            )
 
 
 subscriptions : Model -> Sub Msg
@@ -119,14 +107,8 @@ view model =
                 [ div [ class "pa3" ] [ text "Game Running" ]
                 , viewGameInfo (G.info g)
                 , div [ class "pa3" ]
-                    [ button
-                        [ onClick <| MakeMove 10, class "ma2", autofocus True ]
-                        [ text "collect 10" ]
-                    , button
-                        [ onClick <| MakeMove 50, class "ma2", autofocus True ]
-                        [ text "collect 50" ]
-                    , btn
-                        (CollectIndices
+                    [ btn
+                        (MakeMove
                             [ ( 3, 1 )
                             , ( 2, 2 )
                             , ( 4, 2 )
