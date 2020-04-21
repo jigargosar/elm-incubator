@@ -79,13 +79,13 @@ peDecoder =
         |> andMap (D.field "offsetX" D.float)
         |> andMap (D.field "offsetY" D.float)
         |> andMap (D.field "pageX" D.float)
+        --|> andThenTapLog "PE"
         |> andMap (D.field "pageY" D.float)
-        |> andThenTapLog "PE"
 
 
 isPrimaryDown : PE -> Bool
 isPrimaryDown pe =
-    pe.isPrimary && (pe.pressure >= 0.5)
+    pe.buttons == 1
 
 
 
