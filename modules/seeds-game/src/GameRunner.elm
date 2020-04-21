@@ -236,26 +236,34 @@ viewGameCells sel fallen cells =
             Dict.fromList (List.map swap fallen)
 
         viewCell ( ( _, _ ) as idx, c ) =
+            let
+                isSelected =
+                    Set.member idx sel
+            in
             Html.td
                 [ onClick (OnClick idx)
-                , HE.on "pointerenter"
-                    (peDecoder
-                        |> D.andThen
-                            (\pe ->
-                                if
-                                    pe.isPrimary
-                                        && (pe.pressure >= 0.5)
-                                        && (pe.offsetX > (pe.target.offsetWidth * 0.2))
-                                        && (pe.offsetX < (pe.target.offsetWidth - pe.target.offsetWidth * 0.2))
-                                        && (pe.offsetY > (pe.target.offsetHeight * 0.2))
-                                        && (pe.offsetY < (pe.target.offsetHeight - pe.target.offsetHeight * 0.2))
-                                then
-                                    D.succeed (OnClick idx)
+                , if isSelected then
+                    class ""
 
-                                else
-                                    D.fail ""
-                            )
-                    )
+                  else
+                    HE.on "pointermove"
+                        (peDecoder
+                            |> D.andThen
+                                (\pe ->
+                                    if
+                                        pe.isPrimary
+                                            && (pe.pressure >= 0.5)
+                                            && (pe.offsetX > (pe.target.offsetWidth * 0.2))
+                                            && (pe.offsetX < (pe.target.offsetWidth - pe.target.offsetWidth * 0.2))
+                                            && (pe.offsetY > (pe.target.offsetHeight * 0.2))
+                                            && (pe.offsetY < (pe.target.offsetHeight - pe.target.offsetHeight * 0.2))
+                                    then
+                                        D.succeed (OnClick idx)
+
+                                    else
+                                        D.fail ""
+                                )
+                        )
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
