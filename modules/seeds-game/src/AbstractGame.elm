@@ -2,9 +2,12 @@ module AbstractGame exposing
     ( Cell(..)
     , GameModel
     , Info
+    , MoveBuilder
     , MoveResult(..)
+    , addIdx
     , info
     , initGame
+    , initMoveBuilder
     , isValidStart
     , makeMove
     )
@@ -15,6 +18,7 @@ import Basics.Extra exposing (atLeast, swap)
 import Dict
 import Grid exposing (GI, Grid)
 import List.Extra
+import Maybe.Extra
 import Random
 import Random.Extra
 
@@ -249,6 +253,62 @@ isCellMovableAt idx grid =
     Grid.get idx grid
         |> Maybe.map isCellMovable
         |> Maybe.withDefault False
+
+
+type MoveBuilder
+    = MoveBuilder GameModel GI (List GI)
+
+
+initMoveBuilder : GI -> GameModel -> Maybe MoveBuilder
+initMoveBuilder idx gm =
+    if isValidStart idx gm then
+        MoveBuilder gm idx []
+            |> Just
+
+    else
+        Nothing
+
+
+addIdx : GI -> MoveBuilder -> Maybe MoveBuilder
+addIdx idx (MoveBuilder ((GM { grid }) as gm) last stack) =
+    if areCellsAtIndicesConnectible idx last grid then
+        MoveBuilder gm idx (last :: stack)
+            |> Just
+
+    else
+        Nothing
+
+
+areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
+areCellsAtIndicesConnectible a b grid =
+    isAdj a b
+        && (Maybe.map2 areCellsConnectible (Grid.get a grid) (Grid.get b grid)
+                |> Maybe.withDefault False
+           )
+
+
+areCellsConnectible : Cell -> Cell -> Bool
+areCellsConnectible cell1 cell2 =
+    case ( cell1, cell2 ) of
+        ( Water, Water ) ->
+            True
+
+        ( Seed, Seed ) ->
+            True
+
+        _ ->
+            False
+
+
+isAdj ( x1, y1 ) ( x2, y2 ) =
+    let
+        dx =
+            abs (x1 - x2)
+
+        dy =
+            abs (y1 - y2)
+    in
+    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
 
 
 makeMove : List GI -> GameModel -> MoveResult
