@@ -4,12 +4,13 @@ module AbstractGame exposing
     , Info
     , MoveBuilder
     , MoveResult(..)
-    , addIdx
     , info
     , initGame
     , initMoveBuilder
     , isValidStart
     , makeMove
+    , pushIdx
+    , toStack
     )
 
 -- GAME GRID
@@ -269,14 +270,19 @@ initMoveBuilder idx gm =
         Nothing
 
 
-addIdx : GI -> MoveBuilder -> Maybe MoveBuilder
-addIdx idx (MoveBuilder ((GM { grid }) as gm) last stack) =
+pushIdx : GI -> MoveBuilder -> Maybe MoveBuilder
+pushIdx idx (MoveBuilder ((GM { grid }) as gm) last prevStack) =
     if areCellsAtIndicesConnectible idx last grid then
-        MoveBuilder gm idx (last :: stack)
+        MoveBuilder gm idx (last :: prevStack)
             |> Just
 
     else
         Nothing
+
+
+toStack : MoveBuilder -> List GI
+toStack (MoveBuilder _ last prevStack) =
+    last :: prevStack
 
 
 areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
