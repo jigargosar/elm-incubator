@@ -136,7 +136,7 @@ initGame =
 type alias Info =
     { movesLeft : Int
     , currentTarget : Int
-    , cells : List ( GI, Cell )
+    , grid : Grid Cell
     , fallen : List ( GI, GI )
     , collected : List GI
     }
@@ -144,7 +144,7 @@ type alias Info =
 
 info : GameModel -> Info
 info (GM g) =
-    Info g.movesLeft g.currentTarget (Grid.toList g.grid) g.fallen g.collected
+    Info g.movesLeft g.currentTarget g.grid g.fallen g.collected
 
 
 type MoveResult
@@ -203,7 +203,7 @@ makeMove list (GM gm) =
             GameWon
                 { currentTarget = 0
                 , movesLeft = nextMovesLeft
-                , cells = Grid.toList fallenGrid
+                , grid = fallenGrid
                 , fallen = fallenIndices
                 , collected = collectedIndices
                 }
@@ -212,7 +212,7 @@ makeMove list (GM gm) =
             GameLost
                 { currentTarget = nextTarget
                 , movesLeft = 0
-                , cells = Grid.toList fallenGrid
+                , grid = fallenGrid
                 , fallen = fallenIndices
                 , collected = collectedIndices
                 }

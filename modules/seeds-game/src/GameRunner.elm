@@ -144,7 +144,7 @@ viewGameInfo i =
         [ div [ class "pa3" ]
             [ text (Debug.toString { currentTarget = i.currentTarget, movesLeft = i.movesLeft })
             ]
-        , viewGameCells i.fallen i.cells
+        , viewGameCells i.fallen (Grid.toList i.grid)
         ]
 
 
