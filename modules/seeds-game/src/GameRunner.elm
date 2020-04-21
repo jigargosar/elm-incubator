@@ -64,8 +64,9 @@ selectionToList (Selection list) =
     list
 
 
-isSelected idx (Selection list) =
-    List.member idx list
+selectionIndexOf : GI -> Selection -> Maybe Int
+selectionIndexOf idx (Selection list) =
+    List.Extra.elemIndex idx list
 
 
 
@@ -264,11 +265,14 @@ viewGameCells sel cells =
 viewCell : Selection -> ( GI, G.Cell ) -> HM
 viewCell sel ( ( _, _ ) as idx, c ) =
     let
-        selected =
-            isSelected idx sel
+        selIdx =
+            selectionIndexOf idx sel
+
+        isSelected =
+            selIdx /= Nothing
 
         selectionMsg =
-            ToggleSelection idx selected
+            ToggleSelection idx isSelected
     in
     Html.td
         [ PE.onPrimaryEnterAndDown selectionMsg
@@ -278,7 +282,7 @@ viewCell sel ( ( _, _ ) as idx, c ) =
             [ class "br3 w3 h3 flex"
             , class "relative"
             , style "transform"
-                (if selected then
+                (if isSelected then
                     "scale(0.5)"
 
                  else
@@ -296,14 +300,15 @@ viewCell sel ( ( _, _ ) as idx, c ) =
                         ""
 
                     G.Seed ->
-                        "bg-light-pink white"
+                        "bg-light-pink "
                 )
             ]
             [ div
-                [ class "code f4 o-50 glow"
+                [ class "code f3 _o-50 glow"
                 , class "absolute pa2"
                 ]
-                []
+                [ text (selIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                ]
             ]
         ]
 
