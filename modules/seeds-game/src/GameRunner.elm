@@ -249,7 +249,7 @@ viewGameCells sel fallen cells =
                 Nothing ->
                     text ""
     in
-    table [ class "pa3" ]
+    table [ class "pa3", style "touch-action" "none" ]
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
