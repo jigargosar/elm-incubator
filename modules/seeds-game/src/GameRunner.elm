@@ -17,36 +17,16 @@ updateSelection idx wasSelected moveBuilder =
             G.toStack moveBuilder
     in
     if wasSelected && List.member idx moves then
-        Maybe.Extra.oneOf [ G.clearIfOnlyEq idx ] moveBuilder
-            |> Maybe.withDefault
-                ---- Remove
-                --case moves of
-                --    only :: [] ->
-                --        if only == idx then
-                --            []
-                --
-                --        else
-                --            moves
-                --
-                --    _ :: secondLast :: prevStack ->
-                --        if secondLast == idx then
-                --            secondLast :: prevStack
-                --
-                --        else
-                --            moves
-                --
-                --    _ ->
-                --        moves
-                moveBuilder
+        -- Remove
+        Maybe.Extra.oneOf [ G.clearIfOnlyEq idx, G.popIfSecondLastEq idx ] moveBuilder
 
     else if not wasSelected && not (List.member idx moves) then
         -- Add
         G.pushIdx idx moveBuilder
-            |> Maybe.withDefault moveBuilder
 
     else
         -- NoOp
-        moveBuilder
+        Nothing
 
 
 
@@ -103,7 +83,7 @@ update message model =
                 Running moveBuilder ->
                     let
                         nm =
-                            Running (updateSelection idx bool moveBuilder)
+                            Running (updateSelection idx bool moveBuilder |> Maybe.withDefault moveBuilder)
                     in
                     ( nm, Cmd.none )
 

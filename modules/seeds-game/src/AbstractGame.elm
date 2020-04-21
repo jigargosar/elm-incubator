@@ -9,6 +9,7 @@ module AbstractGame exposing
     , initGame
     , initMoveBuilder
     , makeMove
+    , popIfSecondLastEq
     , pushIdx
     , toGameModel
     , toStack
@@ -291,6 +292,20 @@ clearIfOnlyEq idx (MoveBuilder gm stack) =
         only :: [] ->
             if idx == only then
                 MoveBuilder gm [] |> Just
+
+            else
+                Nothing
+
+        _ ->
+            Nothing
+
+
+popIfSecondLastEq : GI -> MoveBuilder -> Maybe MoveBuilder
+popIfSecondLastEq idx (MoveBuilder gm stack) =
+    case stack of
+        _ :: secondLast :: prevStack ->
+            if idx == secondLast then
+                MoveBuilder gm (secondLast :: prevStack) |> Just
 
             else
                 Nothing
