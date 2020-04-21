@@ -7,7 +7,7 @@ import Dict
 import Grid exposing (GI)
 import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
-import Html.Events as HE exposing (onClick, onMouseEnter)
+import Html.Events as HE exposing (onClick)
 import Json.Decode as D exposing (Decoder)
 import Json.Decode.Extra as DX
 import List.Extra
@@ -221,15 +221,6 @@ peDecoder =
 isPrimaryDown : PE -> Bool
 isPrimaryDown pe =
     pe.isPrimary && (pe.pressure >= 0.5)
-
-
-whenPrimaryDown : a -> PE -> Decoder a
-whenPrimaryDown msg pe =
-    if pe.isPrimary && (pe.pressure >= 0.5) then
-        D.succeed msg
-
-    else
-        D.fail ""
 
 
 andThenTapLog logMsg =
