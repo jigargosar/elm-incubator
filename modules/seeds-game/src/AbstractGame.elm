@@ -190,8 +190,8 @@ isCellCollectible cell =
             False
 
 
-computeCollectedIndicesAndUpdateGrid : List GI -> Grid Cell -> ( Int, Grid Cell )
-computeCollectedIndicesAndUpdateGrid toCollectIndices grid0 =
+collectIndices : List GI -> Grid Cell -> ( Int, Grid Cell )
+collectIndices indicesToCollect grid0 =
     let
         computeCollectedAt idx ( ct, grid ) =
             case Grid.get idx grid of
@@ -210,7 +210,7 @@ computeCollectedIndicesAndUpdateGrid toCollectIndices grid0 =
                 Nothing ->
                     Nothing
     in
-    filterFoldr computeCollectedAt ( 0, grid0 ) toCollectIndices
+    filterFoldr computeCollectedAt ( 0, grid0 ) indicesToCollect
 
 
 fillEmptyCells : Grid Cell -> Grid Cell
@@ -233,7 +233,7 @@ makeMove input (GM gm) =
     else
         let
             ( collectedCount, collectedGrid_ ) =
-                computeCollectedIndicesAndUpdateGrid input gm.grid
+                collectIndices input gm.grid
 
             ( _, fallenGrid_ ) =
                 computeFallingIndicesAndUpdateGrid collectedGrid_
