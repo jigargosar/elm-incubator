@@ -32,6 +32,13 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
 updateSelection idx wasSelected (Selection list) =
     (if wasSelected && List.member idx list then
         case list of
+            only :: [] ->
+                if only == idx then
+                    []
+
+                else
+                    list
+
             _ :: secondLast :: prevStack ->
                 if secondLast == idx then
                     secondLast :: prevStack
