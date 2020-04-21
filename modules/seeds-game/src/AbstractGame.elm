@@ -16,13 +16,6 @@ import Grid exposing (GI, Grid)
 import List.Extra
 
 
-type alias FallingAcc =
-    { pendingIndices : List GI
-    , fallenIndexPairs : List ( GI, GI )
-    , grid : Grid Cell
-    }
-
-
 computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
 computeFallingAt to grid =
     case Grid.get to grid of
@@ -43,34 +36,24 @@ computeFallingAt to grid =
             Nothing
 
 
-computeFallingIndicesAndUpdateGrid_ : Grid Cell -> ( List ( GI, GI ), Grid Cell )
-computeFallingIndicesAndUpdateGrid_ grid0 =
-    let
-        func idx (( list, grid1 ) as acc) =
-            case computeFallingAt idx grid1 of
-                Just ( item, grid2 ) ->
-                    ( item :: list, grid2 )
-
-                Nothing ->
-                    acc
-    in
-    List.foldr func ( [], grid0 ) (Grid.indices grid0)
-
-
 computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
 computeFallingIndicesAndUpdateGrid grid0 =
     let
-        func grid1 idx =
+        func idx grid1 =
             case computeFallingAt idx grid1 of
                 Just ( item, grid2 ) ->
-                    ( grid2, Just item )
+                    ( Just item, grid2 )
 
                 Nothing ->
-                    ( grid1, Nothing )
+                    ( Nothing, grid1 )
     in
-    List.Extra.mapAccumr func grid0 (Grid.indices grid0)
-        |> swap
+    flipMapAccumr func grid0 (Grid.indices grid0)
         |> Tuple.mapFirst (List.filterMap identity)
+
+
+flipMapAccumr func acc =
+    List.Extra.mapAccumr (\a b -> func b a |> swap) acc
+        >> swap
 
 
 type GameModel
