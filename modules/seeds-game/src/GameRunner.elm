@@ -8,7 +8,6 @@ import Html.Attributes exposing (autofocus, class, style)
 import Html.Events exposing (onClick)
 import List.Extra
 import PointerEvents as PE
-import Set exposing (Set)
 
 
 type Selection
