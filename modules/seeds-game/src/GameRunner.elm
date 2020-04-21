@@ -1,15 +1,11 @@
 module GameRunner exposing (main)
 
 import AbstractGame as G
-import Basics.Extra exposing (swap)
 import Browser exposing (Document)
-import Dict
 import Grid exposing (GI)
 import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
-import Html.Events as HE exposing (onClick)
-import Json.Decode as D exposing (Decoder)
-import Json.Decode.Extra as DX
+import Html.Events exposing (onClick)
 import List.Extra
 import PointerEvents as PE
 import Set exposing (Set)
@@ -178,55 +174,14 @@ viewGameInfo sel i =
 viewGameCells : Set GI -> List ( GI, G.Cell ) -> HM
 viewGameCells sel cells =
     let
-        viewCell ( ( _, _ ) as idx, c ) =
-            let
-                isSelected =
-                    Set.member idx sel
-
-                selectionMsg =
-                    SetSelection idx (not isSelected)
-            in
-            Html.td
-                [ PE.onPrimaryEnterAndDown selectionMsg
-                , PE.onPrimaryDown selectionMsg
-                ]
-                [ div
-                    [ class "br3 w3 h3 flex"
-                    , class "relative"
-                    , style "transform"
-                        (if isSelected then
-                            "scale(0.5)"
-
-                         else
-                            "scale(1)"
-                        )
-                    , class
-                        (case c of
-                            G.Water ->
-                                "bg-light-blue"
-
-                            G.Wall ->
-                                "bg-light-purple white"
-
-                            G.Empty ->
-                                ""
-                        )
-                    ]
-                    [ div
-                        [ class "code f4 o-50 glow"
-                        , class "absolute pa2"
-                        ]
-                        []
-                    ]
-                ]
-
         rows =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
 
+        viewRow : Int -> ( ( GI, G.Cell ), List ( GI, G.Cell ) ) -> HM
         viewRow y ( h, t ) =
             Html.tr []
                 (styledTH [ text "y", text (String.fromInt y) ]
-                    :: List.map viewCell (h :: t)
+                    :: List.map (viewCell sel) (h :: t)
                 )
 
         styledTH =
@@ -248,6 +203,50 @@ viewGameCells sel cells =
     in
     table [ class "pa3" ]
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
+
+
+viewCell : Set GI -> ( GI, G.Cell ) -> HM
+viewCell sel ( ( _, _ ) as idx, c ) =
+    let
+        isSelected =
+            Set.member idx sel
+
+        selectionMsg =
+            SetSelection idx (not isSelected)
+    in
+    Html.td
+        [ PE.onPrimaryEnterAndDown selectionMsg
+        , PE.onPrimaryDown selectionMsg
+        ]
+        [ div
+            [ class "br3 w3 h3 flex"
+            , class "relative"
+            , style "transform"
+                (if isSelected then
+                    "scale(0.5)"
+
+                 else
+                    "scale(1)"
+                )
+            , class
+                (case c of
+                    G.Water ->
+                        "bg-light-blue"
+
+                    G.Wall ->
+                        "bg-light-purple white"
+
+                    G.Empty ->
+                        ""
+                )
+            ]
+            [ div
+                [ class "code f4 o-50 glow"
+                , class "absolute pa2"
+                ]
+                []
+            ]
+        ]
 
 
 btn msg txt =
