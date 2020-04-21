@@ -11,12 +11,38 @@ import PointerEvents as PE
 import Set exposing (Set)
 
 
+type Selection
+    = Selection (Set GI)
+
+
+emptySelection =
+    Selection Set.empty
+
+
+updateSelection idx bool (Selection set) =
+    (if bool then
+        Set.insert idx set
+
+     else
+        Set.remove idx set
+    )
+        |> Selection
+
+
+selectionToList (Selection set) =
+    Set.toList set
+
+
+isSelected idx (Selection set) =
+    Set.member idx set
+
+
 
 -- Model
 
 
 type Model
-    = Running (Set GI) G.GameModel
+    = Running Selection G.GameModel
     | Over G.Info
     | Won G.Info
 
@@ -27,7 +53,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running Set.empty G.initGame
+    ( Running emptySelection G.initGame
     , Cmd.none
     )
 
@@ -40,7 +66,7 @@ type Msg
     = NoOp
     | PlayAnother
     | Collect
-    | SetSelection GI Bool
+    | ToggleSelection GI Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,19 +86,12 @@ update message model =
                 Won _ ->
                     init ()
 
-        SetSelection idx bool ->
+        ToggleSelection idx bool ->
             case model of
-                Running selected g ->
+                Running sel g ->
                     let
                         nm =
-                            Running
-                                (if bool then
-                                    Set.insert idx selected
-
-                                 else
-                                    Set.remove idx selected
-                                )
-                                g
+                            Running (updateSelection idx bool sel) g
                     in
                     ( nm, Cmd.none )
 
@@ -84,15 +103,15 @@ update message model =
 
         Collect ->
             case model of
-                Running selected g ->
+                Running sel g ->
                     let
                         nm =
-                            case G.makeMove (Set.toList selected) g of
+                            case G.makeMove (selectionToList sel) g of
                                 G.InvalidMove ->
                                     model
 
                                 G.NextState ng ->
-                                    Running Set.empty ng
+                                    Running emptySelection ng
 
                                 G.GameLost info ->
                                     Over info
@@ -144,13 +163,13 @@ view model =
 
                     Over info ->
                         [ div [ class "pa3" ] [ text "Game Lost" ]
-                        , viewGameInfo Set.empty info
+                        , viewGameInfo emptySelection info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
                     Won info ->
                         [ div [ class "pa3" ] [ text "Game Won" ]
-                        , viewGameInfo Set.empty info
+                        , viewGameInfo emptySelection info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
                )
@@ -161,7 +180,7 @@ type alias HM =
     Html Msg
 
 
-viewGameInfo : Set GI -> G.Info -> HM
+viewGameInfo : Selection -> G.Info -> HM
 viewGameInfo sel i =
     div []
         [ div [ class "pa3" ]
@@ -177,7 +196,7 @@ viewGameInfo sel i =
         ]
 
 
-viewGameCells : Set GI -> List ( GI, G.Cell ) -> HM
+viewGameCells : Selection -> List ( GI, G.Cell ) -> HM
 viewGameCells sel cells =
     let
         rows =
@@ -211,14 +230,14 @@ viewGameCells sel cells =
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
-viewCell : Set GI -> ( GI, G.Cell ) -> HM
+viewCell : Selection -> ( GI, G.Cell ) -> HM
 viewCell sel ( ( _, _ ) as idx, c ) =
     let
-        isSelected =
-            Set.member idx sel
+        selected =
+            isSelected idx sel
 
         selectionMsg =
-            SetSelection idx (not isSelected)
+            ToggleSelection idx (not selected)
     in
     Html.td
         [ PE.onPrimaryEnterAndDown selectionMsg
@@ -228,7 +247,7 @@ viewCell sel ( ( _, _ ) as idx, c ) =
             [ class "br3 w3 h3 flex"
             , class "relative"
             , style "transform"
-                (if isSelected then
+                (if selected then
                     "scale(0.5)"
 
                  else
