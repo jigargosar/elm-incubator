@@ -51,9 +51,25 @@ computeFallingIndicesAndUpdateGrid grid0 =
         |> Tuple.mapFirst (List.filterMap identity)
 
 
+flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
 flipMapAccumr func acc =
     List.Extra.mapAccumr (\a b -> func b a |> swap) acc
         >> swap
+
+
+filterMapAccumr : (a -> c -> Maybe ( b, c )) -> c -> List a -> ( List b, c )
+filterMapAccumr func acc =
+    flipMapAccumr
+        (\a b ->
+            case func a b of
+                Nothing ->
+                    ( Nothing, b )
+
+                Just ( na, nb ) ->
+                    ( Just na, nb )
+        )
+        acc
+        >> Tuple.mapFirst (List.filterMap identity)
 
 
 type GameModel
