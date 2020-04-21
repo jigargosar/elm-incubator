@@ -218,11 +218,17 @@ makeMove list (GM gm) =
 
             ( fallenIndices, fallenGrid ) =
                 computeFallingIndicesAndUpdateGrid collectedGrid
+
+            nextTarget =
+                gm.currentTarget - collectedCount
+
+            nextMovesLeft =
+                gm.movesLeft - 1
         in
-        if gm.currentTarget - collectedCount <= 0 then
+        if nextTarget <= 0 then
             GameWon
                 { currentTarget = 0
-                , movesLeft = gm.movesLeft - 1
+                , movesLeft = nextMovesLeft
                 , cells = Grid.toList fallenGrid
                 , fallen = fallenIndices
                 , collected = collectedIndices
@@ -230,7 +236,7 @@ makeMove list (GM gm) =
 
         else if gm.movesLeft == 1 then
             GameLost
-                { currentTarget = gm.currentTarget - collectedCount
+                { currentTarget = nextTarget
                 , movesLeft = 0
                 , cells = Grid.toList fallenGrid
                 , fallen = fallenIndices
@@ -240,8 +246,8 @@ makeMove list (GM gm) =
         else
             NextState
                 (GM
-                    { currentTarget = gm.currentTarget - collectedCount
-                    , movesLeft = gm.movesLeft - 1
+                    { currentTarget = nextTarget
+                    , movesLeft = nextMovesLeft
                     , grid = fallenGrid
                     , fallen = fallenIndices
                     , collected = collectedIndices
