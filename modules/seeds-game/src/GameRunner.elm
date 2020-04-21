@@ -7,7 +7,8 @@ import Dict
 import Grid exposing (GI)
 import Html exposing (Html, button, div, table, text)
 import Html.Attributes exposing (autofocus, class)
-import Html.Events exposing (onClick)
+import Html.Events as HE exposing (onClick, onMouseEnter)
+import Json.Decode as D exposing (Decoder)
 import List.Extra
 import Set exposing (Set)
 
@@ -174,6 +175,27 @@ viewGameInfo i =
         ]
 
 
+type alias PE =
+    { isPrimary : Bool
+    , pressure : Float
+    }
+
+
+peDecoder : Decoder PE
+peDecoder =
+    D.map2 PE
+        (D.field "isPrimary" D.bool)
+        (D.field "pressure" D.float)
+
+
+
+--noinspection ElmUnusedSymbol
+
+
+andThenDebugFail =
+    D.andThen (Debug.log "debug" >> (\_ -> D.fail ""))
+
+
 viewGameCells : List ( GI, GI ) -> List ( GI, G.Cell ) -> HM
 viewGameCells fallen cells =
     let
@@ -181,7 +203,20 @@ viewGameCells fallen cells =
             Dict.fromList (List.map swap fallen)
 
         viewCell ( ( _, _ ) as idx, c ) =
-            Html.td [ onClick (OnClick idx) ]
+            Html.td
+                [ onClick (OnClick idx)
+                , HE.on "pointerenter"
+                    (peDecoder
+                        |> D.andThen
+                            (\pe ->
+                                if pe.isPrimary && pe.pressure >= 0.5 then
+                                    D.succeed (OnClick idx)
+
+                                else
+                                    D.fail ""
+                            )
+                    )
+                ]
                 [ div
                     [ class "br3 w3 h3 flex"
                     , class "relative"
