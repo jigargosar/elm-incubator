@@ -253,6 +253,8 @@ viewGameCells sel fallen cells =
                 [ onClick (OnClick idx)
                 , HE.on "pointerenter"
                     (DX.when peDecoder isPrimaryDown (D.succeed (OnClick idx)))
+                , HE.on "pointerdown"
+                    (DX.when peDecoder isPrimaryDown (D.succeed (OnClick idx)))
                 ]
                 [ div
                     [ class "br3 w3 h3 flex"
