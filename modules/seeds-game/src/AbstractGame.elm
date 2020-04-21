@@ -19,7 +19,6 @@ import Basics.Extra exposing (atLeast, swap)
 import Dict
 import Grid exposing (GI, Grid)
 import List.Extra
-import Maybe.Extra
 import Random
 import Random.Extra
 
