@@ -176,14 +176,32 @@ viewGameInfo sel i =
 type alias PE =
     { isPrimary : Bool
     , pressure : Float
+    , target : El
     }
+
+
+type alias El =
+    { offsetLeft : Float
+    , offsetTop : Float
+    , offsetWidth : Float
+    , offsetHeight : Float
+    }
+
+
+elDecoder =
+    D.map4 El
+        (D.field "offsetLeft" D.float)
+        (D.field "offsetTop" D.float)
+        (D.field "offsetWidth" D.float)
+        (D.field "offsetHeight" D.float)
 
 
 peDecoder : Decoder PE
 peDecoder =
-    D.map2 PE
+    D.map3 PE
         (D.field "isPrimary" D.bool)
         (D.field "pressure" D.float)
+        (D.field "target" elDecoder)
 
 
 
