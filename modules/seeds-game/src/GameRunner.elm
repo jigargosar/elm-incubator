@@ -18,12 +18,12 @@ emptySelection =
     Selection []
 
 
-updateSelection idx bool (Selection list) =
-    (if bool then
-        idx :: List.Extra.remove idx list
+updateSelection idx wasSelected (Selection list) =
+    (if wasSelected then
+        List.Extra.remove idx list
 
      else
-        List.Extra.remove idx list
+        idx :: List.Extra.remove idx list
     )
         |> Selection
 
@@ -236,7 +236,7 @@ viewCell sel ( ( _, _ ) as idx, c ) =
             isSelected idx sel
 
         selectionMsg =
-            ToggleSelection idx (not selected)
+            ToggleSelection idx selected
     in
     Html.td
         [ PE.onPrimaryEnterAndDown selectionMsg
