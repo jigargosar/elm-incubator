@@ -20,8 +20,8 @@ import Random
 import Random.Extra
 
 
-computeFallingIndicesAndUpdateGrid : Grid Cell -> Grid Cell
-computeFallingIndicesAndUpdateGrid grid0 =
+computeFallenGrid : Grid Cell -> Grid Cell
+computeFallenGrid grid0 =
     let
         computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
         computeFallingAt to grid =
@@ -353,7 +353,7 @@ makeMove (GM gm selectionStack) =
                 collectIndices selectionStack gm.grid
 
             fallenGrid_ =
-                computeFallingIndicesAndUpdateGrid collectedGrid_
+                computeFallenGrid collectedGrid_
 
             ( filledGrid, nextRandom ) =
                 Random.step (fillEmptyCells fallenGrid_) gm.random
