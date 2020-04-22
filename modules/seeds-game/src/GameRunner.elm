@@ -37,7 +37,7 @@ updateSelection idx wasSelected moveBuilder =
 
     else if not wasSelected && not (List.member idx moves) then
         -- Add
-        G.pushIdx idx moveBuilder
+        G.push idx moveBuilder
 
     else
         -- NoOp

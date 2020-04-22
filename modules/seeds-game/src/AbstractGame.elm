@@ -9,7 +9,7 @@ module AbstractGame exposing
     , makeMove
     , pop
     , popIfSecondLastEq
-    , pushIdx
+    , push
     , toStack
     )
 
@@ -299,8 +299,8 @@ type GameModel
     = GM GameState (List GI)
 
 
-pushIdx : GI -> GameModel -> Maybe GameModel
-pushIdx idx (GM ({ grid } as gm) stack) =
+push : GI -> GameModel -> Maybe GameModel
+push idx (GM ({ grid } as gm) stack) =
     case stack of
         [] ->
             if isValidStart idx gm then
