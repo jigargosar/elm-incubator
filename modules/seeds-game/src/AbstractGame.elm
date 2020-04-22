@@ -52,30 +52,6 @@ collectIndices indicesToCollect grid0 =
     filterFoldr computeCollectedAt ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
 
 
-fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
-fillEmptyCells grid =
-    Grid.toListBy
-        (\i c ->
-            if c == Empty then
-                Just i
-
-            else
-                Nothing
-        )
-        grid
-        |> List.filterMap identity
-        |> Random.Extra.traverse
-            (\i ->
-                Random.uniform Water [ Seed ]
-                    |> Random.map (Tuple.pair i)
-            )
-        |> Random.map Dict.fromList
-        |> Random.map
-            (\nd ->
-                Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
-            )
-
-
 computeFallenGrid : Grid Cell -> Grid Cell
 computeFallenGrid grid0 =
     let
@@ -102,6 +78,30 @@ computeFallenGrid grid0 =
         |> Tuple.second
 
 
+fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
+fillEmptyCells grid =
+    Grid.toListBy
+        (\i c ->
+            if c == Empty then
+                Just i
+
+            else
+                Nothing
+        )
+        grid
+        |> List.filterMap identity
+        |> Random.Extra.traverse
+            (\i ->
+                Random.uniform Water [ Seed ]
+                    |> Random.map (Tuple.pair i)
+            )
+        |> Random.map Dict.fromList
+        |> Random.map
+            (\nd ->
+                Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
+            )
+
+
 findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
 findFirstMovableAbove startIndex grid =
     case Grid.entryAbove startIndex grid of
@@ -114,6 +114,22 @@ findFirstMovableAbove startIndex grid =
 
             else
                 findFirstMovableAbove index grid
+
+
+isCellMovable : Cell -> Bool
+isCellMovable cell =
+    case cell of
+        Water ->
+            True
+
+        Seed ->
+            True
+
+        Wall ->
+            False
+
+        Empty ->
+            False
 
 
 filterMapAccumr : (a -> c -> Maybe ( b, c )) -> c -> List a -> ( List b, c )
@@ -181,22 +197,6 @@ computeValidSelectionIndices grid selectionStack =
 
 canStartSelectionWithCell =
     isCellMovable
-
-
-isCellMovable : Cell -> Bool
-isCellMovable cell =
-    case cell of
-        Water ->
-            True
-
-        Seed ->
-            True
-
-        Wall ->
-            False
-
-        Empty ->
-            False
 
 
 adjacentOf : ( number, number ) -> List ( number, number )
