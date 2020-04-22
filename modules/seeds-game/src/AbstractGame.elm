@@ -250,14 +250,14 @@ initGame =
         { movesLeft = 10
         , targetSeeds = 35
         , targetWater = 35
-        , grid = initialGrid
+        , grid = initGrid
         , random = Random.initialSeed 0
         }
         []
 
 
-initialGrid : Grid Cell
-initialGrid =
+initGrid : Grid Cell
+initGrid =
     let
         wallIndices =
             [ ( 1, 1 ), ( 4, 1 ), ( 1, 4 ), ( 4, 4 ) ]
