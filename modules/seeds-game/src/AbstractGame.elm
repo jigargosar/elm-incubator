@@ -3,14 +3,11 @@ module AbstractGame exposing
     , GameModel
     , Info
     , MoveResult(..)
-    , clearIfOnlyEq
     , info
     , initGame
     , makeMove
     , pop
-    , popIfSecondLastEq
     , push
-    , toStack
     )
 
 -- GAME GRID
@@ -156,7 +153,7 @@ type alias Info =
     , targetSeeds : Int
     , targetWater : Int
     , grid : Grid Cell
-    , selected : List GI
+    , selectionStack : List GI
     , validIndices : List GI
     }
 
@@ -329,39 +326,6 @@ pop (GM gm stack) =
             GM gm prevStack |> Just
 
 
-clearIfOnlyEq : GI -> GameModel -> Maybe GameModel
-clearIfOnlyEq idx (GM gm stack) =
-    case stack of
-        only :: [] ->
-            if idx == only then
-                GM gm [] |> Just
-
-            else
-                Nothing
-
-        _ ->
-            Nothing
-
-
-popIfSecondLastEq : GI -> GameModel -> Maybe GameModel
-popIfSecondLastEq idx (GM gm stack) =
-    case stack of
-        _ :: secondLast :: prevStack ->
-            if idx == secondLast then
-                GM gm (secondLast :: prevStack) |> Just
-
-            else
-                Nothing
-
-        _ ->
-            Nothing
-
-
-toStack : GameModel -> List GI
-toStack (GM _ stack) =
-    stack
-
-
 areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
 areCellsAtIndicesConnectible a b grid =
     isAdj a b
@@ -437,7 +401,7 @@ makeMove (GM gm input) =
                 , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
-                , selected = []
+                , selectionStack = []
                 , validIndices = []
                 }
 
@@ -447,7 +411,7 @@ makeMove (GM gm input) =
                 , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
-                , selected = []
+                , selectionStack = []
                 , validIndices = []
                 }
 

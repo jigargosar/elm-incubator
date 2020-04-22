@@ -10,24 +10,25 @@ import List.Extra
 import PointerEvents as PE
 
 
-updateSelection idx wasSelected moveBuilder =
+updateSelection idx wasSelected game =
     let
-        moves =
-            G.toStack moveBuilder
+        stack =
+            G.info game
+                |> .selectionStack
     in
-    if wasSelected && List.member idx moves then
+    if wasSelected && List.member idx stack then
         -- Remove
-        case moves of
+        case stack of
             only :: [] ->
                 if only == idx then
-                    G.pop moveBuilder
+                    G.pop game
 
                 else
                     Nothing
 
             _ :: secondLast :: _ ->
                 if secondLast == idx then
-                    G.pop moveBuilder
+                    G.pop game
 
                 else
                     Nothing
@@ -35,9 +36,9 @@ updateSelection idx wasSelected moveBuilder =
             _ ->
                 Nothing
 
-    else if not wasSelected && not (List.member idx moves) then
+    else if not wasSelected && not (List.member idx stack) then
         -- Add
-        G.push idx moveBuilder
+        G.push idx game
 
     else
         -- NoOp
@@ -95,10 +96,10 @@ update message model =
 
         ToggleSelection idx bool ->
             case model of
-                Running moveBuilder ->
+                Running game ->
                     let
                         nm =
-                            Running (updateSelection idx bool moveBuilder |> Maybe.withDefault moveBuilder)
+                            Running (updateSelection idx bool game |> Maybe.withDefault game)
                     in
                     ( nm, Cmd.none )
 
@@ -244,7 +245,7 @@ viewCell : G.Info -> ( GI, G.Cell ) -> HM
 viewCell info ( ( _, _ ) as idx, c ) =
     let
         selIdx =
-            List.reverse info.selected |> List.Extra.elemIndex idx
+            List.reverse info.selectionStack |> List.Extra.elemIndex idx
 
         isSelected =
             selIdx /= Nothing
