@@ -62,10 +62,10 @@ makeMoveGridGenerator :
     -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
 makeMoveGridGenerator moveIndices grid =
     let
-        ( ct, collectedGrid_ ) =
+        ( ct, collectedGrid ) =
             collectIndices moveIndices grid
     in
-    computeFallenGrid collectedGrid_
+    computeFallenGrid collectedGrid
         |> fillEmptyCells
         |> Random.map (Tuple.pair ct)
 
