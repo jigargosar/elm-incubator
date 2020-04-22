@@ -21,14 +21,14 @@ updateSelection idx wasSelected game =
         case stack of
             only :: [] ->
                 if only == idx then
-                    G.popSelectionIdx game
+                    G.selectionPop game
 
                 else
                     Nothing
 
             _ :: secondLast :: _ ->
                 if secondLast == idx then
-                    G.popSelectionIdx game
+                    G.selectionPop game
 
                 else
                     Nothing
@@ -38,7 +38,7 @@ updateSelection idx wasSelected game =
 
     else if not wasSelected && not (List.member idx stack) then
         -- Add
-        G.pushSelectionIdx idx game
+        G.selectionPush idx game
 
     else
         -- NoOp

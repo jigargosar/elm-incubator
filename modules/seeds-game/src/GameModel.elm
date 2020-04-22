@@ -6,8 +6,8 @@ module GameModel exposing
     , info
     , init
     , makeMove
-    , popSelectionIdx
-    , pushSelectionIdx
+    , selectionPop
+    , selectionPush
     )
 
 import Basics.Extra exposing (atLeast, swap)
@@ -302,8 +302,8 @@ init =
         }
 
 
-pushSelectionIdx : GI -> GameModel -> Maybe GameModel
-pushSelectionIdx idx (GM gm) =
+selectionPush : GI -> GameModel -> Maybe GameModel
+selectionPush idx (GM gm) =
     if List.member idx (computeValidSelectionIndices gm.grid gm.selectionStack) then
         Just (GM { gm | selectionStack = idx :: gm.selectionStack })
 
@@ -311,8 +311,8 @@ pushSelectionIdx idx (GM gm) =
         Nothing
 
 
-popSelectionIdx : GameModel -> Maybe GameModel
-popSelectionIdx (GM gm) =
+selectionPop : GameModel -> Maybe GameModel
+selectionPop (GM gm) =
     case gm.selectionStack of
         [] ->
             Nothing
