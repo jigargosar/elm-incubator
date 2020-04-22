@@ -164,37 +164,14 @@ adjacentOf ( x, y ) =
 
 
 info : GameModel -> Info
-info (GM g selected) =
-    let
-        nextValidIndices =
-            case selected of
-                [] ->
-                    Grid.toListBy
-                        (\i c ->
-                            if canStartSelectionWithCell c then
-                                Just i
-
-                            else
-                                Nothing
-                        )
-                        g.grid
-                        |> List.filterMap identity
-
-                last :: [] ->
-                    adjacentOf last
-                        |> List.filter
-                            (\adj -> areCellsAtIndicesConnectible last adj g.grid)
-
-                last :: secondLast :: _ ->
-                    adjacentOf last
-                        |> List.filter
-                            (\adj ->
-                                adj
-                                    /= secondLast
-                                    && areCellsAtIndicesConnectible last adj g.grid
-                            )
-    in
-    Info g.movesLeft g.targetSeeds g.targetWater g.grid selected nextValidIndices
+info (GM gm selectionStack) =
+    { movesLeft = gm.movesLeft
+    , targetSeeds = gm.targetSeeds
+    , targetWater = gm.targetWater
+    , grid = gm.grid
+    , selectionStack = selectionStack
+    , validIndices = computeValidIndices gm.grid selectionStack
+    }
 
 
 canStartSelectionWithCell =
@@ -280,25 +257,42 @@ fillEmptyCells grid =
             )
 
 
-isValidStart : GI -> GameState -> Bool
-isValidStart idx gm =
-    isCellMovableAt idx gm.grid
-
-
-isCellMovableAt : GI -> Grid Cell -> Bool
-isCellMovableAt idx grid =
-    Grid.get idx grid
-        |> Maybe.map isCellMovable
-        |> Maybe.withDefault False
-
-
 type GameModel
     = GM GameState (List GI)
 
 
+computeValidIndices : Grid Cell -> List GI -> List GI
+computeValidIndices grid selectionStack =
+    case selectionStack of
+        [] ->
+            Grid.toListBy
+                (\i c ->
+                    if canStartSelectionWithCell c then
+                        Just i
+
+                    else
+                        Nothing
+                )
+                grid
+                |> List.filterMap identity
+
+        last :: [] ->
+            adjacentOf last
+                |> List.filter
+                    (\adj -> areCellsAtIndicesConnectible last adj grid)
+
+        last :: secondLast :: _ ->
+            adjacentOf last
+                |> List.filter
+                    (\adj ->
+                        (adj /= secondLast)
+                            && areCellsAtIndicesConnectible last adj grid
+                    )
+
+
 push : GI -> GameModel -> Maybe GameModel
-push idx ((GM gm stack) as game) =
-    if List.member idx (info game).validIndices then
+push idx (GM gm stack) =
+    if List.member idx (computeValidIndices gm.grid stack) then
         Just (GM gm (idx :: stack))
 
     else
