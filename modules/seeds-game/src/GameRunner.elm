@@ -241,18 +241,24 @@ viewGameCells info =
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
-computeScale max n =
+computeScale _ n =
     let
         step =
-            (hi - lo) / toFloat max
+            (hi - lo)
+                --/ toFloat max
+                / 2
 
         lo =
-            0.5
+            0.4
 
         hi =
             0.8
     in
-    (toFloat n * step) + lo
+    if n < 2 then
+        (toFloat n * step) + lo
+
+    else
+        hi
 
 
 viewCell : G.Info -> ( GI, G.Cell ) -> HM
