@@ -93,26 +93,22 @@ collectCellsAtIndices indicesToCollect grid0 =
         seedEntries =
             List.filter isEntrySeed entriesToCollect
 
-        collected =
-            { water = List.length waterEntries
-            , seeds = List.length seedEntries
-            }
-
         indicesToEmpty =
             List.map Tuple.first (waterEntries ++ seedEntries)
-
-        grid1 =
-            Grid.map
-                (\i c ->
-                    if List.member i indicesToEmpty then
-                        Empty
-
-                    else
-                        c
-                )
-                grid0
     in
-    ( collected, grid1 )
+    ( { water = List.length waterEntries
+      , seeds = List.length seedEntries
+      }
+    , Grid.map
+        (\i c ->
+            if List.member i indicesToEmpty then
+                Empty
+
+            else
+                c
+        )
+        grid0
+    )
 
 
 computeFallenGrid : Grid Cell -> Grid Cell
