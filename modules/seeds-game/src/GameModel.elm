@@ -73,16 +73,44 @@ collectAndGenerateNextGrid collectIndices grid =
 collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectCellsAtIndices indicesToCollect grid0 =
     let
-        isCollectIdx i =
+        isEntryCollectible ( i, _ ) =
             List.member i indicesToCollect
 
         entriesToCollect =
             grid0
                 |> Grid.toList
-                |> List.filter (Tuple.first >> isCollectIdx)
+                |> List.filter isEntryCollectible
 
-        _ =
-            1
+        isEntryWater ( _, c ) =
+            c == Water
+
+        isEntrySeed ( _, c ) =
+            c == Seed
+
+        waterEntries =
+            List.filter isEntryWater entriesToCollect
+
+        seedEntries =
+            List.filter isEntrySeed entriesToCollect
+
+        collected =
+            { water = List.length waterEntries
+            , seeds = List.length seedEntries
+            }
+
+        indicesToEmpty =
+            List.map Tuple.first (waterEntries ++ seedEntries)
+
+        grid1 =
+            Grid.map
+                (\i c ->
+                    if List.member i indicesToEmpty then
+                        Empty
+
+                    else
+                        c
+                )
+                grid0
 
         collectAt idx ( ct, grid ) =
             case Grid.get idx grid of
@@ -113,7 +141,8 @@ collectCellsAtIndices indicesToCollect grid0 =
         collectAtIgnoreNothing idx acc =
             collectAt idx acc |> Maybe.withDefault acc
     in
-    List.foldr collectAtIgnoreNothing ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
+    --List.foldr collectAtIgnoreNothing ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
+    ( collected, grid1 )
 
 
 computeFallenGrid : Grid Cell -> Grid Cell
