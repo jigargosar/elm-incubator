@@ -183,6 +183,22 @@ canStartSelectionWithCell =
     isCellMovable
 
 
+isCellMovable : Cell -> Bool
+isCellMovable cell =
+    case cell of
+        Water ->
+            True
+
+        Seed ->
+            True
+
+        Wall ->
+            False
+
+        Empty ->
+            False
+
+
 adjacentOf : ( number, number ) -> List ( number, number )
 adjacentOf ( x, y ) =
     [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
@@ -309,22 +325,6 @@ type MoveResult
     | GameLost Info
     | GameWon Info
     | NextState GameModel
-
-
-isCellMovable : Cell -> Bool
-isCellMovable cell =
-    case cell of
-        Water ->
-            True
-
-        Seed ->
-            True
-
-        Wall ->
-            False
-
-        Empty ->
-            False
 
 
 push : GI -> GameModel -> Maybe GameModel
