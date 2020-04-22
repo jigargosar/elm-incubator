@@ -199,7 +199,34 @@ filterFoldr func acc =
 
 
 
--- SELECTION UTILS
+-- SELECTION
+
+
+type alias Selection =
+    List GI
+
+
+selectionPush_ : GI -> Grid Cell -> Selection -> Maybe Selection
+selectionPush_ idx grid selectionStack =
+    if List.member idx (computeValidSelectionIndices grid selectionStack) then
+        Just (idx :: selectionStack)
+
+    else
+        Nothing
+
+
+selectionPop_ : Selection -> Maybe Selection
+selectionPop_ selectionStack =
+    case selectionStack of
+        [] ->
+            Nothing
+
+        _ :: prevStack ->
+            Just prevStack
+
+
+
+-- SELECTION HELPERS
 
 
 computeValidSelectionIndices : Grid Cell -> List GI -> List GI
@@ -300,29 +327,6 @@ init =
         , selectionStack = []
         , random = Random.initialSeed 0
         }
-
-
-type alias Selection =
-    List GI
-
-
-selectionPush_ : GI -> Grid Cell -> Selection -> Maybe Selection
-selectionPush_ idx grid selectionStack =
-    if List.member idx (computeValidSelectionIndices grid selectionStack) then
-        Just (idx :: selectionStack)
-
-    else
-        Nothing
-
-
-selectionPop_ : Selection -> Maybe Selection
-selectionPop_ selectionStack =
-    case selectionStack of
-        [] ->
-            Nothing
-
-        _ :: prevStack ->
-            Just prevStack
 
 
 selectionPush : GI -> GameModel -> Maybe GameModel
