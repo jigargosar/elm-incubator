@@ -299,7 +299,7 @@ viewCell info ( ( _, _ ) as idx, c ) =
                 )
             ]
             [ div
-                [ class "code f3 _o-50 glow"
+                [ class "code f3"
                 , class "absolute pa2"
                 ]
                 [ text (selIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
