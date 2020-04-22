@@ -202,35 +202,43 @@ filterFoldr func acc =
 -- SELECTION
 
 
-type alias Selection =
-    List GI
+type Selection
+    = Selection (List GI)
+
+
+emptySelection =
+    Selection []
+
+
+selectionToStack (Selection stack) =
+    stack
 
 
 selectionPush_ : GI -> Grid Cell -> Selection -> Maybe Selection
-selectionPush_ idx grid selectionStack =
-    if List.member idx (computeValidSelectionIndices grid selectionStack) then
-        Just (idx :: selectionStack)
+selectionPush_ idx grid ((Selection stack) as selection) =
+    if List.member idx (computeValidSelectionIndices grid selection) then
+        Just (Selection (idx :: stack))
 
     else
         Nothing
 
 
 selectionPop_ : Selection -> Maybe Selection
-selectionPop_ selectionStack =
-    case selectionStack of
+selectionPop_ (Selection stack) =
+    case stack of
         [] ->
             Nothing
 
         _ :: prevStack ->
-            Just prevStack
+            Just (Selection prevStack)
 
 
 
 -- SELECTION HELPERS
 
 
-computeValidSelectionIndices : Grid Cell -> List GI -> List GI
-computeValidSelectionIndices grid selectionStack =
+computeValidSelectionIndices : Grid Cell -> Selection -> List GI
+computeValidSelectionIndices grid (Selection selectionStack) =
     case selectionStack of
         [] ->
             Grid.toListBy
@@ -312,7 +320,7 @@ type alias GameState =
     , targetSeeds : Int
     , targetWater : Int
     , grid : Grid Cell
-    , selectionStack : List GI
+    , selection : Selection
     , random : Random.Seed
     }
 
@@ -324,21 +332,21 @@ init =
         , targetSeeds = 35
         , targetWater = 35
         , grid = initGrid
-        , selectionStack = []
+        , selection = emptySelection
         , random = Random.initialSeed 0
         }
 
 
 selectionPush : GI -> GameModel -> Maybe GameModel
 selectionPush idx (GM gm) =
-    selectionPush_ idx gm.grid gm.selectionStack
-        |> Maybe.map (\selection -> GM { gm | selectionStack = selection })
+    selectionPush_ idx gm.grid gm.selection
+        |> Maybe.map (\selection -> GM { gm | selection = selection })
 
 
 selectionPop : GameModel -> Maybe GameModel
 selectionPop (GM gm) =
-    selectionPop_ gm.selectionStack
-        |> Maybe.map (\selection -> GM { gm | selectionStack = selection })
+    selectionPop_ gm.selection
+        |> Maybe.map (\selection -> GM { gm | selection = selection })
 
 
 type alias Info =
@@ -357,8 +365,8 @@ info (GM gm) =
     , targetSeeds = gm.targetSeeds
     , targetWater = gm.targetWater
     , grid = gm.grid
-    , selectionStack = gm.selectionStack
-    , validIndices = computeValidSelectionIndices gm.grid gm.selectionStack
+    , selectionStack = selectionToStack gm.selection
+    , validIndices = computeValidSelectionIndices gm.grid gm.selection
     }
 
 
@@ -369,68 +377,78 @@ type MoveResult
     | NextState GameModel
 
 
-makeMove : GameModel -> MoveResult
-makeMove (GM gm) =
-    if List.length gm.selectionStack < 2 then
-        InvalidMove
+selectionToMove : Selection -> Maybe (List GI)
+selectionToMove (Selection stack) =
+    if List.length stack < 2 then
+        Nothing
 
     else
-        let
-            ( ct, collectedGrid_ ) =
-                collectIndices gm.selectionStack gm.grid
+        Just stack
 
-            fallenGrid_ =
-                computeFallenGrid collectedGrid_
 
-            ( filledGrid, nextRandom ) =
-                Random.step (fillEmptyCells fallenGrid_) gm.random
+makeMove : GameModel -> MoveResult
+makeMove (GM gm) =
+    case selectionToMove gm.selection of
+        Nothing ->
+            InvalidMove
 
-            nextTargetSeeds =
-                (gm.targetSeeds - ct.seeds)
-                    |> atLeast 0
+        Just moveIndices ->
+            let
+                ( ct, collectedGrid_ ) =
+                    collectIndices moveIndices gm.grid
 
-            nextTargetWater =
-                (gm.targetWater - ct.water)
-                    |> atLeast 0
+                fallenGrid_ =
+                    computeFallenGrid collectedGrid_
 
-            nextMovesLeft =
-                (gm.movesLeft - 1)
-                    |> atLeast 0
+                ( filledGrid, nextRandom ) =
+                    Random.step (fillEmptyCells fallenGrid_) gm.random
 
-            isGameWon =
-                List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
+                nextTargetSeeds =
+                    (gm.targetSeeds - ct.seeds)
+                        |> atLeast 0
 
-            isGameLost =
-                not isGameWon && nextMovesLeft == 0
-        in
-        if isGameWon then
-            GameWon
-                { targetSeeds = nextTargetSeeds
-                , targetWater = nextTargetWater
-                , movesLeft = nextMovesLeft
-                , grid = filledGrid
-                , selectionStack = []
-                , validIndices = []
-                }
+                nextTargetWater =
+                    (gm.targetWater - ct.water)
+                        |> atLeast 0
 
-        else if isGameLost then
-            GameLost
-                { targetSeeds = nextTargetSeeds
-                , targetWater = nextTargetWater
-                , movesLeft = nextMovesLeft
-                , grid = filledGrid
-                , selectionStack = []
-                , validIndices = []
-                }
+                nextMovesLeft =
+                    (gm.movesLeft - 1)
+                        |> atLeast 0
 
-        else
-            NextState
-                (GM
+                isGameWon =
+                    List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
+
+                isGameLost =
+                    not isGameWon && nextMovesLeft == 0
+            in
+            if isGameWon then
+                GameWon
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
                     , grid = filledGrid
-                    , random = nextRandom
                     , selectionStack = []
+                    , validIndices = []
                     }
-                )
+
+            else if isGameLost then
+                GameLost
+                    { targetSeeds = nextTargetSeeds
+                    , targetWater = nextTargetWater
+                    , movesLeft = nextMovesLeft
+                    , grid = filledGrid
+                    , selectionStack = []
+                    , validIndices = []
+                    }
+
+            else
+                NextState
+                    (GM
+                        { targetSeeds = nextTargetSeeds
+                        , targetWater = nextTargetWater
+                        , movesLeft = nextMovesLeft
+                        , grid = filledGrid
+                        , random = nextRandom
+                        , selection = emptySelection
+                        }
+                    )
