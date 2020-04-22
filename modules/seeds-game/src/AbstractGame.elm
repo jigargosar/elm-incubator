@@ -7,6 +7,7 @@ module AbstractGame exposing
     , info
     , initGame
     , makeMove
+    , pop
     , popIfSecondLastEq
     , pushIdx
     , toStack
@@ -316,6 +317,16 @@ pushIdx idx (GM ({ grid } as gm) stack) =
 
             else
                 Nothing
+
+
+pop : GameModel -> Maybe GameModel
+pop (GM gm stack) =
+    case stack of
+        [] ->
+            Nothing
+
+        _ :: prevStack ->
+            GM gm prevStack |> Just
 
 
 clearIfOnlyEq : GI -> GameModel -> Maybe GameModel

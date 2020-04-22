@@ -7,7 +7,6 @@ import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
 import Html.Events exposing (onClick)
 import List.Extra
-import Maybe.Extra
 import PointerEvents as PE
 
 
@@ -18,7 +17,23 @@ updateSelection idx wasSelected moveBuilder =
     in
     if wasSelected && List.member idx moves then
         -- Remove
-        Maybe.Extra.oneOf [ G.clearIfOnlyEq idx, G.popIfSecondLastEq idx ] moveBuilder
+        case moves of
+            only :: [] ->
+                if only == idx then
+                    G.pop moveBuilder
+
+                else
+                    Nothing
+
+            _ :: secondLast :: _ ->
+                if secondLast == idx then
+                    G.pop moveBuilder
+
+                else
+                    Nothing
+
+            _ ->
+                Nothing
 
     else if not wasSelected && not (List.member idx moves) then
         -- Add
