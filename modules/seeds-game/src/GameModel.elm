@@ -60,10 +60,10 @@ collectAndGenerateNextGrid :
     List GI
     -> Grid Cell
     -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
-collectAndGenerateNextGrid moveIndices grid =
+collectAndGenerateNextGrid indices grid =
     let
         ( ct, collectedGrid ) =
-            collectIndices moveIndices grid
+            collectIndices indices grid
     in
     computeFallenGrid collectedGrid
         |> fillEmptyCells
