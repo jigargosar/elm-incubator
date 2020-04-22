@@ -302,13 +302,27 @@ init =
         }
 
 
-selectionPush_ : GI -> Grid Cell -> List GI -> Maybe (List GI)
+type alias SelectionStack =
+    List GI
+
+
+selectionPush_ : GI -> Grid Cell -> SelectionStack -> Maybe SelectionStack
 selectionPush_ idx grid selectionStack =
     if List.member idx (computeValidSelectionIndices grid selectionStack) then
         Just (idx :: selectionStack)
 
     else
         Nothing
+
+
+selectionPop_ : SelectionStack -> Maybe SelectionStack
+selectionPop_ selectionStack =
+    case selectionStack of
+        [] ->
+            Nothing
+
+        _ :: prevStack ->
+            Just prevStack
 
 
 selectionPush : GI -> GameModel -> Maybe GameModel
