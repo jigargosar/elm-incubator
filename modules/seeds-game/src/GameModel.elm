@@ -56,6 +56,17 @@ initGrid =
     grid
 
 
+nextGridGen : List GI -> Grid Cell -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
+nextGridGen moveIndices grid =
+    let
+        ( ct, collectedGrid_ ) =
+            collectIndices moveIndices grid
+    in
+    computeFallenGrid collectedGrid_
+        |> fillEmptyCells
+        |> Random.map (Tuple.pair ct)
+
+
 collectIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectIndices indicesToCollect grid0 =
     let
@@ -384,17 +395,6 @@ selectionToMove (Selection stack) =
 
     else
         Just stack
-
-
-nextGridGen : List GI -> Grid Cell -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
-nextGridGen moveIndices grid =
-    let
-        ( ct, collectedGrid_ ) =
-            collectIndices moveIndices grid
-    in
-    computeFallenGrid collectedGrid_
-        |> fillEmptyCells
-        |> Random.map (Tuple.pair ct)
 
 
 makeMove : GameModel -> MoveResult
