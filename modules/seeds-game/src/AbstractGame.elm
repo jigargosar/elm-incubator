@@ -147,7 +147,85 @@ filterFoldr func acc =
 
 
 
+-- SELECTION UTILS
+
+
+computeValidSelectionIndices : Grid Cell -> List GI -> List GI
+computeValidSelectionIndices grid selectionStack =
+    case selectionStack of
+        [] ->
+            Grid.toListBy
+                (\i c ->
+                    if canStartSelectionWithCell c then
+                        Just i
+
+                    else
+                        Nothing
+                )
+                grid
+                |> List.filterMap identity
+
+        last :: [] ->
+            adjacentOf last
+                |> List.filter
+                    (\adj -> areCellsAtIndicesConnectible last adj grid)
+
+        last :: secondLast :: _ ->
+            adjacentOf last
+                |> List.filter
+                    (\adj ->
+                        (adj /= secondLast)
+                            && areCellsAtIndicesConnectible last adj grid
+                    )
+
+
+canStartSelectionWithCell =
+    isCellMovable
+
+
+adjacentOf : ( number, number ) -> List ( number, number )
+adjacentOf ( x, y ) =
+    [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
+
+
+areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
+areCellsAtIndicesConnectible a b grid =
+    isAdj a b
+        && (Maybe.map2 areCellsConnectible (Grid.get a grid) (Grid.get b grid)
+                |> Maybe.withDefault False
+           )
+
+
+isAdj ( x1, y1 ) ( x2, y2 ) =
+    let
+        dx =
+            abs (x1 - x2)
+
+        dy =
+            abs (y1 - y2)
+    in
+    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
+
+
+areCellsConnectible : Cell -> Cell -> Bool
+areCellsConnectible cell1 cell2 =
+    case ( cell1, cell2 ) of
+        ( Water, Water ) ->
+            True
+
+        ( Seed, Seed ) ->
+            True
+
+        _ ->
+            False
+
+
+
 -- GAME MODEL
+
+
+type GameModel
+    = GM GameState (List GI)
 
 
 type alias GameState =
@@ -226,10 +304,6 @@ info (GM gm selectionStack) =
     }
 
 
-canStartSelectionWithCell =
-    isCellMovable
-
-
 type MoveResult
     = InvalidMove
     | GameLost Info
@@ -250,76 +324,6 @@ isCellMovable cell =
             False
 
         Empty ->
-            False
-
-
-type GameModel
-    = GM GameState (List GI)
-
-
-computeValidSelectionIndices : Grid Cell -> List GI -> List GI
-computeValidSelectionIndices grid selectionStack =
-    case selectionStack of
-        [] ->
-            Grid.toListBy
-                (\i c ->
-                    if canStartSelectionWithCell c then
-                        Just i
-
-                    else
-                        Nothing
-                )
-                grid
-                |> List.filterMap identity
-
-        last :: [] ->
-            adjacentOf last
-                |> List.filter
-                    (\adj -> areCellsAtIndicesConnectible last adj grid)
-
-        last :: secondLast :: _ ->
-            adjacentOf last
-                |> List.filter
-                    (\adj ->
-                        (adj /= secondLast)
-                            && areCellsAtIndicesConnectible last adj grid
-                    )
-
-
-adjacentOf : ( number, number ) -> List ( number, number )
-adjacentOf ( x, y ) =
-    [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
-
-
-areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
-areCellsAtIndicesConnectible a b grid =
-    isAdj a b
-        && (Maybe.map2 areCellsConnectible (Grid.get a grid) (Grid.get b grid)
-                |> Maybe.withDefault False
-           )
-
-
-isAdj ( x1, y1 ) ( x2, y2 ) =
-    let
-        dx =
-            abs (x1 - x2)
-
-        dy =
-            abs (y1 - y2)
-    in
-    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
-
-
-areCellsConnectible : Cell -> Cell -> Bool
-areCellsConnectible cell1 cell2 =
-    case ( cell1, cell2 ) of
-        ( Water, Water ) ->
-            True
-
-        ( Seed, Seed ) ->
-            True
-
-        _ ->
             False
 
 
