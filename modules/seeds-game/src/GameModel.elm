@@ -302,6 +302,15 @@ init =
         }
 
 
+selectionPush_ : GI -> Grid Cell -> List GI -> Maybe (List GI)
+selectionPush_ idx grid selectionStack =
+    if List.member idx (computeValidSelectionIndices grid selectionStack) then
+        Just (idx :: selectionStack)
+
+    else
+        Nothing
+
+
 selectionPush : GI -> GameModel -> Maybe GameModel
 selectionPush idx (GM gm) =
     if List.member idx (computeValidSelectionIndices gm.grid gm.selectionStack) then
