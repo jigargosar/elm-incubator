@@ -1,7 +1,7 @@
 module GameRunner exposing (main)
 
 import Browser exposing (Document)
-import GameModel as G
+import GameModel as Game
 import Grid exposing (GI)
 import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
@@ -13,7 +13,7 @@ import PointerEvents as PE
 updateSelection idx wasSelected game =
     let
         stack =
-            G.info game
+            Game.info game
                 |> .selectionStack
     in
     if wasSelected && List.member idx stack then
@@ -21,14 +21,14 @@ updateSelection idx wasSelected game =
         case stack of
             only :: [] ->
                 if only == idx then
-                    G.selectionPop game
+                    Game.selectionPop game
 
                 else
                     Nothing
 
             _ :: secondLast :: _ ->
                 if secondLast == idx then
-                    G.selectionPop game
+                    Game.selectionPop game
 
                 else
                     Nothing
@@ -38,7 +38,7 @@ updateSelection idx wasSelected game =
 
     else if not wasSelected && not (List.member idx stack) then
         -- Add
-        G.selectionPush idx game
+        Game.selectionPush idx game
 
     else
         -- NoOp
@@ -50,9 +50,9 @@ updateSelection idx wasSelected game =
 
 
 type Model
-    = Running G.GameModel
-    | Over G.Info
-    | Won G.Info
+    = Running Game.Model
+    | Over Game.Info
+    | Won Game.Info
 
 
 type alias Flags =
@@ -61,7 +61,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running G.init
+    ( Running Game.init
     , Cmd.none
     )
 
@@ -112,17 +112,17 @@ update message model =
         Collect ->
             case model of
                 Running game ->
-                    ( case G.makeMove game of
-                        G.InvalidMove ->
+                    ( case Game.makeMove game of
+                        Game.InvalidMove ->
                             model
 
-                        G.NextState ng ->
+                        Game.NextState ng ->
                             Running ng
 
-                        G.GameLost info ->
+                        Game.GameLost info ->
                             Over info
 
-                        G.GameWon info ->
+                        Game.GameWon info ->
                             Won info
                     , Cmd.none
                     )
@@ -159,7 +159,7 @@ view model =
             :: (case model of
                     Running game ->
                         [ div [ class "pa3" ] [ text "Game Running" ]
-                        , viewGameInfo (G.info game)
+                        , viewGameInfo (Game.info game)
                         , div [ class "pa3" ]
                             [ btn
                                 Collect
@@ -186,7 +186,7 @@ type alias HM =
     Html Msg
 
 
-viewGameInfo : G.Info -> HM
+viewGameInfo : Game.Info -> HM
 viewGameInfo i =
     div []
         [ div [ class "pa3" ]
@@ -202,7 +202,7 @@ viewGameInfo i =
         ]
 
 
-viewGameCells : G.Info -> HM
+viewGameCells : Game.Info -> HM
 viewGameCells info =
     let
         cells =
@@ -211,7 +211,7 @@ viewGameCells info =
         rows =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
 
-        viewRow : Int -> ( ( GI, G.Cell ), List ( GI, G.Cell ) ) -> HM
+        viewRow : Int -> ( ( GI, Game.Cell ), List ( GI, Game.Cell ) ) -> HM
         viewRow y ( h, t ) =
             Html.tr []
                 (styledTH [ text "y", text (String.fromInt y) ]
@@ -259,7 +259,7 @@ computeScale _ n =
         hi
 
 
-viewCell : G.Info -> ( GI, G.Cell ) -> HM
+viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
 viewCell info ( ( _, _ ) as idx, c ) =
     let
         isValidNext =
@@ -305,16 +305,16 @@ viewCell info ( ( _, _ ) as idx, c ) =
                    , class "relative"
                    , class
                         (case c of
-                            G.Water ->
+                            Game.Water ->
                                 "bg-light-blue"
 
-                            G.Wall ->
+                            Game.Wall ->
                                 "bg-light-purple white"
 
-                            G.Empty ->
+                            Game.Empty ->
                                 ""
 
-                            G.Seed ->
+                            Game.Seed ->
                                 "bg-light-pink "
                         )
                    ]

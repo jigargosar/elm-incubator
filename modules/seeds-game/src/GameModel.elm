@@ -1,7 +1,7 @@
 module GameModel exposing
     ( Cell(..)
-    , GameModel
     , Info
+    , Model
     , MoveResult(..)
     , info
     , init
@@ -325,11 +325,11 @@ areCellsConnectible cell1 cell2 =
 -- GAME MODEL
 
 
-type GameModel
-    = GM GameState
+type Model
+    = Model State
 
 
-type alias GameState =
+type alias State =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
@@ -339,9 +339,9 @@ type alias GameState =
     }
 
 
-init : GameModel
+init : Model
 init =
-    GM
+    Model
         { movesLeft = 10
         , targetSeeds = 35
         , targetWater = 35
@@ -351,16 +351,16 @@ init =
         }
 
 
-selectionPush : GI -> GameModel -> Maybe GameModel
-selectionPush idx (GM gm) =
+selectionPush : GI -> Model -> Maybe Model
+selectionPush idx (Model gm) =
     selectionPush_ idx gm.grid gm.selection
-        |> Maybe.map (\selection -> GM { gm | selection = selection })
+        |> Maybe.map (\selection -> Model { gm | selection = selection })
 
 
-selectionPop : GameModel -> Maybe GameModel
-selectionPop (GM gm) =
+selectionPop : Model -> Maybe Model
+selectionPop (Model gm) =
     selectionPop_ gm.selection
-        |> Maybe.map (\selection -> GM { gm | selection = selection })
+        |> Maybe.map (\selection -> Model { gm | selection = selection })
 
 
 type alias Info =
@@ -373,8 +373,8 @@ type alias Info =
     }
 
 
-info : GameModel -> Info
-info (GM gm) =
+info : Model -> Info
+info (Model gm) =
     { movesLeft = gm.movesLeft
     , targetSeeds = gm.targetSeeds
     , targetWater = gm.targetWater
@@ -388,7 +388,7 @@ type MoveResult
     = InvalidMove
     | GameLost Info
     | GameWon Info
-    | NextState GameModel
+    | NextState Model
 
 
 selectionToMove : Selection -> Maybe (List GI)
@@ -400,8 +400,8 @@ selectionToMove (Selection stack) =
         Just stack
 
 
-makeMove : GameModel -> MoveResult
-makeMove (GM gm) =
+makeMove : Model -> MoveResult
+makeMove (Model gm) =
     case selectionToMove gm.selection of
         Nothing ->
             InvalidMove
@@ -451,7 +451,7 @@ makeMove (GM gm) =
 
             else
                 NextState
-                    (GM
+                    (Model
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
                         , movesLeft = nextMovesLeft
