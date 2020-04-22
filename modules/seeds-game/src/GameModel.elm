@@ -73,6 +73,17 @@ collectAndGenerateNextGrid collectIndices grid =
 collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectCellsAtIndices indicesToCollect grid0 =
     let
+        isCollectIdx i =
+            List.member i indicesToCollect
+
+        entriesToCollect =
+            grid0
+                |> Grid.toList
+                |> List.filter (Tuple.first >> isCollectIdx)
+
+        _ =
+            1
+
         collectAt idx ( ct, grid ) =
             case Grid.get idx grid of
                 Just cell ->
