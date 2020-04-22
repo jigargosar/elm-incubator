@@ -20,7 +20,7 @@ import Random
 import Random.Extra
 
 
-computeFallingIndicesAndUpdateGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallingIndicesAndUpdateGrid : Grid Cell -> Grid Cell
 computeFallingIndicesAndUpdateGrid grid0 =
     let
         computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
@@ -43,6 +43,7 @@ computeFallingIndicesAndUpdateGrid grid0 =
                     Nothing
     in
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
+        |> Tuple.second
 
 
 findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
@@ -351,7 +352,7 @@ makeMove (GM gm selectionStack) =
             ( ct, collectedGrid_ ) =
                 collectIndices selectionStack gm.grid
 
-            ( _, fallenGrid_ ) =
+            fallenGrid_ =
                 computeFallingIndicesAndUpdateGrid collectedGrid_
 
             ( filledGrid, nextRandom ) =
