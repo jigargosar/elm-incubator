@@ -1,9 +1,9 @@
-module SeedsGame exposing (main)
+module SeedsGameV1 exposing (main)
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Dict exposing (Dict)
-import Draw exposing (canvas, circle, class, fade, group, move, noTransition, rect, scale, square, transition)
+import Draw exposing (canvas, circle, fade, group, move, noTransition, rect, scale, square, transition)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Maybe.Extra
@@ -487,7 +487,7 @@ view (Model window gs) =
         h =
             window.height
     in
-    Document "SeedsGame"
+    Document "SeedsGameV1"
         [ canvas
             w
             h
