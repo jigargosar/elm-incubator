@@ -365,18 +365,15 @@ makeMove (GM gm selectionStack) =
                 Random.step (fillEmptyCells fallenGrid_) gm.random
 
             nextTargetSeeds =
-                gm.targetSeeds
-                    - ct.seeds
+                (gm.targetSeeds - ct.seeds)
                     |> atLeast 0
 
             nextTargetWater =
-                gm.targetWater
-                    - ct.water
+                (gm.targetWater - ct.water)
                     |> atLeast 0
 
             nextMovesLeft =
-                gm.movesLeft
-                    - 1
+                (gm.movesLeft - 1)
                     |> atLeast 0
 
             isGameWon =
