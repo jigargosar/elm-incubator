@@ -277,7 +277,7 @@ areCellsConnectible cell1 cell2 =
 
 
 type GameModel
-    = GM GameState (List GI)
+    = GM GameState
 
 
 type alias GameState =
@@ -300,26 +300,25 @@ initGame =
         , selectionStack = []
         , random = Random.initialSeed 0
         }
-        []
 
 
 pushSelectionIdx : GI -> GameModel -> Maybe GameModel
-pushSelectionIdx idx (GM gm stack) =
-    if List.member idx (computeValidSelectionIndices gm.grid stack) then
-        Just (GM gm (idx :: stack))
+pushSelectionIdx idx (GM gm) =
+    if List.member idx (computeValidSelectionIndices gm.grid gm.selectionStack) then
+        Just (GM { gm | selectionStack = idx :: gm.selectionStack })
 
     else
         Nothing
 
 
 popSelectionIdx : GameModel -> Maybe GameModel
-popSelectionIdx (GM gm stack) =
-    case stack of
+popSelectionIdx (GM gm) =
+    case gm.selectionStack of
         [] ->
             Nothing
 
         _ :: prevStack ->
-            GM gm prevStack |> Just
+            GM { gm | selectionStack = prevStack } |> Just
 
 
 type alias Info =
@@ -333,13 +332,13 @@ type alias Info =
 
 
 info : GameModel -> Info
-info (GM gm selectionStack) =
+info (GM gm) =
     { movesLeft = gm.movesLeft
     , targetSeeds = gm.targetSeeds
     , targetWater = gm.targetWater
     , grid = gm.grid
-    , selectionStack = selectionStack
-    , validIndices = computeValidSelectionIndices gm.grid selectionStack
+    , selectionStack = gm.selectionStack
+    , validIndices = computeValidSelectionIndices gm.grid gm.selectionStack
     }
 
 
@@ -351,14 +350,14 @@ type MoveResult
 
 
 makeMove : GameModel -> MoveResult
-makeMove (GM gm selectionStack) =
-    if List.length selectionStack < 2 then
+makeMove (GM gm) =
+    if List.length gm.selectionStack < 2 then
         InvalidMove
 
     else
         let
             ( ct, collectedGrid_ ) =
-                collectIndices selectionStack gm.grid
+                collectIndices gm.selectionStack gm.grid
 
             fallenGrid_ =
                 computeFallenGrid collectedGrid_
@@ -414,5 +413,4 @@ makeMove (GM gm selectionStack) =
                     , random = nextRandom
                     , selectionStack = []
                     }
-                    []
                 )
