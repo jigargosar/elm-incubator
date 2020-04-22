@@ -10,14 +10,23 @@ module AbstractGame exposing
     , push
     )
 
--- GAME GRID
-
 import Basics.Extra exposing (atLeast, swap)
 import Dict
 import Grid exposing (GI, Grid)
 import List.Extra
 import Random
 import Random.Extra
+
+
+
+-- CELL GRID
+
+
+type Cell
+    = Water
+    | Seed
+    | Wall
+    | Empty
 
 
 initGrid : Grid Cell
@@ -280,13 +289,6 @@ type alias GameState =
     }
 
 
-type Cell
-    = Water
-    | Seed
-    | Wall
-    | Empty
-
-
 initGame : GameModel
 initGame =
     GM
@@ -297,6 +299,25 @@ initGame =
         , random = Random.initialSeed 0
         }
         []
+
+
+push : GI -> GameModel -> Maybe GameModel
+push idx (GM gm stack) =
+    if List.member idx (computeValidSelectionIndices gm.grid stack) then
+        Just (GM gm (idx :: stack))
+
+    else
+        Nothing
+
+
+pop : GameModel -> Maybe GameModel
+pop (GM gm stack) =
+    case stack of
+        [] ->
+            Nothing
+
+        _ :: prevStack ->
+            GM gm prevStack |> Just
 
 
 type alias Info =
@@ -325,25 +346,6 @@ type MoveResult
     | GameLost Info
     | GameWon Info
     | NextState GameModel
-
-
-push : GI -> GameModel -> Maybe GameModel
-push idx (GM gm stack) =
-    if List.member idx (computeValidSelectionIndices gm.grid stack) then
-        Just (GM gm (idx :: stack))
-
-    else
-        Nothing
-
-
-pop : GameModel -> Maybe GameModel
-pop (GM gm stack) =
-    case stack of
-        [] ->
-            Nothing
-
-        _ :: prevStack ->
-            GM gm prevStack |> Just
 
 
 makeMove : GameModel -> MoveResult
