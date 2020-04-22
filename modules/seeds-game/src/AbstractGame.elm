@@ -343,7 +343,7 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
 
 makeMove : GameModel -> MoveResult
 makeMove (GM gm selectionStack) =
-    if selectionStack == [] then
+    if List.length selectionStack < 2 then
         InvalidMove
 
     else
