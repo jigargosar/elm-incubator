@@ -9,7 +9,6 @@ module Grid exposing
     , map
     , set
     , swap
-    , toDict
     , toList
     , toListBy
     , updateAt
@@ -107,15 +106,6 @@ wh (G d) =
 toList : Grid a -> List ( GI, a )
 toList (G d) =
     Dict.toList d
-
-
-
---noinspection ElmUnusedSymbol
-
-
-toDict : Grid a -> Dict GI a
-toDict (G d) =
-    d
 
 
 toListBy : (GI -> a -> b) -> Grid a -> List b
