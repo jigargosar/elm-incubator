@@ -258,6 +258,9 @@ computeScale max n =
 viewCell : G.Info -> ( GI, G.Cell ) -> HM
 viewCell info ( ( _, _ ) as idx, c ) =
     let
+        isValidNext =
+            List.member idx info.validIndices
+
         selIdx =
             List.reverse info.selectionStack |> List.Extra.elemIndex idx
 
@@ -277,6 +280,11 @@ viewCell info ( ( _, _ ) as idx, c ) =
         animAttrs =
             if isSelected then
                 [ style "transform" ([ "scale(", scaleForSelection, ")" ] |> String.join "")
+                , style "transition" "transform 500ms"
+                ]
+
+            else if isValidNext then
+                [ class "" -- "animated infinite pulse"
                 , style "transition" "transform 500ms"
                 ]
 
