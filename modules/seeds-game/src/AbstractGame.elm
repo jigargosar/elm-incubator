@@ -20,6 +20,62 @@ import Random
 import Random.Extra
 
 
+collectIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
+collectIndices indicesToCollect grid0 =
+    let
+        computeCollectedAt idx ( ct, grid ) =
+            case Grid.get idx grid of
+                Just cell ->
+                    let
+                        mbNewCt =
+                            case cell of
+                                Water ->
+                                    Just { ct | water = ct.water + 1 }
+
+                                Seed ->
+                                    Just { ct | seeds = ct.seeds + 1 }
+
+                                Wall ->
+                                    Nothing
+
+                                Empty ->
+                                    Nothing
+
+                        mbNewGrid =
+                            Grid.set idx Empty grid
+                    in
+                    Maybe.map2 Tuple.pair mbNewCt mbNewGrid
+
+                Nothing ->
+                    Nothing
+    in
+    filterFoldr computeCollectedAt ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
+
+
+fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
+fillEmptyCells grid =
+    Grid.toListBy
+        (\i c ->
+            if c == Empty then
+                Just i
+
+            else
+                Nothing
+        )
+        grid
+        |> List.filterMap identity
+        |> Random.Extra.traverse
+            (\i ->
+                Random.uniform Water [ Seed ]
+                    |> Random.map (Tuple.pair i)
+            )
+        |> Random.map Dict.fromList
+        |> Random.map
+            (\nd ->
+                Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
+            )
+
+
 computeFallenGrid : Grid Cell -> Grid Cell
 computeFallenGrid grid0 =
     let
@@ -159,11 +215,6 @@ type alias Info =
     }
 
 
-adjacentOf : ( number, number ) -> List ( number, number )
-adjacentOf ( x, y ) =
-    [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
-
-
 info : GameModel -> Info
 info (GM gm selectionStack) =
     { movesLeft = gm.movesLeft
@@ -171,7 +222,7 @@ info (GM gm selectionStack) =
     , targetWater = gm.targetWater
     , grid = gm.grid
     , selectionStack = selectionStack
-    , validIndices = computeValidIndices gm.grid selectionStack
+    , validIndices = computeValidSelectionIndices gm.grid selectionStack
     }
 
 
@@ -202,68 +253,12 @@ isCellMovable cell =
             False
 
 
-collectIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
-collectIndices indicesToCollect grid0 =
-    let
-        computeCollectedAt idx ( ct, grid ) =
-            case Grid.get idx grid of
-                Just cell ->
-                    let
-                        mbNewCt =
-                            case cell of
-                                Water ->
-                                    Just { ct | water = ct.water + 1 }
-
-                                Seed ->
-                                    Just { ct | seeds = ct.seeds + 1 }
-
-                                Wall ->
-                                    Nothing
-
-                                Empty ->
-                                    Nothing
-
-                        mbNewGrid =
-                            Grid.set idx Empty grid
-                    in
-                    Maybe.map2 Tuple.pair mbNewCt mbNewGrid
-
-                Nothing ->
-                    Nothing
-    in
-    filterFoldr computeCollectedAt ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
-
-
-fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
-fillEmptyCells grid =
-    Grid.toListBy
-        (\i c ->
-            if c == Empty then
-                Just i
-
-            else
-                Nothing
-        )
-        grid
-        |> List.filterMap identity
-        |> Random.Extra.traverse
-            (\i ->
-                Random.uniform Water [ Seed ]
-                    |> Random.map (Tuple.pair i)
-            )
-        |> Random.map Dict.fromList
-        |> Random.map
-            (\nd ->
-                Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
-            )
-
-
 type GameModel
     = GM GameState (List GI)
 
 
-computeValidIndices : Grid Cell -> List GI -> List GI
-computeValidIndices grid selectionStack =
+computeValidSelectionIndices : Grid Cell -> List GI -> List GI
+computeValidSelectionIndices grid selectionStack =
     case selectionStack of
         [] ->
             Grid.toListBy
@@ -291,23 +286,9 @@ computeValidIndices grid selectionStack =
                     )
 
 
-push : GI -> GameModel -> Maybe GameModel
-push idx (GM gm stack) =
-    if List.member idx (computeValidIndices gm.grid stack) then
-        Just (GM gm (idx :: stack))
-
-    else
-        Nothing
-
-
-pop : GameModel -> Maybe GameModel
-pop (GM gm stack) =
-    case stack of
-        [] ->
-            Nothing
-
-        _ :: prevStack ->
-            GM gm prevStack |> Just
+adjacentOf : ( number, number ) -> List ( number, number )
+adjacentOf ( x, y ) =
+    [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
 
 
 areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
@@ -316,6 +297,17 @@ areCellsAtIndicesConnectible a b grid =
         && (Maybe.map2 areCellsConnectible (Grid.get a grid) (Grid.get b grid)
                 |> Maybe.withDefault False
            )
+
+
+isAdj ( x1, y1 ) ( x2, y2 ) =
+    let
+        dx =
+            abs (x1 - x2)
+
+        dy =
+            abs (y1 - y2)
+    in
+    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
 
 
 areCellsConnectible : Cell -> Cell -> Bool
@@ -331,15 +323,23 @@ areCellsConnectible cell1 cell2 =
             False
 
 
-isAdj ( x1, y1 ) ( x2, y2 ) =
-    let
-        dx =
-            abs (x1 - x2)
+push : GI -> GameModel -> Maybe GameModel
+push idx (GM gm stack) =
+    if List.member idx (computeValidSelectionIndices gm.grid stack) then
+        Just (GM gm (idx :: stack))
 
-        dy =
-            abs (y1 - y2)
-    in
-    (dx == 0 && dy == 1) || (dy == 0 && dx == 1)
+    else
+        Nothing
+
+
+pop : GameModel -> Maybe GameModel
+pop (GM gm stack) =
+    case stack of
+        [] ->
+            Nothing
+
+        _ :: prevStack ->
+            GM gm prevStack |> Just
 
 
 makeMove : GameModel -> MoveResult
