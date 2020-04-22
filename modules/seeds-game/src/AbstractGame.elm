@@ -155,6 +155,7 @@ type alias Info =
     , targetSeeds : Int
     , targetWater : Int
     , grid : Grid Cell
+    , selected : List GI
     , validIndices : List GI
     }
 
@@ -195,7 +196,7 @@ info (GM g selected) =
                                     && areCellsAtIndicesConnectible last adj g.grid
                             )
     in
-    Info g.movesLeft g.targetSeeds g.targetWater g.grid nextValidIndices
+    Info g.movesLeft g.targetSeeds g.targetWater g.grid selected nextValidIndices
 
 
 canStartSelectionWithCell =
@@ -425,6 +426,7 @@ makeMove (GM gm input) =
                 , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
+                , selected = []
                 , validIndices = []
                 }
 
@@ -434,6 +436,7 @@ makeMove (GM gm input) =
                 , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
+                , selected = []
                 , validIndices = []
                 }
 

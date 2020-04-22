@@ -145,7 +145,7 @@ view model =
             :: (case model of
                     Running moveBuilder ->
                         [ div [ class "pa3" ] [ text "Game Running" ]
-                        , viewGameInfo (G.toStack moveBuilder) (G.info moveBuilder)
+                        , viewGameInfo (G.info moveBuilder)
                         , div [ class "pa3" ]
                             [ btn
                                 Collect
@@ -155,13 +155,13 @@ view model =
 
                     Over info ->
                         [ div [ class "pa3" ] [ text "Game Lost" ]
-                        , viewGameInfo [] info
+                        , viewGameInfo info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
                     Won info ->
                         [ div [ class "pa3" ] [ text "Game Won" ]
-                        , viewGameInfo [] info
+                        , viewGameInfo info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
                )
@@ -172,12 +172,8 @@ type alias HM =
     Html Msg
 
 
-type alias Selection =
-    List GI
-
-
-viewGameInfo : Selection -> G.Info -> HM
-viewGameInfo sel i =
+viewGameInfo : G.Info -> HM
+viewGameInfo i =
     div []
         [ div [ class "pa3" ]
             [ text
@@ -188,13 +184,16 @@ viewGameInfo sel i =
                     }
                 )
             ]
-        , viewGameCells sel (Grid.toList i.grid)
+        , viewGameCells i
         ]
 
 
-viewGameCells : Selection -> List ( GI, G.Cell ) -> HM
-viewGameCells sel cells =
+viewGameCells : G.Info -> HM
+viewGameCells info =
     let
+        cells =
+            Grid.toList info.grid
+
         rows =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
 
@@ -202,7 +201,7 @@ viewGameCells sel cells =
         viewRow y ( h, t ) =
             Html.tr []
                 (styledTH [ text "y", text (String.fromInt y) ]
-                    :: List.map (viewCell sel) (h :: t)
+                    :: List.map (viewCell info) (h :: t)
                 )
 
         styledTH =
@@ -226,11 +225,11 @@ viewGameCells sel cells =
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
-viewCell : Selection -> ( GI, G.Cell ) -> HM
-viewCell sel ( ( _, _ ) as idx, c ) =
+viewCell : G.Info -> ( GI, G.Cell ) -> HM
+viewCell info ( ( _, _ ) as idx, c ) =
     let
         selIdx =
-            List.reverse sel |> List.Extra.elemIndex idx
+            List.reverse info.selected |> List.Extra.elemIndex idx
 
         isSelected =
             selIdx /= Nothing
