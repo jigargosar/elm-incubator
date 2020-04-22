@@ -261,7 +261,7 @@ viewCell info ( ( _, _ ) as idx, c ) =
         selIdx =
             List.reverse info.selectionStack |> List.Extra.elemIndex idx
 
-        sc =
+        scaleForSelection =
             info.selectionStack
                 |> List.Extra.elemIndex idx
                 |> Maybe.map (computeScale (List.length info.selectionStack))
@@ -281,7 +281,7 @@ viewCell info ( ( _, _ ) as idx, c ) =
         [ div
             [ class "br3 w3 h3 flex"
             , class "relative"
-            , style "transform" ([ "scale(", sc, ")" ] |> String.join "")
+            , style "transform" ([ "scale(", scaleForSelection, ")" ] |> String.join "")
             , style "transition" "transform 500ms"
             , class
                 (case c of
