@@ -244,6 +244,18 @@ type Cell
     | Empty
 
 
+initGame : GameModel
+initGame =
+    GM
+        { movesLeft = 10
+        , targetSeeds = 35
+        , targetWater = 35
+        , grid = initialGrid
+        , random = Random.initialSeed 0
+        }
+        []
+
+
 initialGrid : Grid Cell
 initialGrid =
     let
@@ -269,18 +281,6 @@ initialGrid =
                 )
     in
     grid
-
-
-initGame : GameModel
-initGame =
-    GM
-        { movesLeft = 10
-        , targetSeeds = 35
-        , targetWater = 35
-        , grid = initialGrid
-        , random = Random.initialSeed 0
-        }
-        []
 
 
 type alias Info =
