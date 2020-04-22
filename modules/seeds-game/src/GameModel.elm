@@ -85,14 +85,14 @@ collectCellsAtIndices indicesToCollect grid0 =
                             Nothing
                     )
 
-        indicesToEmpty =
-            waterIndices ++ seedIndices
-
         waterIndices =
             filterIndices Water
 
         seedIndices =
             filterIndices Seed
+
+        indicesToEmpty =
+            waterIndices ++ seedIndices
     in
     ( { water = List.length waterIndices
       , seeds = List.length seedIndices
