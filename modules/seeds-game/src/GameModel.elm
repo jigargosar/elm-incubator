@@ -4,7 +4,7 @@ module GameModel exposing
     , Info
     , MoveResult(..)
     , info
-    , initGame
+    , init
     , makeMove
     , popSelectionIdx
     , pushSelectionIdx
@@ -290,8 +290,8 @@ type alias GameState =
     }
 
 
-initGame : GameModel
-initGame =
+init : GameModel
+init =
     GM
         { movesLeft = 10
         , targetSeeds = 35

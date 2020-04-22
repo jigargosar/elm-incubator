@@ -61,7 +61,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running G.initGame
+    ( Running G.init
     , Cmd.none
     )
 
