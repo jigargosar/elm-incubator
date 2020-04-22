@@ -302,11 +302,11 @@ init =
         }
 
 
-type alias SelectionStack =
+type alias Selection =
     List GI
 
 
-selectionPush_ : GI -> Grid Cell -> SelectionStack -> Maybe SelectionStack
+selectionPush_ : GI -> Grid Cell -> Selection -> Maybe Selection
 selectionPush_ idx grid selectionStack =
     if List.member idx (computeValidSelectionIndices grid selectionStack) then
         Just (idx :: selectionStack)
@@ -315,7 +315,7 @@ selectionPush_ idx grid selectionStack =
         Nothing
 
 
-selectionPop_ : SelectionStack -> Maybe SelectionStack
+selectionPop_ : Selection -> Maybe Selection
 selectionPop_ selectionStack =
     case selectionStack of
         [] ->
@@ -327,21 +327,14 @@ selectionPop_ selectionStack =
 
 selectionPush : GI -> GameModel -> Maybe GameModel
 selectionPush idx (GM gm) =
-    if List.member idx (computeValidSelectionIndices gm.grid gm.selectionStack) then
-        Just (GM { gm | selectionStack = idx :: gm.selectionStack })
-
-    else
-        Nothing
+    selectionPush_ idx gm.grid gm.selectionStack
+        |> Maybe.map (\selection -> GM { gm | selectionStack = selection })
 
 
 selectionPop : GameModel -> Maybe GameModel
 selectionPop (GM gm) =
-    case gm.selectionStack of
-        [] ->
-            Nothing
-
-        _ :: prevStack ->
-            GM { gm | selectionStack = prevStack } |> Just
+    selectionPop_ gm.selectionStack
+        |> Maybe.map (\selection -> GM { gm | selectionStack = selection })
 
 
 type alias Info =
