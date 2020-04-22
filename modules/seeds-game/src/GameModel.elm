@@ -71,10 +71,10 @@ collectAndGenerateNextGrid collectIndices grid =
 
 
 collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
-collectCellsAtIndices indicesToCollect grid0 =
+collectCellsAtIndices indicesToCollect grid =
     let
         filterIndices cell =
-            grid0
+            grid
                 |> Grid.toList
                 |> List.filterMap
                     (\( i, c ) ->
@@ -105,7 +105,7 @@ collectCellsAtIndices indicesToCollect grid0 =
             else
                 c
         )
-        grid0
+        grid
     )
 
 
