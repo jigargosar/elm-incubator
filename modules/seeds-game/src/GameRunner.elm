@@ -241,11 +241,32 @@ viewGameCells info =
         (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
 
 
+computeScale max n =
+    let
+        step =
+            (hi - lo) / toFloat max
+
+        lo =
+            0.5
+
+        hi =
+            0.8
+    in
+    (toFloat n * step) + lo
+
+
 viewCell : G.Info -> ( GI, G.Cell ) -> HM
 viewCell info ( ( _, _ ) as idx, c ) =
     let
         selIdx =
             List.reverse info.selectionStack |> List.Extra.elemIndex idx
+
+        sc =
+            info.selectionStack
+                |> List.Extra.elemIndex idx
+                |> Maybe.map (computeScale (List.length info.selectionStack))
+                |> Maybe.withDefault 1
+                |> String.fromFloat
 
         isSelected =
             selIdx /= Nothing
@@ -260,13 +281,8 @@ viewCell info ( ( _, _ ) as idx, c ) =
         [ div
             [ class "br3 w3 h3 flex"
             , class "relative"
-            , style "transform"
-                (if isSelected then
-                    "scale(0.75)"
-
-                 else
-                    "scale(1)"
-                )
+            , style "transform" ([ "scale(", sc, ")" ] |> String.join "")
+            , style "transition" "transform 500ms"
             , class
                 (case c of
                     G.Water ->
