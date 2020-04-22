@@ -155,12 +155,51 @@ type alias Info =
     , targetSeeds : Int
     , targetWater : Int
     , grid : Grid Cell
+    , validIndices : List GI
     }
 
 
+adjacentOf : ( number, number ) -> List ( number, number )
+adjacentOf ( x, y ) =
+    [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
+
+
 info : GameModel -> Info
-info (GM g _) =
-    Info g.movesLeft g.targetSeeds g.targetWater g.grid
+info (GM g selected) =
+    let
+        nextValidIndices =
+            case selected of
+                [] ->
+                    Grid.toListBy
+                        (\i c ->
+                            if canStartSelectionWithCell c then
+                                Just i
+
+                            else
+                                Nothing
+                        )
+                        g.grid
+                        |> List.filterMap identity
+
+                last :: [] ->
+                    adjacentOf last
+                        |> List.filter
+                            (\adj -> areCellsAtIndicesConnectible last adj g.grid)
+
+                last :: secondLast :: _ ->
+                    adjacentOf last
+                        |> List.filter
+                            (\adj ->
+                                adj
+                                    /= secondLast
+                                    && areCellsAtIndicesConnectible last adj g.grid
+                            )
+    in
+    Info g.movesLeft g.targetSeeds g.targetWater g.grid nextValidIndices
+
+
+canStartSelectionWithCell =
+    isCellMovable
 
 
 type MoveResult
@@ -386,6 +425,7 @@ makeMove (GM gm input) =
                 , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
+                , validIndices = []
                 }
 
         else if isGameLost then
@@ -394,6 +434,7 @@ makeMove (GM gm input) =
                 , targetWater = nextTargetWater
                 , movesLeft = nextMovesLeft
                 , grid = filledGrid
+                , validIndices = []
                 }
 
         else

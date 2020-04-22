@@ -1,6 +1,7 @@
 module Grid exposing
     ( GI
     , Grid
+    , adjacentEntries
     , entryAbove
     , entryAt
     , get
@@ -131,3 +132,14 @@ rangeLen len =
 mapWH : Int -> Int -> (GI -> a) -> List a
 mapWH w h func =
     rangeLen h |> List.concatMap (\y -> rangeLen w |> List.map (\x -> func ( x, y )))
+
+
+adjacentOf : ( number, number ) -> List ( number, number )
+adjacentOf ( x, y ) =
+    [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
+
+
+adjacentEntries : GI -> Grid a -> List (Maybe ( GI, a ))
+adjacentEntries idx grid =
+    adjacentOf idx
+        |> List.map (flip entryAt grid)
