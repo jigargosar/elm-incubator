@@ -386,6 +386,19 @@ selectionToMove (Selection stack) =
         Just stack
 
 
+computeNextGrid : List GI -> Grid Cell -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
+computeNextGrid moveIndices grid =
+    let
+        ( ct, collectedGrid_ ) =
+            collectIndices moveIndices grid
+
+        fallenGrid_ =
+            computeFallenGrid collectedGrid_
+    in
+    fillEmptyCells fallenGrid_
+        |> Random.map (Tuple.pair ct)
+
+
 makeMove : GameModel -> MoveResult
 makeMove (GM gm) =
     case selectionToMove gm.selection of
@@ -394,14 +407,8 @@ makeMove (GM gm) =
 
         Just moveIndices ->
             let
-                ( ct, collectedGrid_ ) =
-                    collectIndices moveIndices gm.grid
-
-                fallenGrid_ =
-                    computeFallenGrid collectedGrid_
-
-                ( nextGrid, nextRandom ) =
-                    Random.step (fillEmptyCells fallenGrid_) gm.random
+                ( ( ct, nextGrid ), nextRandom ) =
+                    Random.step (computeNextGrid moveIndices gm.grid) gm.random
 
                 nextTargetSeeds =
                     (gm.targetSeeds - ct.seeds)
