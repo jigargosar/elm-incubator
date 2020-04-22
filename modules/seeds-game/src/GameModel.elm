@@ -1,4 +1,4 @@
-module AbstractGame exposing
+module GameModel exposing
     ( Cell(..)
     , GameModel
     , Info

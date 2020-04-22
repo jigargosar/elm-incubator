@@ -1,7 +1,7 @@
 module GameRunner exposing (main)
 
-import AbstractGame as G
 import Browser exposing (Document)
+import GameModel as G
 import Grid exposing (GI)
 import Html exposing (Html, button, div, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
