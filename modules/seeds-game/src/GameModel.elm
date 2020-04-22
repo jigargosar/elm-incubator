@@ -73,31 +73,29 @@ collectAndGenerateNextGrid collectIndices grid =
 collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectCellsAtIndices indicesToCollect grid0 =
     let
-        isEntryCollectible ( i, _ ) =
-            List.member i indicesToCollect
-
-        entriesToCollect =
+        filterIndices cell =
             grid0
                 |> Grid.toList
-                |> List.filter isEntryCollectible
+                |> List.filterMap
+                    (\( i, c ) ->
+                        if List.member i indicesToCollect && c == cell then
+                            Just i
 
-        isEntryWater ( _, c ) =
-            c == Water
-
-        isEntrySeed ( _, c ) =
-            c == Seed
-
-        waterEntries =
-            List.filter isEntryWater entriesToCollect
-
-        seedEntries =
-            List.filter isEntrySeed entriesToCollect
+                        else
+                            Nothing
+                    )
 
         indicesToEmpty =
-            List.map Tuple.first (waterEntries ++ seedEntries)
+            waterIndices ++ seedIndices
+
+        waterIndices =
+            filterIndices Water
+
+        seedIndices =
+            filterIndices Seed
     in
-    ( { water = List.length waterEntries
-      , seeds = List.length seedEntries
+    ( { water = List.length waterIndices
+      , seeds = List.length seedIndices
       }
     , Grid.map
         (\i c ->
