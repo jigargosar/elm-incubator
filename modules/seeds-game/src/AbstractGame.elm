@@ -20,6 +20,33 @@ import Random
 import Random.Extra
 
 
+initGrid : Grid Cell
+initGrid =
+    let
+        wallIndices =
+            [ ( 1, 1 ), ( 4, 1 ), ( 1, 4 ), ( 4, 4 ) ]
+
+        isSeedIdx ( x, y ) =
+            x == 0 || y == 0 || x == 5 || y == 5
+
+        grid =
+            Grid.init
+                6
+                6
+                (\i ->
+                    if List.member i wallIndices then
+                        Wall
+
+                    else if isSeedIdx i then
+                        Seed
+
+                    else
+                        Water
+                )
+    in
+    grid
+
+
 collectIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectIndices indicesToCollect grid0 =
     let
@@ -270,33 +297,6 @@ initGame =
         , random = Random.initialSeed 0
         }
         []
-
-
-initGrid : Grid Cell
-initGrid =
-    let
-        wallIndices =
-            [ ( 1, 1 ), ( 4, 1 ), ( 1, 4 ), ( 4, 4 ) ]
-
-        isSeedIdx ( x, y ) =
-            x == 0 || y == 0 || x == 5 || y == 5
-
-        grid =
-            Grid.init
-                6
-                6
-                (\i ->
-                    if List.member i wallIndices then
-                        Wall
-
-                    else if isSeedIdx i then
-                        Seed
-
-                    else
-                        Water
-                )
-    in
-    grid
 
 
 type alias Info =
