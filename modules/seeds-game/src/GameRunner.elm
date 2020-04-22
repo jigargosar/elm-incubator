@@ -94,12 +94,12 @@ update message model =
                 Won _ ->
                     init ()
 
-        ToggleSelection idx bool ->
+        ToggleSelection idx wasSelected ->
             case model of
                 Running game ->
                     let
                         nm =
-                            Running (updateSelection idx bool game |> Maybe.withDefault game)
+                            Running (updateSelection idx wasSelected game |> Maybe.withDefault game)
                     in
                     ( nm, Cmd.none )
 
