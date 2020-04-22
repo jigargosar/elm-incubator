@@ -60,18 +60,18 @@ collectAndGenerateNextGrid :
     List GI
     -> Grid Cell
     -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
-collectAndGenerateNextGrid indices grid =
+collectAndGenerateNextGrid collectIndices grid =
     let
         ( ct, collectedGrid ) =
-            collectIndices indices grid
+            collectCellsAtIndices collectIndices grid
     in
     computeFallenGrid collectedGrid
         |> fillEmptyCells
         |> Random.map (Tuple.pair ct)
 
 
-collectIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
-collectIndices indicesToCollect grid0 =
+collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
+collectCellsAtIndices indicesToCollect grid0 =
     let
         computeCollectedAt idx ( ct, grid ) =
             case Grid.get idx grid of
