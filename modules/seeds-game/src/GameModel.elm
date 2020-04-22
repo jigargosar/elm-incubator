@@ -400,7 +400,7 @@ makeMove (GM gm) =
                 fallenGrid_ =
                     computeFallenGrid collectedGrid_
 
-                ( filledGrid, nextRandom ) =
+                ( nextGrid, nextRandom ) =
                     Random.step (fillEmptyCells fallenGrid_) gm.random
 
                 nextTargetSeeds =
@@ -426,7 +426,7 @@ makeMove (GM gm) =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = filledGrid
+                    , grid = nextGrid
                     , selectionStack = []
                     , validIndices = []
                     }
@@ -436,7 +436,7 @@ makeMove (GM gm) =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = filledGrid
+                    , grid = nextGrid
                     , selectionStack = []
                     , validIndices = []
                     }
@@ -447,7 +447,7 @@ makeMove (GM gm) =
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
                         , movesLeft = nextMovesLeft
-                        , grid = filledGrid
+                        , grid = nextGrid
                         , random = nextRandom
                         , selection = emptySelection
                         }
