@@ -111,37 +111,7 @@ collectCellsAtIndices indicesToCollect grid0 =
                         c
                 )
                 grid0
-
-        collectAt idx ( ct, grid ) =
-            case Grid.get idx grid of
-                Just cell ->
-                    let
-                        mbNewCt =
-                            case cell of
-                                Water ->
-                                    Just { ct | water = ct.water + 1 }
-
-                                Seed ->
-                                    Just { ct | seeds = ct.seeds + 1 }
-
-                                Wall ->
-                                    Nothing
-
-                                Empty ->
-                                    Nothing
-
-                        mbNewGrid =
-                            Grid.set idx Empty grid
-                    in
-                    Maybe.map2 Tuple.pair mbNewCt mbNewGrid
-
-                Nothing ->
-                    Nothing
-
-        collectAtIgnoreNothing idx acc =
-            collectAt idx acc |> Maybe.withDefault acc
     in
-    --List.foldr collectAtIgnoreNothing ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
     ( collected, grid1 )
 
 
