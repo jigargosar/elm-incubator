@@ -6,8 +6,8 @@ module AbstractGame exposing
     , info
     , initGame
     , makeMove
-    , pop
-    , push
+    , popSelectionIdx
+    , pushSelectionIdx
     )
 
 import Basics.Extra exposing (atLeast, swap)
@@ -301,8 +301,8 @@ initGame =
         []
 
 
-push : GI -> GameModel -> Maybe GameModel
-push idx (GM gm stack) =
+pushSelectionIdx : GI -> GameModel -> Maybe GameModel
+pushSelectionIdx idx (GM gm stack) =
     if List.member idx (computeValidSelectionIndices gm.grid stack) then
         Just (GM gm (idx :: stack))
 
@@ -310,8 +310,8 @@ push idx (GM gm stack) =
         Nothing
 
 
-pop : GameModel -> Maybe GameModel
-pop (GM gm stack) =
+popSelectionIdx : GameModel -> Maybe GameModel
+popSelectionIdx (GM gm stack) =
     case stack of
         [] ->
             Nothing
