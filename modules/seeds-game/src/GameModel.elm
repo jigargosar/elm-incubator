@@ -386,8 +386,8 @@ selectionToMove (Selection stack) =
         Just stack
 
 
-computeNextGrid : List GI -> Grid Cell -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
-computeNextGrid moveIndices grid =
+nextGridGen : List GI -> Grid Cell -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
+nextGridGen moveIndices grid =
     let
         ( ct, collectedGrid_ ) =
             collectIndices moveIndices grid
@@ -408,7 +408,7 @@ makeMove (GM gm) =
         Just moveIndices ->
             let
                 ( ( ct, nextGrid ), nextRandom ) =
-                    Random.step (computeNextGrid moveIndices gm.grid) gm.random
+                    Random.step (nextGridGen moveIndices gm.grid) gm.random
 
                 nextTargetSeeds =
                     (gm.targetSeeds - ct.seeds)
