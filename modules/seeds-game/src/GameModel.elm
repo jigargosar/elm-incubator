@@ -29,8 +29,8 @@ type Cell
     | Empty
 
 
-initGrid : Grid Cell
-initGrid =
+initCellGrid : Grid Cell
+initCellGrid =
     let
         wallIndices =
             [ ( 1, 1 ), ( 4, 1 ), ( 1, 4 ), ( 4, 4 ) ]
@@ -345,7 +345,7 @@ init =
         { movesLeft = 10
         , targetSeeds = 35
         , targetWater = 35
-        , grid = initGrid
+        , grid = initCellGrid
         , selection = emptySelection
         , random = Random.initialSeed 0
         }
