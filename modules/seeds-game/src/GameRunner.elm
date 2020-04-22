@@ -273,31 +273,40 @@ viewCell info ( ( _, _ ) as idx, c ) =
 
         selectionMsg =
             ToggleSelection idx isSelected
+
+        animAttrs =
+            if isSelected then
+                [ style "transform" ([ "scale(", scaleForSelection, ")" ] |> String.join "")
+                , style "transition" "transform 500ms"
+                ]
+
+            else
+                [ style "transition" "transform 500ms" ]
     in
     Html.td
         [ PE.onPrimaryEnterAndDown selectionMsg
         , PE.onPrimaryDown selectionMsg
         ]
         [ div
-            [ class "br3 w3 h3 flex"
-            , class "relative"
-            , style "transform" ([ "scale(", scaleForSelection, ")" ] |> String.join "")
-            , style "transition" "transform 500ms"
-            , class
-                (case c of
-                    G.Water ->
-                        "bg-light-blue"
+            (animAttrs
+                ++ [ class "br3 w3 h3 flex"
+                   , class "relative"
+                   , class
+                        (case c of
+                            G.Water ->
+                                "bg-light-blue"
 
-                    G.Wall ->
-                        "bg-light-purple white"
+                            G.Wall ->
+                                "bg-light-purple white"
 
-                    G.Empty ->
-                        ""
+                            G.Empty ->
+                                ""
 
-                    G.Seed ->
-                        "bg-light-pink "
-                )
-            ]
+                            G.Seed ->
+                                "bg-light-pink "
+                        )
+                   ]
+            )
             [ div
                 [ class "code f3"
                 , class "absolute pa2"
