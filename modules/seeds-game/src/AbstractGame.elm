@@ -285,6 +285,7 @@ type alias GameState =
     , targetSeeds : Int
     , targetWater : Int
     , grid : Grid Cell
+    , selectionStack : List GI
     , random : Random.Seed
     }
 
@@ -296,6 +297,7 @@ initGame =
         , targetSeeds = 35
         , targetWater = 35
         , grid = initGrid
+        , selectionStack = []
         , random = Random.initialSeed 0
         }
         []
@@ -410,6 +412,7 @@ makeMove (GM gm selectionStack) =
                     , movesLeft = nextMovesLeft
                     , grid = filledGrid
                     , random = nextRandom
+                    , selectionStack = []
                     }
                     []
                 )
