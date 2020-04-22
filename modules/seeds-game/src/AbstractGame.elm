@@ -297,23 +297,12 @@ type GameModel
 
 
 push : GI -> GameModel -> Maybe GameModel
-push idx (GM ({ grid } as gm) stack) =
-    case stack of
-        [] ->
-            if isValidStart idx gm then
-                GM gm [ idx ]
-                    |> Just
+push idx ((GM gm stack) as game) =
+    if List.member idx (info game).validIndices then
+        Just (GM gm (idx :: stack))
 
-            else
-                Nothing
-
-        last :: _ ->
-            if areCellsAtIndicesConnectible idx last grid then
-                GM gm (idx :: stack)
-                    |> Just
-
-            else
-                Nothing
+    else
+        Nothing
 
 
 pop : GameModel -> Maybe GameModel
