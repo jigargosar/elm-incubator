@@ -111,23 +111,21 @@ update message model =
 
         Collect ->
             case model of
-                Running moveBuilder ->
-                    let
-                        nm =
-                            case G.makeMove moveBuilder of
-                                G.InvalidMove ->
-                                    model
+                Running game ->
+                    ( case G.makeMove game of
+                        G.InvalidMove ->
+                            model
 
-                                G.NextState ng ->
-                                    Running ng
+                        G.NextState ng ->
+                            Running ng
 
-                                G.GameLost info ->
-                                    Over info
+                        G.GameLost info ->
+                            Over info
 
-                                G.GameWon info ->
-                                    Won info
-                    in
-                    ( nm, Cmd.none )
+                        G.GameWon info ->
+                            Won info
+                    , Cmd.none
+                    )
 
                 Over _ ->
                     ( model, Cmd.none )
@@ -159,9 +157,9 @@ view model =
             }
         """ ]
             :: (case model of
-                    Running moveBuilder ->
+                    Running game ->
                         [ div [ class "pa3" ] [ text "Game Running" ]
-                        , viewGameInfo (G.info moveBuilder)
+                        , viewGameInfo (G.info game)
                         , div [ class "pa3" ]
                             [ btn
                                 Collect
