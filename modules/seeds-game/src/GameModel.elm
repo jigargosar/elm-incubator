@@ -56,11 +56,11 @@ initGrid =
     grid
 
 
-makeMoveGridGenerator :
+collectAndGenerateNextGrid :
     List GI
     -> Grid Cell
     -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
-makeMoveGridGenerator moveIndices grid =
+collectAndGenerateNextGrid moveIndices grid =
     let
         ( ct, collectedGrid ) =
             collectIndices moveIndices grid
@@ -409,7 +409,7 @@ makeMove (GM gm) =
         Just moveIndices ->
             let
                 ( ( ct, nextGrid ), nextRandom ) =
-                    Random.step (makeMoveGridGenerator moveIndices gm.grid) gm.random
+                    Random.step (collectAndGenerateNextGrid moveIndices gm.grid) gm.random
 
                 nextTargetSeeds =
                     (gm.targetSeeds - ct.seeds)
