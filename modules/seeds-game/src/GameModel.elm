@@ -391,11 +391,9 @@ nextGridGen moveIndices grid =
     let
         ( ct, collectedGrid_ ) =
             collectIndices moveIndices grid
-
-        fallenGrid_ =
-            computeFallenGrid collectedGrid_
     in
-    fillEmptyCells fallenGrid_
+    computeFallenGrid collectedGrid_
+        |> fillEmptyCells
         |> Random.map (Tuple.pair ct)
 
 
