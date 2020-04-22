@@ -342,14 +342,14 @@ isAdj ( x1, y1 ) ( x2, y2 ) =
 
 
 makeMove : GameModel -> MoveResult
-makeMove (GM gm input) =
-    if input == [] then
+makeMove (GM gm selectionStack) =
+    if selectionStack == [] then
         InvalidMove
 
     else
         let
             ( ct, collectedGrid_ ) =
-                collectIndices input gm.grid
+                collectIndices selectionStack gm.grid
 
             ( _, fallenGrid_ ) =
                 computeFallingIndicesAndUpdateGrid collectedGrid_
