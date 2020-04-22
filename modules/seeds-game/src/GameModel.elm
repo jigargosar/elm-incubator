@@ -73,7 +73,7 @@ collectAndGenerateNextGrid collectIndices grid =
 collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
 collectCellsAtIndices indicesToCollect grid0 =
     let
-        computeCollectedAt idx ( ct, grid ) =
+        collectAt idx ( ct, grid ) =
             case Grid.get idx grid of
                 Just cell ->
                     let
@@ -98,8 +98,11 @@ collectCellsAtIndices indicesToCollect grid0 =
 
                 Nothing ->
                     Nothing
+
+        collectAtIgnoreNothing idx acc =
+            collectAt idx acc |> Maybe.withDefault acc
     in
-    filterFoldr computeCollectedAt ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
+    List.foldr collectAtIgnoreNothing ( { seeds = 0, water = 0 }, grid0 ) indicesToCollect
 
 
 computeFallenGrid : Grid Cell -> Grid Cell
@@ -201,15 +204,6 @@ flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
 flipMapAccumr func acc =
     List.Extra.mapAccumr (\a b -> func b a |> swap) acc
         >> swap
-
-
-filterFoldr : (a -> b -> Maybe b) -> b -> List a -> b
-filterFoldr func acc =
-    List.foldr
-        (\a b ->
-            func a b |> Maybe.withDefault b
-        )
-        acc
 
 
 
@@ -391,8 +385,8 @@ type MoveResult
     | NextState Model
 
 
-selectionToMove : Selection -> Maybe (List GI)
-selectionToMove (Selection stack) =
+selectionToCollectibleIndices : Selection -> Maybe (List GI)
+selectionToCollectibleIndices (Selection stack) =
     if List.length stack < 2 then
         Nothing
 
@@ -402,14 +396,14 @@ selectionToMove (Selection stack) =
 
 makeMove : Model -> MoveResult
 makeMove (Model gm) =
-    case selectionToMove gm.selection of
+    case selectionToCollectibleIndices gm.selection of
         Nothing ->
             InvalidMove
 
-        Just moveIndices ->
+        Just collectibleIndices ->
             let
                 ( ( ct, nextGrid ), nextRandom ) =
-                    Random.step (collectAndGenerateNextGrid moveIndices gm.grid) gm.random
+                    Random.step (collectAndGenerateNextGrid collectibleIndices gm.grid) gm.random
 
                 nextTargetSeeds =
                     (gm.targetSeeds - ct.seeds)
