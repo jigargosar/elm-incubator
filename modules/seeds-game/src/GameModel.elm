@@ -64,12 +64,12 @@ collectAndGenerateNextGrid :
     -> Random.Generator ( Entries, Grid Cell )
 collectAndGenerateNextGrid collectIndices grid =
     let
-        ( ct, collectedGrid ) =
+        ( collectedEntries, collectedGrid ) =
             collectCellsAtIndices collectIndices grid
     in
     computeFallenGrid collectedGrid
         |> fillEmptyCells
-        |> Random.map (Tuple.pair ct)
+        |> Random.map (Tuple.pair collectedEntries)
 
 
 type alias Entry =
