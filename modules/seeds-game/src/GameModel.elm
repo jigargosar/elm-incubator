@@ -367,7 +367,6 @@ type alias Info =
     , targetWater : Int
     , grid : Grid Cell
     , selectionStack : List GI
-    , validIndices : List GI
     }
 
 
@@ -378,7 +377,6 @@ info (Model gm) =
     , targetWater = gm.targetWater
     , grid = gm.grid
     , selectionStack = selectionToStack gm.selection
-    , validIndices = computeValidSelectionIndices gm.grid gm.selection
     }
 
 
@@ -433,7 +431,6 @@ makeMove (Model gm) =
                     , movesLeft = nextMovesLeft
                     , grid = nextGrid
                     , selectionStack = []
-                    , validIndices = []
                     }
 
             else
