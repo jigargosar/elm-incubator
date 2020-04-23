@@ -209,6 +209,48 @@ viewGameTable info =
     viewGridTable viewCell info.grid
 
 
+viewCellWithConfig :
+    { a
+        | selectionIdx : Maybe Int
+        , selectionMsg : Msg
+    }
+    -> Game.Cell
+    -> HM
+viewCellWithConfig conf cell =
+    Html.td
+        [ PE.onPrimaryEnterAndDown conf.selectionMsg
+        , PE.onPrimaryDown conf.selectionMsg
+        ]
+        [ div
+            [ class "br3 w3 h3 flex"
+            , style "transition" "transform 500ms"
+            , style "transform"
+                (if conf.selectionIdx == Nothing then
+                    "scale(1.0)"
+
+                 else
+                    "scale(0.8)"
+                )
+            , class
+                (case cell of
+                    Game.Water ->
+                        "bg-light-blue"
+
+                    Game.Wall ->
+                        "bg-light-purple white"
+
+                    Game.Empty ->
+                        ""
+
+                    Game.Seed ->
+                        "bg-light-pink "
+                )
+            ]
+            [ text (conf.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            ]
+        ]
+
+
 viewGridTable : (GI -> a -> HM) -> Grid.Grid a -> HM
 viewGridTable renderCell grid =
     let
@@ -249,48 +291,6 @@ viewGridTable renderCell grid =
 
 rangeLen len =
     List.range 0 (len - 1)
-
-
-viewCellWithConfig :
-    { selectionIdx : Maybe Int
-    , selectionMsg : Msg
-    , gridIdx : GI
-    }
-    -> Game.Cell
-    -> HM
-viewCellWithConfig conf cell =
-    Html.td
-        [ PE.onPrimaryEnterAndDown conf.selectionMsg
-        , PE.onPrimaryDown conf.selectionMsg
-        ]
-        [ div
-            [ class "br3 w3 h3 flex"
-            , style "transition" "transform 500ms"
-            , style "transform"
-                (if conf.selectionIdx == Nothing then
-                    "scale(1.0)"
-
-                 else
-                    "scale(0.8)"
-                )
-            , class
-                (case cell of
-                    Game.Water ->
-                        "bg-light-blue"
-
-                    Game.Wall ->
-                        "bg-light-purple white"
-
-                    Game.Empty ->
-                        ""
-
-                    Game.Seed ->
-                        "bg-light-pink "
-                )
-            ]
-            [ text (conf.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
-            ]
-        ]
 
 
 btn msg txt =
