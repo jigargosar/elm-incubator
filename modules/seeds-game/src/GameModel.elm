@@ -411,19 +411,16 @@ makeMove (Model gm) =
                     List.Extra.count (Tuple.second >> (==) Seed) collectedEntries
 
                 nextTargetSeeds =
-                    (gm.targetSeeds - collectedSeeds)
-                        |> atLeast 0
+                    (gm.targetSeeds - collectedSeeds) |> atLeast 0
 
                 collectedWater =
                     List.Extra.count (Tuple.second >> (==) Water) collectedEntries
 
                 nextTargetWater =
-                    (gm.targetWater - collectedWater)
-                        |> atLeast 0
+                    (gm.targetWater - collectedWater) |> atLeast 0
 
                 nextMovesLeft =
-                    (gm.movesLeft - 1)
-                        |> atLeast 0
+                    (gm.movesLeft - 1) |> atLeast 0
 
                 isGameWon =
                     List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
