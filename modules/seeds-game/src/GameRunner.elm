@@ -223,7 +223,7 @@ viewCell _ conf =
             [ PE.onPrimaryEnterAndDown conf.selectionMsg
             , PE.onPrimaryDown conf.selectionMsg
             , class "br3 w3 h3 flex"
-            , style "transition" "transform 500ms"
+            , style "transition" "transform 300ms"
             , style "transform"
                 (if conf.selectionIdx == Nothing then
                     "scale(1.0)"
