@@ -202,11 +202,11 @@ viewGameTable info =
             , gridIdx = idx
             }
 
-        viewCell : GI -> Game.Cell -> HM
-        viewCell idx c =
+        renderCell : GI -> Game.Cell -> HM
+        renderCell idx c =
             viewCellWithConfig (toCellConfig idx) c
     in
-    viewGridTable viewCell info.grid
+    viewGridTable renderCell info.grid
 
 
 viewCellWithConfig :
