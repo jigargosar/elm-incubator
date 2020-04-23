@@ -250,46 +250,37 @@ viewCell info ( ( _, _ ) as idx, c ) =
 
         selectionMsg =
             ToggleSelection idx isSelected
-
-        animAttrs =
-            if isSelected then
-                [ style "transform" ([ "scale(", "0.7", ")" ] |> String.join "")
-                , style "transition" "transform 500ms"
-                ]
-
-            else
-                [ style "transition" "transform 500ms" ]
     in
     Html.td
         [ PE.onPrimaryEnterAndDown selectionMsg
         , PE.onPrimaryDown selectionMsg
         ]
         [ div
-            (animAttrs
-                ++ [ class "br3 w3 h3 flex"
-                   , class "relative"
-                   , class
-                        (case c of
-                            Game.Water ->
-                                "bg-light-blue"
+            [ class "br3 w3 h3 flex"
+            , style "transition" "transform 500ms"
+            , style "transform"
+                (if isSelected then
+                    "scale(0.8)"
 
-                            Game.Wall ->
-                                "bg-light-purple white"
+                 else
+                    "scale(1.0)"
+                )
+            , class
+                (case c of
+                    Game.Water ->
+                        "bg-light-blue"
 
-                            Game.Empty ->
-                                ""
+                    Game.Wall ->
+                        "bg-light-purple white"
 
-                            Game.Seed ->
-                                "bg-light-pink "
-                        )
-                   ]
-            )
-            [ div
-                [ class "code f3"
-                , class "absolute pa2"
-                ]
-                [ text (selIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
-                ]
+                    Game.Empty ->
+                        ""
+
+                    Game.Seed ->
+                        "bg-light-pink "
+                )
+            ]
+            [ text (selIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
             ]
         ]
 
