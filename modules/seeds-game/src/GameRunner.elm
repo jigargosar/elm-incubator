@@ -246,7 +246,11 @@ viewCellWithConfig conf cell =
                         "bg-light-pink "
                 )
             ]
-            [ text (conf.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            [ text
+                (conf.selectionIdx
+                    |> Maybe.map String.fromInt
+                    |> Maybe.withDefault ""
+                )
             ]
         ]
 
