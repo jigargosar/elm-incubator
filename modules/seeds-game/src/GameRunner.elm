@@ -185,10 +185,30 @@ viewGameInfo i =
 
 viewGameTable : Game.Info -> HM
 viewGameTable info =
-    viewGridTable (viewCell info) info.grid
+    let
+        viewCell : GI -> Game.Cell -> HM
+        viewCell idx c =
+            let
+                selIdx =
+                    List.reverse info.selectionStack |> List.Extra.elemIndex idx
+
+                isSelected =
+                    selIdx /= Nothing
+
+                selectionMsg =
+                    ToggleSelection idx isSelected
+            in
+            viewCellHelp
+                { selectionIdx = selIdx
+                , selectionMsg = selectionMsg
+                , gridIdx = idx
+                , cell = c
+                }
+    in
+    viewGridTable viewCell info.grid
 
 
-viewGridTable : (( GI, a ) -> HM) -> Grid.Grid a -> HM
+viewGridTable : (GI -> a -> HM) -> Grid.Grid a -> HM
 viewGridTable renderCell grid =
     let
         cells =
@@ -201,7 +221,7 @@ viewGridTable renderCell grid =
         viewGridRow : Int -> List ( GI, a ) -> HM
         viewGridRow y entry =
             Html.tr []
-                (viewYTH y :: List.map renderCell entry)
+                (viewYTH y :: List.map (uncurry renderCell) entry)
 
         rowWidth =
             List.head rows |> Maybe.map List.length |> Maybe.withDefault 0
@@ -228,26 +248,6 @@ viewGridTable renderCell grid =
 
 rangeLen len =
     List.range 0 (len - 1)
-
-
-viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
-viewCell info ( ( _, _ ) as idx, c ) =
-    let
-        selIdx =
-            List.reverse info.selectionStack |> List.Extra.elemIndex idx
-
-        isSelected =
-            selIdx /= Nothing
-
-        selectionMsg =
-            ToggleSelection idx isSelected
-    in
-    viewCellHelp
-        { selectionIdx = selIdx
-        , selectionMsg = selectionMsg
-        , gridIdx = idx
-        , cell = c
-        }
 
 
 viewCellHelp :
