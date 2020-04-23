@@ -111,10 +111,10 @@ update message model =
                         Game.InvalidMove ->
                             model
 
-                        Game.NextState ng ->
+                        Game.NextState _ ng ->
                             Selecting ng
 
-                        Game.GameOver info ->
+                        Game.GameOver _ info ->
                             Over info
                     , Cmd.none
                     )

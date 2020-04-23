@@ -58,18 +58,36 @@ initCellGrid =
     grid
 
 
-collectAndGenerateNextGrid :
-    List GI
-    -> Grid Cell
-    -> Random.Generator ( Entries, Grid Cell )
+type alias NextGridWithContext =
+    { collectedEntries : Entries
+    , collectedGrid : Grid Cell
+    , fallenIndices : List ( GI, GI )
+    , fallenGrid : Grid Cell
+    , filledGrid : Grid Cell
+    }
+
+
+collectAndGenerateNextGrid : List GI -> Grid Cell -> Random.Generator NextGridWithContext
 collectAndGenerateNextGrid collectIndices grid =
     let
         ( collectedEntries, collectedGrid ) =
             collectCellsAtIndices collectIndices grid
+
+        ( fallenIndices, fallenGrid ) =
+            computeFallenGrid collectedGrid
+
+        context : Grid Cell -> NextGridWithContext
+        context filledGrid =
+            { collectedEntries = collectedEntries
+            , collectedGrid = collectedGrid
+            , fallenIndices = fallenIndices
+            , fallenGrid = fallenGrid
+            , filledGrid = filledGrid
+            }
     in
-    computeFallenGrid collectedGrid
+    fallenGrid
         |> fillEmptyCells
-        |> Random.map (Tuple.pair collectedEntries)
+        |> Random.map context
 
 
 type alias Entry =
@@ -112,7 +130,7 @@ setEmptyAtIndices indicesToEmpty grid =
         grid
 
 
-computeFallenGrid : Grid Cell -> Grid Cell
+computeFallenGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
 computeFallenGrid grid0 =
     let
         computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
@@ -135,7 +153,6 @@ computeFallenGrid grid0 =
                     Nothing
     in
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
-        |> Tuple.second
 
 
 fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
@@ -389,8 +406,8 @@ info (Model gm) =
 
 type MoveResult
     = InvalidMove
-    | GameOver Info
-    | NextState Model
+    | GameOver NextGridWithContext Info
+    | NextState NextGridWithContext Model
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
@@ -410,23 +427,23 @@ makeMove (Model gm) =
 
         Just collectibleIndices ->
             let
-                ( ( collectedEntries, nextGrid ), nextRandom ) =
+                ( nextGridCtx, nextRandom ) =
                     Random.step (collectAndGenerateNextGrid collectibleIndices gm.grid) gm.random
 
                 collectedSeeds =
-                    List.Extra.count (Tuple.second >> (==) Seed) collectedEntries
+                    List.Extra.count (Tuple.second >> (==) Seed) nextGridCtx.collectedEntries
 
                 nextTargetSeeds =
                     (gm.targetSeeds - collectedSeeds) |> atLeast 0
 
                 collectedWater =
-                    List.Extra.count (Tuple.second >> (==) Water) collectedEntries
+                    List.Extra.count (Tuple.second >> (==) Water) nextGridCtx.collectedEntries
 
                 nextTargetWater =
                     (gm.targetWater - collectedWater) |> atLeast 0
 
                 collectedIndices =
-                    List.map Tuple.first collectedEntries
+                    List.map Tuple.first nextGridCtx.collectedEntries
 
                 nextMovesLeft =
                     (gm.movesLeft - 1) |> atLeast 0
@@ -438,22 +455,22 @@ makeMove (Model gm) =
                     not isGameWon && nextMovesLeft == 0
             in
             if isGameWon || isGameLost then
-                GameOver
+                GameOver nextGridCtx
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = nextGrid
+                    , grid = nextGridCtx.filledGrid
                     , selectionStack = []
                     , collectedIndices = collectedIndices
                     }
 
             else
-                NextState
+                NextState nextGridCtx
                     (Model
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
                         , movesLeft = nextMovesLeft
-                        , grid = nextGrid
+                        , grid = nextGridCtx.filledGrid
                         , random = nextRandom
                         , selection = emptySelection
                         , collectedIndices = collectedIndices
