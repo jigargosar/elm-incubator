@@ -201,22 +201,31 @@ viewGameCells info =
         styledTH =
             Html.th [ class "code f4 pa1" ]
 
-        viewHeadCell x _ =
-            styledTH [ text "x", text (String.fromInt x) ]
-
-        viewTHead mh =
-            case mh of
-                Just ( h, t ) ->
-                    Html.thead []
-                        (styledTH [ text "x,y" ]
-                            :: List.indexedMap viewHeadCell (h :: t)
-                        )
-
-                Nothing ->
-                    text ""
+        ( gridWidth, gridHeight ) =
+            Grid.wh info.grid
     in
     table [ class "pa3" ]
-        (viewTHead (List.head rows) :: List.indexedMap viewRow rows)
+        (gridTHeadRow gridWidth :: List.indexedMap viewRow rows)
+
+
+styledGridTH =
+    Html.th [ class "code f4 pa1" ]
+
+
+gridTHeadRow : Int -> HM
+gridTHeadRow gridWidth =
+    let
+        viewXTH x =
+            styledGridTH [ text ("x" ++ String.fromInt x) ]
+    in
+    Html.thead []
+        (styledGridTH [ text "x,y" ]
+            :: List.map viewXTH (rangeLen gridWidth)
+        )
+
+
+rangeLen len =
+    List.range 0 (len - 1)
 
 
 viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
