@@ -336,7 +336,7 @@ type alias State =
     , targetWater : Int
     , grid : Grid Cell
     , selection : Selection
-    , collectedEntries : Entries
+    , collectedIndices : List GI
     , random : Random.Seed
     }
 
@@ -349,7 +349,7 @@ init =
         , targetWater = 35
         , grid = initCellGrid
         , selection = emptySelection
-        , collectedEntries = []
+        , collectedIndices = []
         , random = Random.initialSeed 0
         }
 
@@ -372,7 +372,7 @@ type alias Info =
     , targetWater : Int
     , grid : Grid Cell
     , selectionStack : List GI
-    , collectedEntries : Entries
+    , collectedIndices : List GI
     }
 
 
@@ -383,7 +383,7 @@ info (Model gm) =
     , targetWater = gm.targetWater
     , grid = gm.grid
     , selectionStack = selectionToStack gm.selection
-    , collectedEntries = gm.collectedEntries
+    , collectedIndices = gm.collectedIndices
     }
 
 
@@ -425,6 +425,9 @@ makeMove (Model gm) =
                 nextTargetWater =
                     (gm.targetWater - collectedWater) |> atLeast 0
 
+                collectedIndices =
+                    List.map Tuple.first collectedEntries
+
                 nextMovesLeft =
                     (gm.movesLeft - 1) |> atLeast 0
 
@@ -441,7 +444,7 @@ makeMove (Model gm) =
                     , movesLeft = nextMovesLeft
                     , grid = nextGrid
                     , selectionStack = []
-                    , collectedEntries = collectedEntries
+                    , collectedIndices = collectedIndices
                     }
 
             else
@@ -453,6 +456,6 @@ makeMove (Model gm) =
                         , grid = nextGrid
                         , random = nextRandom
                         , selection = emptySelection
-                        , collectedEntries = collectedEntries
+                        , collectedIndices = collectedIndices
                         }
                     )
