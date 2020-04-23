@@ -149,9 +149,7 @@ view model =
                         [ div [ class "pa3" ] [ text "Game Running" ]
                         , viewGameInfo (Game.info game)
                         , div [ class "pa3" ]
-                            [ btn
-                                CollectSelection
-                                "collect"
+                            [ btn CollectSelection "collect"
                             ]
                         ]
 
