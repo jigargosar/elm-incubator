@@ -242,18 +242,8 @@ computeScale _ n =
 viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
 viewCell info ( ( _, _ ) as idx, c ) =
     let
-        isValidNext =
-            List.member idx info.validIndices
-
         selIdx =
             List.reverse info.selectionStack |> List.Extra.elemIndex idx
-
-        scaleForSelection =
-            info.selectionStack
-                |> List.Extra.elemIndex idx
-                |> Maybe.map (computeScale (List.length info.selectionStack))
-                |> Maybe.withDefault 1
-                |> String.fromFloat
 
         isSelected =
             selIdx /= Nothing
@@ -263,12 +253,7 @@ viewCell info ( ( _, _ ) as idx, c ) =
 
         animAttrs =
             if isSelected then
-                [ style "transform" ([ "scale(", scaleForSelection, ")" ] |> String.join "")
-                , style "transition" "transform 500ms"
-                ]
-
-            else if isValidNext then
-                [ class "" -- "animated infinite pulse"
+                [ style "transform" ([ "scale(", "0.7", ")" ] |> String.join "")
                 , style "transition" "transform 500ms"
                 ]
 
