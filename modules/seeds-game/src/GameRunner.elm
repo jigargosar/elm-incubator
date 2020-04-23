@@ -218,40 +218,38 @@ type alias CellViewModel a =
 
 viewCell : GI -> CellViewModel a -> HM
 viewCell _ conf =
-    Html.td []
-        [ div
-            [ PE.onPrimaryEnterAndDown conf.selectionMsg
-            , PE.onPrimaryDown conf.selectionMsg
-            , class "br3 w3 h3 flex"
-            , style "transition" "transform 300ms"
-            , style "transform"
-                (if conf.selectionIdx == Nothing then
-                    "scale(1.0)"
+    div
+        [ PE.onPrimaryEnterAndDown conf.selectionMsg
+        , PE.onPrimaryDown conf.selectionMsg
+        , class "br3 w3 h3 flex"
+        , style "transition" "transform 300ms"
+        , style "transform"
+            (if conf.selectionIdx == Nothing then
+                "scale(1.0)"
 
-                 else
-                    "scale(0.8)"
-                )
-            , class
-                (case conf.cell of
-                    Game.Water ->
-                        "bg-light-blue"
+             else
+                "scale(0.8)"
+            )
+        , class
+            (case conf.cell of
+                Game.Water ->
+                    "bg-light-blue"
 
-                    Game.Wall ->
-                        "bg-light-purple white"
+                Game.Wall ->
+                    "bg-light-purple white"
 
-                    Game.Empty ->
-                        ""
+                Game.Empty ->
+                    ""
 
-                    Game.Seed ->
-                        "bg-light-pink "
-                )
-            ]
-            [ text
-                (conf.selectionIdx
-                    |> Maybe.map String.fromInt
-                    |> Maybe.withDefault ""
-                )
-            ]
+                Game.Seed ->
+                    "bg-light-pink "
+            )
+        ]
+        [ text
+            (conf.selectionIdx
+                |> Maybe.map String.fromInt
+                |> Maybe.withDefault ""
+            )
         ]
 
 
