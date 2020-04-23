@@ -1,5 +1,6 @@
 module GameRunner exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import GameModel as Game
 import Grid exposing (GI)
@@ -178,52 +179,51 @@ viewGameInfo i =
                     }
                 )
             ]
-        , viewGameCells i
+        , viewGameTable i
         ]
 
 
-viewGameCells : Game.Info -> HM
-viewGameCells info =
+viewGameTable : Game.Info -> HM
+viewGameTable info =
+    viewGridTable (viewCell info) info.grid
+
+
+viewGridTable : (( GI, a ) -> HM) -> Grid.Grid a -> HM
+viewGridTable renderCell grid =
     let
         cells =
-            Grid.toList info.grid
+            Grid.toList grid
 
         rows =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
+                |> List.map (uncurry (::))
 
-        viewRow : Int -> ( ( GI, Game.Cell ), List ( GI, Game.Cell ) ) -> HM
-        viewRow y ( h, t ) =
+        viewGridRow : Int -> List ( GI, a ) -> HM
+        viewGridRow y entry =
             Html.tr []
-                (viewYTH y :: List.map (viewCell info) (h :: t))
+                (viewYTH y :: List.map renderCell entry)
 
-        styledTH =
+        rowWidth =
+            List.head rows |> Maybe.map List.length |> Maybe.withDefault 0
+
+        styledGridTH =
             Html.th [ class "code f4 pa1" ]
 
-        ( gridWidth, gridHeight ) =
-            Grid.wh info.grid
+        viewXTH x =
+            styledGridTH [ text ("x" ++ String.fromInt x) ]
+
+        viewYTH y =
+            styledGridTH [ text ("y" ++ String.fromInt y) ]
+
+        gridHeaderRow : Int -> HM
+        gridHeaderRow gridWidth =
+            Html.tr []
+                (styledGridTH [ text "x,y" ]
+                    :: List.map viewXTH (rangeLen gridWidth)
+                )
     in
     table [ class "pa3" ]
-        (gridHeaderRow gridWidth :: List.indexedMap viewRow rows)
-
-
-styledGridTH =
-    Html.th [ class "code f4 pa1" ]
-
-
-viewXTH x =
-    styledGridTH [ text ("x" ++ String.fromInt x) ]
-
-
-viewYTH y =
-    styledGridTH [ text ("y" ++ String.fromInt y) ]
-
-
-gridHeaderRow : Int -> HM
-gridHeaderRow gridWidth =
-    Html.tr []
-        (styledGridTH [ text "x,y" ]
-            :: List.map viewXTH (rangeLen gridWidth)
-        )
+        (gridHeaderRow rowWidth :: List.indexedMap viewGridRow rows)
 
 
 rangeLen len =
