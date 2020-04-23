@@ -73,7 +73,7 @@ init () =
 type Msg
     = NoOp
     | PlayAnother
-    | Collect
+    | CollectSelection
     | ToggleSelection GI Bool
 
 
@@ -103,7 +103,7 @@ update message model =
                 Over _ ->
                     ( model, Cmd.none )
 
-        Collect ->
+        CollectSelection ->
             case model of
                 Selecting game ->
                     ( case Game.makeMove game of
@@ -153,7 +153,7 @@ view model =
                         , viewGameInfo (Game.info game)
                         , div [ class "pa3" ]
                             [ btn
-                                Collect
+                                CollectSelection
                                 "collect"
                             ]
                         ]
