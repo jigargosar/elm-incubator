@@ -186,8 +186,7 @@ viewGameInfo i =
 viewGameTable : Game.Info -> HM
 viewGameTable info =
     let
-        viewCell : GI -> Game.Cell -> HM
-        viewCell idx c =
+        toCellConfig idx =
             let
                 selIdx =
                     List.reverse info.selectionStack |> List.Extra.elemIndex idx
@@ -198,12 +197,14 @@ viewGameTable info =
                 selectionMsg =
                     ToggleSelection idx isSelected
             in
-            viewCellHelp
-                { selectionIdx = selIdx
-                , selectionMsg = selectionMsg
-                , gridIdx = idx
-                , cell = c
-                }
+            { selectionIdx = selIdx
+            , selectionMsg = selectionMsg
+            , gridIdx = idx
+            }
+
+        viewCell : GI -> Game.Cell -> HM
+        viewCell idx c =
+            viewCellWithConfig (toCellConfig idx) c
     in
     viewGridTable viewCell info.grid
 
@@ -250,30 +251,30 @@ rangeLen len =
     List.range 0 (len - 1)
 
 
-viewCellHelp :
+viewCellWithConfig :
     { selectionIdx : Maybe Int
     , selectionMsg : Msg
     , gridIdx : GI
-    , cell : Game.Cell
     }
+    -> Game.Cell
     -> HM
-viewCellHelp rec =
+viewCellWithConfig conf cell =
     Html.td
-        [ PE.onPrimaryEnterAndDown rec.selectionMsg
-        , PE.onPrimaryDown rec.selectionMsg
+        [ PE.onPrimaryEnterAndDown conf.selectionMsg
+        , PE.onPrimaryDown conf.selectionMsg
         ]
         [ div
             [ class "br3 w3 h3 flex"
             , style "transition" "transform 500ms"
             , style "transform"
-                (if rec.selectionIdx == Nothing then
+                (if conf.selectionIdx == Nothing then
                     "scale(1.0)"
 
                  else
                     "scale(0.8)"
                 )
             , class
-                (case rec.cell of
+                (case cell of
                     Game.Water ->
                         "bg-light-blue"
 
@@ -287,7 +288,7 @@ viewCellHelp rec =
                         "bg-light-pink "
                 )
             ]
-            [ text (rec.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            [ text (conf.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
             ]
         ]
 
