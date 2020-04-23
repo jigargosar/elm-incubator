@@ -59,7 +59,7 @@ initCellGrid =
 collectAndGenerateNextGrid :
     List GI
     -> Grid Cell
-    -> Random.Generator ( { seeds : Int, water : Int }, Grid Cell )
+    -> Random.Generator ( Entries, Grid Cell )
 collectAndGenerateNextGrid collectIndices grid =
     let
         ( ct, collectedGrid ) =
@@ -70,34 +70,36 @@ collectAndGenerateNextGrid collectIndices grid =
         |> Random.map (Tuple.pair ct)
 
 
-collectCellsAtIndices : List GI -> Grid Cell -> ( { seeds : Int, water : Int }, Grid Cell )
+type alias Entry =
+    ( GI, Cell )
+
+
+type alias Entries =
+    List Entry
+
+
+collectCellsAtIndices : List GI -> Grid Cell -> ( Entries, Grid Cell )
 collectCellsAtIndices indicesToCollect grid =
     let
-        filterIndices cell =
+        collectedEntries : List ( GI, Cell )
+        collectedEntries =
             grid
                 |> Grid.toList
-                |> List.filterMap
-                    (\( i, c ) ->
-                        if List.member i indicesToCollect && c == cell then
-                            Just i
-
-                        else
-                            Nothing
+                |> List.filter
+                    (\( i, cell ) ->
+                        List.member i indicesToCollect && List.member cell [ Water, Seed ]
                     )
 
-        waterIndices =
-            filterIndices Water
-
-        seedIndices =
-            filterIndices Seed
-
         indicesToEmpty =
-            waterIndices ++ seedIndices
+            List.map Tuple.first collectedEntries
     in
-    ( { water = List.length waterIndices
-      , seeds = List.length seedIndices
-      }
-    , Grid.map
+    ( collectedEntries
+    , setEmptyAtIndices indicesToEmpty grid
+    )
+
+
+setEmptyAtIndices indicesToEmpty grid =
+    Grid.map
         (\i c ->
             if List.member i indicesToEmpty then
                 Empty
@@ -106,7 +108,6 @@ collectCellsAtIndices indicesToCollect grid =
                 c
         )
         grid
-    )
 
 
 computeFallenGrid : Grid Cell -> Grid Cell
@@ -403,15 +404,21 @@ makeMove (Model gm) =
 
         Just collectibleIndices ->
             let
-                ( ( ct, nextGrid ), nextRandom ) =
+                ( ( collectedEntries, nextGrid ), nextRandom ) =
                     Random.step (collectAndGenerateNextGrid collectibleIndices gm.grid) gm.random
 
+                collectedSeeds =
+                    List.Extra.count (Tuple.second >> (==) Seed) collectedEntries
+
                 nextTargetSeeds =
-                    (gm.targetSeeds - ct.seeds)
+                    (gm.targetSeeds - collectedSeeds)
                         |> atLeast 0
 
+                collectedWater =
+                    List.Extra.count (Tuple.second >> (==) Water) collectedEntries
+
                 nextTargetWater =
-                    (gm.targetWater - ct.water)
+                    (gm.targetWater - collectedWater)
                         |> atLeast 0
 
                 nextMovesLeft =
