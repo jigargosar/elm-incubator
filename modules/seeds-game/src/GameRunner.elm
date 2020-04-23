@@ -186,7 +186,7 @@ viewGameInfo i =
 viewGameTable : Game.Info -> HM
 viewGameTable info =
     let
-        toCellConfig idx =
+        toCellViewModel idx cell =
             let
                 selIdx =
                     List.reverse info.selectionStack |> List.Extra.elemIndex idx
@@ -200,23 +200,26 @@ viewGameTable info =
             { selectionIdx = selIdx
             , selectionMsg = selectionMsg
             , gridIdx = idx
+            , cell = cell
             }
 
-        renderCell : GI -> Game.Cell -> HM
-        renderCell idx c =
-            viewCellWithConfig (toCellConfig idx) c
+        gridViewModel =
+            info.grid
+                |> Grid.map toCellViewModel
     in
-    viewGridTable renderCell info.grid
+    viewGridTable viewCell gridViewModel
 
 
-viewCellWithConfig :
+type alias CellViewModel a =
     { a
         | selectionIdx : Maybe Int
         , selectionMsg : Msg
+        , cell : Game.Cell
     }
-    -> Game.Cell
-    -> HM
-viewCellWithConfig conf cell =
+
+
+viewCell : GI -> CellViewModel a -> HM
+viewCell _ conf =
     Html.td []
         [ div
             [ PE.onPrimaryEnterAndDown conf.selectionMsg
@@ -231,7 +234,7 @@ viewCellWithConfig conf cell =
                     "scale(0.8)"
                 )
             , class
-                (case cell of
+                (case conf.cell of
                     Game.Water ->
                         "bg-light-blue"
 
