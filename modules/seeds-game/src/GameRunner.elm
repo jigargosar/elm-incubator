@@ -239,6 +239,26 @@ computeScale _ n =
         hi
 
 
+viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
+viewCell info ( ( _, _ ) as idx, c ) =
+    let
+        selIdx =
+            List.reverse info.selectionStack |> List.Extra.elemIndex idx
+
+        isSelected =
+            selIdx /= Nothing
+
+        selectionMsg =
+            ToggleSelection idx isSelected
+    in
+    viewCellHelp
+        { selectionIdx = selIdx
+        , selectionMsg = selectionMsg
+        , gridIdx = idx
+        , cell = c
+        }
+
+
 viewCellHelp :
     { selectionIdx : Maybe Int
     , selectionMsg : Msg
@@ -279,26 +299,6 @@ viewCellHelp rec =
             [ text (rec.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
             ]
         ]
-
-
-viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
-viewCell info ( ( _, _ ) as idx, c ) =
-    let
-        selIdx =
-            List.reverse info.selectionStack |> List.Extra.elemIndex idx
-
-        isSelected =
-            selIdx /= Nothing
-
-        selectionMsg =
-            ToggleSelection idx isSelected
-    in
-    viewCellHelp
-        { selectionIdx = selIdx
-        , selectionMsg = selectionMsg
-        , gridIdx = idx
-        , cell = c
-        }
 
 
 btn msg txt =
