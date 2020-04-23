@@ -217,12 +217,11 @@ viewCellWithConfig :
     -> Game.Cell
     -> HM
 viewCellWithConfig conf cell =
-    Html.td
-        [ PE.onPrimaryEnterAndDown conf.selectionMsg
-        , PE.onPrimaryDown conf.selectionMsg
-        ]
+    Html.td []
         [ div
-            [ class "br3 w3 h3 flex"
+            [ PE.onPrimaryEnterAndDown conf.selectionMsg
+            , PE.onPrimaryDown conf.selectionMsg
+            , class "br3 w3 h3 flex"
             , style "transition" "transform 500ms"
             , style "transform"
                 (if conf.selectionIdx == Nothing then
@@ -265,10 +264,13 @@ viewGridTable renderCell grid =
             List.Extra.gatherEqualsBy (Tuple.first >> Tuple.second) cells
                 |> List.map (uncurry (::))
 
+        renderCell_ ( gi, a ) =
+            Html.td [] [ renderCell gi a ]
+
         viewGridRow : Int -> List ( GI, a ) -> HM
         viewGridRow y entry =
             Html.tr []
-                (viewYTH y :: List.map (uncurry renderCell) entry)
+                (viewYTH y :: List.map renderCell_ entry)
 
         rowWidth =
             List.head rows |> Maybe.map List.length |> Maybe.withDefault 0
