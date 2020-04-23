@@ -87,13 +87,11 @@ update message model =
 
         PlayAnother ->
             case model of
-
                 Over _ ->
                     init ()
 
                 _ ->
-                    ( model , Cmd.none )
-
+                    ( model, Cmd.none )
 
         ToggleSelection idx wasSelected ->
             case model of
@@ -114,7 +112,7 @@ update message model =
                         Game.InvalidMove ->
                             model
 
-                        Game.NextState ctx  ng ->
+                        Game.NextState ctx ng ->
                             AnimatingMoveResult ctx ng
 
                         Game.GameOver _ info ->
@@ -156,6 +154,7 @@ view model =
                             [ btn CollectSelection "collect"
                             ]
                         ]
+
                     AnimatingMoveResult nextGridWithContext game ->
                         []
 
@@ -164,9 +163,7 @@ view model =
                         , viewGameInfo info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
-
-
-                                   )
+               )
         )
 
 
