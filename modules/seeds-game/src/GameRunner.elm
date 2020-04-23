@@ -51,7 +51,7 @@ updateSelection idx wasSelected game =
 
 
 type Model
-    = Running Game.Model
+    = Selecting Game.Model
     | Over Game.Info
 
 
@@ -61,7 +61,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Running Game.init
+    ( Selecting Game.init
     , Cmd.none
     )
 
@@ -85,7 +85,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Running _ ->
+                Selecting _ ->
                     ( model, Cmd.none )
 
                 Over _ ->
@@ -93,10 +93,10 @@ update message model =
 
         ToggleSelection idx wasSelected ->
             case model of
-                Running game ->
+                Selecting game ->
                     let
                         nm =
-                            Running (updateSelection idx wasSelected game |> Maybe.withDefault game)
+                            Selecting (updateSelection idx wasSelected game |> Maybe.withDefault game)
                     in
                     ( nm, Cmd.none )
 
@@ -105,13 +105,13 @@ update message model =
 
         Collect ->
             case model of
-                Running game ->
+                Selecting game ->
                     ( case Game.makeMove game of
                         Game.InvalidMove ->
                             model
 
                         Game.NextState ng ->
-                            Running ng
+                            Selecting ng
 
                         Game.GameLost info ->
                             Over info
@@ -148,7 +148,7 @@ view model =
             }
         """ ]
             :: (case model of
-                    Running game ->
+                    Selecting game ->
                         [ div [ class "pa3" ] [ text "Game Running" ]
                         , viewGameInfo (Game.info game)
                         , div [ class "pa3" ]
