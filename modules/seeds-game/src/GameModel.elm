@@ -1,5 +1,7 @@
 module GameModel exposing
     ( Cell(..)
+    , Entries
+    , Entry
     , Info
     , Model
     , MoveResult(..)
@@ -334,6 +336,7 @@ type alias State =
     , targetWater : Int
     , grid : Grid Cell
     , selection : Selection
+    , collectedEntries : Entries
     , random : Random.Seed
     }
 
@@ -346,6 +349,7 @@ init =
         , targetWater = 35
         , grid = initCellGrid
         , selection = emptySelection
+        , collectedEntries = []
         , random = Random.initialSeed 0
         }
 
@@ -368,6 +372,7 @@ type alias Info =
     , targetWater : Int
     , grid : Grid Cell
     , selectionStack : List GI
+    , collectedEntries : Entries
     }
 
 
@@ -378,6 +383,7 @@ info (Model gm) =
     , targetWater = gm.targetWater
     , grid = gm.grid
     , selectionStack = selectionToStack gm.selection
+    , collectedEntries = gm.collectedEntries
     }
 
 
@@ -435,6 +441,7 @@ makeMove (Model gm) =
                     , movesLeft = nextMovesLeft
                     , grid = nextGrid
                     , selectionStack = []
+                    , collectedEntries = collectedEntries
                     }
 
             else
@@ -446,5 +453,6 @@ makeMove (Model gm) =
                         , grid = nextGrid
                         , random = nextRandom
                         , selection = emptySelection
+                        , collectedEntries = collectedEntries
                         }
                     )
