@@ -205,7 +205,7 @@ viewGameTable info =
         gridViewModel =
             info.grid |> Grid.map toCellViewModel
     in
-    viewGridTable viewCell gridViewModel
+    viewGridAsTable viewCell gridViewModel
 
 
 type alias CellViewModel a =
@@ -255,8 +255,8 @@ viewCell _ conf =
         ]
 
 
-viewGridTable : (GI -> a -> HM) -> Grid.Grid a -> HM
-viewGridTable renderCell grid =
+viewGridAsTable : (GI -> a -> HM) -> Grid.Grid a -> HM
+viewGridAsTable renderCell grid =
     let
         cells =
             Grid.toList grid
