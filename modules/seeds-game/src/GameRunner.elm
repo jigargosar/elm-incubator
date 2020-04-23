@@ -114,8 +114,8 @@ update message model =
                         Game.InvalidMove ->
                             model
 
-                        Game.NextState _ ng ->
-                            Selecting ng
+                        Game.NextState ctx  ng ->
+                            AnimatingMoveResult ctx ng
 
                         Game.GameOver _ info ->
                             Over info
