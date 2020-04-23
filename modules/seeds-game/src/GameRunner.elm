@@ -239,6 +239,48 @@ computeScale _ n =
         hi
 
 
+viewCellHelp :
+    { selectionIdx : Maybe Int
+    , selectionMsg : Msg
+    , gridIdx : GI
+    , cell : Game.Cell
+    }
+    -> HM
+viewCellHelp rec =
+    Html.td
+        [ PE.onPrimaryEnterAndDown rec.selectionMsg
+        , PE.onPrimaryDown rec.selectionMsg
+        ]
+        [ div
+            [ class "br3 w3 h3 flex"
+            , style "transition" "transform 500ms"
+            , style "transform"
+                (if rec.selectionIdx == Nothing then
+                    "scale(1.0)"
+
+                 else
+                    "scale(0.8)"
+                )
+            , class
+                (case rec.cell of
+                    Game.Water ->
+                        "bg-light-blue"
+
+                    Game.Wall ->
+                        "bg-light-purple white"
+
+                    Game.Empty ->
+                        ""
+
+                    Game.Seed ->
+                        "bg-light-pink "
+                )
+            ]
+            [ text (rec.selectionIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            ]
+        ]
+
+
 viewCell : Game.Info -> ( GI, Game.Cell ) -> HM
 viewCell info ( ( _, _ ) as idx, c ) =
     let
