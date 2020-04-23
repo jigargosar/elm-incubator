@@ -217,21 +217,21 @@ type alias CellViewModel a =
 
 
 viewCell : GI -> CellViewModel a -> HM
-viewCell _ conf =
+viewCell _ vm =
     div
-        [ PE.onPrimaryEnterAndDown conf.selectionMsg
-        , PE.onPrimaryDown conf.selectionMsg
+        [ PE.onPrimaryEnterAndDown vm.selectionMsg
+        , PE.onPrimaryDown vm.selectionMsg
         , class "br3 w3 h3 flex"
         , style "transition" "transform 300ms"
         , style "transform"
-            (if conf.selectionIdx == Nothing then
+            (if vm.selectionIdx == Nothing then
                 "scale(1.0)"
 
              else
                 "scale(0.8)"
             )
         , class
-            (case conf.cell of
+            (case vm.cell of
                 Game.Water ->
                     "bg-light-blue"
 
@@ -246,7 +246,7 @@ viewCell _ conf =
             )
         ]
         [ text
-            (conf.selectionIdx
+            (vm.selectionIdx
                 |> Maybe.map String.fromInt
                 |> Maybe.withDefault ""
             )
