@@ -10,6 +10,7 @@ import List.Extra
 import PointerEvents as PE
 
 
+updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
 updateSelection idx wasSelected game =
     let
         stack =
@@ -52,7 +53,6 @@ updateSelection idx wasSelected game =
 type Model
     = Running Game.Model
     | Over Game.Info
-    | Won Game.Info
 
 
 type alias Flags =
@@ -91,9 +91,6 @@ update message model =
                 Over _ ->
                     init ()
 
-                Won _ ->
-                    init ()
-
         ToggleSelection idx wasSelected ->
             case model of
                 Running game ->
@@ -104,9 +101,6 @@ update message model =
                     ( nm, Cmd.none )
 
                 Over _ ->
-                    ( model, Cmd.none )
-
-                Won _ ->
                     ( model, Cmd.none )
 
         Collect ->
@@ -123,14 +117,11 @@ update message model =
                             Over info
 
                         Game.GameWon info ->
-                            Won info
+                            Over info
                     , Cmd.none
                     )
 
                 Over _ ->
-                    ( model, Cmd.none )
-
-                Won _ ->
                     ( model, Cmd.none )
 
 
@@ -168,13 +159,7 @@ view model =
                         ]
 
                     Over info ->
-                        [ div [ class "pa3" ] [ text "Game Lost" ]
-                        , viewGameInfo info
-                        , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
-                        ]
-
-                    Won info ->
-                        [ div [ class "pa3" ] [ text "Game Won" ]
+                        [ div [ class "pa3" ] [ text "Game Over" ]
                         , viewGameInfo info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
