@@ -293,38 +293,12 @@ viewCell info ( ( _, _ ) as idx, c ) =
         selectionMsg =
             ToggleSelection idx isSelected
     in
-    Html.td
-        [ PE.onPrimaryEnterAndDown selectionMsg
-        , PE.onPrimaryDown selectionMsg
-        ]
-        [ div
-            [ class "br3 w3 h3 flex"
-            , style "transition" "transform 500ms"
-            , style "transform"
-                (if isSelected then
-                    "scale(0.8)"
-
-                 else
-                    "scale(1.0)"
-                )
-            , class
-                (case c of
-                    Game.Water ->
-                        "bg-light-blue"
-
-                    Game.Wall ->
-                        "bg-light-purple white"
-
-                    Game.Empty ->
-                        ""
-
-                    Game.Seed ->
-                        "bg-light-pink "
-                )
-            ]
-            [ text (selIdx |> Maybe.map String.fromInt |> Maybe.withDefault "")
-            ]
-        ]
+    viewCellHelp
+        { selectionIdx = selIdx
+        , selectionMsg = selectionMsg
+        , gridIdx = idx
+        , cell = c
+        }
 
 
 btn msg txt =
