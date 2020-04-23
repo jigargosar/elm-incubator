@@ -384,8 +384,7 @@ info (Model gm) =
 
 type MoveResult
     = InvalidMove
-    | GameLost Info
-    | GameWon Info
+    | GameOver Info
     | NextState Model
 
 
@@ -427,18 +426,8 @@ makeMove (Model gm) =
                 isGameLost =
                     not isGameWon && nextMovesLeft == 0
             in
-            if isGameWon then
-                GameWon
-                    { targetSeeds = nextTargetSeeds
-                    , targetWater = nextTargetWater
-                    , movesLeft = nextMovesLeft
-                    , grid = nextGrid
-                    , selectionStack = []
-                    , validIndices = []
-                    }
-
-            else if isGameLost then
-                GameLost
+            if isGameWon || isGameLost then
+                GameOver
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft

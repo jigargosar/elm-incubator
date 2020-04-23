@@ -113,10 +113,7 @@ update message model =
                         Game.NextState ng ->
                             Selecting ng
 
-                        Game.GameLost info ->
-                            Over info
-
-                        Game.GameWon info ->
+                        Game.GameOver info ->
                             Over info
                     , Cmd.none
                     )
