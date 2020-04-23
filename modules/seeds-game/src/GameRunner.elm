@@ -53,6 +53,7 @@ updateSelection idx wasSelected game =
 
 type Model
     = Selecting Game.Model
+    | AnimatingMoveResult Game.NextGridWithContext Game.Model
     | Over Game.Info
 
 
@@ -86,11 +87,13 @@ update message model =
 
         PlayAnother ->
             case model of
-                Selecting _ ->
-                    ( model, Cmd.none )
 
                 Over _ ->
                     init ()
+
+                _ ->
+                    ( model , Cmd.none )
+
 
         ToggleSelection idx wasSelected ->
             case model of
@@ -101,7 +104,7 @@ update message model =
                     in
                     ( nm, Cmd.none )
 
-                Over _ ->
+                _ ->
                     ( model, Cmd.none )
 
         CollectSelection ->
@@ -119,7 +122,7 @@ update message model =
                     , Cmd.none
                     )
 
-                Over _ ->
+                _ ->
                     ( model, Cmd.none )
 
 
@@ -153,13 +156,17 @@ view model =
                             [ btn CollectSelection "collect"
                             ]
                         ]
+                    AnimatingMoveResult nextGridWithContext game ->
+                        []
 
                     Over info ->
                         [ div [ class "pa3" ] [ text "Game Over" ]
                         , viewGameInfo info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
-               )
+
+
+                                   )
         )
 
 

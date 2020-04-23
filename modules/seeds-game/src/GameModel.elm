@@ -5,6 +5,7 @@ module GameModel exposing
     , Info
     , Model
     , MoveResult(..)
+    , NextGridWithContext
     , info
     , init
     , makeMove
