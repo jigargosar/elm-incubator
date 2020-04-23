@@ -199,13 +199,11 @@ viewGameTable info =
             in
             { selectionIdx = selIdx
             , selectionMsg = selectionMsg
-            , gridIdx = idx
             , cell = cell
             }
 
         gridViewModel =
-            info.grid
-                |> Grid.map toCellViewModel
+            info.grid |> Grid.map toCellViewModel
     in
     viewGridTable viewCell gridViewModel
 
