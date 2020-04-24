@@ -247,31 +247,64 @@ view model =
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.transitionSteps))
                         , let
-                            info =
+                            ( info, toCellViewModel ) =
                                 case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
-                                        { movesLeft = anim.info.movesLeft
-                                        , targetSeeds = anim.info.targetSeeds
-                                        , targetWater = anim.info.targetWater
-                                        , selectionStack = []
-                                        , grid = anim.context.collectedGrid
-                                        }
+                                        ( { movesLeft = anim.info.movesLeft
+                                          , targetSeeds = anim.info.targetSeeds
+                                          , targetWater = anim.info.targetWater
+                                          , selectionStack = []
+                                          , grid = anim.context.collectedGrid
+                                          }
+                                        , let
+                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
+                                            toCellViewModel_ _ cell =
+                                                { selectionIdx = Nothing
+                                                , selectionMsg = Nothing
+                                                , cell = cell
+                                                , cellState = CellStatic
+                                                }
+                                          in
+                                          toCellViewModel_
+                                        )
 
                                     FallingTransition ->
-                                        { movesLeft = anim.info.movesLeft
-                                        , targetSeeds = anim.info.targetSeeds
-                                        , targetWater = anim.info.targetWater
-                                        , selectionStack = []
-                                        , grid = anim.context.fallenGrid
-                                        }
+                                        ( { movesLeft = anim.info.movesLeft
+                                          , targetSeeds = anim.info.targetSeeds
+                                          , targetWater = anim.info.targetWater
+                                          , selectionStack = []
+                                          , grid = anim.context.fallenGrid
+                                          }
+                                        , let
+                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
+                                            toCellViewModel_ _ cell =
+                                                { selectionIdx = Nothing
+                                                , selectionMsg = Nothing
+                                                , cell = cell
+                                                , cellState = CellStatic
+                                                }
+                                          in
+                                          toCellViewModel_
+                                        )
 
                                     EnteringTransition ->
-                                        { movesLeft = anim.info.movesLeft
-                                        , targetSeeds = anim.info.targetSeeds
-                                        , targetWater = anim.info.targetWater
-                                        , selectionStack = []
-                                        , grid = anim.context.filledGrid
-                                        }
+                                        ( { movesLeft = anim.info.movesLeft
+                                          , targetSeeds = anim.info.targetSeeds
+                                          , targetWater = anim.info.targetWater
+                                          , selectionStack = []
+                                          , grid = anim.context.filledGrid
+                                          }
+                                        , let
+                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
+                                            toCellViewModel_ _ cell =
+                                                { selectionIdx = Nothing
+                                                , selectionMsg = Nothing
+                                                , cell = cell
+                                                , cellState = CellStatic
+                                                }
+                                          in
+                                          toCellViewModel_
+                                        )
                           in
                           div []
                             [ div [ class "pa3" ]
@@ -284,14 +317,6 @@ view model =
                                     )
                                 ]
                             , let
-                                toCellViewModel : GI -> Game.Cell -> CellViewModel
-                                toCellViewModel _ cell =
-                                    { selectionIdx = Nothing
-                                    , selectionMsg = Nothing
-                                    , cell = cell
-                                    , cellState = CellStatic
-                                    }
-
                                 gridViewModel : Grid CellViewModel
                                 gridViewModel =
                                     info.grid |> Grid.map toCellViewModel
