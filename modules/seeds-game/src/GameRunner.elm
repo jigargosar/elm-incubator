@@ -419,20 +419,26 @@ maybeAttr attrFunc maybeValue =
 viewCell : GI -> CellViewModel -> HM
 viewCell _ vm =
     let
+        defaultTransitionStyle =
+            style "transition" "transform 300ms"
+
         animProps =
             case vm.cellState of
                 CellStatic ->
-                    [ style "transform" "scale(1.0)" ]
+                    [ style "transform" "scale(1.0)"
+                    , defaultTransitionStyle
+                    ]
 
                 CellSelected ->
-                    [ style "transform" "scale(0.8)" ]
+                    [ style "transform" "scale(0.8)"
+                    , defaultTransitionStyle
+                    ]
     in
     div
         (animProps
             ++ [ maybeAttr PE.onPrimaryEnterAndDown vm.selectionMsg
                , maybeAttr PE.onPrimaryDown vm.selectionMsg
                , class "br3 w3 h3 flex"
-               , style "transition" "transform 300ms"
                , class
                     (case vm.cell of
                         Game.Water ->
