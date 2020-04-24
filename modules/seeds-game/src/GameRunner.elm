@@ -262,6 +262,14 @@ view model =
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.transitionSteps))
                         , let
+                            toCellVMHelp : (GI -> Game.Cell -> CellState) -> GI -> Game.Cell -> CellViewModel
+                            toCellVMHelp func idx cell =
+                                { selectionIdx = Nothing
+                                , selectionMsg = Nothing
+                                , cell = cell
+                                , cellState = func idx cell
+                                }
+
                             ( grid, toCellViewModel ) =
                                 case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
@@ -274,22 +282,24 @@ view model =
                                             collectedIndices =
                                                 List.map Tuple.first anim.context.collectedEntries
 
+                                            idxToCellState idx =
+                                                if List.member idx collectedIndices then
+                                                    CellLeaving
+
+                                                else
+                                                    case fallingToIdxOf idx of
+                                                        Just to ->
+                                                            CellFallingTo to
+
+                                                        Nothing ->
+                                                            CellStatic
+
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
                                             toCellViewModel_ idx cell =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState =
-                                                    if List.member idx collectedIndices then
-                                                        CellLeaving
-
-                                                    else
-                                                        case fallingToIdxOf idx of
-                                                            Just to ->
-                                                                CellFallingTo to
-
-                                                            Nothing ->
-                                                                CellStatic
+                                                , cellState = idxToCellState idx
                                                 }
                                           in
                                           toCellViewModel_
@@ -298,17 +308,19 @@ view model =
                                     EnteringStartTransition ->
                                         ( anim.context.filledGrid
                                         , let
+                                            idxToCellState idx =
+                                                if List.member idx anim.context.filledIndices then
+                                                    CellEnterStart
+
+                                                else
+                                                    CellStaticNoTransition
+
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
                                             toCellViewModel_ idx cell =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState =
-                                                    if List.member idx anim.context.filledIndices then
-                                                        CellEnterStart
-
-                                                    else
-                                                        CellStaticNoTransition
+                                                , cellState = idxToCellState idx
                                                 }
                                           in
                                           toCellViewModel_
@@ -338,7 +350,7 @@ view model =
                                         }
                                     )
                                 ]
-                            , viewGridAsTable viewCell (Grid.map toCellViewModel grid)
+                            , viewCellGridTable (Grid.map toCellViewModel grid)
                             ]
                         ]
                )
@@ -407,7 +419,7 @@ viewGameTable info =
         gridViewModel =
             info.grid |> Grid.map toCellViewModel
     in
-    viewGridAsTable viewCell gridViewModel
+    viewCellGridTable gridViewModel
 
 
 type alias CellViewModel =
@@ -435,6 +447,11 @@ maybeAttr attrFunc maybeValue =
 
         Nothing ->
             class ""
+
+
+viewCellGridTable : Grid CellViewModel -> HM
+viewCellGridTable =
+    viewGridAsTable viewCell
 
 
 viewCell : GI -> CellViewModel -> HM
