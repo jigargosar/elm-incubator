@@ -296,7 +296,7 @@ view model =
                                         )
 
                                     EnteringStartTransition ->
-                                        ( anim.moveDetails.filledGrid
+                                        ( anim.moveDetails.generated.grid
                                         , let
                                             idxToCellState idx =
                                                 if Set.member idx anim.moveDetails.generated.indexSet then
@@ -309,7 +309,7 @@ view model =
                                         )
 
                                     EnteringTransition ->
-                                        ( anim.moveDetails.filledGrid
+                                        ( anim.moveDetails.generated.grid
                                         , always CellStatic
                                         )
                           in

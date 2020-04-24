@@ -64,7 +64,6 @@ type alias MoveDetails =
     { collected : { indexSet : Set GI, water : Int, seeds : Int }
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : Grid Cell }
-    , filledGrid : Grid Cell
     }
 
 
@@ -107,7 +106,6 @@ collectAndGenerateNextGrid collectIndices grid =
                         |> Set.fromList
                 , grid = filledGrid
                 }
-            , filledGrid = filledGrid
             }
     in
     fallenGrid
@@ -471,7 +469,7 @@ makeMove (Model gm) =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = md.filledGrid
+                    , grid = md.generated.grid
                     , selectionStack = []
                     }
 
@@ -481,7 +479,7 @@ makeMove (Model gm) =
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
                         , movesLeft = nextMovesLeft
-                        , grid = md.filledGrid
+                        , grid = md.generated.grid
                         , random = nextRandom
                         , selection = emptySelection
                         }
