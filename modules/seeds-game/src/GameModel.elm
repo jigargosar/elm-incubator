@@ -18,7 +18,6 @@ import Dict exposing (Dict)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Random
-import Random.Extra
 import Set exposing (Set)
 
 
@@ -76,21 +75,7 @@ collectAndGenerateNextGrid collectIndices grid =
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collectedGrid
 
-        indexSetToGenerateCellsAt =
-            Grid.toListBy
-                (\i c ->
-                    if c == Empty then
-                        Just i
-
-                    else
-                        Nothing
-                )
-                fallenGrid
-                |> List.filterMap identity
-                |> Set.fromList
-
-        initMoveDetails : Grid Cell -> MoveDetails
-        initMoveDetails filledGrid =
+        initMoveDetails generated =
             let
                 collectedCells =
                     List.map Tuple.second collectedEntries
@@ -104,10 +89,7 @@ collectAndGenerateNextGrid collectIndices grid =
                 , seeds = List.Extra.count (eq Seed) collectedCells
                 }
             , fallenLookup = Dict.fromList fallenIndices
-            , generated =
-                { indexSet = indexSetToGenerateCellsAt
-                , grid = filledGrid
-                }
+            , generated = generated
             }
     in
     fallenGrid
@@ -180,7 +162,7 @@ computeFallenGrid grid0 =
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
 
 
-fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
+fillEmptyCells : Grid Cell -> Random.Generator { indexSet : Set GI, grid : Grid Cell }
 fillEmptyCells grid =
     let
         emptyIndices =
@@ -197,31 +179,18 @@ fillEmptyCells grid =
 
         cellGenerator =
             Random.uniform Water [ Seed ]
-
-        _ =
-            Random.list (List.length emptyIndices) cellGenerator
-                |> Random.map
-                    (\cells ->
-                        let
-                            generatedCellsLookup =
-                                List.map2 Tuple.pair emptyIndices cells
-                                    |> Dict.fromList
-                        in
-                        { indexSet = Set.fromList emptyIndices
-                        , grid = Grid.map (\i c -> Dict.get i generatedCellsLookup |> Maybe.withDefault c) grid
-                        }
-                    )
     in
-    emptyIndices
-        |> Random.Extra.traverse
-            (\i ->
-                Random.uniform Water [ Seed ]
-                    |> Random.map (Tuple.pair i)
-            )
-        |> Random.map Dict.fromList
+    Random.list (List.length emptyIndices) cellGenerator
         |> Random.map
-            (\nd ->
-                Grid.map (\i c -> Dict.get i nd |> Maybe.withDefault c) grid
+            (\cells ->
+                let
+                    generatedCellsLookup =
+                        List.map2 Tuple.pair emptyIndices cells
+                            |> Dict.fromList
+                in
+                { indexSet = Set.fromList emptyIndices
+                , grid = Grid.map (\i c -> Dict.get i generatedCellsLookup |> Maybe.withDefault c) grid
+                }
             )
 
 
