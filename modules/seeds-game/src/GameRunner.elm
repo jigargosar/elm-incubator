@@ -100,7 +100,7 @@ type alias MoveAnimation =
     { settledState : SettledState
     , initialGrid : Grid Game.Cell
     , info : Game.Info
-    , context : Game.MoveDetails
+    , moveDetails : Game.MoveDetails
     , transitionSteps : TransitionSteps MoveTransition
     }
 
@@ -185,7 +185,7 @@ update message model =
                                 { settledState = Selecting nextGame
                                 , initialGrid = (Game.info game).grid
                                 , info = Game.info nextGame
-                                , context = ctx
+                                , moveDetails = ctx
                                 , transitionSteps = transitionSteps
                                 }
                             , cmd
@@ -200,7 +200,7 @@ update message model =
                                 { settledState = Over info
                                 , initialGrid = (Game.info game).grid
                                 , info = info
-                                , context = ctx
+                                , moveDetails = ctx
                                 , transitionSteps = transitionSteps
                                 }
                             , cmd
@@ -276,14 +276,14 @@ view model =
                             ( grid, idxToCS ) =
                                 case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
-                                        ( anim.context.beforeGrid
+                                        ( anim.moveDetails.beforeGrid
                                         , let
                                             fallingToIdxOf idx =
-                                                List.Extra.find (Tuple.first >> (==) idx) anim.context.fallenIndices
+                                                List.Extra.find (Tuple.first >> (==) idx) anim.moveDetails.fallenIndices
                                                     |> Maybe.map Tuple.second
 
                                             collectedIndices =
-                                                List.map Tuple.first anim.context.collectedEntries
+                                                List.map Tuple.first anim.moveDetails.collectedEntries
 
                                             idxToCellState idx =
                                                 if List.member idx collectedIndices then
@@ -301,10 +301,10 @@ view model =
                                         )
 
                                     EnteringStartTransition ->
-                                        ( anim.context.filledGrid
+                                        ( anim.moveDetails.filledGrid
                                         , let
                                             idxToCellState idx =
-                                                if List.member idx anim.context.filledIndices then
+                                                if List.member idx anim.moveDetails.filledIndices then
                                                     CellEnterStart
 
                                                 else
@@ -314,7 +314,7 @@ view model =
                                         )
 
                                     EnteringTransition ->
-                                        ( anim.context.filledGrid
+                                        ( anim.moveDetails.filledGrid
                                         , always CellStatic
                                         )
                           in
