@@ -98,6 +98,7 @@ type SettledState
 
 type alias MoveAnimation =
     { settledState : SettledState
+    , initialGrid : Grid Game.Cell
     , info : Game.Info
     , context : Game.MoveDetails
     , transitionSteps : TransitionSteps MoveTransition
@@ -182,6 +183,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = Selecting nextGame
+                                , initialGrid = (Game.info game).grid
                                 , info = Game.info nextGame
                                 , context = ctx
                                 , transitionSteps = transitionSteps
@@ -196,6 +198,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = Over info
+                                , initialGrid = (Game.info game).grid
                                 , info = info
                                 , context = ctx
                                 , transitionSteps = transitionSteps
