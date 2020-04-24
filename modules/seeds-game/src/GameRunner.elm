@@ -9,6 +9,8 @@ import Html.Attributes exposing (autofocus, class, style)
 import Html.Events exposing (onClick)
 import List.Extra
 import PointerEvents as PE
+import Process
+import Task
 
 
 updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
@@ -53,8 +55,27 @@ updateSelection idx wasSelected game =
 
 type Model
     = Selecting Game.Model
-    | AnimatingMove Game.MoveContext Game.Model
+    | AnimatingMove MoveAnimation
     | Over Game.Info
+
+
+type AfterMoveModel
+    = AfterMoveSelecting Game.Model
+    | AfterMoveOver Game.Info
+
+
+type alias MoveAnimation =
+    { afterMoveModel : AfterMoveModel
+    , info : Game.Info
+    , context : Game.MoveContext
+    , transitionState : MoveTransition
+    }
+
+
+type MoveTransition
+    = LeavingFallingTransition
+    | EnteringStartTransition
+    | EnteringTransition
 
 
 type alias Flags =
@@ -77,6 +98,7 @@ type Msg
     | PlayAnother
     | CollectSelection
     | ToggleSelection GI Bool
+    | StepMoveAnimation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -108,17 +130,49 @@ update message model =
         CollectSelection ->
             case model of
                 Selecting game ->
-                    ( case Game.makeMove game of
+                    case Game.makeMove game of
                         Game.InvalidMove ->
-                            model
+                            ( model, Cmd.none )
 
-                        Game.NextState ctx ng ->
-                            AnimatingMove ctx ng
+                        Game.NextState ctx nextGame ->
+                            ( AnimatingMove
+                                { afterMoveModel = AfterMoveSelecting nextGame
+                                , info = Game.info game
+                                , context = ctx
+                                , transitionState = LeavingFallingTransition
+                                }
+                            , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
+                            )
 
                         Game.GameOver _ info ->
-                            Over info
-                    , Cmd.none
-                    )
+                            ( Over info, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        StepMoveAnimation ->
+            case model of
+                AnimatingMove anim ->
+                    case anim.transitionState of
+                        LeavingFallingTransition ->
+                            ( AnimatingMove { anim | transitionState = EnteringStartTransition }
+                            , Process.sleep 16 |> Task.perform (always StepMoveAnimation)
+                            )
+
+                        EnteringStartTransition ->
+                            ( AnimatingMove { anim | transitionState = EnteringStartTransition }
+                            , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
+                            )
+
+                        EnteringTransition ->
+                            ( case anim.afterMoveModel of
+                                AfterMoveSelecting game ->
+                                    Selecting game
+
+                                AfterMoveOver info ->
+                                    Over info
+                            , Cmd.none
+                            )
 
                 _ ->
                     ( model, Cmd.none )
@@ -155,7 +209,7 @@ view model =
                             ]
                         ]
 
-                    AnimatingMove nextGridWithContext game ->
+                    AnimatingMove anim ->
                         []
 
                     Over info ->
