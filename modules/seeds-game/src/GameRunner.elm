@@ -173,7 +173,7 @@ update message model =
                                 ( transitionSteps, cmd ) =
                                     initTS StepMoveAnimation
                                         ( LeavingTransition, 1000 )
-                                        [ ( FallingTransition, 1000 )
+                                        [ ( EnteringStartTransition, 20 )
                                         , ( EnteringTransition, 1000 )
                                         ]
                             in
