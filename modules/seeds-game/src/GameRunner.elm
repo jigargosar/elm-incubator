@@ -283,16 +283,13 @@ view model =
                                                     if List.member idx collectedIndices then
                                                         CellLeaving
 
-                                                    else if fallingToIdxOf idx /= Nothing then
+                                                    else
                                                         case fallingToIdxOf idx of
                                                             Just to ->
                                                                 CellFallingTo to
 
                                                             Nothing ->
                                                                 CellStatic
-
-                                                    else
-                                                        CellStatic
                                                 }
                                           in
                                           toCellViewModel_
