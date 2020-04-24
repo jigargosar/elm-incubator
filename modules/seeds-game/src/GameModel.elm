@@ -15,7 +15,6 @@ module GameModel exposing
 
 import Basics.Extra exposing (atLeast, swap)
 import Dict exposing (Dict)
-import Dict.Extra
 import Grid exposing (GI, Grid)
 import List.Extra
 import Random
@@ -196,8 +195,16 @@ fillEmptyCells grid =
                             Nothing
                     )
 
+        cellGenerator =
+            Random.uniform Water [ Seed ]
+
         _ =
-            Dict.Extra.frequencies
+            Random.list (List.length emptyIndices) cellGenerator
+                |> Random.map
+                    (\cells ->
+                        List.map2 Tuple.pair emptyIndices cells
+                            |> Dict.fromList
+                    )
     in
     emptyIndices
         |> Random.Extra.traverse
