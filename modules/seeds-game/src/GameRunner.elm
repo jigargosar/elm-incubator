@@ -100,7 +100,7 @@ type alias MoveAnimation =
     { settledState : SettledState
     , info : Game.Info
     , context : Game.MoveContext
-    , transitionState : MoveTransition
+    , transitionSteps : TransitionSteps MoveTransition
     }
 
 
@@ -168,13 +168,21 @@ update message model =
                             ( model, Cmd.none )
 
                         Game.NextState ctx nextGame ->
+                            let
+                                ( ts, cmd ) =
+                                    initTS StepMoveAnimation
+                                        ( LeavingTransition, 1000 )
+                                        [ ( FallingTransition, 1000 )
+                                        , ( EnteringTransition, 1000 )
+                                        ]
+                            in
                             ( AnimatingMove
                                 { settledState = Selecting nextGame
                                 , info = Game.info game
                                 , context = ctx
-                                , transitionState = LeavingTransition
+                                , transitionSteps = ts
                                 }
-                            , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
+                            , cmd
                             )
 
                         Game.GameOver _ info ->
@@ -186,18 +194,13 @@ update message model =
         StepMoveAnimation ->
             case model of
                 AnimatingMove anim ->
-                    case anim.transitionState of
-                        LeavingTransition ->
-                            ( AnimatingMove { anim | transitionState = FallingTransition }
-                            , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
+                    case stepTS StepMoveAnimation anim.transitionSteps of
+                        Just ( ts, cmd ) ->
+                            ( AnimatingMove { anim | transitionSteps = ts }
+                            , cmd
                             )
 
-                        FallingTransition ->
-                            ( AnimatingMove { anim | transitionState = EnteringTransition }
-                            , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
-                            )
-
-                        EnteringTransition ->
+                        Nothing ->
                             ( Settled anim.settledState
                             , Cmd.none
                             )
@@ -242,10 +245,10 @@ view model =
                         ]
 
                     AnimatingMove anim ->
-                        [ viewTitle (Debug.toString anim.transitionState)
+                        [ viewTitle (Debug.toString (currentTS anim.transitionSteps))
                         , let
                             info =
-                                case anim.transitionState of
+                                case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
                                         { movesLeft = anim.info.movesLeft
                                         , targetSeeds = anim.info.targetSeeds
