@@ -314,7 +314,7 @@ viewGameInfo i =
 viewGameTable : { a | selectionStack : List GI, grid : Grid Game.Cell } -> HM
 viewGameTable info =
     let
-        toCellViewModel : GI -> Game.Cell -> CellViewModel {}
+        toCellViewModel : GI -> Game.Cell -> CellViewModel
         toCellViewModel idx cell =
             let
                 selIdx =
@@ -331,22 +331,21 @@ viewGameTable info =
             , cell = cell
             }
 
-        gridViewModel : Grid (CellViewModel {})
+        gridViewModel : Grid CellViewModel
         gridViewModel =
             info.grid |> Grid.map toCellViewModel
     in
     viewGridAsTable viewCell gridViewModel
 
 
-type alias CellViewModel a =
-    { a
-        | selectionIdx : Maybe Int
-        , selectionMsg : Msg
-        , cell : Game.Cell
+type alias CellViewModel =
+    { selectionIdx : Maybe Int
+    , selectionMsg : Msg
+    , cell : Game.Cell
     }
 
 
-viewCell : GI -> CellViewModel a -> HM
+viewCell : GI -> CellViewModel -> HM
 viewCell _ vm =
     div
         [ PE.onPrimaryEnterAndDown vm.selectionMsg
