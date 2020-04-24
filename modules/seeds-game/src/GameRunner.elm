@@ -63,13 +63,8 @@ type SettledState
     | Over Game.Info
 
 
-type AfterMoveModel
-    = AfterMoveSelecting Game.Model
-    | AfterMoveOver Game.Info
-
-
 type alias MoveAnimation =
-    { afterMoveModel : AfterMoveModel
+    { settledState : SettledState
     , info : Game.Info
     , context : Game.MoveContext
     , transitionState : MoveTransition
@@ -141,7 +136,7 @@ update message model =
 
                         Game.NextState ctx nextGame ->
                             ( AnimatingMove
-                                { afterMoveModel = AfterMoveSelecting nextGame
+                                { settledState = Selecting nextGame
                                 , info = Game.info game
                                 , context = ctx
                                 , transitionState = LeavingTransition
@@ -170,14 +165,7 @@ update message model =
                             )
 
                         EnteringTransition ->
-                            ( (case anim.afterMoveModel of
-                                AfterMoveSelecting game ->
-                                    Selecting game
-
-                                AfterMoveOver info ->
-                                    Over info
-                              )
-                                |> Settled
+                            ( Settled anim.settledState
                             , Cmd.none
                             )
 
