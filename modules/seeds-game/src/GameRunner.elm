@@ -257,6 +257,10 @@ view model =
                                           , grid = anim.context.beforeGrid
                                           }
                                         , let
+                                            fallingToIdxOf idx =
+                                                List.Extra.find (Tuple.first >> (==) idx) anim.context.fallenIndices
+                                                    |> Maybe.map Tuple.second
+
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
                                             toCellViewModel_ idx cell =
                                                 { selectionIdx = Nothing
@@ -265,6 +269,14 @@ view model =
                                                 , cellState =
                                                     if List.member ( idx, cell ) anim.context.collectedEntries then
                                                         CellLeaving
+
+                                                    else if fallingToIdxOf idx /= Nothing then
+                                                        case fallingToIdxOf idx of
+                                                            Just to ->
+                                                                CellFallingTo to
+
+                                                            Nothing ->
+                                                                CellStatic
 
                                                     else
                                                         CellStatic
@@ -410,6 +422,7 @@ type CellState
     = CellStatic
     | CellSelected
     | CellLeaving
+    | CellFallingTo GI
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -423,7 +436,7 @@ maybeAttr attrFunc maybeValue =
 
 
 viewCell : GI -> CellViewModel -> HM
-viewCell _ vm =
+viewCell idx vm =
     let
         defaultTransitionStyle =
             style "transition" "transform 500ms"
@@ -441,6 +454,11 @@ viewCell _ vm =
                     ]
 
                 CellLeaving ->
+                    [ style "transform" "translate(0,-300px) scale(0)"
+                    , defaultTransitionStyle
+                    ]
+
+                CellFallingTo toIdx ->
                     [ style "transform" "translate(0,-300px) scale(0)"
                     , defaultTransitionStyle
                     ]
