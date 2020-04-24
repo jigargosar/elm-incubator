@@ -76,8 +76,8 @@ collectAndGenerateNextGrid collectIndices grid =
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collectedGrid
 
-        context : Grid Cell -> MoveDetails
-        context filledGrid =
+        initMoveDetails : Grid Cell -> MoveDetails
+        initMoveDetails filledGrid =
             let
                 collectedCells =
                     List.map Tuple.second collectedEntries
@@ -110,7 +110,7 @@ collectAndGenerateNextGrid collectIndices grid =
     in
     fallenGrid
         |> fillEmptyCells
-        |> Random.map context
+        |> Random.map initMoveDetails
 
 
 type alias Entry =
