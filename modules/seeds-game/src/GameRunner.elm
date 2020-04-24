@@ -262,15 +262,15 @@ view model =
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.transitionSteps))
                         , let
-                            toCellVMHelp : (GI -> Game.Cell -> CellState) -> GI -> Game.Cell -> CellViewModel
+                            toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
                             toCellVMHelp func idx cell =
                                 { selectionIdx = Nothing
                                 , selectionMsg = Nothing
                                 , cell = cell
-                                , cellState = func idx cell
+                                , cellState = func idx
                                 }
 
-                            ( grid, toCellViewModel ) =
+                            ( grid, idxToCS ) =
                                 case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
                                         ( anim.context.beforeGrid
@@ -293,16 +293,8 @@ view model =
 
                                                         Nothing ->
                                                             CellStatic
-
-                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
-                                            toCellViewModel_ idx cell =
-                                                { selectionIdx = Nothing
-                                                , selectionMsg = Nothing
-                                                , cell = cell
-                                                , cellState = idxToCellState idx
-                                                }
                                           in
-                                          toCellViewModel_
+                                          idxToCellState
                                         )
 
                                     EnteringStartTransition ->
@@ -314,30 +306,13 @@ view model =
 
                                                 else
                                                     CellStaticNoTransition
-
-                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
-                                            toCellViewModel_ idx cell =
-                                                { selectionIdx = Nothing
-                                                , selectionMsg = Nothing
-                                                , cell = cell
-                                                , cellState = idxToCellState idx
-                                                }
                                           in
-                                          toCellViewModel_
+                                          idxToCellState
                                         )
 
                                     EnteringTransition ->
                                         ( anim.context.filledGrid
-                                        , let
-                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
-                                            toCellViewModel_ _ cell =
-                                                { selectionIdx = Nothing
-                                                , selectionMsg = Nothing
-                                                , cell = cell
-                                                , cellState = CellStatic
-                                                }
-                                          in
-                                          toCellViewModel_
+                                        , always CellStatic
                                         )
                           in
                           div []
@@ -350,7 +325,7 @@ view model =
                                         }
                                     )
                                 ]
-                            , viewCellGridTable (Grid.map toCellViewModel grid)
+                            , viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
                             ]
                         ]
                )
