@@ -267,7 +267,7 @@ view model =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState =
+                                                , cellStyle =
                                                     if List.member ( idx, cell ) anim.context.collectedEntries then
                                                         CellLeaving
 
@@ -299,7 +299,7 @@ view model =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState = CellStatic
+                                                , cellStyle = CellStatic
                                                 }
                                           in
                                           toCellViewModel_
@@ -318,7 +318,7 @@ view model =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState =
+                                                , cellStyle =
                                                     if List.member idx anim.context.filledIndices then
                                                         CellEnterStart
 
@@ -342,7 +342,7 @@ view model =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState = CellStatic
+                                                , cellStyle = CellStatic
                                                 }
                                           in
                                           toCellViewModel_
@@ -420,7 +420,7 @@ viewGameTable info =
             { selectionIdx = selIdx
             , selectionMsg = Just selectionMsg
             , cell = cell
-            , cellState =
+            , cellStyle =
                 if isSelected then
                     CellSelected
 
@@ -439,11 +439,11 @@ type alias CellViewModel =
     { selectionIdx : Maybe Int
     , selectionMsg : Maybe Msg
     , cell : Game.Cell
-    , cellState : CellState
+    , cellStyle : CellStyle
     }
 
 
-type CellState
+type CellStyle
     = CellStatic
     | CellSelected
     | CellLeaving
@@ -469,7 +469,7 @@ viewCell idx vm =
             style "transition" "transform 500ms"
 
         animProps =
-            case vm.cellState of
+            case vm.cellStyle of
                 CellStatic ->
                     [ style "transform" "translate(0,0) scale(1.0)"
                     , defaultTransitionStyle
