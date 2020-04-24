@@ -271,13 +271,16 @@ view model =
                                                 List.Extra.find (Tuple.first >> (==) idx) anim.context.fallenIndices
                                                     |> Maybe.map Tuple.second
 
+                                            collectedIndices =
+                                                List.map Tuple.first anim.context.collectedEntries
+
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
                                             toCellViewModel_ idx cell =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
                                                 , cellState =
-                                                    if List.member ( idx, cell ) anim.context.collectedEntries then
+                                                    if List.member idx collectedIndices then
                                                         CellLeaving
 
                                                     else if fallingToIdxOf idx /= Nothing then
