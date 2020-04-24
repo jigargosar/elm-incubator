@@ -207,7 +207,9 @@ fillEmptyCells grid =
                                 List.map2 Tuple.pair emptyIndices cells
                                     |> Dict.fromList
                         in
-                        Grid.map (\i c -> Dict.get i generatedCellsLookup |> Maybe.withDefault c) grid
+                        { indexSet = Set.fromList emptyIndices
+                        , grid = Grid.map (\i c -> Dict.get i generatedCellsLookup |> Maybe.withDefault c) grid
+                        }
                     )
     in
     emptyIndices
