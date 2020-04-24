@@ -182,16 +182,20 @@ computeFallenGrid grid0 =
 
 fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
 fillEmptyCells grid =
-    Grid.toListBy
-        (\i c ->
-            if c == Empty then
-                Just i
+    let
+        emptyIndices =
+            Grid.toListBy
+                (\i c ->
+                    if c == Empty then
+                        Just i
 
-            else
-                Nothing
-        )
-        grid
-        |> List.filterMap identity
+                    else
+                        Nothing
+                )
+                grid
+                |> List.filterMap identity
+    in
+    emptyIndices
         |> Random.Extra.traverse
             (\i ->
                 Random.uniform Water [ Seed ]
