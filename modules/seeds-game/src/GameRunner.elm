@@ -273,7 +273,40 @@ view model =
                                         , grid = anim.context.filledGrid
                                         }
                           in
-                          viewGameInfo info
+                          div []
+                            [ div [ class "pa3" ]
+                                [ text
+                                    (Debug.toString
+                                        { movesLeft = info.movesLeft
+                                        , targetSeeds = info.targetSeeds
+                                        , targetWater = info.targetWater
+                                        }
+                                    )
+                                ]
+                            , let
+                                toCellViewModel : GI -> Game.Cell -> CellViewModel
+                                toCellViewModel idx cell =
+                                    let
+                                        selIdx =
+                                            List.reverse info.selectionStack |> List.Extra.elemIndex idx
+
+                                        isSelected =
+                                            selIdx /= Nothing
+
+                                        selectionMsg =
+                                            ToggleSelection idx isSelected
+                                    in
+                                    { selectionIdx = selIdx
+                                    , selectionMsg = selectionMsg
+                                    , cell = cell
+                                    }
+
+                                gridViewModel : Grid CellViewModel
+                                gridViewModel =
+                                    info.grid |> Grid.map toCellViewModel
+                              in
+                              viewGridAsTable viewCell gridViewModel
+                            ]
                         ]
                )
         )
