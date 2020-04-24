@@ -15,6 +15,7 @@ module GameModel exposing
 
 import Basics.Extra exposing (atLeast, swap)
 import Dict exposing (Dict)
+import Dict.Extra
 import Grid exposing (GI, Grid)
 import List.Extra
 import Random
@@ -184,16 +185,19 @@ fillEmptyCells : Grid Cell -> Random.Generator (Grid Cell)
 fillEmptyCells grid =
     let
         emptyIndices =
-            Grid.toListBy
-                (\i c ->
-                    if c == Empty then
-                        Just i
+            grid
+                |> Grid.toList
+                |> List.filterMap
+                    (\( i, c ) ->
+                        if c == Empty then
+                            Just i
 
-                    else
-                        Nothing
-                )
-                grid
-                |> List.filterMap identity
+                        else
+                            Nothing
+                    )
+
+        _ =
+            Dict.Extra.frequencies
     in
     emptyIndices
         |> Random.Extra.traverse
