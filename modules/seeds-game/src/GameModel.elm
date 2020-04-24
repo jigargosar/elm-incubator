@@ -281,10 +281,6 @@ selectionPop_ (Selection stack) =
             Just (Selection prevStack)
 
 
-
--- SELECTION HELPERS
-
-
 computeValidSelectionIndices : Grid Cell -> Selection -> List GI
 computeValidSelectionIndices grid (Selection selectionStack) =
     case selectionStack of
@@ -432,24 +428,24 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMove : Model -> MoveResult
-makeMove (Model gm) =
-    case selectionToCollectibleIndices gm.selection of
+makeMove (Model state) =
+    case selectionToCollectibleIndices state.selection of
         Nothing ->
             InvalidMove
 
         Just collectibleIndices ->
             let
-                ( md, nextRandom ) =
-                    Random.step (collectAndGenerateNextGrid collectibleIndices gm.grid) gm.random
+                ( moveDetails, nextRandom ) =
+                    Random.step (collectAndGenerateNextGrid collectibleIndices state.grid) state.random
 
                 nextTargetSeeds =
-                    (gm.targetSeeds - md.collected.seeds) |> atLeast 0
+                    (state.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
 
                 nextTargetWater =
-                    (gm.targetWater - md.collected.water) |> atLeast 0
+                    (state.targetWater - moveDetails.collected.water) |> atLeast 0
 
                 nextMovesLeft =
-                    (gm.movesLeft - 1) |> atLeast 0
+                    (state.movesLeft - 1) |> atLeast 0
 
                 isGameWon =
                     List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
@@ -458,21 +454,21 @@ makeMove (Model gm) =
                     not isGameWon && nextMovesLeft == 0
             in
             if isGameWon || isGameLost then
-                GameOver md
+                GameOver moveDetails
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = md.generated.grid
+                    , grid = moveDetails.generated.grid
                     , selectionStack = []
                     }
 
             else
-                NextState md
+                NextState moveDetails
                     (Model
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
                         , movesLeft = nextMovesLeft
-                        , grid = md.generated.grid
+                        , grid = moveDetails.generated.grid
                         , random = nextRandom
                         , selection = emptySelection
                         }
