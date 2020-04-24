@@ -77,6 +77,15 @@ type MoveTransition
     | EnteringTransition
 
 
+type TransitionSteps
+    = TransitionSteps
+
+
+initTS : TransitionSteps
+initTS =
+    Debug.todo "impl"
+
+
 type alias Flags =
     ()
 
