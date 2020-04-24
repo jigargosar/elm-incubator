@@ -106,7 +106,6 @@ type alias MoveAnimation =
 
 type MoveTransition
     = LeavingTransition
-    | FallingTransition
     | EnteringStartTransition
     | EnteringTransition
 
@@ -296,25 +295,6 @@ view model =
 
                                                     else
                                                         CellStatic
-                                                }
-                                          in
-                                          toCellViewModel_
-                                        )
-
-                                    FallingTransition ->
-                                        ( { movesLeft = anim.info.movesLeft
-                                          , targetSeeds = anim.info.targetSeeds
-                                          , targetWater = anim.info.targetWater
-                                          , selectionStack = []
-                                          , grid = anim.context.fallenGrid
-                                          }
-                                        , let
-                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
-                                            toCellViewModel_ _ cell =
-                                                { selectionIdx = Nothing
-                                                , selectionMsg = Nothing
-                                                , cell = cell
-                                                , cellState = CellStatic
                                                 }
                                           in
                                           toCellViewModel_
