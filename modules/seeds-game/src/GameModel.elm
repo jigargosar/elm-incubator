@@ -75,6 +75,7 @@ collectAndGenerateNextGrid collectIndices grid =
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collectedGrid
 
+        initMoveDetails : { grid : Grid Cell, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
             let
                 collectedCells =
