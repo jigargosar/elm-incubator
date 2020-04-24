@@ -378,7 +378,12 @@ viewGameTable info =
             { selectionIdx = selIdx
             , selectionMsg = Just selectionMsg
             , cell = cell
-            , cellState = CellStatic
+            , cellState =
+                if isSelected then
+                    CellSelected
+
+                else
+                    CellStatic
             }
 
         gridViewModel : Grid CellViewModel
@@ -398,6 +403,7 @@ type alias CellViewModel =
 
 type CellState
     = CellStatic
+    | CellSelected
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -412,33 +418,37 @@ maybeAttr attrFunc maybeValue =
 
 viewCell : GI -> CellViewModel -> HM
 viewCell _ vm =
+    let
+        animProps =
+            case vm.cellState of
+                CellStatic ->
+                    [ style "transform" "scale(1.0)" ]
+
+                CellSelected ->
+                    [ style "transform" "scale(0.8)" ]
+    in
     div
-        [ maybeAttr PE.onPrimaryEnterAndDown vm.selectionMsg
-        , maybeAttr PE.onPrimaryDown vm.selectionMsg
-        , class "br3 w3 h3 flex"
-        , style "transition" "transform 300ms"
-        , style "transform"
-            (if vm.selectionIdx == Nothing then
-                "scale(1.0)"
+        (animProps
+            ++ [ maybeAttr PE.onPrimaryEnterAndDown vm.selectionMsg
+               , maybeAttr PE.onPrimaryDown vm.selectionMsg
+               , class "br3 w3 h3 flex"
+               , style "transition" "transform 300ms"
+               , class
+                    (case vm.cell of
+                        Game.Water ->
+                            "bg-light-blue"
 
-             else
-                "scale(0.8)"
-            )
-        , class
-            (case vm.cell of
-                Game.Water ->
-                    "bg-light-blue"
+                        Game.Wall ->
+                            "bg-light-purple white"
 
-                Game.Wall ->
-                    "bg-light-purple white"
+                        Game.Empty ->
+                            ""
 
-                Game.Empty ->
-                    ""
-
-                Game.Seed ->
-                    "bg-light-pink "
-            )
-        ]
+                        Game.Seed ->
+                            "bg-light-pink "
+                    )
+               ]
+        )
         [ text
             (vm.selectionIdx
                 |> Maybe.map String.fromInt
