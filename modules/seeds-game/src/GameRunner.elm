@@ -262,7 +262,7 @@ view model =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState = CellStatic
+                                                , cellState = CellLeaving
                                                 }
                                           in
                                           toCellViewModel_
@@ -404,6 +404,7 @@ type alias CellViewModel =
 type CellState
     = CellStatic
     | CellSelected
+    | CellLeaving
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -425,12 +426,17 @@ viewCell _ vm =
         animProps =
             case vm.cellState of
                 CellStatic ->
-                    [ style "transform" "scale(1.0)"
+                    [ style "transform" "translate(0,0) scale(1.0)"
                     , defaultTransitionStyle
                     ]
 
                 CellSelected ->
-                    [ style "transform" "scale(0.8)"
+                    [ style "transform" "translate(0,0) scale(0.8)"
+                    , defaultTransitionStyle
+                    ]
+
+                CellLeaving ->
+                    [ style "transform" "translate(0,-300px) scale(0)"
                     , defaultTransitionStyle
                     ]
     in
