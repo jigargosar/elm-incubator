@@ -179,7 +179,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = Selecting nextGame
-                                , info = Game.info game
+                                , info = Game.info nextGame
                                 , context = ctx
                                 , transitionSteps = transitionSteps
                                 }
