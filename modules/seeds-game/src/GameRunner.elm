@@ -225,7 +225,15 @@ type alias HM =
     Html Msg
 
 
-viewGameInfo : Game.Info -> HM
+viewGameInfo :
+    { a
+        | movesLeft : Int
+        , targetSeeds : Int
+        , targetWater : Int
+        , selectionStack : List GI
+        , grid : Grid Game.Cell
+    }
+    -> HM
 viewGameInfo i =
     div []
         [ div [ class "pa3" ]
