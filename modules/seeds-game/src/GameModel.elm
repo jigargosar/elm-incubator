@@ -61,9 +61,7 @@ initCellGrid =
 
 type alias MoveDetails =
     { collected : { indices : List GI, water : Int, seeds : Int }
-    , collectedGrid : Grid Cell
     , fallenIndices : List ( GI, GI )
-    , fallenGrid : Grid Cell
     , filledIndices : List GI
     , filledGrid : Grid Cell
     }
@@ -92,9 +90,7 @@ collectAndGenerateNextGrid collectIndices grid =
                 , water = List.Extra.count (eq Water) collectedCells
                 , seeds = List.Extra.count (eq Seed) collectedCells
                 }
-            , collectedGrid = collectedGrid
             , fallenIndices = fallenIndices
-            , fallenGrid = fallenGrid
             , filledIndices =
                 Grid.toListBy
                     (\i c ->
