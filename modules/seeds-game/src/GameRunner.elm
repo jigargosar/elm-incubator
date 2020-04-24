@@ -268,7 +268,6 @@ view model =
                                         ( { movesLeft = anim.info.movesLeft
                                           , targetSeeds = anim.info.targetSeeds
                                           , targetWater = anim.info.targetWater
-                                          , selectionStack = []
                                           , grid = anim.context.beforeGrid
                                           }
                                         , let
@@ -304,7 +303,6 @@ view model =
                                         ( { movesLeft = anim.info.movesLeft
                                           , targetSeeds = anim.info.targetSeeds
                                           , targetWater = anim.info.targetWater
-                                          , selectionStack = []
                                           , grid = anim.context.filledGrid
                                           }
                                         , let
@@ -328,7 +326,6 @@ view model =
                                         ( { movesLeft = anim.info.movesLeft
                                           , targetSeeds = anim.info.targetSeeds
                                           , targetWater = anim.info.targetWater
-                                          , selectionStack = []
                                           , grid = anim.context.filledGrid
                                           }
                                         , let
