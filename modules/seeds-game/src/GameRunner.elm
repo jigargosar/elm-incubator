@@ -101,7 +101,7 @@ type alias MoveAnimation =
     , initialGrid : Grid Game.Cell
     , info : Game.Info
     , moveDetails : Game.MoveDetails
-    , transitionSteps : TransitionSteps MoveTransition
+    , steps : TransitionSteps MoveTransition
     }
 
 
@@ -186,7 +186,7 @@ update message model =
                                 , initialGrid = (Game.info game).grid
                                 , info = Game.info nextGame
                                 , moveDetails = ctx
-                                , transitionSteps = transitionSteps
+                                , steps = transitionSteps
                                 }
                             , cmd
                             )
@@ -201,7 +201,7 @@ update message model =
                                 , initialGrid = (Game.info game).grid
                                 , info = info
                                 , moveDetails = ctx
-                                , transitionSteps = transitionSteps
+                                , steps = transitionSteps
                                 }
                             , cmd
                             )
@@ -212,9 +212,9 @@ update message model =
         StepMoveAnimation ->
             case model of
                 AnimatingMove anim ->
-                    case stepTS StepMoveAnimation anim.transitionSteps of
+                    case stepTS StepMoveAnimation anim.steps of
                         Just ( transitionSteps, cmd ) ->
-                            ( AnimatingMove { anim | transitionSteps = transitionSteps }
+                            ( AnimatingMove { anim | steps = transitionSteps }
                             , cmd
                             )
 
@@ -263,7 +263,7 @@ view model =
                         ]
 
                     AnimatingMove anim ->
-                        [ viewTitle (Debug.toString (currentTS anim.transitionSteps))
+                        [ viewTitle (Debug.toString (currentTS anim.steps))
                         , let
                             toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
                             toCellVMHelp func idx cell =
@@ -274,7 +274,7 @@ view model =
                                 }
 
                             ( grid, idxToCS ) =
-                                case currentTS anim.transitionSteps |> Tuple.first of
+                                case currentTS anim.steps |> Tuple.first of
                                     LeavingTransition ->
                                         ( anim.moveDetails.beforeGrid
                                         , let
