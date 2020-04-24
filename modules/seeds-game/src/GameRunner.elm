@@ -338,12 +338,7 @@ view model =
                                         }
                                     )
                                 ]
-                            , let
-                                gridViewModel : Grid CellViewModel
-                                gridViewModel =
-                                    grid |> Grid.map toCellViewModel
-                              in
-                              viewGridAsTable viewCell gridViewModel
+                            , viewGridAsTable viewCell (Grid.map toCellViewModel grid)
                             ]
                         ]
                )
