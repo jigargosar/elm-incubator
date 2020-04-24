@@ -284,7 +284,7 @@ view model =
                                                     CellLeaving
 
                                                 else
-                                                    case Dict.get idx anim.moveDetails.fallenIndices of
+                                                    case Dict.get idx anim.moveDetails.fallenToDict of
                                                         Just to ->
                                                             CellFallingTo to
 
