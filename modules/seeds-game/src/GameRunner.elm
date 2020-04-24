@@ -299,7 +299,7 @@ view model =
                                         ( anim.moveDetails.filledGrid
                                         , let
                                             idxToCellState idx =
-                                                if List.member idx anim.moveDetails.filledIndices then
+                                                if Set.member idx anim.moveDetails.generated.indexSet then
                                                     CellEnterStart
 
                                                 else

@@ -64,7 +64,6 @@ type alias MoveDetails =
     { collected : { indexSet : Set GI, water : Int, seeds : Int }
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : Grid Cell }
-    , filledIndices : List GI
     , filledGrid : Grid Cell
     }
 
@@ -108,17 +107,6 @@ collectAndGenerateNextGrid collectIndices grid =
                         |> Set.fromList
                 , grid = filledGrid
                 }
-            , filledIndices =
-                Grid.toListBy
-                    (\i c ->
-                        if c == Empty then
-                            Just i
-
-                        else
-                            Nothing
-                    )
-                    fallenGrid
-                    |> List.filterMap identity
             , filledGrid = filledGrid
             }
     in
