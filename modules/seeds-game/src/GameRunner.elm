@@ -276,7 +276,7 @@ view model =
                             ( grid, idxToCS ) =
                                 case currentTS anim.steps |> Tuple.first of
                                     LeavingTransition ->
-                                        ( anim.moveDetails.beforeGrid
+                                        ( anim.initialGrid
                                         , let
                                             fallingToIdxOf idx =
                                                 List.Extra.find (Tuple.first >> (==) idx) anim.moveDetails.fallenIndices
