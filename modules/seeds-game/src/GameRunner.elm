@@ -314,11 +314,16 @@ view model =
                                           }
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
-                                            toCellViewModel_ _ cell =
+                                            toCellViewModel_ idx cell =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState = CellStatic
+                                                , cellState =
+                                                    if List.member idx anim.context.filledIndices then
+                                                        CellEnterStart
+
+                                                    else
+                                                        CellStaticNoTransition
                                                 }
                                           in
                                           toCellViewModel_
@@ -444,6 +449,7 @@ type CellState
     | CellLeaving
     | CellFallingTo GI
     | CellEnterStart
+    | CellStaticNoTransition
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -482,12 +488,11 @@ viewCell idx vm =
                 CellFallingTo toIdx ->
                     let
                         dyFactor =
-                            Tuple.second toIdx
-                                - Tuple.second idx
+                            (Tuple.second toIdx - Tuple.second idx)
                                 |> String.fromInt
 
                         translateStr =
-                            "translate(0, calc(" ++ dyFactor ++ " * 4rem) )"
+                            "translate(0, calc( " ++ dyFactor ++ " * 4.25rem ) )"
                     in
                     [ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
                     , defaultTransitionStyle
@@ -497,12 +502,17 @@ viewCell idx vm =
                     [ style "transform" "translate(0,-300px) scale(0)"
                     , style "transition" "none"
                     ]
+
+                CellStaticNoTransition ->
+                    [ style "transform" "translate(0,0) scale(1.0)"
+                    , style "transition" "none"
+                    ]
     in
     div
         (animProps
             ++ [ maybeAttr PE.onPrimaryEnterAndDown vm.selectionMsg
                , maybeAttr PE.onPrimaryDown vm.selectionMsg
-               , class "br3 w3 h3 flex"
+               , class "ma1 br3 w3 h3 flex"
                , class
                     (case vm.cell of
                         Game.Water ->
@@ -538,7 +548,7 @@ viewGridAsTable renderCell grid =
                 |> List.map (uncurry (::))
 
         renderCell_ ( gi, a ) =
-            Html.td [] [ renderCell gi a ]
+            Html.td [ class "pa0" ] [ renderCell gi a ]
 
         viewGridRow : Int -> List ( GI, a ) -> HM
         viewGridRow y entry =
@@ -564,7 +574,7 @@ viewGridAsTable renderCell grid =
                     :: List.map viewXTH (rangeLen gridWidth)
                 )
     in
-    table [ class "pa3" ]
+    table [ class "pa3", style "border-collapse" "collapse" ]
         (gridHeaderRow rowWidth :: List.indexedMap viewGridRow rows)
 
 

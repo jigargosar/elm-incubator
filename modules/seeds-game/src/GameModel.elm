@@ -65,6 +65,7 @@ type alias MoveContext =
     , collectedGrid : Grid Cell
     , fallenIndices : List ( GI, GI )
     , fallenGrid : Grid Cell
+    , filledIndices : List GI
     , filledGrid : Grid Cell
     }
 
@@ -85,6 +86,17 @@ collectAndGenerateNextGrid collectIndices grid =
             , collectedGrid = collectedGrid
             , fallenIndices = fallenIndices
             , fallenGrid = fallenGrid
+            , filledIndices =
+                Grid.toListBy
+                    (\i c ->
+                        if c == Empty then
+                            Just i
+
+                        else
+                            Nothing
+                    )
+                    fallenGrid
+                    |> List.filterMap identity
             , filledGrid = filledGrid
             }
     in
