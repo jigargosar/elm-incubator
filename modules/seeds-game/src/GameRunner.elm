@@ -314,6 +314,7 @@ viewGameInfo i =
 viewGameTable : { a | selectionStack : List GI, grid : Grid Game.Cell } -> HM
 viewGameTable info =
     let
+        toCellViewModel : GI -> Game.Cell -> CellViewModel {}
         toCellViewModel idx cell =
             let
                 selIdx =
@@ -330,6 +331,7 @@ viewGameTable info =
             , cell = cell
             }
 
+        gridViewModel : Grid (CellViewModel {})
         gridViewModel =
             info.grid |> Grid.map toCellViewModel
     in
