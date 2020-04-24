@@ -165,9 +165,9 @@ update message model =
             let
                 initMoveTransitionSteps =
                     initTS StepMoveAnimation
-                        ( LeavingTransition, 1000 )
+                        ( LeavingTransition, 500 )
                         [ ( EnteringStartTransition, 20 )
-                        , ( EnteringTransition, 1000 )
+                        , ( EnteringTransition, 500 )
                         ]
             in
             case model of
