@@ -376,7 +376,7 @@ type alias State =
 init : Model
 init =
     Model
-        { movesLeft = 10
+        { movesLeft = 2
         , targetSeeds = 35
         , targetWater = 35
         , grid = initCellGrid

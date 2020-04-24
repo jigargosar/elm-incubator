@@ -162,6 +162,14 @@ update message model =
                     ( model, Cmd.none )
 
         CollectSelection ->
+            let
+                initMoveTransitionSteps =
+                    initTS StepMoveAnimation
+                        ( LeavingTransition, 1000 )
+                        [ ( EnteringStartTransition, 20 )
+                        , ( EnteringTransition, 1000 )
+                        ]
+            in
             case model of
                 Settled (Selecting game) ->
                     case Game.makeMove game of
@@ -171,11 +179,7 @@ update message model =
                         Game.NextState ctx nextGame ->
                             let
                                 ( transitionSteps, cmd ) =
-                                    initTS StepMoveAnimation
-                                        ( LeavingTransition, 1000 )
-                                        [ ( EnteringStartTransition, 20 )
-                                        , ( EnteringTransition, 1000 )
-                                        ]
+                                    initMoveTransitionSteps
                             in
                             ( AnimatingMove
                                 { settledState = Selecting nextGame
@@ -186,8 +190,19 @@ update message model =
                             , cmd
                             )
 
-                        Game.GameOver _ info ->
-                            ( Settled (Over info), Cmd.none )
+                        Game.GameOver ctx info ->
+                            let
+                                ( transitionSteps, cmd ) =
+                                    initMoveTransitionSteps
+                            in
+                            ( AnimatingMove
+                                { settledState = Over info
+                                , info = info
+                                , context = ctx
+                                , transitionSteps = transitionSteps
+                                }
+                            , cmd
+                            )
 
                 _ ->
                     ( model, Cmd.none )
