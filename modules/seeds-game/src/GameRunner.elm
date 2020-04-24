@@ -52,7 +52,7 @@ updateSelection idx wasSelected game =
 
 
 
--- TRANSITION STATE HELPER
+-- TRANSITION STEPS
 
 
 type TransitionSteps a
