@@ -285,20 +285,11 @@ view model =
                                 ]
                             , let
                                 toCellViewModel : GI -> Game.Cell -> CellViewModel
-                                toCellViewModel idx cell =
-                                    let
-                                        selIdx =
-                                            List.reverse info.selectionStack |> List.Extra.elemIndex idx
-
-                                        isSelected =
-                                            selIdx /= Nothing
-
-                                        selectionMsg =
-                                            ToggleSelection idx isSelected
-                                    in
-                                    { selectionIdx = selIdx
-                                    , selectionMsg = selectionMsg
+                                toCellViewModel _ cell =
+                                    { selectionIdx = Nothing
+                                    , selectionMsg = Nothing
                                     , cell = cell
+                                    , cellState = CellStatic
                                     }
 
                                 gridViewModel : Grid CellViewModel
@@ -360,8 +351,9 @@ viewGameTable info =
                     ToggleSelection idx isSelected
             in
             { selectionIdx = selIdx
-            , selectionMsg = selectionMsg
+            , selectionMsg = Just selectionMsg
             , cell = cell
+            , cellState = CellStatic
             }
 
         gridViewModel : Grid CellViewModel
@@ -373,16 +365,31 @@ viewGameTable info =
 
 type alias CellViewModel =
     { selectionIdx : Maybe Int
-    , selectionMsg : Msg
+    , selectionMsg : Maybe Msg
     , cell : Game.Cell
+    , cellState : CellState
     }
+
+
+type CellState
+    = CellStatic
+
+
+maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
+maybeAttr attrFunc maybeValue =
+    case maybeValue of
+        Just val ->
+            attrFunc val
+
+        Nothing ->
+            class ""
 
 
 viewCell : GI -> CellViewModel -> HM
 viewCell _ vm =
     div
-        [ PE.onPrimaryEnterAndDown vm.selectionMsg
-        , PE.onPrimaryDown vm.selectionMsg
+        [ maybeAttr PE.onPrimaryEnterAndDown vm.selectionMsg
+        , maybeAttr PE.onPrimaryDown vm.selectionMsg
         , class "br3 w3 h3 flex"
         , style "transition" "transform 300ms"
         , style "transform"
