@@ -60,7 +60,8 @@ initCellGrid =
 
 
 type alias MoveDetails =
-    { collectedEntries : Entries
+    { collected : { indices : List GI, water : Int, seeds : Int }
+    , collectedEntries : Entries
     , collectedGrid : Grid Cell
     , fallenIndices : List ( GI, GI )
     , fallenGrid : Grid Cell
@@ -80,7 +81,8 @@ collectAndGenerateNextGrid collectIndices grid =
 
         context : Grid Cell -> MoveDetails
         context filledGrid =
-            { collectedEntries = collectedEntries
+            { collected = { indices = [], water = 0, seeds = 0 }
+            , collectedEntries = collectedEntries
             , collectedGrid = collectedGrid
             , fallenIndices = fallenIndices
             , fallenGrid = fallenGrid
