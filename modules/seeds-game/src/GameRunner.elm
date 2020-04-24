@@ -73,8 +73,8 @@ type alias MoveAnimation =
 
 
 type MoveTransition
-    = LeavingFallingTransition
-    | EnteringStartTransition
+    = LeavingTransition
+    | FallingTransition
     | EnteringTransition
 
 
@@ -139,7 +139,7 @@ update message model =
                                 { afterMoveModel = AfterMoveSelecting nextGame
                                 , info = Game.info game
                                 , context = ctx
-                                , transitionState = LeavingFallingTransition
+                                , transitionState = LeavingTransition
                                 }
                             , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
                             )
@@ -154,12 +154,12 @@ update message model =
             case model of
                 AnimatingMove anim ->
                     case anim.transitionState of
-                        LeavingFallingTransition ->
-                            ( AnimatingMove { anim | transitionState = EnteringStartTransition }
-                            , Process.sleep 16 |> Task.perform (always StepMoveAnimation)
+                        LeavingTransition ->
+                            ( AnimatingMove { anim | transitionState = FallingTransition }
+                            , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
                             )
 
-                        EnteringStartTransition ->
+                        FallingTransition ->
                             ( AnimatingMove { anim | transitionState = EnteringTransition }
                             , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
                             )
@@ -210,7 +210,36 @@ view model =
                         ]
 
                     AnimatingMove anim ->
-                        [ div [ class "pa3 f3" ] [ text (Debug.toString anim.transitionState) ] ]
+                        [ div [ class "pa3 f3" ] [ text (Debug.toString anim.transitionState) ]
+                        , let
+                            info =
+                                case anim.transitionState of
+                                    LeavingTransition ->
+                                        { movesLeft = anim.info.movesLeft
+                                        , targetSeeds = anim.info.targetSeeds
+                                        , targetWater = anim.info.targetWater
+                                        , selectionStack = []
+                                        , grid = anim.context.collectedGrid
+                                        }
+
+                                    FallingTransition ->
+                                        { movesLeft = anim.info.movesLeft
+                                        , targetSeeds = anim.info.targetSeeds
+                                        , targetWater = anim.info.targetWater
+                                        , selectionStack = []
+                                        , grid = anim.context.fallenGrid
+                                        }
+
+                                    EnteringTransition ->
+                                        { movesLeft = anim.info.movesLeft
+                                        , targetSeeds = anim.info.targetSeeds
+                                        , targetWater = anim.info.targetWater
+                                        , selectionStack = []
+                                        , grid = anim.context.filledGrid
+                                        }
+                          in
+                          viewGameInfo info
+                        ]
 
                     Over info ->
                         [ div [ class "pa3" ] [ text "Game Over" ]
