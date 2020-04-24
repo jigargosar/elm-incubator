@@ -262,11 +262,10 @@ view model =
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.transitionSteps))
                         , let
-                            ( info, toCellViewModel ) =
+                            ( grid, toCellViewModel ) =
                                 case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
-                                        ( { grid = anim.context.beforeGrid
-                                          }
+                                        ( anim.context.beforeGrid
                                         , let
                                             fallingToIdxOf idx =
                                                 List.Extra.find (Tuple.first >> (==) idx) anim.context.fallenIndices
@@ -297,8 +296,7 @@ view model =
                                         )
 
                                     EnteringStartTransition ->
-                                        ( { grid = anim.context.filledGrid
-                                          }
+                                        ( anim.context.filledGrid
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
                                             toCellViewModel_ idx cell =
@@ -317,8 +315,7 @@ view model =
                                         )
 
                                     EnteringTransition ->
-                                        ( { grid = anim.context.filledGrid
-                                          }
+                                        ( anim.context.filledGrid
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
                                             toCellViewModel_ _ cell =
@@ -344,7 +341,7 @@ view model =
                             , let
                                 gridViewModel : Grid CellViewModel
                                 gridViewModel =
-                                    info.grid |> Grid.map toCellViewModel
+                                    grid |> Grid.map toCellViewModel
                               in
                               viewGridAsTable viewCell gridViewModel
                             ]
