@@ -99,7 +99,7 @@ type SettledState
 type alias MoveAnimation =
     { settledState : SettledState
     , info : Game.Info
-    , context : Game.MoveContext
+    , context : Game.MoveDetails
     , transitionSteps : TransitionSteps MoveTransition
     }
 

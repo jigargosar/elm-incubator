@@ -4,7 +4,7 @@ module GameModel exposing
     , Entry
     , Info
     , Model
-    , MoveContext
+    , MoveDetails
     , MoveResult(..)
     , info
     , init
@@ -59,7 +59,7 @@ initCellGrid =
     grid
 
 
-type alias MoveContext =
+type alias MoveDetails =
     { beforeGrid : Grid Cell
     , collectedEntries : Entries
     , collectedGrid : Grid Cell
@@ -70,7 +70,7 @@ type alias MoveContext =
     }
 
 
-collectAndGenerateNextGrid : List GI -> Grid Cell -> Random.Generator MoveContext
+collectAndGenerateNextGrid : List GI -> Grid Cell -> Random.Generator MoveDetails
 collectAndGenerateNextGrid collectIndices grid =
     let
         ( collectedEntries, collectedGrid ) =
@@ -79,7 +79,7 @@ collectAndGenerateNextGrid collectIndices grid =
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collectedGrid
 
-        context : Grid Cell -> MoveContext
+        context : Grid Cell -> MoveDetails
         context filledGrid =
             { beforeGrid = grid
             , collectedEntries = collectedEntries
@@ -421,8 +421,8 @@ info (Model gm) =
 
 type MoveResult
     = InvalidMove
-    | GameOver MoveContext Info
-    | NextState MoveContext Model
+    | GameOver MoveDetails Info
+    | NextState MoveDetails Model
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
