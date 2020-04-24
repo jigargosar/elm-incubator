@@ -61,7 +61,6 @@ initCellGrid =
 
 type alias MoveDetails =
     { collected : { indices : List GI, water : Int, seeds : Int }
-    , collectedEntries : Entries
     , collectedGrid : Grid Cell
     , fallenIndices : List ( GI, GI )
     , fallenGrid : Grid Cell
@@ -93,7 +92,6 @@ collectAndGenerateNextGrid collectIndices grid =
                 , water = List.Extra.count (eq Water) collectedCells
                 , seeds = List.Extra.count (eq Seed) collectedCells
                 }
-            , collectedEntries = collectedEntries
             , collectedGrid = collectedGrid
             , fallenIndices = fallenIndices
             , fallenGrid = fallenGrid
@@ -449,20 +447,14 @@ makeMove (Model gm) =
 
         Just collectibleIndices ->
             let
-                ( nextGridCtx, nextRandom ) =
+                ( md, nextRandom ) =
                     Random.step (collectAndGenerateNextGrid collectibleIndices gm.grid) gm.random
 
-                collectedSeeds =
-                    List.Extra.count (Tuple.second >> (==) Seed) nextGridCtx.collectedEntries
-
                 nextTargetSeeds =
-                    (gm.targetSeeds - collectedSeeds) |> atLeast 0
-
-                collectedWater =
-                    List.Extra.count (Tuple.second >> (==) Water) nextGridCtx.collectedEntries
+                    (gm.targetSeeds - md.collected.seeds) |> atLeast 0
 
                 nextTargetWater =
-                    (gm.targetWater - collectedWater) |> atLeast 0
+                    (gm.targetWater - md.collected.water) |> atLeast 0
 
                 nextMovesLeft =
                     (gm.movesLeft - 1) |> atLeast 0
@@ -474,21 +466,21 @@ makeMove (Model gm) =
                     not isGameWon && nextMovesLeft == 0
             in
             if isGameWon || isGameLost then
-                GameOver nextGridCtx
+                GameOver md
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = nextGridCtx.filledGrid
+                    , grid = md.filledGrid
                     , selectionStack = []
                     }
 
             else
-                NextState nextGridCtx
+                NextState md
                     (Model
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
                         , movesLeft = nextMovesLeft
-                        , grid = nextGridCtx.filledGrid
+                        , grid = md.filledGrid
                         , random = nextRandom
                         , selection = emptySelection
                         }

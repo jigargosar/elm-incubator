@@ -282,11 +282,8 @@ view model =
                                                 List.Extra.find (Tuple.first >> (==) idx) anim.moveDetails.fallenIndices
                                                     |> Maybe.map Tuple.second
 
-                                            collectedIndices =
-                                                List.map Tuple.first anim.moveDetails.collectedEntries
-
                                             idxToCellState idx =
-                                                if List.member idx collectedIndices then
+                                                if List.member idx anim.moveDetails.collected.indices then
                                                     CellLeaving
 
                                                 else
