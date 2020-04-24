@@ -265,10 +265,7 @@ view model =
                             ( info, toCellViewModel ) =
                                 case currentTS anim.transitionSteps |> Tuple.first of
                                     LeavingTransition ->
-                                        ( { movesLeft = anim.info.movesLeft
-                                          , targetSeeds = anim.info.targetSeeds
-                                          , targetWater = anim.info.targetWater
-                                          , grid = anim.context.beforeGrid
+                                        ( { grid = anim.context.beforeGrid
                                           }
                                         , let
                                             fallingToIdxOf idx =
@@ -300,10 +297,7 @@ view model =
                                         )
 
                                     EnteringStartTransition ->
-                                        ( { movesLeft = anim.info.movesLeft
-                                          , targetSeeds = anim.info.targetSeeds
-                                          , targetWater = anim.info.targetWater
-                                          , grid = anim.context.filledGrid
+                                        ( { grid = anim.context.filledGrid
                                           }
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
@@ -323,10 +317,7 @@ view model =
                                         )
 
                                     EnteringTransition ->
-                                        ( { movesLeft = anim.info.movesLeft
-                                          , targetSeeds = anim.info.targetSeeds
-                                          , targetWater = anim.info.targetWater
-                                          , grid = anim.context.filledGrid
+                                        ( { grid = anim.context.filledGrid
                                           }
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
@@ -344,9 +335,9 @@ view model =
                             [ div [ class "pa3" ]
                                 [ text
                                     (Debug.toString
-                                        { movesLeft = info.movesLeft
-                                        , targetSeeds = info.targetSeeds
-                                        , targetWater = info.targetWater
+                                        { movesLeft = anim.info.movesLeft
+                                        , targetSeeds = anim.info.targetSeeds
+                                        , targetWater = anim.info.targetWater
                                         }
                                     )
                                 ]
