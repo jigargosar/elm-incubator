@@ -76,6 +76,19 @@ collectAndGenerateNextGrid collectIndices grid =
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collectedGrid
 
+        indexSetToGenerateCellsAt =
+            Grid.toListBy
+                (\i c ->
+                    if c == Empty then
+                        Just i
+
+                    else
+                        Nothing
+                )
+                fallenGrid
+                |> List.filterMap identity
+                |> Set.fromList
+
         initMoveDetails : Grid Cell -> MoveDetails
         initMoveDetails filledGrid =
             let
@@ -92,18 +105,7 @@ collectAndGenerateNextGrid collectIndices grid =
                 }
             , fallenLookup = Dict.fromList fallenIndices
             , generated =
-                { indexSet =
-                    Grid.toListBy
-                        (\i c ->
-                            if c == Empty then
-                                Just i
-
-                            else
-                                Nothing
-                        )
-                        fallenGrid
-                        |> List.filterMap identity
-                        |> Set.fromList
+                { indexSet = indexSetToGenerateCellsAt
                 , grid = filledGrid
                 }
             }
