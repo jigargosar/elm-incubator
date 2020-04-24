@@ -53,7 +53,7 @@ updateSelection idx wasSelected game =
 
 type Model
     = Selecting Game.Model
-    | AnimatingMoveResult Game.MoveContext Game.Model
+    | AnimatingMove Game.MoveContext Game.Model
     | Over Game.Info
 
 
@@ -113,7 +113,7 @@ update message model =
                             model
 
                         Game.NextState ctx ng ->
-                            AnimatingMoveResult ctx ng
+                            AnimatingMove ctx ng
 
                         Game.GameOver _ info ->
                             Over info
@@ -155,7 +155,7 @@ view model =
                             ]
                         ]
 
-                    AnimatingMoveResult nextGridWithContext game ->
+                    AnimatingMove nextGridWithContext game ->
                         []
 
                     Over info ->
