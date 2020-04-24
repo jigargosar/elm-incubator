@@ -11,6 +11,7 @@ import Html.Events exposing (onClick)
 import List.Extra
 import PointerEvents as PE
 import Process
+import Set
 import Task
 
 
@@ -280,7 +281,7 @@ view model =
                                         ( anim.initialGrid
                                         , let
                                             idxToCellState idx =
-                                                if List.member idx anim.moveDetails.collected.indices then
+                                                if Set.member idx anim.moveDetails.collected.indexSet then
                                                     CellLeaving
 
                                                 else

@@ -19,6 +19,7 @@ import Grid exposing (GI, Grid)
 import List.Extra
 import Random
 import Random.Extra
+import Set exposing (Set)
 
 
 
@@ -60,8 +61,9 @@ initCellGrid =
 
 
 type alias MoveDetails =
-    { collected : { indices : List GI, water : Int, seeds : Int }
+    { collected : { indexSet : Set GI, water : Int, seeds : Int }
     , fallenLookup : Dict GI GI
+    , generated : { indexSet : Set GI, grid : Grid Cell }
     , filledIndices : List GI
     , filledGrid : Grid Cell
     }
@@ -86,11 +88,26 @@ collectAndGenerateNextGrid collectIndices grid =
                     (==)
             in
             { collected =
-                { indices = List.map Tuple.first collectedEntries
+                { indexSet = List.map Tuple.first collectedEntries |> Set.fromList
                 , water = List.Extra.count (eq Water) collectedCells
                 , seeds = List.Extra.count (eq Seed) collectedCells
                 }
             , fallenLookup = Dict.fromList fallenIndices
+            , generated =
+                { indexSet =
+                    Grid.toListBy
+                        (\i c ->
+                            if c == Empty then
+                                Just i
+
+                            else
+                                Nothing
+                        )
+                        fallenGrid
+                        |> List.filterMap identity
+                        |> Set.fromList
+                , grid = filledGrid
+                }
             , filledIndices =
                 Grid.toListBy
                     (\i c ->
