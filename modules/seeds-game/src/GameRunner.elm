@@ -50,6 +50,39 @@ updateSelection idx wasSelected game =
 
 
 
+-- TRANSITION STATE HELPER
+
+
+type TransitionSteps a
+    = TransitionSteps ( a, Float ) (List ( a, Float ))
+
+
+initTS : msg -> ( a, Float ) -> List ( a, Float ) -> ( TransitionSteps a, Cmd msg )
+initTS msg current rest =
+    ( TransitionSteps current rest, delay (Tuple.second current) msg )
+
+
+delay : Float -> msg -> Cmd msg
+delay for msg =
+    Process.sleep for |> Task.perform (always msg)
+
+
+stepTS : msg -> TransitionSteps a -> Maybe ( TransitionSteps a, Cmd msg )
+stepTS msg (TransitionSteps _ steps) =
+    case steps of
+        [] ->
+            Nothing
+
+        current :: rest ->
+            Just (initTS msg current rest)
+
+
+currentTS : TransitionSteps a -> ( a, Float )
+currentTS (TransitionSteps current _) =
+    current
+
+
+
 -- Model
 
 
@@ -75,15 +108,6 @@ type MoveTransition
     = LeavingTransition
     | FallingTransition
     | EnteringTransition
-
-
-type TransitionSteps
-    = TransitionSteps
-
-
-initTS : TransitionSteps
-initTS =
-    Debug.todo "impl"
 
 
 type alias Flags =
