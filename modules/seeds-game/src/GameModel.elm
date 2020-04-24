@@ -81,7 +81,18 @@ collectAndGenerateNextGrid collectIndices grid =
 
         context : Grid Cell -> MoveDetails
         context filledGrid =
-            { collected = { indices = [], water = 0, seeds = 0 }
+            let
+                collectedCells =
+                    List.map Tuple.second collectedEntries
+
+                eq =
+                    (==)
+            in
+            { collected =
+                { indices = List.map Tuple.first collectedEntries
+                , water = List.Extra.count (eq Water) collectedCells
+                , seeds = List.Extra.count (eq Seed) collectedCells
+                }
             , collectedEntries = collectedEntries
             , collectedGrid = collectedGrid
             , fallenIndices = fallenIndices
