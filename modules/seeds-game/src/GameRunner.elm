@@ -54,8 +54,12 @@ updateSelection idx wasSelected game =
 
 
 type Model
+    = AnimatingMove MoveAnimation
+    | Settled SettledState
+
+
+type SettledState
     = Selecting Game.Model
-    | AnimatingMove MoveAnimation
     | Over Game.Info
 
 
@@ -84,7 +88,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Selecting Game.init
+    ( Settled (Selecting Game.init)
     , Cmd.none
     )
 
@@ -109,7 +113,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Over _ ->
+                Settled (Over _) ->
                     init ()
 
                 _ ->
@@ -117,10 +121,11 @@ update message model =
 
         ToggleSelection idx wasSelected ->
             case model of
-                Selecting game ->
+                Settled (Selecting game) ->
                     let
                         nm =
                             Selecting (updateSelection idx wasSelected game |> Maybe.withDefault game)
+                                |> Settled
                     in
                     ( nm, Cmd.none )
 
@@ -129,7 +134,7 @@ update message model =
 
         CollectSelection ->
             case model of
-                Selecting game ->
+                Settled (Selecting game) ->
                     case Game.makeMove game of
                         Game.InvalidMove ->
                             ( model, Cmd.none )
@@ -145,7 +150,7 @@ update message model =
                             )
 
                         Game.GameOver _ info ->
-                            ( Over info, Cmd.none )
+                            ( Settled (Over info), Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -165,12 +170,14 @@ update message model =
                             )
 
                         EnteringTransition ->
-                            ( case anim.afterMoveModel of
+                            ( (case anim.afterMoveModel of
                                 AfterMoveSelecting game ->
                                     Selecting game
 
                                 AfterMoveOver info ->
                                     Over info
+                              )
+                                |> Settled
                             , Cmd.none
                             )
 
@@ -201,10 +208,16 @@ view model =
             }
         """ ]
             :: (case model of
-                    Selecting game ->
+                    Settled (Selecting game) ->
                         [ viewTitle "Game Running"
                         , viewGameInfo (Game.info game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
+                        ]
+
+                    Settled (Over info) ->
+                        [ viewTitle "Game Over"
+                        , viewGameInfo info
+                        , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
                     AnimatingMove anim ->
@@ -237,12 +250,6 @@ view model =
                                         }
                           in
                           viewGameInfo info
-                        ]
-
-                    Over info ->
-                        [ viewTitle "Game Over"
-                        , viewGameInfo info
-                        , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
                )
         )
