@@ -107,6 +107,7 @@ type alias MoveAnimation =
 type MoveTransition
     = LeavingTransition
     | FallingTransition
+    | EnteringStartTransition
     | EnteringTransition
 
 
@@ -291,6 +292,25 @@ view model =
                                           , targetWater = anim.info.targetWater
                                           , selectionStack = []
                                           , grid = anim.context.fallenGrid
+                                          }
+                                        , let
+                                            toCellViewModel_ : GI -> Game.Cell -> CellViewModel
+                                            toCellViewModel_ _ cell =
+                                                { selectionIdx = Nothing
+                                                , selectionMsg = Nothing
+                                                , cell = cell
+                                                , cellState = CellStatic
+                                                }
+                                          in
+                                          toCellViewModel_
+                                        )
+
+                                    EnteringStartTransition ->
+                                        ( { movesLeft = anim.info.movesLeft
+                                          , targetSeeds = anim.info.targetSeeds
+                                          , targetWater = anim.info.targetWater
+                                          , selectionStack = []
+                                          , grid = anim.context.filledGrid
                                           }
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
