@@ -421,7 +421,7 @@ viewCell : GI -> CellViewModel -> HM
 viewCell _ vm =
     let
         defaultTransitionStyle =
-            style "transition" "transform 300ms"
+            style "transition" "transform 500ms"
 
         animProps =
             case vm.cellState of
