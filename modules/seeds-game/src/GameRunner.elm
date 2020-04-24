@@ -53,7 +53,7 @@ updateSelection idx wasSelected game =
 
 type Model
     = Selecting Game.Model
-    | AnimatingMoveResult Game.NextGridWithContext Game.Model
+    | AnimatingMoveResult Game.MoveContext Game.Model
     | Over Game.Info
 
 
