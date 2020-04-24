@@ -254,15 +254,20 @@ view model =
                                           , targetSeeds = anim.info.targetSeeds
                                           , targetWater = anim.info.targetWater
                                           , selectionStack = []
-                                          , grid = anim.context.collectedGrid
+                                          , grid = anim.context.beforeGrid
                                           }
                                         , let
                                             toCellViewModel_ : GI -> Game.Cell -> CellViewModel
-                                            toCellViewModel_ _ cell =
+                                            toCellViewModel_ idx cell =
                                                 { selectionIdx = Nothing
                                                 , selectionMsg = Nothing
                                                 , cell = cell
-                                                , cellState = CellLeaving
+                                                , cellState =
+                                                    if List.member ( idx, cell ) anim.context.collectedEntries then
+                                                        CellLeaving
+
+                                                    else
+                                                        CellStatic
                                                 }
                                           in
                                           toCellViewModel_
