@@ -169,7 +169,7 @@ update message model =
 
                         Game.NextState ctx nextGame ->
                             let
-                                ( ts, cmd ) =
+                                ( transitionSteps, cmd ) =
                                     initTS StepMoveAnimation
                                         ( LeavingTransition, 1000 )
                                         [ ( FallingTransition, 1000 )
@@ -180,7 +180,7 @@ update message model =
                                 { settledState = Selecting nextGame
                                 , info = Game.info game
                                 , context = ctx
-                                , transitionSteps = ts
+                                , transitionSteps = transitionSteps
                                 }
                             , cmd
                             )
@@ -195,8 +195,8 @@ update message model =
             case model of
                 AnimatingMove anim ->
                     case stepTS StepMoveAnimation anim.transitionSteps of
-                        Just ( ts, cmd ) ->
-                            ( AnimatingMove { anim | transitionSteps = ts }
+                        Just ( transitionSteps, cmd ) ->
+                            ( AnimatingMove { anim | transitionSteps = transitionSteps }
                             , cmd
                             )
 
