@@ -459,7 +459,16 @@ viewCell idx vm =
                     ]
 
                 CellFallingTo toIdx ->
-                    [ style "transform" "translate(0,-300px) scale(0)"
+                    let
+                        dyFactor =
+                            Tuple.second toIdx
+                                - Tuple.second idx
+                                |> String.fromInt
+
+                        translateStr =
+                            "translate(0, calc(" ++ dyFactor ++ " * 4rem) )"
+                    in
+                    [ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
                     , defaultTransitionStyle
                     ]
     in
