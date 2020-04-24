@@ -202,15 +202,13 @@ view model =
         """ ]
             :: (case model of
                     Selecting game ->
-                        [ div [ class "pa3" ] [ text "Game Running" ]
+                        [ viewTitle "Game Running"
                         , viewGameInfo (Game.info game)
-                        , div [ class "pa3" ]
-                            [ btn CollectSelection "collect"
-                            ]
+                        , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
                     AnimatingMove anim ->
-                        [ div [ class "pa3 f3" ] [ text (Debug.toString anim.transitionState) ]
+                        [ viewTitle (Debug.toString anim.transitionState)
                         , let
                             info =
                                 case anim.transitionState of
@@ -242,12 +240,16 @@ view model =
                         ]
 
                     Over info ->
-                        [ div [ class "pa3" ] [ text "Game Over" ]
+                        [ viewTitle "Game Over"
                         , viewGameInfo info
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
                )
         )
+
+
+viewTitle title =
+    div [ class "pa3 f3" ] [ text title ]
 
 
 type alias HM =
