@@ -210,7 +210,7 @@ view model =
                         ]
 
                     AnimatingMove anim ->
-                        []
+                        [ div [ class "pa3 f3" ] [ text (Debug.toString anim.transitionState) ] ]
 
                     Over info ->
                         [ div [ class "pa3" ] [ text "Game Over" ]
