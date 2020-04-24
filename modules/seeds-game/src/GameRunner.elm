@@ -160,7 +160,7 @@ update message model =
                             )
 
                         EnteringStartTransition ->
-                            ( AnimatingMove { anim | transitionState = EnteringStartTransition }
+                            ( AnimatingMove { anim | transitionState = EnteringTransition }
                             , Process.sleep 1000 |> Task.perform (always StepMoveAnimation)
                             )
 
