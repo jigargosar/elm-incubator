@@ -492,7 +492,7 @@ viewCell idx vm =
                                 |> String.fromInt
 
                         translateStr =
-                            "translate(0, calc( " ++ dyFactor ++ " * 4.25rem ) )"
+                            "translate(0, calc( " ++ dyFactor ++ " * 4.50rem ) )"
                     in
                     [ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
                     , defaultTransitionStyle
