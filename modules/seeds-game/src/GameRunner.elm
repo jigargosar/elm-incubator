@@ -443,6 +443,7 @@ type CellState
     | CellSelected
     | CellLeaving
     | CellFallingTo GI
+    | CellEnterStart
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -490,6 +491,11 @@ viewCell idx vm =
                     in
                     [ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
                     , defaultTransitionStyle
+                    ]
+
+                CellEnterStart ->
+                    [ style "transform" "translate(0,-300px) scale(0)"
+                    , style "transition" "none"
                     ]
     in
     div
