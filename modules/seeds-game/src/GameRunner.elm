@@ -2,6 +2,7 @@ module GameRunner exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
+import Dict
 import GameModel as Game
 import Grid exposing (GI, Grid)
 import Html exposing (Html, button, div, node, table, text)
@@ -278,16 +279,12 @@ view model =
                                     LeavingTransition ->
                                         ( anim.initialGrid
                                         , let
-                                            fallingToIdxOf idx =
-                                                List.Extra.find (Tuple.first >> (==) idx) anim.moveDetails.fallenIndices
-                                                    |> Maybe.map Tuple.second
-
                                             idxToCellState idx =
                                                 if List.member idx anim.moveDetails.collected.indices then
                                                     CellLeaving
 
                                                 else
-                                                    case fallingToIdxOf idx of
+                                                    case Dict.get idx anim.moveDetails.fallenIndices of
                                                         Just to ->
                                                             CellFallingTo to
 

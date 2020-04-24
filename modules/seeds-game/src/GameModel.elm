@@ -14,7 +14,7 @@ module GameModel exposing
     )
 
 import Basics.Extra exposing (atLeast, swap)
-import Dict
+import Dict exposing (Dict)
 import Grid exposing (GI, Grid)
 import List.Extra
 import Random
@@ -61,7 +61,7 @@ initCellGrid =
 
 type alias MoveDetails =
     { collected : { indices : List GI, water : Int, seeds : Int }
-    , fallenIndices : List ( GI, GI )
+    , fallenIndices : Dict GI GI
     , filledIndices : List GI
     , filledGrid : Grid Cell
     }
@@ -90,7 +90,7 @@ collectAndGenerateNextGrid collectIndices grid =
                 , water = List.Extra.count (eq Water) collectedCells
                 , seeds = List.Extra.count (eq Seed) collectedCells
                 }
-            , fallenIndices = fallenIndices
+            , fallenIndices = Dict.fromList fallenIndices
             , filledIndices =
                 Grid.toListBy
                     (\i c ->
