@@ -165,9 +165,9 @@ update message model =
             let
                 initMoveTransitionSteps =
                     initTS StepMoveAnimation
-                        ( LeavingTransition, 500 )
+                        ( LeavingTransition, 300 )
                         [ ( EnteringStartTransition, 20 )
-                        , ( EnteringTransition, 500 )
+                        , ( EnteringTransition, 300 )
                         ]
             in
             case model of
@@ -481,7 +481,7 @@ viewCell : GI -> CellViewModel -> HM
 viewCell idx vm =
     let
         defaultTransitionStyle =
-            style "transition" "transform 500ms"
+            style "transition" "transform 300ms"
 
         animProps =
             case vm.cellState of
