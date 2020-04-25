@@ -434,7 +434,7 @@ selectionStack (Model modelRecord) =
 type MoveResult
     = InvalidMove
     | GameOver MoveDetails Over
-    | NextModel MoveDetails Selecting
+    | NextSelecting MoveDetails Selecting
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
@@ -500,4 +500,4 @@ initMoveSuccess moveDetails modelRecord =
         GameOver moveDetails nextModel
 
     else
-        NextModel moveDetails nextModel
+        NextSelecting moveDetails nextModel

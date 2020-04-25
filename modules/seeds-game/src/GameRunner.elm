@@ -158,7 +158,7 @@ update message model =
                         Game.InvalidMove ->
                             ( model, Cmd.none )
 
-                        Game.NextModel moveDetails nextSelecting ->
+                        Game.NextSelecting moveDetails nextSelecting ->
                             initAnimatingMove moveDetails (Selecting nextSelecting) nextSelecting
 
                         Game.GameOver moveDetails over ->
