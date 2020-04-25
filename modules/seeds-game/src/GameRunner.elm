@@ -178,7 +178,7 @@ update message model =
                         Game.InvalidMove ->
                             ( model, Cmd.none )
 
-                        Game.NextState ctx nextGame ->
+                        Game.NextModel ctx nextGame ->
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps

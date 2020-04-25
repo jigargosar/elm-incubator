@@ -415,7 +415,7 @@ info (Model gm) =
 type MoveResult
     = InvalidMove
     | GameOver MoveDetails Info
-    | NextState MoveDetails Model
+    | NextModel MoveDetails Model
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
@@ -463,7 +463,7 @@ makeMove (Model modelRecord) =
                     }
 
             else
-                NextState moveDetails
+                NextModel moveDetails
                     (Model
                         { targetSeeds = nextTargetSeeds
                         , targetWater = nextTargetWater
