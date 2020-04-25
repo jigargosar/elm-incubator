@@ -287,8 +287,8 @@ selectionPop_ (Selection stack) =
 
 
 computeValidSelectionIndices : CellGrid -> Selection -> List GI
-computeValidSelectionIndices grid (Selection selectionStack) =
-    case selectionStack of
+computeValidSelectionIndices grid (Selection stack) =
+    case stack of
         [] ->
             Grid.toListBy
                 (\i c ->
@@ -411,6 +411,7 @@ type alias Stats =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
+    , grid : CellGrid
     }
 
 
@@ -419,6 +420,7 @@ stats (Model modelRecord) =
     { movesLeft = modelRecord.movesLeft
     , targetSeeds = modelRecord.targetSeeds
     , targetWater = modelRecord.targetWater
+    , grid = modelRecord.grid
     }
 
 
