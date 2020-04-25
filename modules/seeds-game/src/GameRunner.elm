@@ -15,41 +15,6 @@ import Set
 import Task
 
 
-updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
-updateSelection idx wasSelected game =
-    let
-        stack =
-            Game.selectionStack game
-    in
-    if wasSelected && List.member idx stack then
-        -- Remove
-        case stack of
-            only :: [] ->
-                if only == idx then
-                    Game.selectionPop game
-
-                else
-                    Nothing
-
-            _ :: secondLast :: _ ->
-                if secondLast == idx then
-                    Game.selectionPop game
-
-                else
-                    Nothing
-
-            _ ->
-                Nothing
-
-    else if not wasSelected && not (List.member idx stack) then
-        -- Add
-        Game.selectionPush idx game
-
-    else
-        -- NoOp
-        Nothing
-
-
 
 -- TRANSITION STEPS
 
@@ -226,6 +191,49 @@ update message model =
 
                 _ ->
                     ( model, Cmd.none )
+
+
+
+-- UPDATE SELECTION
+
+
+updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
+updateSelection idx wasSelected game =
+    let
+        stack =
+            Game.selectionStack game
+    in
+    if wasSelected && List.member idx stack then
+        -- Remove
+        case stack of
+            only :: [] ->
+                if only == idx then
+                    Game.selectionPop game
+
+                else
+                    Nothing
+
+            _ :: secondLast :: _ ->
+                if secondLast == idx then
+                    Game.selectionPop game
+
+                else
+                    Nothing
+
+            _ ->
+                Nothing
+
+    else if not wasSelected && not (List.member idx stack) then
+        -- Add
+        Game.selectionPush idx game
+
+    else
+        -- NoOp
+        Nothing
+
+
+
+-- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
