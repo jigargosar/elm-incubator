@@ -471,23 +471,23 @@ makeMove (Model modelRecord) =
                 nextMovesLeft =
                     (modelRecord.movesLeft - 1) |> atLeast 0
 
-                isGameWon =
-                    List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
+                isGameOver =
+                    nextMovesLeft == 0 && List.any ((/=) 0) [ nextTargetSeeds, nextTargetWater ]
 
-                isGameLost =
-                    not isGameWon && nextMovesLeft == 0
+                nextModelRecord =
+                    { targetSeeds = nextTargetSeeds
+                    , targetWater = nextTargetWater
+                    , movesLeft = nextMovesLeft
+                    , grid = moveDetails.generated.grid
+                    , random = nextRandom
+                    , selection = emptySelection
+                    }
 
+                nextModel : Model a
                 nextModel =
-                    Model
-                        { targetSeeds = nextTargetSeeds
-                        , targetWater = nextTargetWater
-                        , movesLeft = nextMovesLeft
-                        , grid = moveDetails.generated.grid
-                        , random = nextRandom
-                        , selection = emptySelection
-                        }
+                    Model nextModelRecord
             in
-            if isGameWon || isGameLost then
+            if isGameOver then
                 GameOver moveDetails nextModel
 
             else
