@@ -54,11 +54,11 @@ currentTS (TransitionSteps current _) =
 
 type Model
     = AnimatingMove MoveAnimation
-    | Settled Game.State
+    | Settled Game.Model
 
 
 type alias MoveAnimation =
-    { settledState : Game.State
+    { settledState : Game.Model
     , initialGrid : Grid Game.Cell
     , stats : Game.Stats
     , moveDetails : Game.MoveDetails
@@ -135,7 +135,7 @@ update message model =
             case model of
                 Settled ((Game.Selecting selectingModel) as gameState) ->
                     let
-                        initAnimatingMove : Game.MoveDetails -> Game.State -> ( Model, Cmd Msg )
+                        initAnimatingMove : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
                         initAnimatingMove moveDetails nextGameState =
                             let
                                 ( transitionSteps, cmd ) =

@@ -3,10 +3,10 @@ module GameModel exposing
     , CellGrid
     , Entries
     , Entry
+    , Model(..)
     , MoveDetails
     , OverModel
     , SelectingModel
-    , State(..)
     , Stats
     , cellGrid
     , init
@@ -363,20 +363,20 @@ areCellsConnectible cell1 cell2 =
 -- GAME MODEL
 
 
-type State
+type Model
     = Selecting SelectingModel
     | Over OverModel
 
 
 type alias SelectingModel =
-    Model_ { selection : () }
+    PrivateModel { selecting : () }
 
 
 type alias OverModel =
-    Model_ { over : () }
+    PrivateModel { over : () }
 
 
-type Model_ a
+type PrivateModel a
     = Model_ ModelRecord
 
 
@@ -388,7 +388,7 @@ type alias ModelRecord =
     }
 
 
-init : State
+init : Model
 init =
     Model_
         { stats =
@@ -422,17 +422,17 @@ type alias Stats =
     }
 
 
-modelStats : Model_ a -> Stats
+modelStats : PrivateModel a -> Stats
 modelStats (Model_ modelRecord) =
     modelRecord.stats
 
 
-stats : State -> Stats
+stats : Model -> Stats
 stats =
     toModel >> modelStats
 
 
-toModel : State -> Model_ a
+toModel : Model -> PrivateModel a
 toModel state =
     case state of
         Selecting (Model_ mr) ->
@@ -442,12 +442,12 @@ toModel state =
             Model_ mr
 
 
-cellGrid : State -> CellGrid
+cellGrid : Model -> CellGrid
 cellGrid =
     toModel >> modelCellGrid
 
 
-modelCellGrid : Model_ a -> CellGrid
+modelCellGrid : PrivateModel a -> CellGrid
 modelCellGrid (Model_ modelRecord) =
     modelRecord.grid
 
@@ -466,7 +466,7 @@ selectionToCollectibleIndices (Selection stack) =
         Just stack
 
 
-makeMove : SelectingModel -> Maybe ( MoveDetails, State )
+makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
 makeMove (Model_ modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->
@@ -506,7 +506,7 @@ makeMove (Model_ modelRecord) =
                 |> Just
 
 
-initState : ModelRecord -> State
+initState : ModelRecord -> Model
 initState modelRecord =
     let
         nextModel =
