@@ -3,9 +3,9 @@ module GameModel exposing
     , CellGrid
     , Entries
     , Entry
-    , Model
     , MoveDetails
     , MoveResult(..)
+    , Selecting
     , Stats
     , cellGrid
     , init
@@ -362,7 +362,15 @@ areCellsConnectible cell1 cell2 =
 -- GAME MODEL
 
 
-type Model
+type alias Selecting =
+    Model Selecting_
+
+
+type Selecting_
+    = Selecting_
+
+
+type Model a
     = Model ModelRecord
 
 
@@ -376,7 +384,7 @@ type alias ModelRecord =
     }
 
 
-init : Model
+init : Selecting
 init =
     Model
         { movesLeft = 2
@@ -388,13 +396,13 @@ init =
         }
 
 
-selectionPush : GI -> Model -> Maybe Model
+selectionPush : GI -> Selecting -> Maybe Selecting
 selectionPush idx (Model gm) =
     selectionPush_ idx gm.grid gm.selection
         |> Maybe.map (\selection -> Model { gm | selection = selection })
 
 
-selectionPop : Model -> Maybe Model
+selectionPop : Selecting -> Maybe Selecting
 selectionPop (Model gm) =
     selectionPop_ gm.selection
         |> Maybe.map (\selection -> Model { gm | selection = selection })
@@ -407,7 +415,7 @@ type alias Stats =
     }
 
 
-stats : Model -> Stats
+stats : Selecting -> Stats
 stats (Model modelRecord) =
     { movesLeft = modelRecord.movesLeft
     , targetSeeds = modelRecord.targetSeeds
@@ -415,12 +423,12 @@ stats (Model modelRecord) =
     }
 
 
-cellGrid : Model -> CellGrid
+cellGrid : Selecting -> CellGrid
 cellGrid (Model modelRecord) =
     modelRecord.grid
 
 
-selectionStack : Model -> List GI
+selectionStack : Selecting -> List GI
 selectionStack (Model modelRecord) =
     selectionToStack modelRecord.selection
 
@@ -428,7 +436,7 @@ selectionStack (Model modelRecord) =
 type MoveResult
     = InvalidMove
     | GameOver MoveDetails Stats
-    | NextModel MoveDetails Model
+    | NextModel MoveDetails Selecting
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
@@ -440,7 +448,7 @@ selectionToCollectibleIndices (Selection stack) =
         Just stack
 
 
-makeMove : Model -> MoveResult
+makeMove : Selecting -> MoveResult
 makeMove (Model modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->

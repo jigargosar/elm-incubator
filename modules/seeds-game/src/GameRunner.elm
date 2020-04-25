@@ -58,7 +58,7 @@ type Model
 
 
 type SettledState
-    = Selecting Game.Model
+    = Selecting Game.Selecting
     | Over Game.Stats Game.CellGrid
 
 
@@ -197,7 +197,7 @@ update message model =
 -- UPDATE SELECTION
 
 
-updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
+updateSelection : GI -> Bool -> Game.Selecting -> Maybe Game.Selecting
 updateSelection idx wasSelected game =
     let
         stack =
