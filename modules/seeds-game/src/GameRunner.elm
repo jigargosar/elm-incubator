@@ -5,7 +5,7 @@ import Browser exposing (Document)
 import Dict
 import GameModel as Game
 import Grid exposing (GI, Grid)
-import Html exposing (Html, button, div, node, table, text)
+import Html exposing (Html, button, node, table, text)
 import Html.Attributes exposing (autofocus, class, style)
 import Html.Events exposing (onClick)
 import List.Extra
