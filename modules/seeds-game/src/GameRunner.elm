@@ -315,15 +315,7 @@ view model =
                                         )
                           in
                           div []
-                            [ div [ class "pa3" ]
-                                [ text
-                                    (Debug.toString
-                                        { movesLeft = anim.stats.movesLeft
-                                        , targetSeeds = anim.stats.targetSeeds
-                                        , targetWater = anim.stats.targetWater
-                                        }
-                                    )
-                                ]
+                            [ viewGameStats anim.stats
                             , viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
                             ]
                         ]
