@@ -369,6 +369,10 @@ type alias ModelRecord =
     }
 
 
+type alias CellGrid =
+    Grid.Grid Cell
+
+
 init : Model
 init =
     Model
