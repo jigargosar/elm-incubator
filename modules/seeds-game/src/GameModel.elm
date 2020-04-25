@@ -11,6 +11,7 @@ module GameModel exposing
     , makeMove
     , selectionPop
     , selectionPush
+    , stats
     )
 
 import Basics.Extra exposing (atLeast, swap)
@@ -410,6 +411,14 @@ type alias Stats =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
+    }
+
+
+stats : Model -> Stats
+stats (Model modelRecord) =
+    { movesLeft = modelRecord.movesLeft
+    , targetSeeds = modelRecord.targetSeeds
+    , targetWater = modelRecord.targetWater
     }
 
 
