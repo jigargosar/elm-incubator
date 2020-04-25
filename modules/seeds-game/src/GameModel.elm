@@ -426,9 +426,9 @@ selectionPush idx (Internal state) =
 
 
 selectionPop : SelectingModel -> Maybe SelectingModel
-selectionPop (Internal gm) =
-    selectionPop_ gm.selection
-        |> Maybe.map (\selection -> Internal { gm | selection = selection })
+selectionPop (Internal state) =
+    selectionPop_ state.selection
+        |> Maybe.map (\selection -> Internal { state | selection = selection })
 
 
 type alias Stats =
