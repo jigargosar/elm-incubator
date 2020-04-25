@@ -4,7 +4,6 @@ module GameModel exposing
     , Entries
     , Entry
     , MoveDetails
-    , MoveResult(..)
     , OverModel
     , SelectingModel
     , State(..)
@@ -423,9 +422,19 @@ type alias Stats =
     }
 
 
-stats : Model a -> Stats
-stats (Model modelRecord) =
+modelStats : Model a -> Stats
+modelStats (Model modelRecord) =
     modelRecord.stats
+
+
+stats : State -> Stats
+stats state =
+    case state of
+        Selecting m ->
+            modelStats m
+
+        Over m ->
+            modelStats m
 
 
 cellGrid : Model a -> CellGrid
@@ -438,12 +447,6 @@ selectionStack (Model modelRecord) =
     selectionToStack modelRecord.selection
 
 
-type MoveResult
-    = InvalidMove
-    | GameOver MoveDetails OverModel
-    | NextSelecting MoveDetails SelectingModel
-
-
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
 selectionToCollectibleIndices (Selection stack) =
     if List.length stack < 2 then
@@ -453,11 +456,11 @@ selectionToCollectibleIndices (Selection stack) =
         Just stack
 
 
-makeMove : SelectingModel -> MoveResult
+makeMove : SelectingModel -> Maybe ( MoveDetails, State )
 makeMove (Model modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->
-            InvalidMove
+            Nothing
 
         Just collectibleIndices ->
             let
@@ -478,7 +481,8 @@ makeMove (Model modelRecord) =
                 nextMovesLeft =
                     (stats_.movesLeft - 1) |> atLeast 0
             in
-            initMoveSuccess moveDetails
+            ( moveDetails
+            , initState
                 { stats =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
@@ -488,10 +492,12 @@ makeMove (Model modelRecord) =
                 , random = nextRandom
                 , selection = emptySelection
                 }
+            )
+                |> Just
 
 
-initMoveSuccess : MoveDetails -> ModelRecord -> MoveResult
-initMoveSuccess moveDetails modelRecord =
+initState : ModelRecord -> State
+initState modelRecord =
     let
         nextModel =
             Model modelRecord
@@ -504,7 +510,7 @@ initMoveSuccess moveDetails modelRecord =
                 && List.any ((/=) 0) [ stats_.targetWater, stats_.targetSeeds ]
     in
     if isGameOver then
-        GameOver moveDetails nextModel
+        Over nextModel
 
     else
-        NextSelecting moveDetails nextModel
+        Selecting nextModel
