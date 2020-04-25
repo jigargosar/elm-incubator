@@ -267,6 +267,7 @@ view model =
 
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.steps))
+                        , viewGameStats anim.stats
                         , let
                             toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
                             toCellVMHelp func idx cell =
@@ -314,10 +315,7 @@ view model =
                                         , always CellStatic
                                         )
                           in
-                          div []
-                            [ viewGameStats anim.stats
-                            , viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
-                            ]
+                          viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
                         ]
                )
         )
