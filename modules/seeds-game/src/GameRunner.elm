@@ -337,18 +337,15 @@ type alias HM =
     Html Msg
 
 
+viewGameStats : Game.Stats -> HM
+viewGameStats stats =
+    div [ class "pa3" ] [ text (Debug.toString stats) ]
+
+
 viewGameInfo : Game.Stats -> List GI -> Game.CellGrid -> HM
 viewGameInfo stats selectionStack grid =
     div []
-        [ div [ class "pa3" ]
-            [ text
-                (Debug.toString
-                    { movesLeft = stats.movesLeft
-                    , targetSeeds = stats.targetSeeds
-                    , targetWater = stats.targetWater
-                    }
-                )
-            ]
+        [ viewGameStats stats
         , viewGameTable selectionStack grid
         ]
 
