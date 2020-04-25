@@ -245,6 +245,15 @@ type alias HM =
     Html Msg
 
 
+type alias AM =
+    Html.Attribute Msg
+
+
+div : List AM -> List HM -> HM
+div =
+    Html.div
+
+
 view : Model -> DM
 view model =
     Document "GameRunner"
