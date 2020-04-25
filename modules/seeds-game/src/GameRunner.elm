@@ -133,18 +133,18 @@ update message model =
                         ]
             in
             case model of
-                Settled ((Game.Selecting selectingModel) as gameState) ->
+                Settled ((Game.Selecting selectingModel) as game) ->
                     let
                         initAnimatingMove : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
-                        initAnimatingMove moveDetails nextGameState =
+                        initAnimatingMove moveDetails nextGame =
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps
                             in
                             ( AnimatingMove
-                                { settledState = nextGameState
-                                , initialGrid = Game.cellGrid gameState
-                                , stats = Game.stats nextGameState
+                                { settledState = nextGame
+                                , initialGrid = Game.cellGrid game
+                                , stats = Game.stats nextGame
                                 , moveDetails = moveDetails
                                 , steps = transitionSteps
                                 }
@@ -155,8 +155,8 @@ update message model =
                         Nothing ->
                             ( model, Cmd.none )
 
-                        Just ( moveDetails, nextGameState ) ->
-                            initAnimatingMove moveDetails nextGameState
+                        Just ( moveDetails, nextGame ) ->
+                            initAnimatingMove moveDetails nextGame
 
                 _ ->
                     ( model, Cmd.none )
