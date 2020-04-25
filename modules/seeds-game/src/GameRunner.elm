@@ -258,20 +258,20 @@ view model =
             }
         """ ]
             :: (case model of
-                    Settled ((Game.Selecting selecting) as gameState) ->
+                    Settled ((Game.Selecting selecting) as game) ->
                         [ viewTitle "Game Running"
-                        , viewGameStats (Game.stats gameState)
+                        , viewGameStats (Game.stats game)
                         , viewCellGridTableWithSelectionStack
                             (Game.selectionStack selecting)
-                            (Game.cellGrid gameState)
+                            (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled ((Game.Over _) as gameState) ->
+                    Settled ((Game.Over _) as game) ->
                         [ viewTitle "Game Over"
-                        , viewGameStats (Game.stats gameState)
+                        , viewGameStats (Game.stats game)
                         , viewCellGridTableWithSelectionStack []
-                            (Game.cellGrid gameState)
+                            (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
