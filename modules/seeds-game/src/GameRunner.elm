@@ -95,7 +95,7 @@ type Model
 
 type SettledState
     = Selecting Game.Model
-    | Over Game.Stats
+    | Over Game.Stats Game.CellGrid
 
 
 type alias MoveAnimation =
@@ -144,7 +144,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Settled (Over _) ->
+                Settled (Over _ _) ->
                     init ()
 
                 _ ->
@@ -199,7 +199,7 @@ update message model =
                                     initMoveTransitionSteps
                             in
                             ( AnimatingMove
-                                { settledState = Over stats
+                                { settledState = Over stats ctx.generated.grid
                                 , initialGrid = (Game.info game).grid
                                 , stats = stats
                                 , moveDetails = ctx
@@ -254,13 +254,13 @@ view model =
             :: (case model of
                     Settled (Selecting game) ->
                         [ viewTitle "Game Running"
-                        , viewGameInfo (Game.stats game) (Game.selectionStack game)
+                        , viewGameInfo (Game.stats game) (Game.selectionStack game) (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled (Over stats) ->
+                    Settled (Over stats grid) ->
                         [ viewTitle "Game Over"
-                        , viewGameInfo stats []
+                        , viewGameInfo stats [] grid
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
@@ -338,8 +338,8 @@ type alias HM =
     Html Msg
 
 
-viewGameInfo : Game.Stats -> List GI -> HM
-viewGameInfo stats selectionStack =
+viewGameInfo : Game.Stats -> List GI -> Game.CellGrid -> HM
+viewGameInfo stats selectionStack grid =
     div []
         [ div [ class "pa3" ]
             [ text
@@ -350,7 +350,7 @@ viewGameInfo stats selectionStack =
                     }
                 )
             ]
-        , viewGameTable selectionStack stats.grid
+        , viewGameTable selectionStack grid
         ]
 
 

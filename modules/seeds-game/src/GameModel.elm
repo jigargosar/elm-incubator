@@ -8,6 +8,7 @@ module GameModel exposing
     , MoveDetails
     , MoveResult(..)
     , Stats
+    , cellGrid
     , info
     , init
     , makeMove
@@ -414,7 +415,6 @@ type alias Stats =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
-    , grid : CellGrid
     }
 
 
@@ -423,8 +423,12 @@ stats (Model modelRecord) =
     { movesLeft = modelRecord.movesLeft
     , targetSeeds = modelRecord.targetSeeds
     , targetWater = modelRecord.targetWater
-    , grid = modelRecord.grid
     }
+
+
+cellGrid : Model -> CellGrid
+cellGrid (Model modelRecord) =
+    modelRecord.grid
 
 
 selectionStack : Model -> List GI
@@ -488,7 +492,6 @@ makeMove (Model modelRecord) =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
-                    , grid = moveDetails.generated.grid
                     }
 
             else
