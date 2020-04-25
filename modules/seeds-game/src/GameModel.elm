@@ -390,7 +390,7 @@ type alias State =
 
 init : Model
 init =
-    modelFromState
+    fromState
         { stats =
             { movesLeft = 2
             , targetSeeds = 35
@@ -400,6 +400,23 @@ init =
         , selection = emptySelection
         , random = Random.initialSeed 0
         }
+
+
+fromState : State -> Model
+fromState state =
+    let
+        { movesLeft, targetWater, targetSeeds } =
+            state.stats
+
+        isGameOver =
+            (movesLeft == 0)
+                && List.any ((/=) 0) [ targetWater, targetSeeds ]
+    in
+    if isGameOver then
+        Over (Internal state)
+
+    else
+        Selecting (Internal state)
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
@@ -481,7 +498,7 @@ makeMove (Internal state) =
                     (movesLeft - 1) |> atLeast 0
             in
             ( moveDetails
-            , modelFromState
+            , fromState
                 { stats =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
@@ -493,20 +510,3 @@ makeMove (Internal state) =
                 }
             )
                 |> Just
-
-
-modelFromState : State -> Model
-modelFromState state =
-    let
-        { movesLeft, targetWater, targetSeeds } =
-            state.stats
-
-        isGameOver =
-            (movesLeft == 0)
-                && List.any ((/=) 0) [ targetWater, targetSeeds ]
-    in
-    if isGameOver then
-        Over (Internal state)
-
-    else
-        Selecting (Internal state)
