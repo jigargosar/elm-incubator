@@ -369,18 +369,18 @@ type Model
 
 
 type alias SelectingModel =
-    PrivateModel { selecting : () }
+    Internal { selecting : () }
 
 
 type alias OverModel =
-    PrivateModel { over : () }
+    Internal { over : () }
 
 
-type PrivateModel a
-    = PrivateModel ModelRecord
+type Internal a
+    = Internal State
 
 
-type alias ModelRecord =
+type alias State =
     { stats : Stats
     , grid : CellGrid
     , selection : Selection
@@ -390,7 +390,7 @@ type alias ModelRecord =
 
 init : Model
 init =
-    PrivateModel
+    Internal
         { stats =
             { movesLeft = 2
             , targetSeeds = 35
@@ -404,15 +404,15 @@ init =
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
-selectionPush idx (PrivateModel gm) =
+selectionPush idx (Internal gm) =
     selectionPush_ idx gm.grid gm.selection
-        |> Maybe.map (\selection -> PrivateModel { gm | selection = selection })
+        |> Maybe.map (\selection -> Internal { gm | selection = selection })
 
 
 selectionPop : SelectingModel -> Maybe SelectingModel
-selectionPop (PrivateModel gm) =
+selectionPop (Internal gm) =
     selectionPop_ gm.selection
-        |> Maybe.map (\selection -> PrivateModel { gm | selection = selection })
+        |> Maybe.map (\selection -> Internal { gm | selection = selection })
 
 
 type alias Stats =
@@ -422,38 +422,38 @@ type alias Stats =
     }
 
 
-modelStats : PrivateModel a -> Stats
-modelStats (PrivateModel modelRecord) =
-    modelRecord.stats
-
-
 stats : Model -> Stats
 stats =
-    toModel >> modelStats
-
-
-toModel : Model -> PrivateModel a
-toModel state =
-    case state of
-        Selecting (PrivateModel mr) ->
-            PrivateModel mr
-
-        Over (PrivateModel mr) ->
-            PrivateModel mr
+    toInternal >> internalStats
 
 
 cellGrid : Model -> CellGrid
 cellGrid =
-    toModel >> modelCellGrid
+    toInternal >> internalCellGrid
 
 
-modelCellGrid : PrivateModel a -> CellGrid
-modelCellGrid (PrivateModel modelRecord) =
+internalCellGrid : Internal a -> CellGrid
+internalCellGrid (Internal modelRecord) =
     modelRecord.grid
 
 
+internalStats : Internal a -> Stats
+internalStats (Internal modelRecord) =
+    modelRecord.stats
+
+
+toInternal : Model -> Internal a
+toInternal state =
+    case state of
+        Selecting (Internal mr) ->
+            Internal mr
+
+        Over (Internal mr) ->
+            Internal mr
+
+
 selectionStack : SelectingModel -> List GI
-selectionStack (PrivateModel modelRecord) =
+selectionStack (Internal modelRecord) =
     selectionToStack modelRecord.selection
 
 
@@ -467,7 +467,7 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
-makeMove (PrivateModel modelRecord) =
+makeMove (Internal modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->
             Nothing
@@ -506,11 +506,11 @@ makeMove (PrivateModel modelRecord) =
                 |> Just
 
 
-initState : ModelRecord -> Model
+initState : State -> Model
 initState modelRecord =
     let
         nextModel =
-            PrivateModel modelRecord
+            Internal modelRecord
 
         stats_ =
             modelRecord.stats
