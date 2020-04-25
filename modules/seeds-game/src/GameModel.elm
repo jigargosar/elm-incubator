@@ -11,6 +11,7 @@ module GameModel exposing
     , makeMove
     , selectionPop
     , selectionPush
+    , selectionStack
     , stats
     )
 
@@ -422,6 +423,11 @@ stats (Model modelRecord) =
     , targetWater = modelRecord.targetWater
     , grid = modelRecord.grid
     }
+
+
+selectionStack : Model -> List GI
+selectionStack (Model modelRecord) =
+    selectionToStack modelRecord.selection
 
 
 info : Model -> Info
