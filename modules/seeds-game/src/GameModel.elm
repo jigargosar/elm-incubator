@@ -3,6 +3,7 @@ module GameModel exposing
     , CellGrid
     , Entries
     , Entry
+    , Model
     , MoveDetails
     , MoveResult(..)
     , Over
