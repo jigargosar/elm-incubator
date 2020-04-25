@@ -457,8 +457,8 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
-makeMove (Internal modelRecord) =
-    case selectionToCollectibleIndices modelRecord.selection of
+makeMove (Internal state) =
+    case selectionToCollectibleIndices state.selection of
         Nothing ->
             Nothing
 
@@ -466,20 +466,20 @@ makeMove (Internal modelRecord) =
             let
                 ( moveDetails, nextRandom ) =
                     Random.step
-                        (collectAndGenerateWithDetails collectibleIndices modelRecord.grid)
-                        modelRecord.random
+                        (collectAndGenerateWithDetails collectibleIndices state.grid)
+                        state.random
 
-                stats_ =
-                    modelRecord.stats
+                { movesLeft, targetWater, targetSeeds } =
+                    state.stats
 
                 nextTargetSeeds =
-                    (stats_.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+                    (targetSeeds - moveDetails.collected.seeds) |> atLeast 0
 
                 nextTargetWater =
-                    (stats_.targetWater - moveDetails.collected.water) |> atLeast 0
+                    (targetWater - moveDetails.collected.water) |> atLeast 0
 
                 nextMovesLeft =
-                    (stats_.movesLeft - 1) |> atLeast 0
+                    (movesLeft - 1) |> atLeast 0
             in
             ( moveDetails
             , modelFromState
