@@ -25,6 +25,10 @@ import Set exposing (Set)
 -- CELL GRID
 
 
+type alias CellGrid =
+    Grid.Grid Cell
+
+
 type Cell
     = Water
     | Seed
@@ -32,7 +36,7 @@ type Cell
     | Empty
 
 
-initCellGrid : Grid Cell
+initCellGrid : CellGrid
 initCellGrid =
     let
         wallIndices =
@@ -62,11 +66,11 @@ initCellGrid =
 type alias MoveDetails =
     { collected : { indexSet : Set GI, water : Int, seeds : Int }
     , fallenLookup : Dict GI GI
-    , generated : { indexSet : Set GI, grid : Grid Cell }
+    , generated : { indexSet : Set GI, grid : CellGrid }
     }
 
 
-collectAndGenerateNextGrid : List GI -> Grid Cell -> Random.Generator MoveDetails
+collectAndGenerateNextGrid : List GI -> CellGrid -> Random.Generator MoveDetails
 collectAndGenerateNextGrid collectIndices grid =
     let
         ( collectedEntries, collectedGrid ) =
@@ -75,7 +79,7 @@ collectAndGenerateNextGrid collectIndices grid =
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collectedGrid
 
-        initMoveDetails : { grid : Grid Cell, indexSet : Set GI } -> MoveDetails
+        initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
             let
                 collectedCells =
@@ -106,7 +110,7 @@ type alias Entries =
     List Entry
 
 
-collectCellsAtIndices : List GI -> Grid Cell -> ( Entries, Grid Cell )
+collectCellsAtIndices : List GI -> CellGrid -> ( Entries, CellGrid )
 collectCellsAtIndices indicesToCollect grid =
     let
         collectedEntries : List ( GI, Cell )
@@ -138,10 +142,10 @@ setEmptyAtIndices indicesToEmpty grid =
         grid
 
 
-computeFallenGrid : Grid Cell -> ( List ( GI, GI ), Grid Cell )
+computeFallenGrid : CellGrid -> ( List ( GI, GI ), CellGrid )
 computeFallenGrid grid0 =
     let
-        computeFallingAt : GI -> Grid Cell -> Maybe ( ( GI, GI ), Grid Cell )
+        computeFallingAt : GI -> CellGrid -> Maybe ( ( GI, GI ), CellGrid )
         computeFallingAt to grid =
             case Grid.get to grid of
                 Just Empty ->
@@ -163,7 +167,7 @@ computeFallenGrid grid0 =
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
 
 
-fillEmptyCells : Grid Cell -> Random.Generator { indexSet : Set GI, grid : Grid Cell }
+fillEmptyCells : CellGrid -> Random.Generator { indexSet : Set GI, grid : CellGrid }
 fillEmptyCells grid =
     let
         emptyIndices =
@@ -195,7 +199,7 @@ fillEmptyCells grid =
             )
 
 
-findFirstMovableAbove : GI -> Grid Cell -> Maybe GI
+findFirstMovableAbove : GI -> CellGrid -> Maybe GI
 findFirstMovableAbove startIndex grid =
     case Grid.entryAbove startIndex grid of
         Nothing ->
@@ -262,7 +266,7 @@ selectionToStack (Selection stack) =
     stack
 
 
-selectionPush_ : GI -> Grid Cell -> Selection -> Maybe Selection
+selectionPush_ : GI -> CellGrid -> Selection -> Maybe Selection
 selectionPush_ idx grid ((Selection stack) as selection) =
     if List.member idx (computeValidSelectionIndices grid selection) then
         Just (Selection (idx :: stack))
@@ -281,7 +285,7 @@ selectionPop_ (Selection stack) =
             Just (Selection prevStack)
 
 
-computeValidSelectionIndices : Grid Cell -> Selection -> List GI
+computeValidSelectionIndices : CellGrid -> Selection -> List GI
 computeValidSelectionIndices grid (Selection selectionStack) =
     case selectionStack of
         [] ->
@@ -319,7 +323,7 @@ adjacentOf ( x, y ) =
     [ ( x, y - 1 ), ( x + 1, y ), ( x, y + 1 ), ( x - 1, y ) ]
 
 
-areCellsAtIndicesConnectible : GI -> GI -> Grid Cell -> Bool
+areCellsAtIndicesConnectible : GI -> GI -> CellGrid -> Bool
 areCellsAtIndicesConnectible a b grid =
     isAdj a b
         && (Maybe.map2 areCellsConnectible (Grid.get a grid) (Grid.get b grid)
@@ -363,14 +367,10 @@ type alias ModelRecord =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
-    , grid : Grid Cell
+    , grid : CellGrid
     , selection : Selection
     , random : Random.Seed
     }
-
-
-type alias CellGrid =
-    Grid.Grid Cell
 
 
 init : Model
@@ -401,7 +401,7 @@ type alias Info =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
-    , grid : Grid Cell
+    , grid : CellGrid
     , selectionStack : List GI
     }
 
