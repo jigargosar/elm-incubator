@@ -180,24 +180,24 @@ update message model =
 
 
 updateSelection : GI -> Bool -> Game.SelectingModel -> Maybe Game.SelectingModel
-updateSelection idx wasSelected game =
+updateSelection idx wasSelected selectingModel =
     let
         stack =
-            Game.selectionStack game
+            Game.selectionStack selectingModel
     in
     if wasSelected && List.member idx stack then
         -- Remove
         case stack of
             only :: [] ->
                 if only == idx then
-                    Game.selectionPop game
+                    Game.selectionPop selectingModel
 
                 else
                     Nothing
 
             _ :: secondLast :: _ ->
                 if secondLast == idx then
-                    Game.selectionPop game
+                    Game.selectionPop selectingModel
 
                 else
                     Nothing
@@ -207,7 +207,7 @@ updateSelection idx wasSelected game =
 
     else if not wasSelected && not (List.member idx stack) then
         -- Add
-        Game.selectionPush idx game
+        Game.selectionPush idx selectingModel
 
     else
         -- NoOp
