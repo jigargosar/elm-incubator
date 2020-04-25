@@ -17,7 +17,7 @@ module GameModel exposing
     , stats
     )
 
-import Basics.Extra exposing (atLeast, swap)
+import Basics.Extra exposing (atLeast, flip, swap)
 import Dict exposing (Dict)
 import Grid exposing (GI, Grid)
 import List.Extra
@@ -475,36 +475,38 @@ selectionToCollectibleIndices (Selection stack) =
 makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
 makeMove (Internal state) =
     selectionToCollectibleIndices state.selection
-        |> Maybe.map
-            (\collectibleIndices ->
-                let
-                    ( moveDetails, nextRandom ) =
-                        Random.step
-                            (collectAndGenerateWithDetails collectibleIndices state.grid)
-                            state.random
+        |> Maybe.map (flip makeMoveHelp state)
 
-                    { movesLeft, targetWater, targetSeeds } =
-                        state.stats
 
-                    nextTargetSeeds =
-                        (targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+makeMoveHelp : List GI -> State -> ( MoveDetails, Model )
+makeMoveHelp collectibleIndices state =
+    let
+        ( moveDetails, nextRandom ) =
+            Random.step
+                (collectAndGenerateWithDetails collectibleIndices state.grid)
+                state.random
 
-                    nextTargetWater =
-                        (targetWater - moveDetails.collected.water) |> atLeast 0
+        { movesLeft, targetWater, targetSeeds } =
+            state.stats
 
-                    nextMovesLeft =
-                        (movesLeft - 1) |> atLeast 0
-                in
-                ( moveDetails
-                , fromState
-                    { stats =
-                        { targetSeeds = nextTargetSeeds
-                        , targetWater = nextTargetWater
-                        , movesLeft = nextMovesLeft
-                        }
-                    , grid = moveDetails.generated.grid
-                    , random = nextRandom
-                    , selection = emptySelection
-                    }
-                )
-            )
+        nextTargetSeeds =
+            (targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+
+        nextTargetWater =
+            (targetWater - moveDetails.collected.water) |> atLeast 0
+
+        nextMovesLeft =
+            (movesLeft - 1) |> atLeast 0
+    in
+    ( moveDetails
+    , fromState
+        { stats =
+            { targetSeeds = nextTargetSeeds
+            , targetWater = nextTargetWater
+            , movesLeft = nextMovesLeft
+            }
+        , grid = moveDetails.generated.grid
+        , random = nextRandom
+        , selection = emptySelection
+        }
+    )
