@@ -142,7 +142,7 @@ update message model =
                         Game.InvalidMove ->
                             ( model, Cmd.none )
 
-                        Game.NextModel ctx nextGame ->
+                        Game.NextModel moveDetails nextGame ->
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps
@@ -151,13 +151,13 @@ update message model =
                                 { settledState = Selecting nextGame
                                 , initialGrid = Game.cellGrid game
                                 , stats = Game.stats nextGame
-                                , moveDetails = ctx
+                                , moveDetails = moveDetails
                                 , steps = transitionSteps
                                 }
                             , cmd
                             )
 
-                        Game.GameOver ctx nextGame ->
+                        Game.GameOver moveDetails nextGame ->
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps
@@ -166,7 +166,7 @@ update message model =
                                 { settledState = Over nextGame
                                 , initialGrid = Game.cellGrid game
                                 , stats = Game.stats nextGame
-                                , moveDetails = ctx
+                                , moveDetails = moveDetails
                                 , steps = transitionSteps
                                 }
                             , cmd
