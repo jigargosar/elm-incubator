@@ -139,16 +139,16 @@ update message model =
             case model of
                 Settled (Selecting selecting) ->
                     let
-                        foo ss new md =
+                        initAnimatingMove moveDetails nextSettledState nextGameModel =
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps
                             in
                             ( AnimatingMove
-                                { settledState = ss
+                                { settledState = nextSettledState
                                 , initialGrid = Game.cellGrid selecting
-                                , stats = Game.stats new
-                                , moveDetails = md
+                                , stats = Game.stats nextGameModel
+                                , moveDetails = moveDetails
                                 , steps = transitionSteps
                                 }
                             , cmd
@@ -159,42 +159,10 @@ update message model =
                             ( model, Cmd.none )
 
                         Game.NextModel moveDetails nextSelecting ->
-                            let
-                                ( transitionSteps, cmd ) =
-                                    initMoveTransitionSteps
-
-                                bar : ( Model, Cmd Msg )
-                                bar =
-                                    foo (Selecting nextSelecting) nextSelecting moveDetails
-                            in
-                            ( AnimatingMove
-                                { settledState = Selecting nextSelecting
-                                , initialGrid = Game.cellGrid selecting
-                                , stats = Game.stats nextSelecting
-                                , moveDetails = moveDetails
-                                , steps = transitionSteps
-                                }
-                            , cmd
-                            )
+                            initAnimatingMove moveDetails (Selecting nextSelecting) nextSelecting
 
                         Game.GameOver moveDetails over ->
-                            let
-                                bar : ( Model, Cmd Msg )
-                                bar =
-                                    foo (Over over) over moveDetails
-
-                                ( transitionSteps, cmd ) =
-                                    initMoveTransitionSteps
-                            in
-                            ( AnimatingMove
-                                { settledState = Over over
-                                , initialGrid = Game.cellGrid selecting
-                                , stats = Game.stats over
-                                , moveDetails = moveDetails
-                                , steps = transitionSteps
-                                }
-                            , cmd
-                            )
+                            initAnimatingMove moveDetails (Over over) over
 
                 _ ->
                     ( model, Cmd.none )
