@@ -356,10 +356,10 @@ areCellsConnectible cell1 cell2 =
 
 
 type Model
-    = Model State
+    = Model ModelRecord
 
 
-type alias State =
+type alias ModelRecord =
     { movesLeft : Int
     , targetSeeds : Int
     , targetWater : Int
@@ -428,24 +428,24 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMove : Model -> MoveResult
-makeMove (Model state) =
-    case selectionToCollectibleIndices state.selection of
+makeMove (Model modelRecord) =
+    case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->
             InvalidMove
 
         Just collectibleIndices ->
             let
                 ( moveDetails, nextRandom ) =
-                    Random.step (collectAndGenerateNextGrid collectibleIndices state.grid) state.random
+                    Random.step (collectAndGenerateNextGrid collectibleIndices modelRecord.grid) modelRecord.random
 
                 nextTargetSeeds =
-                    (state.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+                    (modelRecord.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
 
                 nextTargetWater =
-                    (state.targetWater - moveDetails.collected.water) |> atLeast 0
+                    (modelRecord.targetWater - moveDetails.collected.water) |> atLeast 0
 
                 nextMovesLeft =
-                    (state.movesLeft - 1) |> atLeast 0
+                    (modelRecord.movesLeft - 1) |> atLeast 0
 
                 isGameWon =
                     List.all ((==) 0) [ nextTargetSeeds, nextTargetWater ]
