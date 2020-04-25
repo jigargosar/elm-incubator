@@ -241,6 +241,10 @@ type alias DM =
     Document Msg
 
 
+type alias HM =
+    Html Msg
+
+
 view : Model -> DM
 view model =
     Document "GameRunner"
@@ -254,68 +258,21 @@ view model =
                     Settled (Selecting game) ->
                         [ viewTitle "Game Running"
                         , viewGameStats (Game.stats game)
-                        , viewGameTable (Game.selectionStack game) (Game.cellGrid game)
+                        , viewCellGridTableWithSelectionStack (Game.selectionStack game) (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
                     Settled (Over stats grid) ->
                         [ viewTitle "Game Over"
                         , viewGameStats stats
-                        , viewGameTable [] grid
+                        , viewCellGridTableWithSelectionStack [] grid
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.steps))
                         , viewGameStats anim.stats
-                        , let
-                            toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
-                            toCellVMHelp func idx cell =
-                                { selectionIdx = Nothing
-                                , selectionMsg = Nothing
-                                , cell = cell
-                                , cellState = func idx
-                                }
-
-                            ( grid, idxToCS ) =
-                                case currentTS anim.steps |> Tuple.first of
-                                    LeavingTransition ->
-                                        ( anim.initialGrid
-                                        , let
-                                            idxToCellState idx =
-                                                if Set.member idx anim.moveDetails.collected.indexSet then
-                                                    CellLeaving
-
-                                                else
-                                                    case Dict.get idx anim.moveDetails.fallenLookup of
-                                                        Just to ->
-                                                            CellFallingTo to
-
-                                                        Nothing ->
-                                                            CellStatic
-                                          in
-                                          idxToCellState
-                                        )
-
-                                    EnteringStartTransition ->
-                                        ( anim.moveDetails.generated.grid
-                                        , let
-                                            idxToCellState idx =
-                                                if Set.member idx anim.moveDetails.generated.indexSet then
-                                                    CellEnterStart
-
-                                                else
-                                                    CellStaticNoTransition
-                                          in
-                                          idxToCellState
-                                        )
-
-                                    EnteringTransition ->
-                                        ( anim.moveDetails.generated.grid
-                                        , always CellStatic
-                                        )
-                          in
-                          viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
+                        , viewCellGridTableWithMoveAnimation anim
                         ]
                )
         )
@@ -325,17 +282,65 @@ viewTitle title =
     div [ class "pa3 f3" ] [ text title ]
 
 
-type alias HM =
-    Html Msg
-
-
 viewGameStats : Game.Stats -> HM
 viewGameStats stats =
     div [ class "pa3" ] [ text (Debug.toString stats) ]
 
 
-viewGameTable : List GI -> Game.CellGrid -> HM
-viewGameTable selectionStack grid =
+viewCellGridTableWithMoveAnimation : MoveAnimation -> HM
+viewCellGridTableWithMoveAnimation anim =
+    let
+        toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
+        toCellVMHelp func idx cell =
+            { selectionIdx = Nothing
+            , selectionMsg = Nothing
+            , cell = cell
+            , cellState = func idx
+            }
+
+        ( grid, idxToCS ) =
+            case currentTS anim.steps |> Tuple.first of
+                LeavingTransition ->
+                    ( anim.initialGrid
+                    , let
+                        idxToCellState idx =
+                            if Set.member idx anim.moveDetails.collected.indexSet then
+                                CellLeaving
+
+                            else
+                                case Dict.get idx anim.moveDetails.fallenLookup of
+                                    Just to ->
+                                        CellFallingTo to
+
+                                    Nothing ->
+                                        CellStatic
+                      in
+                      idxToCellState
+                    )
+
+                EnteringStartTransition ->
+                    ( anim.moveDetails.generated.grid
+                    , let
+                        idxToCellState idx =
+                            if Set.member idx anim.moveDetails.generated.indexSet then
+                                CellEnterStart
+
+                            else
+                                CellStaticNoTransition
+                      in
+                      idxToCellState
+                    )
+
+                EnteringTransition ->
+                    ( anim.moveDetails.generated.grid
+                    , always CellStatic
+                    )
+    in
+    viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
+
+
+viewCellGridTableWithSelectionStack : List GI -> Game.CellGrid -> HM
+viewCellGridTableWithSelectionStack selectionStack grid =
     let
         toCellViewModel : GI -> Game.Cell -> CellViewModel
         toCellViewModel idx cell =
