@@ -58,9 +58,7 @@ type Model
 
 
 type alias MoveAnimation =
-    { settledState : Game.Model
-    , initialGrid : Grid Game.Cell
-    , stats : Game.Stats
+    { game : Game.Model
     , moveDetails : Game.MoveDetails
     , steps : TransitionSteps MoveTransition
     }
@@ -142,9 +140,7 @@ update message model =
                                     initMoveTransitionSteps
                             in
                             ( AnimatingMove
-                                { settledState = nextGame
-                                , initialGrid = Game.cellGrid game
-                                , stats = Game.stats nextGame
+                                { game = nextGame
                                 , moveDetails = moveDetails
                                 , steps = transitionSteps
                                 }
@@ -171,7 +167,7 @@ update message model =
                             )
 
                         Nothing ->
-                            ( Settled anim.settledState
+                            ( Settled anim.game
                             , Cmd.none
                             )
 
@@ -277,7 +273,7 @@ view model =
 
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.steps))
-                        , viewGameStats anim.stats
+                        , viewGameStats (Game.stats anim.game)
                         , viewCellGridTableWithMoveAnimation anim
                         ]
                )
@@ -308,7 +304,7 @@ viewCellGridTableWithMoveAnimation anim =
         ( grid, idxToCS ) =
             case currentTS anim.steps |> Tuple.first of
                 LeavingTransition ->
-                    ( anim.initialGrid
+                    ( anim.moveDetails.initialGrid
                     , let
                         idxToCellState idx =
                             if Set.member idx anim.moveDetails.collected.indexSet then

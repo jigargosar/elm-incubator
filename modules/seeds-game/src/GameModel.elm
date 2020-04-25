@@ -68,7 +68,8 @@ initCellGrid =
 
 
 type alias MoveDetails =
-    { collected : { indexSet : Set GI, water : Int, seeds : Int }
+    { initialGrid : CellGrid
+    , collected : { indexSet : Set GI, water : Int, seeds : Int }
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : CellGrid }
     }
@@ -92,7 +93,8 @@ collectAndGenerateWithDetails collectIndices grid =
                 eq =
                     (==)
             in
-            { collected =
+            { initialGrid = grid
+            , collected =
                 { indexSet = List.map Tuple.first collectedEntries |> Set.fromList
                 , water = List.Extra.count (eq Water) collectedCells
                 , seeds = List.Extra.count (eq Seed) collectedCells
