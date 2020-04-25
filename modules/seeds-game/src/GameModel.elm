@@ -463,6 +463,12 @@ selectionStack (Internal state) =
     selectionToStack state.selection
 
 
+makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
+makeMove (Internal state) =
+    selectionToCollectibleIndices state.selection
+        |> Maybe.map (flip makeMoveHelp state)
+
+
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
 selectionToCollectibleIndices (Selection stack) =
     if List.length stack < 2 then
@@ -470,12 +476,6 @@ selectionToCollectibleIndices (Selection stack) =
 
     else
         Just stack
-
-
-makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
-makeMove (Internal state) =
-    selectionToCollectibleIndices state.selection
-        |> Maybe.map (flip makeMoveHelp state)
 
 
 makeMoveHelp : List GI -> State -> ( MoveDetails, Model )
