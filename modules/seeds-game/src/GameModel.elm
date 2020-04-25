@@ -497,20 +497,17 @@ makeMove (Internal modelRecord) =
 
 
 modelFromState : State -> Model
-modelFromState modelRecord =
+modelFromState state =
     let
-        nextModel =
-            Internal modelRecord
-
-        stats_ =
-            modelRecord.stats
+        { movesLeft, targetWater, targetSeeds } =
+            state.stats
 
         isGameOver =
-            (stats_.movesLeft == 0)
-                && List.any ((/=) 0) [ stats_.targetWater, stats_.targetSeeds ]
+            (movesLeft == 0)
+                && List.any ((/=) 0) [ targetWater, targetSeeds ]
     in
     if isGameOver then
-        Over nextModel
+        Over (Internal state)
 
     else
-        Selecting nextModel
+        Selecting (Internal state)
