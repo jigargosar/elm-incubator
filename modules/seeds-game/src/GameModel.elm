@@ -364,19 +364,11 @@ areCellsConnectible cell1 cell2 =
 
 
 type alias Selecting =
-    Model Selecting_
+    Model { selecting : () }
 
 
 type alias Over =
-    Model Over_
-
-
-type Over_
-    = Over_
-
-
-type Selecting_
-    = Selecting_
+    Model { over : () }
 
 
 type Model a
