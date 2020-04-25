@@ -492,3 +492,20 @@ makeMove (Model modelRecord) =
 
             else
                 NextModel moveDetails nextModel
+
+
+initMoveSuccess : MoveDetails -> ModelRecord -> MoveResult
+initMoveSuccess moveDetails modelRecord =
+    let
+        nextModel =
+            Model modelRecord
+
+        isGameOver =
+            (modelRecord.movesLeft == 0)
+                && List.any ((/=) 0) [ modelRecord.targetWater, modelRecord.targetSeeds ]
+    in
+    if isGameOver then
+        GameOver moveDetails nextModel
+
+    else
+        NextModel moveDetails nextModel
