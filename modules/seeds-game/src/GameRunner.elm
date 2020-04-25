@@ -278,6 +278,7 @@ view model =
         )
 
 
+viewTitle : String -> HM
 viewTitle title =
     div [ class "pa3 f3" ] [ text title ]
 
