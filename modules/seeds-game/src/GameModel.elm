@@ -402,6 +402,13 @@ type alias Info =
     }
 
 
+type alias Stats =
+    { movesLeft : Int
+    , targetSeeds : Int
+    , targetWater : Int
+    }
+
+
 info : Model -> Info
 info (Model gm) =
     { movesLeft = gm.movesLeft
