@@ -3,13 +3,11 @@ module GameModel exposing
     , CellGrid
     , Entries
     , Entry
-    , Info
     , Model
     , MoveDetails
     , MoveResult(..)
     , Stats
     , cellGrid
-    , info
     , init
     , makeMove
     , selectionPop
@@ -402,15 +400,6 @@ selectionPop (Model gm) =
         |> Maybe.map (\selection -> Model { gm | selection = selection })
 
 
-type alias Info =
-    { movesLeft : Int
-    , targetSeeds : Int
-    , targetWater : Int
-    , grid : CellGrid
-    , selectionStack : List GI
-    }
-
-
 type alias Stats =
     { movesLeft : Int
     , targetSeeds : Int
@@ -434,16 +423,6 @@ cellGrid (Model modelRecord) =
 selectionStack : Model -> List GI
 selectionStack (Model modelRecord) =
     selectionToStack modelRecord.selection
-
-
-info : Model -> Info
-info (Model gm) =
-    { movesLeft = gm.movesLeft
-    , targetSeeds = gm.targetSeeds
-    , targetWater = gm.targetWater
-    , grid = gm.grid
-    , selectionStack = selectionToStack gm.selection
-    }
 
 
 type MoveResult
