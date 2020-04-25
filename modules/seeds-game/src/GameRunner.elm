@@ -54,16 +54,11 @@ currentTS (TransitionSteps current _) =
 
 type Model
     = AnimatingMove MoveAnimation
-    | Settled SettledState
-
-
-type SettledState
-    = Selecting Game.SelectingModel
-    | Over Game.OverModel
+    | Settled Game.State
 
 
 type alias MoveAnimation =
-    { settledState : SettledState
+    { settledState : Game.State
     , initialGrid : Grid Game.Cell
     , stats : Game.Stats
     , moveDetails : Game.MoveDetails
@@ -83,7 +78,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( Settled (Selecting Game.init)
+    ( Settled Game.init
     , Cmd.none
     )
 
@@ -108,7 +103,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Settled (Over _) ->
+                Settled (Game.Over _) ->
                     init ()
 
                 _ ->
@@ -116,10 +111,11 @@ update message model =
 
         ToggleSelection idx wasSelected ->
             case model of
-                Settled (Selecting game) ->
+                Settled (Game.Selecting selectingModel) ->
                     let
                         nm =
-                            Selecting (updateSelection idx wasSelected game |> Maybe.withDefault game)
+                            Game.Selecting
+                                (updateSelection idx wasSelected selectingModel |> Maybe.withDefault selectingModel)
                                 |> Settled
                     in
                     ( nm, Cmd.none )
@@ -137,7 +133,7 @@ update message model =
                         ]
             in
             case model of
-                Settled (Selecting selecting) ->
+                Settled (Game.Selecting selectingModel) ->
                     let
                         initAnimatingMove moveDetails nextSettledState nextGameModel =
                             let
@@ -146,7 +142,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = nextSettledState
-                                , initialGrid = Game.cellGrid selecting
+                                , initialGrid = Game.cellGrid selectingModel
                                 , stats = Game.stats nextGameModel
                                 , moveDetails = moveDetails
                                 , steps = transitionSteps
@@ -154,15 +150,15 @@ update message model =
                             , cmd
                             )
                     in
-                    case Game.makeMove selecting of
+                    case Game.makeMove selectingModel of
                         Game.InvalidMove ->
                             ( model, Cmd.none )
 
                         Game.NextSelecting moveDetails nextSelecting ->
-                            initAnimatingMove moveDetails (Selecting nextSelecting) nextSelecting
+                            initAnimatingMove moveDetails (Game.Selecting nextSelecting) nextSelecting
 
                         Game.GameOver moveDetails over ->
-                            initAnimatingMove moveDetails (Over over) over
+                            initAnimatingMove moveDetails (Game.Over over) over
 
                 _ ->
                     ( model, Cmd.none )
@@ -264,14 +260,14 @@ view model =
             }
         """ ]
             :: (case model of
-                    Settled (Selecting game) ->
+                    Settled (Game.Selecting game) ->
                         [ viewTitle "Game Running"
                         , viewGameStats (Game.stats game)
                         , viewCellGridTableWithSelectionStack (Game.selectionStack game) (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled (Over game) ->
+                    Settled (Game.Over game) ->
                         [ viewTitle "Game Over"
                         , viewGameStats (Game.stats game)
                         , viewCellGridTableWithSelectionStack [] (Game.cellGrid game)

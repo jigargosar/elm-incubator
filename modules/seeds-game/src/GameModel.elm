@@ -7,6 +7,7 @@ module GameModel exposing
     , MoveResult(..)
     , OverModel
     , SelectingModel
+    , State(..)
     , Stats
     , cellGrid
     , init
@@ -363,6 +364,11 @@ areCellsConnectible cell1 cell2 =
 -- GAME MODEL
 
 
+type State
+    = Selecting SelectingModel
+    | Over OverModel
+
+
 type alias SelectingModel =
     Model { selection : Selection }
 
@@ -383,7 +389,7 @@ type alias ModelRecord =
     }
 
 
-init : SelectingModel
+init : State
 init =
     Model
         { stats =
@@ -395,6 +401,7 @@ init =
         , selection = emptySelection
         , random = Random.initialSeed 0
         }
+        |> Selecting
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
