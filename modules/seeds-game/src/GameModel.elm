@@ -364,7 +364,7 @@ areCellsConnectible cell1 cell2 =
 
 
 type alias Selecting =
-    Model { selecting : () }
+    Model { selection : Selection }
 
 
 type alias Over =
