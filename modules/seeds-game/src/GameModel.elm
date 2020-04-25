@@ -377,7 +377,7 @@ type alias OverModel =
 
 
 type PrivateModel a
-    = Model_ ModelRecord
+    = PrivateModel ModelRecord
 
 
 type alias ModelRecord =
@@ -390,7 +390,7 @@ type alias ModelRecord =
 
 init : Model
 init =
-    Model_
+    PrivateModel
         { stats =
             { movesLeft = 2
             , targetSeeds = 35
@@ -404,15 +404,15 @@ init =
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
-selectionPush idx (Model_ gm) =
+selectionPush idx (PrivateModel gm) =
     selectionPush_ idx gm.grid gm.selection
-        |> Maybe.map (\selection -> Model_ { gm | selection = selection })
+        |> Maybe.map (\selection -> PrivateModel { gm | selection = selection })
 
 
 selectionPop : SelectingModel -> Maybe SelectingModel
-selectionPop (Model_ gm) =
+selectionPop (PrivateModel gm) =
     selectionPop_ gm.selection
-        |> Maybe.map (\selection -> Model_ { gm | selection = selection })
+        |> Maybe.map (\selection -> PrivateModel { gm | selection = selection })
 
 
 type alias Stats =
@@ -423,7 +423,7 @@ type alias Stats =
 
 
 modelStats : PrivateModel a -> Stats
-modelStats (Model_ modelRecord) =
+modelStats (PrivateModel modelRecord) =
     modelRecord.stats
 
 
@@ -435,11 +435,11 @@ stats =
 toModel : Model -> PrivateModel a
 toModel state =
     case state of
-        Selecting (Model_ mr) ->
-            Model_ mr
+        Selecting (PrivateModel mr) ->
+            PrivateModel mr
 
-        Over (Model_ mr) ->
-            Model_ mr
+        Over (PrivateModel mr) ->
+            PrivateModel mr
 
 
 cellGrid : Model -> CellGrid
@@ -448,12 +448,12 @@ cellGrid =
 
 
 modelCellGrid : PrivateModel a -> CellGrid
-modelCellGrid (Model_ modelRecord) =
+modelCellGrid (PrivateModel modelRecord) =
     modelRecord.grid
 
 
 selectionStack : SelectingModel -> List GI
-selectionStack (Model_ modelRecord) =
+selectionStack (PrivateModel modelRecord) =
     selectionToStack modelRecord.selection
 
 
@@ -467,7 +467,7 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
-makeMove (Model_ modelRecord) =
+makeMove (PrivateModel modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->
             Nothing
@@ -510,7 +510,7 @@ initState : ModelRecord -> Model
 initState modelRecord =
     let
         nextModel =
-            Model_ modelRecord
+            PrivateModel modelRecord
 
         stats_ =
             modelRecord.stats
