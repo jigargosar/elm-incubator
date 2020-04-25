@@ -59,7 +59,7 @@ type Model
 
 type SettledState
     = Selecting Game.Selecting
-    | Over Game.Stats Game.CellGrid
+    | Over Game.Over
 
 
 type alias MoveAnimation =
@@ -108,7 +108,7 @@ update message model =
 
         PlayAnother ->
             case model of
-                Settled (Over _ _) ->
+                Settled (Over _) ->
                     init ()
 
                 _ ->
@@ -157,15 +157,15 @@ update message model =
                             , cmd
                             )
 
-                        Game.GameOver ctx stats ->
+                        Game.GameOver ctx nextGame ->
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps
                             in
                             ( AnimatingMove
-                                { settledState = Over stats ctx.generated.grid
+                                { settledState = Over nextGame
                                 , initialGrid = Game.cellGrid game
-                                , stats = stats
+                                , stats = Game.stats nextGame
                                 , moveDetails = ctx
                                 , steps = transitionSteps
                                 }
@@ -279,10 +279,10 @@ view model =
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled (Over stats grid) ->
+                    Settled (Over game) ->
                         [ viewTitle "Game Over"
-                        , viewGameStats stats
-                        , viewCellGridTableWithSelectionStack [] grid
+                        , viewGameStats (Game.stats game)
+                        , viewCellGridTableWithSelectionStack [] (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 

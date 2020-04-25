@@ -424,7 +424,7 @@ type alias Stats =
     }
 
 
-stats : Selecting -> Stats
+stats : Model a -> Stats
 stats (Model modelRecord) =
     { movesLeft = modelRecord.movesLeft
     , targetSeeds = modelRecord.targetSeeds
@@ -432,7 +432,7 @@ stats (Model modelRecord) =
     }
 
 
-cellGrid : Selecting -> CellGrid
+cellGrid : Model a -> CellGrid
 cellGrid (Model modelRecord) =
     modelRecord.grid
 
@@ -444,7 +444,7 @@ selectionStack (Model modelRecord) =
 
 type MoveResult
     = InvalidMove
-    | GameOver MoveDetails Stats
+    | GameOver MoveDetails Over
     | NextModel MoveDetails Selecting
 
 
@@ -487,10 +487,15 @@ makeMove (Model modelRecord) =
             in
             if isGameWon || isGameLost then
                 GameOver moveDetails
-                    { targetSeeds = nextTargetSeeds
-                    , targetWater = nextTargetWater
-                    , movesLeft = nextMovesLeft
-                    }
+                    (Model
+                        { targetSeeds = nextTargetSeeds
+                        , targetWater = nextTargetWater
+                        , movesLeft = nextMovesLeft
+                        , grid = moveDetails.generated.grid
+                        , random = nextRandom
+                        , selection = emptySelection
+                        }
+                    )
 
             else
                 NextModel moveDetails
