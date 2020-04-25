@@ -5,6 +5,7 @@ module GameModel exposing
     , Entry
     , MoveDetails
     , MoveResult(..)
+    , Over
     , Selecting
     , Stats
     , cellGrid
@@ -364,6 +365,14 @@ areCellsConnectible cell1 cell2 =
 
 type alias Selecting =
     Model Selecting_
+
+
+type alias Over =
+    Model Over_
+
+
+type Over_
+    = Over_
 
 
 type Selecting_
