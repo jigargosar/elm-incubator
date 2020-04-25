@@ -470,28 +470,15 @@ makeMove (Model modelRecord) =
 
                 nextMovesLeft =
                     (modelRecord.movesLeft - 1) |> atLeast 0
-
-                isGameOver =
-                    nextMovesLeft == 0 && List.any ((/=) 0) [ nextTargetSeeds, nextTargetWater ]
-
-                nextModelRecord =
-                    { targetSeeds = nextTargetSeeds
-                    , targetWater = nextTargetWater
-                    , movesLeft = nextMovesLeft
-                    , grid = moveDetails.generated.grid
-                    , random = nextRandom
-                    , selection = emptySelection
-                    }
-
-                nextModel : Model a
-                nextModel =
-                    Model nextModelRecord
             in
-            if isGameOver then
-                GameOver moveDetails nextModel
-
-            else
-                NextModel moveDetails nextModel
+            initMoveSuccess moveDetails
+                { targetSeeds = nextTargetSeeds
+                , targetWater = nextTargetWater
+                , movesLeft = nextMovesLeft
+                , grid = moveDetails.generated.grid
+                , random = nextRandom
+                , selection = emptySelection
+                }
 
 
 initMoveSuccess : MoveDetails -> ModelRecord -> MoveResult
