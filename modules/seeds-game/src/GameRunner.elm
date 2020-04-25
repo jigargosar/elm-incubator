@@ -19,8 +19,7 @@ updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
 updateSelection idx wasSelected game =
     let
         stack =
-            Game.info game
-                |> .selectionStack
+            Game.selectionStack game
     in
     if wasSelected && List.member idx stack then
         -- Remove
@@ -185,7 +184,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = Selecting nextGame
-                                , initialGrid = (Game.info game).grid
+                                , initialGrid = Game.cellGrid game
                                 , stats = Game.stats nextGame
                                 , moveDetails = ctx
                                 , steps = transitionSteps
@@ -200,7 +199,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = Over stats ctx.generated.grid
-                                , initialGrid = (Game.info game).grid
+                                , initialGrid = Game.cellGrid game
                                 , stats = stats
                                 , moveDetails = ctx
                                 , steps = transitionSteps
