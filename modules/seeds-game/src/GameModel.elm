@@ -376,9 +376,7 @@ type Model a
 
 
 type alias ModelRecord =
-    { movesLeft : Int
-    , targetSeeds : Int
-    , targetWater : Int
+    { stats : Stats
     , grid : CellGrid
     , selection : Selection
     , random : Random.Seed
@@ -388,9 +386,11 @@ type alias ModelRecord =
 init : Selecting
 init =
     Model
-        { movesLeft = 2
-        , targetSeeds = 35
-        , targetWater = 35
+        { stats =
+            { movesLeft = 2
+            , targetSeeds = 35
+            , targetWater = 35
+            }
         , grid = initCellGrid
         , selection = emptySelection
         , random = Random.initialSeed 0
@@ -418,10 +418,7 @@ type alias Stats =
 
 stats : Model a -> Stats
 stats (Model modelRecord) =
-    { movesLeft = modelRecord.movesLeft
-    , targetSeeds = modelRecord.targetSeeds
-    , targetWater = modelRecord.targetWater
-    }
+    modelRecord.stats
 
 
 cellGrid : Model a -> CellGrid
@@ -462,19 +459,24 @@ makeMove (Model modelRecord) =
                         (collectAndGenerateWithDetails collectibleIndices modelRecord.grid)
                         modelRecord.random
 
+                stats_ =
+                    modelRecord.stats
+
                 nextTargetSeeds =
-                    (modelRecord.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+                    (stats_.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
 
                 nextTargetWater =
-                    (modelRecord.targetWater - moveDetails.collected.water) |> atLeast 0
+                    (stats_.targetWater - moveDetails.collected.water) |> atLeast 0
 
                 nextMovesLeft =
-                    (modelRecord.movesLeft - 1) |> atLeast 0
+                    (stats_.movesLeft - 1) |> atLeast 0
             in
             initMoveSuccess moveDetails
-                { targetSeeds = nextTargetSeeds
-                , targetWater = nextTargetWater
-                , movesLeft = nextMovesLeft
+                { stats =
+                    { targetSeeds = nextTargetSeeds
+                    , targetWater = nextTargetWater
+                    , movesLeft = nextMovesLeft
+                    }
                 , grid = moveDetails.generated.grid
                 , random = nextRandom
                 , selection = emptySelection
@@ -487,9 +489,12 @@ initMoveSuccess moveDetails modelRecord =
         nextModel =
             Model modelRecord
 
+        stats_ =
+            modelRecord.stats
+
         isGameOver =
-            (modelRecord.movesLeft == 0)
-                && List.any ((/=) 0) [ modelRecord.targetWater, modelRecord.targetSeeds ]
+            (stats_.movesLeft == 0)
+                && List.any ((/=) 0) [ stats_.targetWater, stats_.targetSeeds ]
     in
     if isGameOver then
         GameOver moveDetails nextModel
