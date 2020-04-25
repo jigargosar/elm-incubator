@@ -474,39 +474,37 @@ selectionToCollectibleIndices (Selection stack) =
 
 makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
 makeMove (Internal state) =
-    case selectionToCollectibleIndices state.selection of
-        Nothing ->
-            Nothing
+    selectionToCollectibleIndices state.selection
+        |> Maybe.map
+            (\collectibleIndices ->
+                let
+                    ( moveDetails, nextRandom ) =
+                        Random.step
+                            (collectAndGenerateWithDetails collectibleIndices state.grid)
+                            state.random
 
-        Just collectibleIndices ->
-            let
-                ( moveDetails, nextRandom ) =
-                    Random.step
-                        (collectAndGenerateWithDetails collectibleIndices state.grid)
-                        state.random
+                    { movesLeft, targetWater, targetSeeds } =
+                        state.stats
 
-                { movesLeft, targetWater, targetSeeds } =
-                    state.stats
+                    nextTargetSeeds =
+                        (targetSeeds - moveDetails.collected.seeds) |> atLeast 0
 
-                nextTargetSeeds =
-                    (targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+                    nextTargetWater =
+                        (targetWater - moveDetails.collected.water) |> atLeast 0
 
-                nextTargetWater =
-                    (targetWater - moveDetails.collected.water) |> atLeast 0
-
-                nextMovesLeft =
-                    (movesLeft - 1) |> atLeast 0
-            in
-            ( moveDetails
-            , fromState
-                { stats =
-                    { targetSeeds = nextTargetSeeds
-                    , targetWater = nextTargetWater
-                    , movesLeft = nextMovesLeft
+                    nextMovesLeft =
+                        (movesLeft - 1) |> atLeast 0
+                in
+                ( moveDetails
+                , fromState
+                    { stats =
+                        { targetSeeds = nextTargetSeeds
+                        , targetWater = nextTargetWater
+                        , movesLeft = nextMovesLeft
+                        }
+                    , grid = moveDetails.generated.grid
+                    , random = nextRandom
+                    , selection = emptySelection
                     }
-                , grid = moveDetails.generated.grid
-                , random = nextRandom
-                , selection = emptySelection
-                }
+                )
             )
-                |> Just
