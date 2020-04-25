@@ -390,7 +390,7 @@ type alias State =
 
 init : Model
 init =
-    Internal
+    modelFromState
         { stats =
             { movesLeft = 2
             , targetSeeds = 35
@@ -400,7 +400,6 @@ init =
         , selection = emptySelection
         , random = Random.initialSeed 0
         }
-        |> Selecting
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
