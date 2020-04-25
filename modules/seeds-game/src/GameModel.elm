@@ -1,11 +1,13 @@
 module GameModel exposing
     ( Cell(..)
+    , CellGrid
     , Entries
     , Entry
     , Info
     , Model
     , MoveDetails
     , MoveResult(..)
+    , Stats
     , info
     , init
     , makeMove
@@ -442,7 +444,7 @@ info (Model gm) =
 
 type MoveResult
     = InvalidMove
-    | GameOver MoveDetails Info
+    | GameOver MoveDetails Stats
     | NextModel MoveDetails Model
 
 
@@ -487,7 +489,6 @@ makeMove (Model modelRecord) =
                     , targetWater = nextTargetWater
                     , movesLeft = nextMovesLeft
                     , grid = moveDetails.generated.grid
-                    , selectionStack = []
                     }
 
             else

@@ -95,13 +95,13 @@ type Model
 
 type SettledState
     = Selecting Game.Model
-    | Over Game.Info
+    | Over Game.Stats
 
 
 type alias MoveAnimation =
     { settledState : SettledState
     , initialGrid : Grid Game.Cell
-    , info : Game.Info
+    , stats : Game.Stats
     , moveDetails : Game.MoveDetails
     , steps : TransitionSteps MoveTransition
     }
@@ -186,22 +186,22 @@ update message model =
                             ( AnimatingMove
                                 { settledState = Selecting nextGame
                                 , initialGrid = (Game.info game).grid
-                                , info = Game.info nextGame
+                                , stats = Game.stats nextGame
                                 , moveDetails = ctx
                                 , steps = transitionSteps
                                 }
                             , cmd
                             )
 
-                        Game.GameOver ctx info ->
+                        Game.GameOver ctx stats ->
                             let
                                 ( transitionSteps, cmd ) =
                                     initMoveTransitionSteps
                             in
                             ( AnimatingMove
-                                { settledState = Over info
+                                { settledState = Over stats
                                 , initialGrid = (Game.info game).grid
-                                , info = info
+                                , stats = stats
                                 , moveDetails = ctx
                                 , steps = transitionSteps
                                 }
@@ -254,13 +254,13 @@ view model =
             :: (case model of
                     Settled (Selecting game) ->
                         [ viewTitle "Game Running"
-                        , viewGameInfo (Game.info game)
+                        , viewGameInfo (Game.stats game) (Game.selectionStack game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled (Over info) ->
+                    Settled (Over stats) ->
                         [ viewTitle "Game Over"
-                        , viewGameInfo info
+                        , viewGameInfo stats []
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
@@ -317,9 +317,9 @@ view model =
                             [ div [ class "pa3" ]
                                 [ text
                                     (Debug.toString
-                                        { movesLeft = anim.info.movesLeft
-                                        , targetSeeds = anim.info.targetSeeds
-                                        , targetWater = anim.info.targetWater
+                                        { movesLeft = anim.stats.movesLeft
+                                        , targetSeeds = anim.stats.targetSeeds
+                                        , targetWater = anim.stats.targetWater
                                         }
                                     )
                                 ]
@@ -338,38 +338,30 @@ type alias HM =
     Html Msg
 
 
-viewGameInfo :
-    { a
-        | movesLeft : Int
-        , targetSeeds : Int
-        , targetWater : Int
-        , selectionStack : List GI
-        , grid : Grid Game.Cell
-    }
-    -> HM
-viewGameInfo i =
+viewGameInfo : Game.Stats -> List GI -> HM
+viewGameInfo stats selectionStack =
     div []
         [ div [ class "pa3" ]
             [ text
                 (Debug.toString
-                    { movesLeft = i.movesLeft
-                    , targetSeeds = i.targetSeeds
-                    , targetWater = i.targetWater
+                    { movesLeft = stats.movesLeft
+                    , targetSeeds = stats.targetSeeds
+                    , targetWater = stats.targetWater
                     }
                 )
             ]
-        , viewGameTable i
+        , viewGameTable selectionStack stats.grid
         ]
 
 
-viewGameTable : { a | selectionStack : List GI, grid : Grid Game.Cell } -> HM
-viewGameTable info =
+viewGameTable : List GI -> Game.CellGrid -> HM
+viewGameTable selectionStack grid =
     let
         toCellViewModel : GI -> Game.Cell -> CellViewModel
         toCellViewModel idx cell =
             let
                 selIdx =
-                    List.reverse info.selectionStack |> List.Extra.elemIndex idx
+                    List.reverse selectionStack |> List.Extra.elemIndex idx
 
                 isSelected =
                     selIdx /= Nothing
@@ -390,7 +382,7 @@ viewGameTable info =
 
         gridViewModel : Grid CellViewModel
         gridViewModel =
-            info.grid |> Grid.map toCellViewModel
+            grid |> Grid.map toCellViewModel
     in
     viewCellGridTable gridViewModel
 
