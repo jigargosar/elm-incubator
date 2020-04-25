@@ -492,7 +492,7 @@ makeMove (Internal modelRecord) =
                     (stats_.movesLeft - 1) |> atLeast 0
             in
             ( moveDetails
-            , initState
+            , modelFromState
                 { stats =
                     { targetSeeds = nextTargetSeeds
                     , targetWater = nextTargetWater
@@ -506,8 +506,8 @@ makeMove (Internal modelRecord) =
                 |> Just
 
 
-initState : State -> Model
-initState modelRecord =
+modelFromState : State -> Model
+modelFromState modelRecord =
     let
         nextModel =
             Internal modelRecord
