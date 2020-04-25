@@ -369,7 +369,7 @@ type State
 
 
 type alias SelectingModel =
-    Model { selection : Selection }
+    Model { selection : () }
 
 
 type alias OverModel =
@@ -428,13 +428,18 @@ modelStats (Model modelRecord) =
 
 
 stats : State -> Stats
-stats state =
-    case state of
-        Selecting m ->
-            modelStats m
+stats =
+    toModel >> modelStats
 
-        Over m ->
-            modelStats m
+
+toModel : State -> Model a
+toModel state =
+    case state of
+        Selecting (Model mr) ->
+            Model mr
+
+        Over (Model mr) ->
+            Model mr
 
 
 cellGrid : Model a -> CellGrid
