@@ -443,8 +443,8 @@ unwrap model =
 
 
 selectionStack : SelectingModel -> List GI
-selectionStack (Internal modelRecord) =
-    selectionToStack modelRecord.selection
+selectionStack (Internal state) =
+    selectionToStack state.selection
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
