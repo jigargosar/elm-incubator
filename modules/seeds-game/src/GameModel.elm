@@ -5,8 +5,8 @@ module GameModel exposing
     , Entry
     , MoveDetails
     , MoveResult(..)
-    , Over
-    , Selecting
+    , OverModel
+    , SelectingModel
     , Stats
     , cellGrid
     , init
@@ -363,11 +363,11 @@ areCellsConnectible cell1 cell2 =
 -- GAME MODEL
 
 
-type alias Selecting =
+type alias SelectingModel =
     Model { selection : Selection }
 
 
-type alias Over =
+type alias OverModel =
     Model { over : () }
 
 
@@ -383,7 +383,7 @@ type alias ModelRecord =
     }
 
 
-init : Selecting
+init : SelectingModel
 init =
     Model
         { stats =
@@ -397,13 +397,13 @@ init =
         }
 
 
-selectionPush : GI -> Selecting -> Maybe Selecting
+selectionPush : GI -> SelectingModel -> Maybe SelectingModel
 selectionPush idx (Model gm) =
     selectionPush_ idx gm.grid gm.selection
         |> Maybe.map (\selection -> Model { gm | selection = selection })
 
 
-selectionPop : Selecting -> Maybe Selecting
+selectionPop : SelectingModel -> Maybe SelectingModel
 selectionPop (Model gm) =
     selectionPop_ gm.selection
         |> Maybe.map (\selection -> Model { gm | selection = selection })
@@ -426,15 +426,15 @@ cellGrid (Model modelRecord) =
     modelRecord.grid
 
 
-selectionStack : Selecting -> List GI
+selectionStack : SelectingModel -> List GI
 selectionStack (Model modelRecord) =
     selectionToStack modelRecord.selection
 
 
 type MoveResult
     = InvalidMove
-    | GameOver MoveDetails Over
-    | NextSelecting MoveDetails Selecting
+    | GameOver MoveDetails OverModel
+    | NextSelecting MoveDetails SelectingModel
 
 
 selectionToCollectibleIndices : Selection -> Maybe (List GI)
@@ -446,7 +446,7 @@ selectionToCollectibleIndices (Selection stack) =
         Just stack
 
 
-makeMove : Selecting -> MoveResult
+makeMove : SelectingModel -> MoveResult
 makeMove (Model modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->

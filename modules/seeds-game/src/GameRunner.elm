@@ -58,8 +58,8 @@ type Model
 
 
 type SettledState
-    = Selecting Game.Selecting
-    | Over Game.Over
+    = Selecting Game.SelectingModel
+    | Over Game.OverModel
 
 
 type alias MoveAnimation =
@@ -189,7 +189,7 @@ update message model =
 -- UPDATE SELECTION
 
 
-updateSelection : GI -> Bool -> Game.Selecting -> Maybe Game.Selecting
+updateSelection : GI -> Bool -> Game.SelectingModel -> Maybe Game.SelectingModel
 updateSelection idx wasSelected game =
     let
         stack =
