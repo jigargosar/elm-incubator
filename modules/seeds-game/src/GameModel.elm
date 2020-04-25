@@ -442,8 +442,13 @@ toModel state =
             Model mr
 
 
-cellGrid : Model a -> CellGrid
-cellGrid (Model modelRecord) =
+cellGrid : State -> CellGrid
+cellGrid =
+    toModel >> modelCellGrid
+
+
+modelCellGrid : Model a -> CellGrid
+modelCellGrid (Model modelRecord) =
     modelRecord.grid
 
 

@@ -133,7 +133,7 @@ update message model =
                         ]
             in
             case model of
-                Settled (Game.Selecting selectingModel) ->
+                Settled ((Game.Selecting selectingModel) as gameState) ->
                     let
                         initAnimatingMove : Game.MoveDetails -> Game.State -> ( Model, Cmd Msg )
                         initAnimatingMove moveDetails nextGameState =
@@ -143,7 +143,7 @@ update message model =
                             in
                             ( AnimatingMove
                                 { settledState = nextGameState
-                                , initialGrid = Game.cellGrid selectingModel
+                                , initialGrid = Game.cellGrid gameState
                                 , stats = Game.stats nextGameState
                                 , moveDetails = moveDetails
                                 , steps = transitionSteps
@@ -155,8 +155,8 @@ update message model =
                         Nothing ->
                             ( model, Cmd.none )
 
-                        Just ( moveDetails, gameState ) ->
-                            initAnimatingMove moveDetails gameState
+                        Just ( moveDetails, nextGameState ) ->
+                            initAnimatingMove moveDetails nextGameState
 
                 _ ->
                     ( model, Cmd.none )
@@ -258,17 +258,20 @@ view model =
             }
         """ ]
             :: (case model of
-                    Settled ((Game.Selecting game) as gameState) ->
+                    Settled ((Game.Selecting selectingModel) as gameState) ->
                         [ viewTitle "Game Running"
                         , viewGameStats (Game.stats gameState)
-                        , viewCellGridTableWithSelectionStack (Game.selectionStack game) (Game.cellGrid game)
+                        , viewCellGridTableWithSelectionStack
+                            (Game.selectionStack selectingModel)
+                            (Game.cellGrid gameState)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled ((Game.Over game) as gameState) ->
+                    Settled ((Game.Over _) as gameState) ->
                         [ viewTitle "Game Over"
                         , viewGameStats (Game.stats gameState)
-                        , viewCellGridTableWithSelectionStack [] (Game.cellGrid game)
+                        , viewCellGridTableWithSelectionStack []
+                            (Game.cellGrid gameState)
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
