@@ -424,32 +424,22 @@ type alias Stats =
 
 stats : Model -> Stats
 stats =
-    toInternal >> internalStats
+    unwrap >> .stats
 
 
 cellGrid : Model -> CellGrid
 cellGrid =
-    toInternal >> internalCellGrid
+    unwrap >> .grid
 
 
-internalCellGrid : Internal a -> CellGrid
-internalCellGrid (Internal modelRecord) =
-    modelRecord.grid
+unwrap : Model -> State
+unwrap model =
+    case model of
+        Selecting (Internal state) ->
+            state
 
-
-internalStats : Internal a -> Stats
-internalStats (Internal modelRecord) =
-    modelRecord.stats
-
-
-toInternal : Model -> Internal a
-toInternal state =
-    case state of
-        Selecting (Internal mr) ->
-            Internal mr
-
-        Over (Internal mr) ->
-            Internal mr
+        Over (Internal state) ->
+            state
 
 
 selectionStack : SelectingModel -> List GI
