@@ -73,8 +73,8 @@ type alias MoveDetails =
     }
 
 
-collectAndGenerateNextGrid : List GI -> CellGrid -> Random.Generator MoveDetails
-collectAndGenerateNextGrid collectIndices grid =
+collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDetails
+collectAndGenerateWithDetails collectIndices grid =
     let
         ( collectedEntries, collectedGrid ) =
             collectCellsAtIndices collectIndices grid
@@ -449,7 +449,9 @@ makeMove (Model modelRecord) =
         Just collectibleIndices ->
             let
                 ( moveDetails, nextRandom ) =
-                    Random.step (collectAndGenerateNextGrid collectibleIndices modelRecord.grid) modelRecord.random
+                    Random.step
+                        (collectAndGenerateWithDetails collectibleIndices modelRecord.grid)
+                        modelRecord.random
 
                 nextTargetSeeds =
                     (modelRecord.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
