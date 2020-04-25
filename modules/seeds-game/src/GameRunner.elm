@@ -253,12 +253,14 @@ view model =
             :: (case model of
                     Settled (Selecting game) ->
                         [ viewTitle "Game Running"
+                        , viewGameStats (Game.stats game)
                         , viewGameInfo (Game.stats game) (Game.selectionStack game) (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
                     Settled (Over stats grid) ->
                         [ viewTitle "Game Over"
+                        , viewGameStats stats
                         , viewGameInfo stats [] grid
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
