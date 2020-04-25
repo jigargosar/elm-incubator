@@ -414,15 +414,17 @@ viewCellGridTable =
     viewGridAsTable viewCell
 
 
+defaultTransitionStyle =
+    style "transition" "transform 300ms"
+
+
+noTransitionStyle =
+    style "transition" "none"
+
+
 viewCell : GI -> CellViewModel -> HM
 viewCell idx vm =
     let
-        defaultTransitionStyle =
-            style "transition" "transform 300ms"
-
-        noTransitionStyle =
-            style "transition" "none"
-
         animProps =
             case vm.cellState of
                 CellStatic ->
