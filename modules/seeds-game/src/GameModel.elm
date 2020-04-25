@@ -420,9 +420,9 @@ fromState state =
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
-selectionPush idx (Internal gm) =
-    selectionPush_ idx gm.grid gm.selection
-        |> Maybe.map (\selection -> Internal { gm | selection = selection })
+selectionPush idx (Internal state) =
+    selectionPush_ idx state.grid state.selection
+        |> Maybe.map (\selection -> Internal { state | selection = selection })
 
 
 selectionPop : SelectingModel -> Maybe SelectingModel
