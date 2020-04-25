@@ -476,27 +476,19 @@ makeMove (Model modelRecord) =
 
                 isGameLost =
                     not isGameWon && nextMovesLeft == 0
+
+                nextModel =
+                    Model
+                        { targetSeeds = nextTargetSeeds
+                        , targetWater = nextTargetWater
+                        , movesLeft = nextMovesLeft
+                        , grid = moveDetails.generated.grid
+                        , random = nextRandom
+                        , selection = emptySelection
+                        }
             in
             if isGameWon || isGameLost then
-                GameOver moveDetails
-                    (Model
-                        { targetSeeds = nextTargetSeeds
-                        , targetWater = nextTargetWater
-                        , movesLeft = nextMovesLeft
-                        , grid = moveDetails.generated.grid
-                        , random = nextRandom
-                        , selection = emptySelection
-                        }
-                    )
+                GameOver moveDetails nextModel
 
             else
-                NextModel moveDetails
-                    (Model
-                        { targetSeeds = nextTargetSeeds
-                        , targetWater = nextTargetWater
-                        , movesLeft = nextMovesLeft
-                        , grid = moveDetails.generated.grid
-                        , random = nextRandom
-                        , selection = emptySelection
-                        }
-                    )
+                NextModel moveDetails nextModel
