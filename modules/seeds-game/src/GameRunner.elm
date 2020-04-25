@@ -258,11 +258,11 @@ view model =
             }
         """ ]
             :: (case model of
-                    Settled ((Game.Selecting selectingModel) as gameState) ->
+                    Settled ((Game.Selecting selecting) as gameState) ->
                         [ viewTitle "Game Running"
                         , viewGameStats (Game.stats gameState)
                         , viewCellGridTableWithSelectionStack
-                            (Game.selectionStack selectingModel)
+                            (Game.selectionStack selecting)
                             (Game.cellGrid gameState)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]

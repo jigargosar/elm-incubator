@@ -369,15 +369,15 @@ type State
 
 
 type alias SelectingModel =
-    Model { selection : () }
+    Model_ { selection : () }
 
 
 type alias OverModel =
-    Model { over : () }
+    Model_ { over : () }
 
 
-type Model a
-    = Model ModelRecord
+type Model_ a
+    = Model_ ModelRecord
 
 
 type alias ModelRecord =
@@ -390,7 +390,7 @@ type alias ModelRecord =
 
 init : State
 init =
-    Model
+    Model_
         { stats =
             { movesLeft = 2
             , targetSeeds = 35
@@ -404,15 +404,15 @@ init =
 
 
 selectionPush : GI -> SelectingModel -> Maybe SelectingModel
-selectionPush idx (Model gm) =
+selectionPush idx (Model_ gm) =
     selectionPush_ idx gm.grid gm.selection
-        |> Maybe.map (\selection -> Model { gm | selection = selection })
+        |> Maybe.map (\selection -> Model_ { gm | selection = selection })
 
 
 selectionPop : SelectingModel -> Maybe SelectingModel
-selectionPop (Model gm) =
+selectionPop (Model_ gm) =
     selectionPop_ gm.selection
-        |> Maybe.map (\selection -> Model { gm | selection = selection })
+        |> Maybe.map (\selection -> Model_ { gm | selection = selection })
 
 
 type alias Stats =
@@ -422,8 +422,8 @@ type alias Stats =
     }
 
 
-modelStats : Model a -> Stats
-modelStats (Model modelRecord) =
+modelStats : Model_ a -> Stats
+modelStats (Model_ modelRecord) =
     modelRecord.stats
 
 
@@ -432,14 +432,14 @@ stats =
     toModel >> modelStats
 
 
-toModel : State -> Model a
+toModel : State -> Model_ a
 toModel state =
     case state of
-        Selecting (Model mr) ->
-            Model mr
+        Selecting (Model_ mr) ->
+            Model_ mr
 
-        Over (Model mr) ->
-            Model mr
+        Over (Model_ mr) ->
+            Model_ mr
 
 
 cellGrid : State -> CellGrid
@@ -447,13 +447,13 @@ cellGrid =
     toModel >> modelCellGrid
 
 
-modelCellGrid : Model a -> CellGrid
-modelCellGrid (Model modelRecord) =
+modelCellGrid : Model_ a -> CellGrid
+modelCellGrid (Model_ modelRecord) =
     modelRecord.grid
 
 
 selectionStack : SelectingModel -> List GI
-selectionStack (Model modelRecord) =
+selectionStack (Model_ modelRecord) =
     selectionToStack modelRecord.selection
 
 
@@ -467,7 +467,7 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMove : SelectingModel -> Maybe ( MoveDetails, State )
-makeMove (Model modelRecord) =
+makeMove (Model_ modelRecord) =
     case selectionToCollectibleIndices modelRecord.selection of
         Nothing ->
             Nothing
@@ -510,7 +510,7 @@ initState : ModelRecord -> State
 initState modelRecord =
     let
         nextModel =
-            Model modelRecord
+            Model_ modelRecord
 
         stats_ =
             modelRecord.stats
