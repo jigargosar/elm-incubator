@@ -254,14 +254,14 @@ view model =
                     Settled (Selecting game) ->
                         [ viewTitle "Game Running"
                         , viewGameStats (Game.stats game)
-                        , viewGameInfo (Game.stats game) (Game.selectionStack game) (Game.cellGrid game)
+                        , viewGameTable (Game.selectionStack game) (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
                     Settled (Over stats grid) ->
                         [ viewTitle "Game Over"
                         , viewGameStats stats
-                        , viewGameInfo stats [] grid
+                        , viewGameTable [] grid
                         , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                         ]
 
@@ -334,14 +334,6 @@ type alias HM =
 viewGameStats : Game.Stats -> HM
 viewGameStats stats =
     div [ class "pa3" ] [ text (Debug.toString stats) ]
-
-
-viewGameInfo : Game.Stats -> List GI -> Game.CellGrid -> HM
-viewGameInfo stats selectionStack grid =
-    div []
-        [ viewGameStats stats
-        , viewGameTable selectionStack grid
-        ]
 
 
 viewGameTable : List GI -> Game.CellGrid -> HM
