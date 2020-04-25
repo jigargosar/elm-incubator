@@ -420,6 +420,9 @@ viewCell idx vm =
         defaultTransitionStyle =
             style "transition" "transform 300ms"
 
+        noTransitionStyle =
+            style "transition" "none"
+
         animProps =
             case vm.cellState of
                 CellStatic ->
@@ -452,12 +455,12 @@ viewCell idx vm =
 
                 CellEnterStart ->
                     [ style "transform" "translate(0,-300px) scale(0)"
-                    , style "transition" "none"
+                    , noTransitionStyle
                     ]
 
                 CellStaticNoTransition ->
                     [ style "transform" "translate(0,0) scale(1.0)"
-                    , style "transition" "none"
+                    , noTransitionStyle
                     ]
     in
     div
