@@ -3,13 +3,12 @@ module GameModel exposing
     , CellGrid
     , Entries
     , Entry
-    , Model(..)
+    , Model
     , MoveDetails
-    , OverModel
-    , SelectingModel
     , Stats
     , cellGrid
     , init
+    , isOver
     , makeMove
     , selectionPop
     , selectionPush
@@ -366,26 +365,13 @@ areCellsConnectible cell1 cell2 =
 
 
 type Model
-    = Selecting SelectingModel
-    | Over OverModel
-
-
-type alias SelectingModel =
-    Internal { selecting : () }
-
-
-type alias OverModel =
-    Internal { over : () }
-
-
-type Internal a
     = Internal State
 
 
 type alias State =
     { stats : Stats
     , grid : CellGrid
-    , selection : Selection
+    , selection_ : Selection
     , random : Random.Seed
     }
 
@@ -399,38 +385,51 @@ init =
             , targetWater = 35
             }
         , grid = initCellGrid
-        , selection = emptySelection
+        , selection_ = emptySelection
         , random = Random.initialSeed 0
         }
 
 
-fromState : State -> Model
-fromState state =
+isGameOver_ : State -> Bool
+isGameOver_ state =
     let
         { movesLeft, targetWater, targetSeeds } =
             state.stats
-
-        isGameOver =
-            (movesLeft == 0)
-                && List.any ((/=) 0) [ targetWater, targetSeeds ]
     in
-    if isGameOver then
-        Over (Internal state)
+    (movesLeft == 0)
+        && List.any ((/=) 0) [ targetWater, targetSeeds ]
+
+
+isOver : Model -> Bool
+isOver =
+    unwrap >> isGameOver_
+
+
+fromState : State -> Model
+fromState =
+    Internal
+
+
+selection_ state =
+    if isGameOver_ state then
+        Nothing
 
     else
-        Selecting (Internal state)
+        Just state.selection_
 
 
-selectionPush : GI -> SelectingModel -> Maybe SelectingModel
+selectionPush : GI -> Model -> Maybe Model
 selectionPush idx (Internal state) =
-    selectionPush_ idx state.grid state.selection
-        |> Maybe.map (\selection -> Internal { state | selection = selection })
+    selection_ state
+        |> Maybe.andThen (selectionPush_ idx state.grid)
+        |> Maybe.map (\selection -> Internal { state | selection_ = selection })
 
 
-selectionPop : SelectingModel -> Maybe SelectingModel
+selectionPop : Model -> Maybe Model
 selectionPop (Internal state) =
-    selectionPop_ state.selection
-        |> Maybe.map (\selection -> Internal { state | selection = selection })
+    selection_ state
+        |> Maybe.andThen selectionPop_
+        |> Maybe.map (\selection -> Internal { state | selection_ = selection })
 
 
 type alias Stats =
@@ -451,23 +450,21 @@ cellGrid =
 
 
 unwrap : Model -> State
-unwrap model =
-    case model of
-        Selecting (Internal state) ->
-            state
-
-        Over (Internal state) ->
-            state
+unwrap (Internal state) =
+    state
 
 
-selectionStack : SelectingModel -> List GI
+selectionStack : Model -> List GI
 selectionStack (Internal state) =
-    selectionToStack state.selection
+    selection_ state
+        |> Maybe.map selectionToStack
+        |> Maybe.withDefault []
 
 
-makeMove : SelectingModel -> Maybe ( MoveDetails, Model )
+makeMove : Model -> Maybe ( MoveDetails, Model )
 makeMove (Internal state) =
-    selectionToCollectibleIndices state.selection
+    selection_ state
+        |> Maybe.andThen selectionToCollectibleIndices
         |> Maybe.map (flip makeMoveHelp state)
 
 
@@ -509,6 +506,6 @@ makeMoveHelp collectibleIndices state =
             }
         , grid = moveDetails.generated.grid
         , random = nextRandom
-        , selection = emptySelection
+        , selection_ = emptySelection
         }
     )

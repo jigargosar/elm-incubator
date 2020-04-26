@@ -101,19 +101,22 @@ update message model =
 
         PlayAnother ->
             case model of
-                Settled (Game.Over _) ->
-                    init ()
+                Settled game ->
+                    if Game.isOver game then
+                        init ()
+
+                    else
+                        ( model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
 
         ToggleSelection idx wasSelected ->
             case model of
-                Settled (Game.Selecting selectingModel) ->
+                Settled game ->
                     let
                         nm =
-                            Game.Selecting
-                                (updateSelection idx wasSelected selectingModel |> Maybe.withDefault selectingModel)
+                            (updateSelection idx wasSelected game |> Maybe.withDefault game)
                                 |> Settled
                     in
                     ( nm, Cmd.none )
@@ -131,7 +134,7 @@ update message model =
                         ]
             in
             case model of
-                Settled ((Game.Selecting selectingModel) as game) ->
+                Settled game ->
                     let
                         initAnimatingMove : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
                         initAnimatingMove moveDetails nextGame =
@@ -147,7 +150,7 @@ update message model =
                             , cmd
                             )
                     in
-                    case Game.makeMove selectingModel of
+                    case Game.makeMove game of
                         Nothing ->
                             ( model, Cmd.none )
 
@@ -179,25 +182,25 @@ update message model =
 -- UPDATE SELECTION
 
 
-updateSelection : GI -> Bool -> Game.SelectingModel -> Maybe Game.SelectingModel
-updateSelection idx wasSelected selectingModel =
+updateSelection : GI -> Bool -> Game.Model -> Maybe Game.Model
+updateSelection idx wasSelected model =
     let
         stack =
-            Game.selectionStack selectingModel
+            Game.selectionStack model
     in
     if wasSelected && List.member idx stack then
         -- Remove
         case stack of
             only :: [] ->
                 if only == idx then
-                    Game.selectionPop selectingModel
+                    Game.selectionPop model
 
                 else
                     Nothing
 
             _ :: secondLast :: _ ->
                 if secondLast == idx then
-                    Game.selectionPop selectingModel
+                    Game.selectionPop model
 
                 else
                     Nothing
@@ -207,7 +210,7 @@ updateSelection idx wasSelected selectingModel =
 
     else if not wasSelected && not (List.member idx stack) then
         -- Add
-        Game.selectionPush idx selectingModel
+        Game.selectionPush idx model
 
     else
         -- NoOp
@@ -254,16 +257,16 @@ view model =
             }
         """ ]
             :: (case model of
-                    Settled ((Game.Selecting selecting) as game) ->
+                    Settled game ->
                         [ viewTitle "Game Running"
                         , viewGameStats (Game.stats game)
                         , viewCellGridTableWithSelectionStack
-                            (Game.selectionStack selecting)
+                            (Game.selectionStack game)
                             (Game.cellGrid game)
                         , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                         ]
 
-                    Settled ((Game.Over _) as game) ->
+                    Settled game ->
                         [ viewTitle "Game Over"
                         , viewGameStats (Game.stats game)
                         , viewCellGridTableWithSelectionStack []
