@@ -2,7 +2,7 @@ module GameRunner exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Dict
+import Dict exposing (Dict)
 import GameModel as Game
 import Grid exposing (GI, Grid)
 import Html exposing (Html, button, node, table, text)
@@ -11,7 +11,7 @@ import Html.Events exposing (onClick)
 import List.Extra
 import PointerEvents as PE
 import Process
-import Set
+import Set exposing (Set)
 import Task
 
 
@@ -47,9 +47,9 @@ type alias MoveAnimation =
 
 
 type MoveTransition
-    = LeavingTransition
-    | EnteringStartTransition
-    | EnteringTransition
+    = LeavingTransition { collectedIndexSet : Set GI, fallenLookup : Dict GI GI } Game.CellGrid
+    | EnteringStartTransition (Set GI) Game.CellGrid
+    | EnteringTransition Game.CellGrid
 
 
 initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
@@ -57,9 +57,22 @@ initMoveAnimation moveDetails nextGame =
     let
         ( transitionSteps, cmd ) =
             initTS StepMoveAnimation
-                ( LeavingTransition, 300 )
-                [ ( EnteringStartTransition, 20 )
-                , ( EnteringTransition, 300 )
+                ( LeavingTransition
+                    { collectedIndexSet = moveDetails.collected.indexSet
+                    , fallenLookup = moveDetails.fallen.lookup
+                    }
+                    moveDetails.initial
+                , 300
+                )
+                [ ( EnteringStartTransition
+                        moveDetails.generated.indexSet
+                        moveDetails.generated.grid
+                  , 20
+                  )
+                , ( EnteringTransition
+                        moveDetails.generated.grid
+                  , 300
+                  )
                 ]
     in
     ( AnimatingMove
@@ -285,7 +298,6 @@ view model =
                         , viewGameStats (Game.stats anim.game)
                         , viewCellGridTable
                             (moveTransitionToCellGridViewModel
-                                anim.moveDetails
                                 (currentTS anim.steps |> Tuple.first)
                             )
                         ]
@@ -307,8 +319,8 @@ type alias CellGridViewModel =
     Grid CellViewModel
 
 
-moveTransitionToCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
-moveTransitionToCellGridViewModel moveDetails moveTransition =
+moveTransitionToCellGridViewModel : MoveTransition -> CellGridViewModel
+moveTransitionToCellGridViewModel moveTransition =
     let
         toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
         toCellVMHelp func idx cell =
@@ -323,35 +335,35 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             Grid.map (toCellVMHelp func)
     in
     case moveTransition of
-        LeavingTransition ->
+        LeavingTransition { collectedIndexSet, fallenLookup } grid ->
             let
                 idxToCellState idx =
-                    if Set.member idx moveDetails.collected.indexSet then
+                    if Set.member idx collectedIndexSet then
                         CellLeaving
 
                     else
-                        case Dict.get idx moveDetails.fallen.lookup of
+                        case Dict.get idx fallenLookup of
                             Just to ->
                                 CellFallingTo to
 
                             Nothing ->
                                 CellStatic
             in
-            toCellGridVMHelp idxToCellState moveDetails.initial
+            toCellGridVMHelp idxToCellState grid
 
-        EnteringStartTransition ->
+        EnteringStartTransition generatedIndexSet grid ->
             let
                 idxToCellState idx =
-                    if Set.member idx moveDetails.generated.indexSet then
+                    if Set.member idx generatedIndexSet then
                         CellEnterStart
 
                     else
                         CellStaticNoTransition
             in
-            toCellGridVMHelp idxToCellState moveDetails.generated.grid
+            toCellGridVMHelp idxToCellState grid
 
-        EnteringTransition ->
-            toCellGridVMHelp (always CellStatic) moveDetails.generated.grid
+        EnteringTransition grid ->
+            toCellGridVMHelp (always CellStatic) grid
 
 
 selectionStackToCellGridViewModel : List GI -> Game.CellGrid -> CellGridViewModel
