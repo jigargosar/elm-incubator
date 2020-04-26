@@ -453,9 +453,10 @@ viewCell idx vm =
                         translateStr =
                             "translate(0, calc( " ++ dyFactor ++ " * 4.50rem ) )"
                     in
-                    [ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
-                    , defaultTransitionStyle
-                    ]
+                    --[ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
+                    --, defaultTransitionStyle
+                    --]
+                    [ class "cell_fall" ]
 
                 CellEnterStart ->
                     [ style "transform" "translate(0,-300px) scale(0)"

@@ -19,7 +19,7 @@
 
 .cell_fall {
   --cell-fall-dy: 0;
-  animation-name: cell_leave;
+  animation-name: cell_fall;
   animation-duration: 300ms;
   animation-fill-mode: both;
   animation-iteration-count: 1;
