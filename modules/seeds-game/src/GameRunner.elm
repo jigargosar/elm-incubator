@@ -57,28 +57,25 @@ type MoveTransition
 
 initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
 initMoveAnimation moveDetails nextGame =
-    let
-        ( transitionSteps, cmd ) =
-            initTS StepMoveAnimation
-                ( LeavingTransition
-                    { collectedIndexSet = moveDetails.collected.indexSet
-                    , fallenLookup = moveDetails.fallen.lookup
-                    }
-                    moveDetails.initial
-                , 300
-                )
-                [ ( EnteringStartTransition
-                        moveDetails.generated.indexSet
-                        moveDetails.generated.grid
-                  , 20
-                  )
-                , ( EnteringTransition
-                        moveDetails.generated.grid
-                  , 300
-                  )
-                ]
-    in
-    ( AnimatingMove nextGame transitionSteps, cmd )
+    initTransitionSteps OnMoveTransition
+        ( LeavingTransition
+            { collectedIndexSet = moveDetails.collected.indexSet
+            , fallenLookup = moveDetails.fallen.lookup
+            }
+            moveDetails.initial
+        , 300
+        )
+        [ ( EnteringStartTransition
+                moveDetails.generated.indexSet
+                moveDetails.generated.grid
+          , 20
+          )
+        , ( EnteringTransition
+                moveDetails.generated.grid
+          , 300
+          )
+        ]
+        |> Tuple.mapFirst (AnimatingMove nextGame)
 
 
 
@@ -89,8 +86,8 @@ type TransitionSteps a
     = TransitionSteps ( a, Float ) (List ( a, Float ))
 
 
-initTS : msg -> ( a, Float ) -> List ( a, Float ) -> ( TransitionSteps a, Cmd msg )
-initTS msg current rest =
+initTransitionSteps : msg -> ( a, Float ) -> List ( a, Float ) -> ( TransitionSteps a, Cmd msg )
+initTransitionSteps msg current rest =
     ( TransitionSteps current rest, delay (Tuple.second current) msg )
 
 
@@ -106,7 +103,7 @@ updateTransitionSteps msg (TransitionSteps _ steps) =
             Nothing
 
         current :: rest ->
-            Just (initTS msg current rest)
+            Just (initTransitionSteps msg current rest)
 
 
 currentTS : TransitionSteps a -> ( a, Float )
@@ -123,7 +120,7 @@ type Msg
     | PlayAnother
     | CollectSelection
     | ToggleSelection GI Bool
-    | StepMoveAnimation
+    | OnMoveTransition
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -170,10 +167,10 @@ update message model =
                 _ ->
                     ( model, Cmd.none )
 
-        StepMoveAnimation ->
+        OnMoveTransition ->
             case model of
                 AnimatingMove game steps ->
-                    case updateTransitionSteps StepMoveAnimation steps of
+                    case updateTransitionSteps OnMoveTransition steps of
                         Just ( nextSteps, cmd ) ->
                             ( AnimatingMove game nextSteps, cmd )
 
