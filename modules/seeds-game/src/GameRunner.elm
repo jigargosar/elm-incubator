@@ -456,15 +456,8 @@ viewCell idx vm =
                         dyFactor =
                             (Tuple.second toIdx - Tuple.second idx)
                                 |> String.fromInt
-
-                        translateStr =
-                            "translate(0, calc( " ++ dyFactor ++ " * 4.50rem ) )"
                     in
-                    --[ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
-                    --, defaultTransitionStyle
-                    --]
                     [ class "cell_fall"
-                    , style "--cell-fall-dy" ("calc( " ++ dyFactor ++ " * 4.50rem )")
                     , styles [ ( "--cell-fall-dy", "calc( " ++ dyFactor ++ " * 4.50rem )" ) ]
                     ]
 
