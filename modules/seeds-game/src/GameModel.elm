@@ -65,7 +65,7 @@ initCellGrid =
 
 
 type alias MoveDetails =
-    { initialGrid : CellGrid
+    { initial : CellGrid
     , collected : CollectionDetails
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : CellGrid }
@@ -87,7 +87,7 @@ collectAndGenerateWithDetails collectIndices grid =
 
         initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
-            { initialGrid = grid
+            { initial = grid
             , collected = collectionDetails
             , fallenLookup = Dict.fromList fallenIndices
             , generated = generated

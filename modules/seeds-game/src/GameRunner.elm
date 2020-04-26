@@ -307,7 +307,7 @@ viewCellGridTableWithMoveAnimation anim =
         ( grid, idxToCS ) =
             case currentTS anim.steps |> Tuple.first of
                 LeavingTransition ->
-                    ( anim.moveDetails.initialGrid
+                    ( anim.moveDetails.initial
                     , let
                         idxToCellState idx =
                             if Set.member idx anim.moveDetails.collected.indexSet then
