@@ -351,15 +351,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             toCellGridVMHelp idxToCellState moveDetails.generated.grid
 
         EnteringTransition ->
-            let
-                idxToCellState idx =
-                    if Set.member idx moveDetails.generated.indexSet then
-                        CellEnterStart
-
-                    else
-                        CellStaticNoTransition
-            in
-            toCellGridVMHelp idxToCellState moveDetails.generated.grid
+            toCellGridVMHelp (always CellStatic) moveDetails.generated.grid
 
 
 selectionStackToCellGridViewModel : List GI -> Game.CellGrid -> CellGridViewModel
