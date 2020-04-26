@@ -261,18 +261,22 @@ view model =
                         if Game.isOver game then
                             [ viewTitle "Game Over"
                             , viewGameStats (Game.stats game)
-                            , viewCellGridTableWithSelectionStack
-                                (Game.selectionStack game)
-                                (Game.cellGrid game)
+                            , viewCellGridTable
+                                (selectionStackToCellGridViewModel
+                                    (Game.selectionStack game)
+                                    (Game.cellGrid game)
+                                )
                             , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                             ]
 
                         else
                             [ viewTitle "Game Running"
                             , viewGameStats (Game.stats game)
-                            , viewCellGridTableWithSelectionStack
-                                (Game.selectionStack game)
-                                (Game.cellGrid game)
+                            , viewCellGridTable
+                                (selectionStackToCellGridViewModel
+                                    (Game.selectionStack game)
+                                    (Game.cellGrid game)
+                                )
                             , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                             ]
 
@@ -358,8 +362,8 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             toCellGridVMHelp idxToCellState moveDetails.generated.grid
 
 
-viewCellGridTableWithSelectionStack : List GI -> Game.CellGrid -> HM
-viewCellGridTableWithSelectionStack selectionStack grid =
+selectionStackToCellGridViewModel : List GI -> Game.CellGrid -> CellGridViewModel
+selectionStackToCellGridViewModel selectionStack =
     let
         toCellViewModel : GI -> Game.Cell -> CellViewModel
         toCellViewModel idx cell =
@@ -383,12 +387,8 @@ viewCellGridTableWithSelectionStack selectionStack grid =
                 else
                     CellStatic
             }
-
-        gridViewModel : Grid CellViewModel
-        gridViewModel =
-            grid |> Grid.map toCellViewModel
     in
-    viewCellGridTable gridViewModel
+    Grid.map toCellViewModel
 
 
 type alias CellViewModel =
