@@ -93,7 +93,7 @@ collectAndGenerateWithDetails indicesToCollect grid =
         fallen =
             computeFallen collected.grid
 
-        initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
+        initMoveDetails : Generated -> MoveDetails
         initMoveDetails generated =
             { initial = grid
             , collected = collected
@@ -101,8 +101,7 @@ collectAndGenerateWithDetails indicesToCollect grid =
             , generated = generated
             }
     in
-    fallen.grid
-        |> fillEmptyCells
+    computeGenerated fallen.grid
         |> Random.map initMoveDetails
 
 
@@ -183,8 +182,8 @@ computeFallen grid0 =
            )
 
 
-fillEmptyCells : CellGrid -> Random.Generator { indexSet : Set GI, grid : CellGrid }
-fillEmptyCells grid =
+computeGenerated : CellGrid -> Random.Generator Generated
+computeGenerated grid =
     let
         emptyIndices =
             grid
