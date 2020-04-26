@@ -66,13 +66,13 @@ initCellGrid =
 
 type alias MoveDetails =
     { initial : CellGrid
-    , collected : CollectionDetails
+    , collected : Collected
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : CellGrid }
     }
 
 
-type alias CollectionDetails =
+type alias Collected =
     { indexSet : Set GI, water : Int, seeds : Int, grid : CellGrid }
 
 
@@ -106,7 +106,7 @@ type alias Entries =
     List Entry
 
 
-collectCellsAtIndices : List GI -> CellGrid -> CollectionDetails
+collectCellsAtIndices : List GI -> CellGrid -> Collected
 collectCellsAtIndices indicesToCollect grid =
     let
         collectedEntries : List ( GI, Cell )
