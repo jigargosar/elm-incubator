@@ -84,7 +84,7 @@ collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDeta
 collectAndGenerateWithDetails indicesToCollect grid =
     let
         collected =
-            collect indicesToCollect grid
+            computeCollected indicesToCollect grid
 
         ( fallenIndices, fallenGrid ) =
             computeFallenGrid collected.grid
@@ -110,8 +110,8 @@ type alias Entries =
     List Entry
 
 
-collect : List GI -> CellGrid -> Collected
-collect indicesToCollect grid =
+computeCollected : List GI -> CellGrid -> Collected
+computeCollected indicesToCollect grid =
     let
         collectedEntries : List ( GI, Cell )
         collectedEntries =
