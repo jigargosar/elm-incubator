@@ -258,21 +258,22 @@ view model =
         """ ]
             :: (case model of
                     Settled game ->
-                        [ viewTitle "Game Running"
-                        , viewGameStats (Game.stats game)
-                        , viewCellGridTableWithSelectionStack
-                            (Game.selectionStack game)
-                            (Game.cellGrid game)
-                        , div [ class "pa3" ] [ btn CollectSelection "collect" ]
-                        ]
+                        if Game.isOver game then
+                            [ viewTitle "Game Over"
+                            , viewGameStats (Game.stats game)
+                            , viewCellGridTableWithSelectionStack []
+                                (Game.cellGrid game)
+                            , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
+                            ]
 
-                    Settled game ->
-                        [ viewTitle "Game Over"
-                        , viewGameStats (Game.stats game)
-                        , viewCellGridTableWithSelectionStack []
-                            (Game.cellGrid game)
-                        , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
-                        ]
+                        else
+                            [ viewTitle "Game Running"
+                            , viewGameStats (Game.stats game)
+                            , viewCellGridTableWithSelectionStack
+                                (Game.selectionStack game)
+                                (Game.cellGrid game)
+                            , div [ class "pa3" ] [ btn CollectSelection "collect" ]
+                            ]
 
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.steps))
