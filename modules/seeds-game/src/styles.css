@@ -15,3 +15,22 @@
     opacity: 0;
   }
 }
+
+.cell_fall {
+  --cell-fall-dy: 0;
+  animation-name: cell_leave;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+}
+
+@keyframes cell_fall {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(0, var(--cell-fall-dy, 0)) scale(1);
+    opacity: 1;
+  }
+}
