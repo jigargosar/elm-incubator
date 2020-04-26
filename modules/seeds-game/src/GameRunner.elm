@@ -261,7 +261,7 @@ view model =
                         if Game.isOver game then
                             [ viewTitle "Game Over"
                             , viewGameStats (Game.stats game)
-                            , viewCellGridTableWithSelectionStack []
+                            , viewCellGridTableWithSelectionStack (Game.selectionStack game)
                                 (Game.cellGrid game)
                             , div [ class "pa3" ] [ btn PlayAnother "Play Again?" ]
                             ]
@@ -269,8 +269,7 @@ view model =
                         else
                             [ viewTitle "Game Running"
                             , viewGameStats (Game.stats game)
-                            , viewCellGridTableWithSelectionStack
-                                (Game.selectionStack game)
+                            , viewCellGridTableWithSelectionStack (Game.selectionStack game)
                                 (Game.cellGrid game)
                             , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                             ]
