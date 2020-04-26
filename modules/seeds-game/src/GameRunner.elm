@@ -2,7 +2,7 @@ module GameRunner exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
-import Dict exposing (Dict)
+import Dict
 import GameModel as Game
 import Grid exposing (GI, Grid)
 import Html exposing (Html, button, node, table, text)
@@ -11,7 +11,7 @@ import Html.Events exposing (onClick)
 import List.Extra
 import PointerEvents as PE
 import Process
-import Set exposing (Set)
+import Set
 import Task
 
 
@@ -20,7 +20,7 @@ import Task
 
 
 type Model
-    = AnimatingMove Game.Model MoveTransitionSteps
+    = AnimatingMove MoveAnimation
     | Settled Game.Model
 
 
@@ -41,40 +41,34 @@ init () =
 
 type alias MoveAnimation =
     { game : Game.Model
-    , steps : MoveTransitionSteps
+    , moveDetails : Game.MoveDetails
+    , steps : TransitionSteps MoveTransition
     }
 
 
-type alias MoveTransitionSteps =
-    TransitionSteps MoveTransition
-
-
 type MoveTransition
-    = LeavingTransition { collectedIndexSet : Set GI, fallenLookup : Dict GI GI } Game.CellGrid
-    | EnteringStartTransition (Set GI) Game.CellGrid
-    | EnteringTransition Game.CellGrid
+    = LeavingTransition
+    | EnteringStartTransition
+    | EnteringTransition
 
 
 initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
 initMoveAnimation moveDetails nextGame =
-    initTransitionSteps OnMoveTransition
-        ( LeavingTransition
-            { collectedIndexSet = moveDetails.collected.indexSet
-            , fallenLookup = moveDetails.fallen.lookup
-            }
-            moveDetails.initialGrid
-        , 300
-        )
-        [ ( EnteringStartTransition
-                moveDetails.generated.indexSet
-                moveDetails.generated.grid
-          , 20
-          )
-        , ( EnteringTransition moveDetails.generated.grid
-          , 300
-          )
-        ]
-        |> Tuple.mapFirst (AnimatingMove nextGame)
+    let
+        ( transitionSteps, cmd ) =
+            initTS StepMoveAnimation
+                ( LeavingTransition, 300 )
+                [ ( EnteringStartTransition, 20 )
+                , ( EnteringTransition, 300 )
+                ]
+    in
+    ( AnimatingMove
+        { game = nextGame
+        , moveDetails = moveDetails
+        , steps = transitionSteps
+        }
+    , cmd
+    )
 
 
 
@@ -85,8 +79,8 @@ type TransitionSteps a
     = TransitionSteps ( a, Float ) (List ( a, Float ))
 
 
-initTransitionSteps : msg -> ( a, Float ) -> List ( a, Float ) -> ( TransitionSteps a, Cmd msg )
-initTransitionSteps msg current rest =
+initTS : msg -> ( a, Float ) -> List ( a, Float ) -> ( TransitionSteps a, Cmd msg )
+initTS msg current rest =
     ( TransitionSteps current rest, delay (Tuple.second current) msg )
 
 
@@ -95,14 +89,14 @@ delay for msg =
     Process.sleep for |> Task.perform (always msg)
 
 
-updateTransitionSteps : msg -> TransitionSteps a -> Maybe ( TransitionSteps a, Cmd msg )
-updateTransitionSteps msg (TransitionSteps _ steps) =
+stepTS : msg -> TransitionSteps a -> Maybe ( TransitionSteps a, Cmd msg )
+stepTS msg (TransitionSteps _ steps) =
     case steps of
         [] ->
             Nothing
 
         current :: rest ->
-            Just (initTransitionSteps msg current rest)
+            Just (initTS msg current rest)
 
 
 currentTS : TransitionSteps a -> ( a, Float )
@@ -119,7 +113,7 @@ type Msg
     | PlayAnother
     | CollectSelection
     | ToggleSelection GI Bool
-    | OnMoveTransition
+    | StepMoveAnimation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -166,15 +160,19 @@ update message model =
                 _ ->
                     ( model, Cmd.none )
 
-        OnMoveTransition ->
+        StepMoveAnimation ->
             case model of
-                AnimatingMove game steps ->
-                    case updateTransitionSteps OnMoveTransition steps of
-                        Just ( nextSteps, cmd ) ->
-                            ( AnimatingMove game nextSteps, cmd )
+                AnimatingMove anim ->
+                    case stepTS StepMoveAnimation anim.steps of
+                        Just ( transitionSteps, cmd ) ->
+                            ( AnimatingMove { anim | steps = transitionSteps }
+                            , cmd
+                            )
 
                         Nothing ->
-                            ( Settled game, Cmd.none )
+                            ( Settled anim.game
+                            , Cmd.none
+                            )
 
                 _ ->
                     ( model, Cmd.none )
@@ -282,12 +280,13 @@ view model =
                             , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                             ]
 
-                    AnimatingMove game steps ->
-                        [ viewTitle (Debug.toString (currentTS steps))
-                        , viewGameStats (Game.stats game)
+                    AnimatingMove anim ->
+                        [ viewTitle (Debug.toString (currentTS anim.steps))
+                        , viewGameStats (Game.stats anim.game)
                         , viewCellGridTable
                             (moveTransitionToCellGridViewModel
-                                (currentTS steps |> Tuple.first)
+                                anim.moveDetails
+                                (currentTS anim.steps |> Tuple.first)
                             )
                         ]
                )
@@ -308,8 +307,8 @@ type alias CellGridViewModel =
     Grid CellViewModel
 
 
-moveTransitionToCellGridViewModel : MoveTransition -> CellGridViewModel
-moveTransitionToCellGridViewModel moveTransition =
+moveTransitionToCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
+moveTransitionToCellGridViewModel moveDetails moveTransition =
     let
         toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
         toCellVMHelp func idx cell =
@@ -324,35 +323,35 @@ moveTransitionToCellGridViewModel moveTransition =
             Grid.map (toCellVMHelp func)
     in
     case moveTransition of
-        LeavingTransition { collectedIndexSet, fallenLookup } grid ->
+        LeavingTransition ->
             let
                 idxToCellState idx =
-                    if Set.member idx collectedIndexSet then
+                    if Set.member idx moveDetails.collected.indexSet then
                         CellLeaving
 
                     else
-                        case Dict.get idx fallenLookup of
+                        case Dict.get idx moveDetails.fallen.lookup of
                             Just to ->
                                 CellFallingTo to
 
                             Nothing ->
                                 CellStatic
             in
-            toCellGridVMHelp idxToCellState grid
+            toCellGridVMHelp idxToCellState moveDetails.initial
 
-        EnteringStartTransition generatedIndexSet grid ->
+        EnteringStartTransition ->
             let
                 idxToCellState idx =
-                    if Set.member idx generatedIndexSet then
+                    if Set.member idx moveDetails.generated.indexSet then
                         CellEnterStart
 
                     else
                         CellStaticNoTransition
             in
-            toCellGridVMHelp idxToCellState grid
+            toCellGridVMHelp idxToCellState moveDetails.generated.grid
 
-        EnteringTransition grid ->
-            toCellGridVMHelp (always CellStatic) grid
+        EnteringTransition ->
+            toCellGridVMHelp (always CellStatic) moveDetails.generated.grid
 
 
 selectionStackToCellGridViewModel : List GI -> Game.CellGrid -> CellGridViewModel
