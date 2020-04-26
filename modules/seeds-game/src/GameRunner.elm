@@ -314,7 +314,7 @@ viewCellGridTableWithMoveAnimation anim =
                                 CellLeaving
 
                             else
-                                case Dict.get idx anim.moveDetails.fallenLookup of
+                                case Dict.get idx anim.moveDetails.fallen.lookup of
                                     Just to ->
                                         CellFallingTo to
 

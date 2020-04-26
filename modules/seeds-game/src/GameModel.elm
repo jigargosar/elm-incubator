@@ -67,7 +67,7 @@ initCellGrid =
 type alias MoveDetails =
     { initial : CellGrid
     , collected : Collected
-    , fallenLookup : Dict GI GI
+    , fallen : Fallen
     , generated : Generated
     }
 
@@ -90,18 +90,18 @@ collectAndGenerateWithDetails indicesToCollect grid =
         collected =
             computeCollected indicesToCollect grid
 
-        ( fallenIndices, fallenGrid ) =
+        fallen =
             computeFallen collected.grid
 
         initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
             { initial = grid
             , collected = collected
-            , fallenLookup = Dict.fromList fallenIndices
+            , fallen = fallen
             , generated = generated
             }
     in
-    fallenGrid
+    fallen.grid
         |> fillEmptyCells
         |> Random.map initMoveDetails
 
@@ -155,7 +155,7 @@ setEmptyAtIndices indicesToEmpty grid =
         grid
 
 
-computeFallen : CellGrid -> ( List ( GI, GI ), CellGrid )
+computeFallen : CellGrid -> Fallen
 computeFallen grid0 =
     let
         computeFallingAt : GI -> CellGrid -> Maybe ( ( GI, GI ), CellGrid )
@@ -178,6 +178,9 @@ computeFallen grid0 =
                     Nothing
     in
     filterMapAccumr computeFallingAt grid0 (Grid.indices grid0)
+        |> (\( fallenIndexPairs, grid ) ->
+                { lookup = Dict.fromList fallenIndexPairs, grid = grid }
+           )
 
 
 fillEmptyCells : CellGrid -> Random.Generator { indexSet : Set GI, grid : CellGrid }
