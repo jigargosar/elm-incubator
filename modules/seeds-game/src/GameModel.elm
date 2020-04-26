@@ -76,6 +76,10 @@ type alias Collected =
     { indexSet : Set GI, water : Int, seeds : Int, grid : CellGrid }
 
 
+type alias Fallen =
+    { lookup : Dict GI GI, grid : CellGrid }
+
+
 type alias Generated =
     { indexSet : Set GI, grid : CellGrid }
 
@@ -87,7 +91,7 @@ collectAndGenerateWithDetails indicesToCollect grid =
             computeCollected indicesToCollect grid
 
         ( fallenIndices, fallenGrid ) =
-            computeFallenGrid collected.grid
+            computeFallen collected.grid
 
         initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
@@ -151,8 +155,8 @@ setEmptyAtIndices indicesToEmpty grid =
         grid
 
 
-computeFallenGrid : CellGrid -> ( List ( GI, GI ), CellGrid )
-computeFallenGrid grid0 =
+computeFallen : CellGrid -> ( List ( GI, GI ), CellGrid )
+computeFallen grid0 =
     let
         computeFallingAt : GI -> CellGrid -> Maybe ( ( GI, GI ), CellGrid )
         computeFallingAt to grid =
