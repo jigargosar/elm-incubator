@@ -20,7 +20,7 @@ import Task
 
 
 type Model
-    = AnimatingMove MoveAnimation
+    = AnimatingMove Game.Model MoveTransitionSteps
     | Settled Game.Model
 
 
@@ -41,8 +41,12 @@ init () =
 
 type alias MoveAnimation =
     { game : Game.Model
-    , steps : TransitionSteps MoveTransition
+    , steps : MoveTransitionSteps
     }
+
+
+type alias MoveTransitionSteps =
+    TransitionSteps MoveTransition
 
 
 type MoveTransition
@@ -74,10 +78,7 @@ initMoveAnimation moveDetails nextGame =
                   )
                 ]
     in
-    ( AnimatingMove
-        { game = nextGame
-        , steps = transitionSteps
-        }
+    ( AnimatingMove nextGame transitionSteps
     , cmd
     )
 
@@ -173,15 +174,15 @@ update message model =
 
         StepMoveAnimation ->
             case model of
-                AnimatingMove anim ->
-                    case stepTS StepMoveAnimation anim.steps of
-                        Just ( transitionSteps, cmd ) ->
-                            ( AnimatingMove { anim | steps = transitionSteps }
+                AnimatingMove nextGame steps ->
+                    case stepTS StepMoveAnimation steps of
+                        Just ( nextSteps, cmd ) ->
+                            ( AnimatingMove nextGame nextSteps
                             , cmd
                             )
 
                         Nothing ->
-                            ( Settled anim.game
+                            ( Settled nextGame
                             , Cmd.none
                             )
 
@@ -291,12 +292,12 @@ view model =
                             , div [ class "pa3" ] [ btn CollectSelection "collect" ]
                             ]
 
-                    AnimatingMove anim ->
-                        [ viewTitle (Debug.toString (currentTS anim.steps))
-                        , viewGameStats (Game.stats anim.game)
+                    AnimatingMove game steps ->
+                        [ viewTitle (Debug.toString (currentTS steps))
+                        , viewGameStats (Game.stats game)
                         , viewCellGridTable
                             (moveTransitionToCellGridViewModel
-                                (currentTS anim.steps |> Tuple.first)
+                                (currentTS steps |> Tuple.first)
                             )
                         ]
                )
