@@ -1,0 +1,17 @@
+.cell_leave {
+  animation-name: cell_leave;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+}
+
+@keyframes cell_leave {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(0, -300px) scale(0);
+    opacity: 0;
+  }
+}
