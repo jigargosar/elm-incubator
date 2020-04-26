@@ -70,8 +70,7 @@ initMoveAnimation moveDetails nextGame =
                 moveDetails.generated.grid
           , 20
           )
-        , ( EnteringTransition
-                moveDetails.generated.grid
+        , ( EnteringTransition moveDetails.generated.grid
           , 300
           )
         ]
