@@ -84,8 +84,8 @@ type alias Generated =
     { indexSet : Set GI, grid : CellGrid }
 
 
-collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDetails
-collectAndGenerateWithDetails indicesToCollect grid =
+moveDetailsGenerator : List GI -> CellGrid -> Random.Generator MoveDetails
+moveDetailsGenerator indicesToCollect grid =
     let
         collected =
             computeCollected indicesToCollect grid
@@ -492,7 +492,7 @@ makeMoveHelp collectibleIndices state =
     let
         ( moveDetails, nextRandom ) =
             Random.step
-                (collectAndGenerateWithDetails collectibleIndices state.grid)
+                (moveDetailsGenerator collectibleIndices state.grid)
                 state.random
 
         { movesLeft, targetWater, targetSeeds } =
