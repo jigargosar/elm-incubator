@@ -125,37 +125,14 @@ update message model =
                     ( model, Cmd.none )
 
         CollectSelection ->
-            let
-                initMoveTransitionSteps =
-                    initTS StepMoveAnimation
-                        ( LeavingTransition, 300 )
-                        [ ( EnteringStartTransition, 20 )
-                        , ( EnteringTransition, 300 )
-                        ]
-            in
             case model of
                 Settled game ->
-                    let
-                        initAnimatingMove : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
-                        initAnimatingMove moveDetails nextGame =
-                            let
-                                ( transitionSteps, cmd ) =
-                                    initMoveTransitionSteps
-                            in
-                            ( AnimatingMove
-                                { game = nextGame
-                                , moveDetails = moveDetails
-                                , steps = transitionSteps
-                                }
-                            , cmd
-                            )
-                    in
                     case Game.makeMove game of
                         Nothing ->
                             ( model, Cmd.none )
 
                         Just ( moveDetails, nextGame ) ->
-                            initAnimatingMove moveDetails nextGame
+                            initMoveAnimation moveDetails nextGame
 
                 _ ->
                     ( model, Cmd.none )
@@ -176,6 +153,25 @@ update message model =
 
                 _ ->
                     ( model, Cmd.none )
+
+
+initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
+initMoveAnimation moveDetails nextGame =
+    let
+        ( transitionSteps, cmd ) =
+            initTS StepMoveAnimation
+                ( LeavingTransition, 300 )
+                [ ( EnteringStartTransition, 20 )
+                , ( EnteringTransition, 300 )
+                ]
+    in
+    ( AnimatingMove
+        { game = nextGame
+        , moveDetails = moveDetails
+        , steps = transitionSteps
+        }
+    , cmd
+    )
 
 
 
