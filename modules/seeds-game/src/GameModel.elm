@@ -17,7 +17,7 @@ module GameModel exposing
 import Basics.Extra exposing (atLeast, flip, swap)
 import Dict exposing (Dict)
 import Grid exposing (GI, Grid)
-import List.Extra as LX
+import List.Extra as List
 import Random
 import Set exposing (Set)
 
@@ -125,8 +125,8 @@ collectCellsAtIndices indicesToCollect grid =
             List.map Tuple.second collectedEntries
     in
     { indexSet = List.map Tuple.first collectedEntries |> Set.fromList
-    , water = LX.count (eq Water) collectedCells
-    , seeds = LX.count (eq Seed) collectedCells
+    , water = List.count (eq Water) collectedCells
+    , seeds = List.count (eq Seed) collectedCells
     , grid = setEmptyAtIndices indicesToEmpty grid
     }
 
@@ -251,7 +251,7 @@ filterMapAccumr func acc =
 
 flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
 flipMapAccumr func acc =
-    LX.mapAccumr (\a b -> func b a |> swap) acc
+    List.mapAccumr (\a b -> func b a |> swap) acc
         >> swap
 
 
