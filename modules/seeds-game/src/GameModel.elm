@@ -1,8 +1,6 @@
 module GameModel exposing
     ( Cell(..)
     , CellGrid
-    , Entries
-    , Entry
     , Model
     , MoveDetails
     , Stats
