@@ -62,7 +62,7 @@ initMoveAnimation moveDetails nextGame =
             { collectedIndexSet = moveDetails.collected.indexSet
             , fallenLookup = moveDetails.fallen.lookup
             }
-            moveDetails.initial
+            moveDetails.initialGrid
         , 300
         )
         [ ( EnteringStartTransition

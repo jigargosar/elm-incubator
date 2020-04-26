@@ -65,7 +65,7 @@ initCellGrid =
 
 
 type alias MoveDetails =
-    { initial : CellGrid
+    { initialGrid : CellGrid
     , collected : Collected
     , fallen : Fallen
     , generated : Generated
@@ -95,7 +95,7 @@ moveDetailsGenerator indicesToCollect grid =
 
         initMoveDetails : Generated -> MoveDetails
         initMoveDetails generated =
-            { initial = grid
+            { initialGrid = grid
             , collected = collected
             , fallen = fallen
             , generated = generated
