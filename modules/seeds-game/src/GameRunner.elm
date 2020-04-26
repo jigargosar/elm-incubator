@@ -309,6 +309,10 @@ foo moveDetails moveTransition =
             , cell = cell
             , cellState = func idx
             }
+
+        toCellGridVMHelp : (GI -> CellState) -> Game.CellGrid -> CellGridViewModel
+        toCellGridVMHelp func =
+            Grid.map (toCellVMHelp func)
     in
     case moveTransition of
         LeavingTransition ->
@@ -325,8 +329,7 @@ foo moveDetails moveTransition =
                             Nothing ->
                                 CellStatic
             in
-            moveDetails.initial
-                |> Grid.map (toCellVMHelp idxToCellState)
+            toCellGridVMHelp idxToCellState moveDetails.initial
 
         EnteringStartTransition ->
             let
@@ -337,8 +340,7 @@ foo moveDetails moveTransition =
                     else
                         CellStaticNoTransition
             in
-            moveDetails.generated.grid
-                |> Grid.map (toCellVMHelp idxToCellState)
+            toCellGridVMHelp idxToCellState moveDetails.generated.grid
 
         EnteringTransition ->
             let
@@ -349,8 +351,7 @@ foo moveDetails moveTransition =
                     else
                         CellStaticNoTransition
             in
-            moveDetails.generated.grid
-                |> Grid.map (toCellVMHelp idxToCellState)
+            toCellGridVMHelp idxToCellState moveDetails.generated.grid
 
 
 viewCellGridTableWithMoveAnimation : MoveAnimation -> HM
