@@ -280,7 +280,7 @@ view model =
                         [ viewTitle (Debug.toString (currentTS anim.steps))
                         , viewGameStats (Game.stats anim.game)
                         , viewCellGridTable
-                            (toCellGridViewModel
+                            (moveTransitionToCellGridViewModel
                                 anim.moveDetails
                                 (currentTS anim.steps |> Tuple.first)
                             )
@@ -303,8 +303,8 @@ type alias CellGridViewModel =
     Grid CellViewModel
 
 
-toCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
-toCellGridViewModel moveDetails moveTransition =
+moveTransitionToCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
+moveTransitionToCellGridViewModel moveDetails moveTransition =
     let
         toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
         toCellVMHelp func idx cell =
