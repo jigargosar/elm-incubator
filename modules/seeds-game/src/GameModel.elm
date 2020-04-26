@@ -81,18 +81,18 @@ type alias Generated =
 
 
 collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDetails
-collectAndGenerateWithDetails collectIndices grid =
+collectAndGenerateWithDetails indicesToCollect grid =
     let
-        collectionDetails =
-            collectCellsAtIndices collectIndices grid
+        collected =
+            collect indicesToCollect grid
 
         ( fallenIndices, fallenGrid ) =
-            computeFallenGrid collectionDetails.grid
+            computeFallenGrid collected.grid
 
         initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
             { initial = grid
-            , collected = collectionDetails
+            , collected = collected
             , fallenLookup = Dict.fromList fallenIndices
             , generated = generated
             }
@@ -110,8 +110,8 @@ type alias Entries =
     List Entry
 
 
-collectCellsAtIndices : List GI -> CellGrid -> Collected
-collectCellsAtIndices indicesToCollect grid =
+collect : List GI -> CellGrid -> Collected
+collect indicesToCollect grid =
     let
         collectedEntries : List ( GI, Cell )
         collectedEntries =
