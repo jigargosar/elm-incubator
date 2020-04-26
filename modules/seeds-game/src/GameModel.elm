@@ -68,12 +68,16 @@ type alias MoveDetails =
     { initial : CellGrid
     , collected : Collected
     , fallenLookup : Dict GI GI
-    , generated : { indexSet : Set GI, grid : CellGrid }
+    , generated : Generated
     }
 
 
 type alias Collected =
     { indexSet : Set GI, water : Int, seeds : Int, grid : CellGrid }
+
+
+type alias Generated =
+    { indexSet : Set GI, grid : CellGrid }
 
 
 collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDetails
