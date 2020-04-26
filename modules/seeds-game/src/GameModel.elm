@@ -66,10 +66,14 @@ initCellGrid =
 
 type alias MoveDetails =
     { initialGrid : CellGrid
-    , collected : { indexSet : Set GI, water : Int, seeds : Int }
+    , collected : CollectedDetails
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : CellGrid }
     }
+
+
+type alias CollectedDetails =
+    { indexSet : Set GI, water : Int, seeds : Int, grid : CellGrid }
 
 
 collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDetails
@@ -95,6 +99,7 @@ collectAndGenerateWithDetails collectIndices grid =
                 { indexSet = List.map Tuple.first collectedEntries |> Set.fromList
                 , water = List.Extra.count (eq Water) collectedCells
                 , seeds = List.Extra.count (eq Seed) collectedCells
+                , grid = collectedGrid
                 }
             , fallenLookup = Dict.fromList fallenIndices
             , generated = generated
