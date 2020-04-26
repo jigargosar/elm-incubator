@@ -14,7 +14,7 @@ module GameModel exposing
     , stats
     )
 
-import Basics.Extra exposing (atLeast, flip, swap)
+import Basics.Extra exposing (..)
 import Dict exposing (Dict)
 import Grid exposing (GI, Grid)
 import List.Extra as List
