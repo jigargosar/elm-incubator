@@ -177,14 +177,10 @@ update message model =
                 AnimatingMove game steps ->
                     case stepTS StepMoveAnimation steps of
                         Just ( nextSteps, cmd ) ->
-                            ( AnimatingMove game nextSteps
-                            , cmd
-                            )
+                            ( AnimatingMove game nextSteps, cmd )
 
                         Nothing ->
-                            ( Settled game
-                            , Cmd.none
-                            )
+                            ( Settled game, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
