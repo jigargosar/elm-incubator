@@ -41,7 +41,6 @@ init () =
 
 type alias MoveAnimation =
     { game : Game.Model
-    , moveDetails : Game.MoveDetails
     , steps : TransitionSteps MoveTransition
     }
 
@@ -77,7 +76,6 @@ initMoveAnimation moveDetails nextGame =
     in
     ( AnimatingMove
         { game = nextGame
-        , moveDetails = moveDetails
         , steps = transitionSteps
         }
     , cmd
