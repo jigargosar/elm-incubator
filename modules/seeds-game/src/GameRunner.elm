@@ -279,7 +279,11 @@ view model =
                     AnimatingMove anim ->
                         [ viewTitle (Debug.toString (currentTS anim.steps))
                         , viewGameStats (Game.stats anim.game)
-                        , viewCellGridTableWithMoveAnimation anim
+                        , viewCellGridTable
+                            (toCellGridViewModel
+                                anim.moveDetails
+                                (currentTS anim.steps |> Tuple.first)
+                            )
                         ]
                )
         )
@@ -299,8 +303,8 @@ type alias CellGridViewModel =
     Grid CellViewModel
 
 
-foo : Game.MoveDetails -> MoveTransition -> CellGridViewModel
-foo moveDetails moveTransition =
+toCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
+toCellGridViewModel moveDetails moveTransition =
     let
         toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
         toCellVMHelp func idx cell =
@@ -352,58 +356,6 @@ foo moveDetails moveTransition =
                         CellStaticNoTransition
             in
             toCellGridVMHelp idxToCellState moveDetails.generated.grid
-
-
-viewCellGridTableWithMoveAnimation : MoveAnimation -> HM
-viewCellGridTableWithMoveAnimation anim =
-    let
-        toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
-        toCellVMHelp func idx cell =
-            { selectionIdx = Nothing
-            , selectionMsg = Nothing
-            , cell = cell
-            , cellState = func idx
-            }
-
-        ( grid, idxToCS ) =
-            case currentTS anim.steps |> Tuple.first of
-                LeavingTransition ->
-                    ( anim.moveDetails.initial
-                    , let
-                        idxToCellState idx =
-                            if Set.member idx anim.moveDetails.collected.indexSet then
-                                CellLeaving
-
-                            else
-                                case Dict.get idx anim.moveDetails.fallen.lookup of
-                                    Just to ->
-                                        CellFallingTo to
-
-                                    Nothing ->
-                                        CellStatic
-                      in
-                      idxToCellState
-                    )
-
-                EnteringStartTransition ->
-                    ( anim.moveDetails.generated.grid
-                    , let
-                        idxToCellState idx =
-                            if Set.member idx anim.moveDetails.generated.indexSet then
-                                CellEnterStart
-
-                            else
-                                CellStaticNoTransition
-                      in
-                      idxToCellState
-                    )
-
-                EnteringTransition ->
-                    ( anim.moveDetails.generated.grid
-                    , always CellStatic
-                    )
-    in
-    viewCellGridTable (Grid.map (toCellVMHelp idxToCS) grid)
 
 
 viewCellGridTableWithSelectionStack : List GI -> Game.CellGrid -> HM
