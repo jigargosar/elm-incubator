@@ -423,6 +423,13 @@ noTransitionStyle =
     style "transition" "none"
 
 
+styles : List ( String, String ) -> Html.Attribute msg
+styles =
+    List.map (\( n, v ) -> n ++ ": " ++ v)
+        >> String.join ";"
+        >> Html.Attributes.attribute "style"
+
+
 viewCell : GI -> CellViewModel -> HM
 viewCell idx vm =
     let
@@ -456,7 +463,10 @@ viewCell idx vm =
                     --[ style "transform" ([ translateStr, "scale(1)" ] |> String.join " ")
                     --, defaultTransitionStyle
                     --]
-                    [ class "cell_fall" ]
+                    [ class "cell_fall"
+                    , style "--cell-fall-dy" ("calc( " ++ dyFactor ++ " * 4.50rem )")
+                    , styles [ ( "--cell-fall-dy", "calc( " ++ dyFactor ++ " * 4.50rem )" ) ]
+                    ]
 
                 CellEnterStart ->
                     [ style "transform" "translate(0,-300px) scale(0)"
