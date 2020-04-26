@@ -295,6 +295,64 @@ viewGameStats stats =
     div [ class "pa3" ] [ text (Debug.toString stats) ]
 
 
+type alias CellGridViewModel =
+    Grid CellViewModel
+
+
+foo : Game.MoveDetails -> MoveTransition -> CellGridViewModel
+foo moveDetails moveTransition =
+    let
+        toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
+        toCellVMHelp func idx cell =
+            { selectionIdx = Nothing
+            , selectionMsg = Nothing
+            , cell = cell
+            , cellState = func idx
+            }
+    in
+    case moveTransition of
+        LeavingTransition ->
+            let
+                idxToCellState idx =
+                    if Set.member idx moveDetails.collected.indexSet then
+                        CellLeaving
+
+                    else
+                        case Dict.get idx moveDetails.fallen.lookup of
+                            Just to ->
+                                CellFallingTo to
+
+                            Nothing ->
+                                CellStatic
+            in
+            moveDetails.initial
+                |> Grid.map (toCellVMHelp idxToCellState)
+
+        EnteringStartTransition ->
+            let
+                idxToCellState idx =
+                    if Set.member idx moveDetails.generated.indexSet then
+                        CellEnterStart
+
+                    else
+                        CellStaticNoTransition
+            in
+            moveDetails.generated.grid
+                |> Grid.map (toCellVMHelp idxToCellState)
+
+        EnteringTransition ->
+            let
+                idxToCellState idx =
+                    if Set.member idx moveDetails.generated.indexSet then
+                        CellEnterStart
+
+                    else
+                        CellStaticNoTransition
+            in
+            moveDetails.generated.grid
+                |> Grid.map (toCellVMHelp idxToCellState)
+
+
 viewCellGridTableWithMoveAnimation : MoveAnimation -> HM
 viewCellGridTableWithMoveAnimation anim =
     let
