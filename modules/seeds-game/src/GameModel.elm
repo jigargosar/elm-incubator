@@ -495,17 +495,14 @@ makeMoveHelp collectibleIndices state =
                 (moveDetailsGenerator collectibleIndices state.grid)
                 state.random
 
-        { movesLeft, targetWater, targetSeeds } =
-            state.stats
-
         nextTargetSeeds =
-            (targetSeeds - moveDetails.collected.seeds) |> atLeast 0
+            (state.stats.targetSeeds - moveDetails.collected.seeds) |> atLeast 0
 
         nextTargetWater =
-            (targetWater - moveDetails.collected.water) |> atLeast 0
+            (state.stats.targetWater - moveDetails.collected.water) |> atLeast 0
 
         nextMovesLeft =
-            (movesLeft - 1) |> atLeast 0
+            (state.stats.movesLeft - 1) |> atLeast 0
     in
     ( moveDetails
     , fromState
