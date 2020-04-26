@@ -464,8 +464,9 @@ viewCell idx vm =
                     ]
 
                 CellStaticNoTransition ->
-                    [ style "transform" "translate(0,0) scale(1.0)"
-                    , noTransitionStyle
+                    [ noTransitionStyle
+
+                    --, style "transform" "translate(0,0) scale(1.0)"
                     ]
     in
     div
