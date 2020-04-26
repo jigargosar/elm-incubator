@@ -16,6 +16,62 @@ import Task
 
 
 
+-- Model
+
+
+type Model
+    = AnimatingMove MoveAnimation
+    | Settled Game.Model
+
+
+type alias Flags =
+    ()
+
+
+init : Flags -> ( Model, Cmd Msg )
+init () =
+    ( Settled Game.init
+    , Cmd.none
+    )
+
+
+
+-- MOVE ANIMATION
+
+
+type alias MoveAnimation =
+    { game : Game.Model
+    , moveDetails : Game.MoveDetails
+    , steps : TransitionSteps MoveTransition
+    }
+
+
+type MoveTransition
+    = LeavingTransition
+    | EnteringStartTransition
+    | EnteringTransition
+
+
+initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
+initMoveAnimation moveDetails nextGame =
+    let
+        ( transitionSteps, cmd ) =
+            initTS StepMoveAnimation
+                ( LeavingTransition, 300 )
+                [ ( EnteringStartTransition, 20 )
+                , ( EnteringTransition, 300 )
+                ]
+    in
+    ( AnimatingMove
+        { game = nextGame
+        , moveDetails = moveDetails
+        , steps = transitionSteps
+        }
+    , cmd
+    )
+
+
+
 -- TRANSITION STEPS
 
 
@@ -46,39 +102,6 @@ stepTS msg (TransitionSteps _ steps) =
 currentTS : TransitionSteps a -> ( a, Float )
 currentTS (TransitionSteps current _) =
     current
-
-
-
--- Model
-
-
-type Model
-    = AnimatingMove MoveAnimation
-    | Settled Game.Model
-
-
-type alias MoveAnimation =
-    { game : Game.Model
-    , moveDetails : Game.MoveDetails
-    , steps : TransitionSteps MoveTransition
-    }
-
-
-type MoveTransition
-    = LeavingTransition
-    | EnteringStartTransition
-    | EnteringTransition
-
-
-type alias Flags =
-    ()
-
-
-init : Flags -> ( Model, Cmd Msg )
-init () =
-    ( Settled Game.init
-    , Cmd.none
-    )
 
 
 
@@ -153,25 +176,6 @@ update message model =
 
                 _ ->
                     ( model, Cmd.none )
-
-
-initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
-initMoveAnimation moveDetails nextGame =
-    let
-        ( transitionSteps, cmd ) =
-            initTS StepMoveAnimation
-                ( LeavingTransition, 300 )
-                [ ( EnteringStartTransition, 20 )
-                , ( EnteringTransition, 300 )
-                ]
-    in
-    ( AnimatingMove
-        { game = nextGame
-        , moveDetails = moveDetails
-        , steps = transitionSteps
-        }
-    , cmd
-    )
 
 
 
