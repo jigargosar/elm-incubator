@@ -78,9 +78,7 @@ initMoveAnimation moveDetails nextGame =
                   )
                 ]
     in
-    ( AnimatingMove nextGame transitionSteps
-    , cmd
-    )
+    ( AnimatingMove nextGame transitionSteps, cmd )
 
 
 
