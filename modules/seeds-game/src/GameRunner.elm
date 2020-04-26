@@ -446,10 +446,7 @@ viewCell idx vm =
                     ]
 
                 CellLeaving ->
-                    [ --style "transform" "translate(0,-300px) scale(0)"
-                      --, defaultTransitionStyle
-                      class "cell_leave"
-                    ]
+                    [ class "cell_leave" ]
 
                 CellFallingTo toIdx ->
                     let
