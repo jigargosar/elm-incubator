@@ -27,12 +27,12 @@
 @keyframes cell_enter {
   from {
     transform: translate(0, -300px) scale(0);
-    opacity: 1;
+    opacity: 0;
   }
 
   to {
     transform: translate(0, 0) scale(1);
-    opacity: 0;
+    opacity: 1;
   }
 }
 

@@ -58,8 +58,9 @@ initMoveAnimation moveDetails nextGame =
         ( transitionSteps, cmd ) =
             initTS StepMoveAnimation
                 ( LeavingTransition, 300 )
-                [ ( EnteringStartTransition, 20 )
-                , ( EnteringTransition, 300 )
+                [ ( EnteringStartTransition, 300 )
+
+                --, ( EnteringTransition, 300 )
                 ]
     in
     ( AnimatingMove
@@ -459,9 +460,10 @@ viewCell idx vm =
                     ]
 
                 CellEnterStart ->
-                    [ style "transform" "translate(0,-300px) scale(0)"
-                    , noTransitionStyle
-                    ]
+                    --[ style "transform" "translate(0,-300px) scale(0)"
+                    --, noTransitionStyle
+                    --]
+                    [ class "cell_enter" ]
 
                 CellStaticNoTransition ->
                     [ noTransitionStyle
