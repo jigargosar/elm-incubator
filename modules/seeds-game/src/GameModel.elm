@@ -17,7 +17,7 @@ module GameModel exposing
 import Basics.Extra exposing (atLeast, flip, swap)
 import Dict exposing (Dict)
 import Grid exposing (GI, Grid)
-import List.Extra
+import List.Extra as LX
 import Random
 import Set exposing (Set)
 
@@ -66,41 +66,29 @@ initCellGrid =
 
 type alias MoveDetails =
     { initialGrid : CellGrid
-    , collected : CollectedDetails
+    , collected : CollectionDetails
     , fallenLookup : Dict GI GI
     , generated : { indexSet : Set GI, grid : CellGrid }
     }
 
 
-type alias CollectedDetails =
+type alias CollectionDetails =
     { indexSet : Set GI, water : Int, seeds : Int, grid : CellGrid }
 
 
 collectAndGenerateWithDetails : List GI -> CellGrid -> Random.Generator MoveDetails
 collectAndGenerateWithDetails collectIndices grid =
     let
-        ( collectedEntries, collectedGrid ) =
+        collectionDetails =
             collectCellsAtIndices collectIndices grid
 
         ( fallenIndices, fallenGrid ) =
-            computeFallenGrid collectedGrid
+            computeFallenGrid collectionDetails.grid
 
         initMoveDetails : { grid : CellGrid, indexSet : Set GI } -> MoveDetails
         initMoveDetails generated =
-            let
-                collectedCells =
-                    List.map Tuple.second collectedEntries
-
-                eq =
-                    (==)
-            in
             { initialGrid = grid
-            , collected =
-                { indexSet = List.map Tuple.first collectedEntries |> Set.fromList
-                , water = List.Extra.count (eq Water) collectedCells
-                , seeds = List.Extra.count (eq Seed) collectedCells
-                , grid = collectedGrid
-                }
+            , collected = collectionDetails
             , fallenLookup = Dict.fromList fallenIndices
             , generated = generated
             }
@@ -118,7 +106,7 @@ type alias Entries =
     List Entry
 
 
-collectCellsAtIndices : List GI -> CellGrid -> ( Entries, CellGrid )
+collectCellsAtIndices : List GI -> CellGrid -> CollectionDetails
 collectCellsAtIndices indicesToCollect grid =
     let
         collectedEntries : List ( GI, Cell )
@@ -132,10 +120,19 @@ collectCellsAtIndices indicesToCollect grid =
 
         indicesToEmpty =
             List.map Tuple.first collectedEntries
+
+        collectedCells =
+            List.map Tuple.second collectedEntries
     in
-    ( collectedEntries
-    , setEmptyAtIndices indicesToEmpty grid
-    )
+    { indexSet = List.map Tuple.first collectedEntries |> Set.fromList
+    , water = LX.count (eq Water) collectedCells
+    , seeds = LX.count (eq Seed) collectedCells
+    , grid = setEmptyAtIndices indicesToEmpty grid
+    }
+
+
+eq =
+    (==)
 
 
 setEmptyAtIndices indicesToEmpty grid =
@@ -254,7 +251,7 @@ filterMapAccumr func acc =
 
 flipMapAccumr : (a -> c -> ( b, c )) -> c -> List a -> ( List b, c )
 flipMapAccumr func acc =
-    List.Extra.mapAccumr (\a b -> func b a |> swap) acc
+    LX.mapAccumr (\a b -> func b a |> swap) acc
         >> swap
 
 
