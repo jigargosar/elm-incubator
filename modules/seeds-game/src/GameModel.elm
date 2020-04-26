@@ -516,3 +516,11 @@ makeMoveHelp collectibleIndices state =
         , selection_ = emptySelection
         }
     )
+
+
+computeNextStats : Collected -> Stats -> Stats
+computeNextStats collected { movesLeft, targetSeeds, targetWater } =
+    { targetSeeds = targetSeeds - collected.seeds |> atLeast 0
+    , targetWater = (targetWater - collected.water) |> atLeast 0
+    , movesLeft = movesLeft - 1 |> atLeast 0
+    }
