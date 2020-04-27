@@ -112,6 +112,17 @@ nextPointGenerator size point =
         (Random.uniform inc [ dec ])
 
 
+nextPointFuncGenerator : Random.Generator (Size -> Point -> Point)
+nextPointFuncGenerator =
+    Random.map2
+        (\func by size point ->
+            func by point
+                |> constrainPointInSize size
+        )
+        (Random.uniform mapX [ mapY ])
+        (Random.uniform inc [ dec ])
+
+
 
 -- Dot
 
