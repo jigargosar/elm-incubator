@@ -42,13 +42,13 @@ init () =
 type alias MoveAnimation =
     { game : Game.Model
     , moveDetails : Game.MoveDetails
-    , steps : TransitionSteps MoveTransition
+    , steps : TransitionSteps MoveAnimationStage
     }
 
 
-type MoveTransition
-    = LeavingTransition
-    | EnteringTransition
+type MoveAnimationStage
+    = CellsLeavingAndFallingAnimationStage
+    | CellsEnteringAnimationStage
 
 
 initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
@@ -56,8 +56,8 @@ initMoveAnimation moveDetails nextGame =
     let
         ( transitionSteps, cmd ) =
             initTS StepMoveAnimation
-                ( LeavingTransition, 300 )
-                [ ( EnteringTransition, 300 )
+                ( CellsLeavingAndFallingAnimationStage, 300 )
+                [ ( CellsEnteringAnimationStage, 300 )
                 ]
     in
     ( AnimatingMove
@@ -305,10 +305,10 @@ type alias CellGridViewModel =
     Grid CellViewModel
 
 
-moveTransitionToCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
+moveTransitionToCellGridViewModel : Game.MoveDetails -> MoveAnimationStage -> CellGridViewModel
 moveTransitionToCellGridViewModel moveDetails moveTransition =
     case moveTransition of
-        LeavingTransition ->
+        CellsLeavingAndFallingAnimationStage ->
             let
                 idxToCellState idx =
                     if Set.member idx moveDetails.collected.indexSet then
@@ -332,7 +332,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
                 )
                 moveDetails.initial.grid
 
-        EnteringTransition ->
+        CellsEnteringAnimationStage ->
             let
                 idxToCellState idx =
                     if Set.member idx moveDetails.generated.indexSet then
