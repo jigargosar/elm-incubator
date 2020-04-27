@@ -2,7 +2,10 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, text)
+import List.Extra
 import Random
+import Random.Extra
+import Random.List
 import Svg
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
@@ -78,11 +81,24 @@ viewRW =
 randomPointsIn size =
     let
         _ =
-            Random.float 0 1
+            Random.List.choose
     in
     [ newPoint 10 10
     , newPoint 11 11
     ]
+
+
+foo : Size -> Int -> Point -> List Point -> Random.Generator (List Point)
+foo size max h t =
+    if max == 0 then
+        Random.constant (List.reverse (h :: t))
+
+    else
+        nextPointGenerator size h
+            |> Random.andThen
+                (\nh ->
+                    Random.lazy (\_ -> foo size (max - 1) nh (h :: t))
+                )
 
 
 nextPointGenerator : Size -> Point -> Random.Generator Point
