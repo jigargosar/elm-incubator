@@ -2,7 +2,9 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, text)
+import List.Extra
 import Random
+import Set
 import Svg
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
@@ -78,28 +80,31 @@ viewRW =
 
 randomPointsIn : Size -> List Point
 randomPointsIn size =
-    Random.step (randomWalkerPointsGenerator size 8000) (Random.initialSeed 3)
+    Random.step (randomWalkerPointsGenerator size 10000) (Random.initialSeed 3)
         |> Tuple.first
+
+
+
+--|> List.Extra.uniqueBy pointToTuple
 
 
 randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
 randomWalkerPointsGenerator size len =
     let
-        acc0 =
-            randomPointGenerator size
-                |> Random.map (\start -> ( start, [] ))
+        func2 _ ( ( h, t ), seed0 ) =
+            Random.step (nextPointGenerator size h) seed0
+                |> Tuple.mapFirst (\np -> ( np, h :: t ))
 
-        func _ acc =
-            acc
-                |> Random.andThen
-                    (\( h, t ) ->
-                        nextPointGenerator size h
-                            |> Random.map (\np -> ( np, h :: t ))
-                    )
+        func startPoint seed =
+            List.range 0 (len - 1)
+                |> List.foldl func2 ( ( startPoint, [] ), seed )
+                |> Tuple.first
+                |> consToList
+                |> List.reverse
     in
-    List.range 0 (len - 1)
-        |> List.foldl func acc0
-        |> Random.map (consToList >> List.reverse)
+    Random.map2 func
+        (randomPointGenerator size)
+        Random.independentSeed
 
 
 consToList ( h, t ) =
@@ -176,6 +181,10 @@ type alias Point =
 newPoint : Float -> Float -> Point
 newPoint x y =
     { x = x, y = y }
+
+
+pointToTuple point =
+    ( point.x, point.y )
 
 
 mapX : (Float -> Float) -> Point -> Point
