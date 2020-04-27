@@ -64,9 +64,25 @@ view _ =
 
 viewRW =
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 300 300 ]
-        [ renderDot 10 10
-        , renderDot 11 11
+        [ [ newPoint 10 10
+          , newPoint 11 11
+          ]
+            |> List.map renderDotAtPoint
+            |> Svg.g []
         ]
+
+
+type alias Point =
+    { x : Float, y : Float }
+
+
+newPoint : Float -> Float -> Point
+newPoint x y =
+    { x = x, y = y }
+
+
+renderDotAtPoint { x, y } =
+    renderDot x y
 
 
 renderDot x y =
