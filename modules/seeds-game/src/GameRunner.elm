@@ -163,14 +163,10 @@ update message model =
                 AnimatingMove anim ->
                     case updateTS StepMoveAnimation anim.steps of
                         Just ( transitionSteps, cmd ) ->
-                            ( AnimatingMove { anim | steps = transitionSteps }
-                            , cmd
-                            )
+                            ( AnimatingMove { anim | steps = transitionSteps }, cmd )
 
                         Nothing ->
-                            ( Settled anim.game
-                            , Cmd.none
-                            )
+                            ( Settled anim.game, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
