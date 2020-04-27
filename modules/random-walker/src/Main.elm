@@ -2,10 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, text)
-import List.Extra
 import Random
-import Random.Extra
-import Random.List
 import Svg
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
@@ -81,38 +78,39 @@ viewRW =
 
 randomPointsIn : Size -> List Point
 randomPointsIn size =
-    Random.step (bar size 8000) (Random.initialSeed 3)
+    Random.step (randomWalkerPointsGenerator size 8000) (Random.initialSeed 3)
         |> Tuple.first
 
 
-bar : Size -> Int -> Random.Generator (List Point)
-bar size max =
-    randomPointGenerator size
-        |> Random.andThen
-            (\start -> foo size max start [])
+randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
+randomWalkerPointsGenerator size len =
+    let
+        acc0 =
+            randomPointGenerator size
+                |> Random.map (\start -> ( start, [] ))
+
+        func _ acc =
+            acc
+                |> Random.andThen
+                    (\( h, t ) ->
+                        nextPointGenerator size h
+                            |> Random.map
+                                (\np -> ( np, h :: t ))
+                    )
+    in
+    List.range 0 (len - 1)
+        |> List.foldl func acc0
+        |> Random.map (consToList >> List.reverse)
 
 
-foo : Size -> Int -> Point -> List Point -> Random.Generator (List Point)
-foo size max h t =
-    if max == 0 then
-        Random.constant (List.reverse (h :: t))
-
-    else
-        nextPointFuncGenerator
-            |> Random.andThen
-                (\func ->
-                    let
-                        nh =
-                            func size h
-                    in
-                    foo size (max - 1) nh (h :: t)
-                )
+consToList ( h, t ) =
+    h :: t
 
 
-nextPointFuncGenerator : Random.Generator (Size -> Point -> Point)
-nextPointFuncGenerator =
+nextPointGenerator : Size -> Point -> Random.Generator Point
+nextPointGenerator size point =
     Random.map2
-        (\func by size point ->
+        (\func by ->
             func by point
                 |> constrainPointInSize size
         )
