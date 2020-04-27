@@ -5,7 +5,7 @@
   transition-duration: 300ms;
 }
 
-.cell_selection_inactive {
+.cell_selection_active {
   transform: translate(0, 0) scale(0.8);
   opacity: 1;
   transition-property: opacity, transform;
