@@ -94,8 +94,7 @@ randomWalkerPointsGenerator size len =
                 |> Random.andThen
                     (\( h, t ) ->
                         nextPointGenerator size h
-                            |> Random.map
-                                (\np -> ( np, h :: t ))
+                            |> Random.map (\np -> ( np, h :: t ))
                     )
     in
     List.range 0 (len - 1)
