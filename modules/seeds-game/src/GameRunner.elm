@@ -48,7 +48,6 @@ type alias MoveAnimation =
 
 type MoveTransition
     = LeavingTransition
-    | EnteringStartTransition
     | EnteringTransition
 
 
@@ -58,7 +57,7 @@ initMoveAnimation moveDetails nextGame =
         ( transitionSteps, cmd ) =
             initTS StepMoveAnimation
                 ( LeavingTransition, 300 )
-                [ ( EnteringStartTransition, 300 )
+                [ ( EnteringTransition, 300 )
 
                 --, ( EnteringTransition, 300 )
                 ]
@@ -340,7 +339,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             in
             toCellGridVMHelp idxToCellState moveDetails.initial
 
-        EnteringStartTransition ->
+        EnteringTransition ->
             let
                 idxToCellState idx =
                     if Set.member idx moveDetails.generated.indexSet then
@@ -350,9 +349,6 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
                         CellStaticNoTransition
             in
             toCellGridVMHelp idxToCellState moveDetails.generated.grid
-
-        EnteringTransition ->
-            toCellGridVMHelp (always CellStatic) moveDetails.generated.grid
 
 
 selectionStackToCellGridViewModel : List GI -> Game.CellGrid -> CellGridViewModel
