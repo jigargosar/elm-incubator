@@ -98,7 +98,7 @@ foo size max h t =
 
     else
         nextPointGenerator size h
-            |> Random.andThen (\nh -> Random.lazy (\_ -> foo size (max - 1) nh (h :: t)))
+            |> Random.andThen (\nh -> foo size (max - 1) nh (h :: t))
 
 
 nextPointGenerator : Size -> Point -> Random.Generator Point
