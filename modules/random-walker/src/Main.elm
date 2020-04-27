@@ -63,17 +63,25 @@ view _ =
 
 
 viewRW =
-    Svg.svg [ TypedSvg.Attributes.viewBox 0 0 300 300 ]
-        [ randomPoints
+    let
+        size =
+            newSize 300 300
+    in
+    Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
+        [ randomPointsIn size
             |> List.map renderDotAtPoint
             |> Svg.g []
         ]
 
 
-randomPoints =
+randomPointsIn size =
     [ newPoint 10 10
     , newPoint 11 11
     ]
+
+
+
+-- Point
 
 
 type alias Point =
@@ -83,6 +91,23 @@ type alias Point =
 newPoint : Float -> Float -> Point
 newPoint x y =
     { x = x, y = y }
+
+
+
+-- Size
+
+
+type alias Size =
+    { width : Float, height : Float }
+
+
+newSize : Float -> Float -> Size
+newSize w h =
+    Size w h
+
+
+
+-- Dot
 
 
 renderDotAtPoint { x, y } =
