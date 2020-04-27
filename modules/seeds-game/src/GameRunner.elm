@@ -336,7 +336,16 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
                             Nothing ->
                                 CellStatic
             in
-            toCellGridVMHelp idxToCellState moveDetails.initial
+            Grid.map
+                (\idx cell ->
+                    { selectionIdx = Nothing
+                    , selectionMsg = Nothing
+                    , cell = cell
+                    , state = idxToCellState idx
+                    , selectionState = toCellSelectionState moveDetails.initial.selectionStack idx
+                    }
+                )
+                moveDetails.initial.grid
 
         EnteringTransition ->
             let
@@ -347,7 +356,16 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
                     else
                         CellStaticNoTransition
             in
-            toCellGridVMHelp idxToCellState moveDetails.generated.grid
+            Grid.map
+                (\idx cell ->
+                    { selectionIdx = Nothing
+                    , selectionMsg = Nothing
+                    , cell = cell
+                    , state = idxToCellState idx
+                    , selectionState = toCellSelectionState [] idx
+                    }
+                )
+                moveDetails.generated.grid
 
 
 selectionStackToCellGridViewModel : List GI -> Game.CellGrid -> CellGridViewModel

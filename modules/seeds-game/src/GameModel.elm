@@ -65,10 +65,16 @@ initCellGrid =
 
 
 type alias MoveDetails =
-    { initial : CellGrid
+    { initial : Initial
     , collected : Collected
     , fallen : Fallen
     , generated : Generated
+    }
+
+
+type alias Initial =
+    { selectionStack : List GI
+    , grid : CellGrid
     }
 
 
@@ -84,18 +90,18 @@ type alias Generated =
     { indexSet : Set GI, grid : CellGrid }
 
 
-moveDetailsGenerator : List GI -> CellGrid -> Random.Generator MoveDetails
-moveDetailsGenerator validSelectionStack grid =
+moveDetailsGenerator : Initial -> Random.Generator MoveDetails
+moveDetailsGenerator initial =
     let
         collected =
-            computeCollected validSelectionStack grid
+            computeCollected initial.selectionStack initial.grid
 
         fallen =
             computeFallen collected.grid
 
         initMoveDetails : Generated -> MoveDetails
         initMoveDetails generated =
-            { initial = grid
+            { initial = initial
             , collected = collected
             , fallen = fallen
             , generated = generated
@@ -492,7 +498,7 @@ makeMoveHelp validSelectionStack state =
     let
         ( moveDetails, nextRandom ) =
             Random.step
-                (moveDetailsGenerator validSelectionStack state.grid)
+                (moveDetailsGenerator { selectionStack = validSelectionStack, grid = state.grid })
                 state.random
     in
     ( moveDetails
