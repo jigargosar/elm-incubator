@@ -64,12 +64,16 @@ view _ =
 
 viewRW =
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 300 300 ]
-        [ [ newPoint 10 10
-          , newPoint 11 11
-          ]
+        [ randomPoints
             |> List.map renderDotAtPoint
             |> Svg.g []
         ]
+
+
+randomPoints =
+    [ newPoint 10 10
+    , newPoint 11 11
+    ]
 
 
 type alias Point =
