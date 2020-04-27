@@ -417,13 +417,6 @@ viewCellGridTable =
     viewGridAsTable viewCell
 
 
-
---defaultTransitionStyle =
---    style "transition" "transform 300ms"
---noTransitionStyle =
---    style "transition" "none"
-
-
 styles : List ( String, String ) -> Html.Attribute msg
 styles =
     List.map (\( n, v ) -> n ++ ": " ++ v)
@@ -437,9 +430,6 @@ viewCell idx vm =
         animProps =
             case vm.animation of
                 CellNoAnimation ->
-                    --[ style "transform" "translate(0,0) scale(1.0)"
-                    --, defaultTransitionStyle
-                    --]
                     []
 
                 CellLeavingAnimation ->
