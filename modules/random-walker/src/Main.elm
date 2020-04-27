@@ -85,9 +85,13 @@ randomPointsIn size =
     ]
 
 
-nextPointGenerator : Point -> Random.Generator Point
-nextPointGenerator point =
-    Random.map2 (\func by -> func by point)
+nextPointGenerator : Size -> Point -> Random.Generator Point
+nextPointGenerator size point =
+    Random.map2
+        (\func by ->
+            func by point
+                |> constrainPointInSize size
+        )
         (Random.uniform mapX [ mapY ])
         (Random.uniform inc [ dec ])
 
@@ -167,9 +171,9 @@ constrainPointInSize size point =
     Point (clamp 0 (size.width - 1) point.x) (clamp 0 (size.height - 1) point.y)
 
 
-randomPoint : Random.Generator Point
-randomPoint =
-    Random.map2 newPoint random random
+randomPointGenerator : Size -> Random.Generator Point
+randomPointGenerator size =
+    Random.map2 (\x y -> newPoint (x * (size.width - 1)) (y * (size.height - 1))) random random
 
 
 
