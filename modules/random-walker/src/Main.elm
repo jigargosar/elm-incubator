@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, text)
+import Random
 import Svg
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
@@ -74,10 +75,24 @@ viewRW =
         ]
 
 
+random : Random.Generator Float
+random =
+    Random.float 0 1
+
+
 randomPointsIn size =
+    let
+        _ =
+            Random.float 0 1
+    in
     [ newPoint 10 10
     , newPoint 11 11
     ]
+
+
+constrainPointInSize : Size -> Point -> Point
+constrainPointInSize size point =
+    Point (clamp 0 (size.width - 1) point.x) (clamp 0 (size.height - 1) point.y)
 
 
 
