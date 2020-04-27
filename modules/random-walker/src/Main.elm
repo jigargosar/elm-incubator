@@ -2,6 +2,9 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, text)
+import Svg
+import TypedSvg.Attributes
+import TypedSvg.Attributes.InPx
 
 
 
@@ -54,7 +57,30 @@ type alias DM =
 view : Model -> DM
 view _ =
     Document "Main"
-        [ text "Hello Main" ]
+        [ text "Hello Main"
+        , viewRW
+        ]
+
+
+viewRW =
+    Svg.svg [ TypedSvg.Attributes.viewBox 0 0 300 300 ]
+        [ renderDot 10 10
+        , renderDot 11 11
+        ]
+
+
+renderDot x y =
+    let
+        dotWidth =
+            1
+    in
+    Svg.rect
+        [ TypedSvg.Attributes.InPx.x x
+        , TypedSvg.Attributes.InPx.y y
+        , TypedSvg.Attributes.InPx.width dotWidth
+        , TypedSvg.Attributes.InPx.height dotWidth
+        ]
+        []
 
 
 
