@@ -369,12 +369,7 @@ selectionStackToCellGridViewModel selectionStack =
             in
             { selectionMsg = Just selectionMsg
             , cell = cell
-            , state =
-                if isSelected then
-                    CellSelected
-
-                else
-                    CellStatic
+            , state = CellStatic
             , selectionState = toCellSelectionState selectionStack idx
             }
     in
@@ -406,7 +401,6 @@ type CellSelectionState
 
 type CellState
     = CellStatic
-    | CellSelected
     | CellLeaving
     | CellFallingTo GI
     | CellEntering
@@ -427,11 +421,9 @@ viewCellGridTable =
     viewGridAsTable viewCell
 
 
-defaultTransitionStyle =
-    style "transition" "transform 300ms"
 
-
-
+--defaultTransitionStyle =
+--    style "transition" "transform 300ms"
 --noTransitionStyle =
 --    style "transition" "none"
 
@@ -450,12 +442,6 @@ viewCell idx vm =
             case vm.state of
                 CellStatic ->
                     --[ style "transform" "translate(0,0) scale(1.0)"
-                    --, defaultTransitionStyle
-                    --]
-                    []
-
-                CellSelected ->
-                    --[ style "transform" "translate(0,0) scale(0.8)"
                     --, defaultTransitionStyle
                     --]
                     []
