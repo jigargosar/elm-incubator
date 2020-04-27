@@ -509,9 +509,12 @@ viewCell idx vm =
                ]
         )
         [ text
-            (vm.selectionIdx
-                |> Maybe.map String.fromInt
-                |> Maybe.withDefault ""
+            (case vm.selectionState of
+                CellSelectionActive selIdx ->
+                    String.fromInt selIdx
+
+                CellSelectionInactive ->
+                    ""
             )
         ]
 
