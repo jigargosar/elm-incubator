@@ -431,8 +431,9 @@ defaultTransitionStyle =
     style "transition" "transform 300ms"
 
 
-noTransitionStyle =
-    style "transition" "none"
+
+--noTransitionStyle =
+--    style "transition" "none"
 
 
 styles : List ( String, String ) -> Html.Attribute msg
