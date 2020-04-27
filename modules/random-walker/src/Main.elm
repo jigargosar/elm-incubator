@@ -78,14 +78,19 @@ viewRW =
         ]
 
 
+randomPointsIn : Size -> List Point
 randomPointsIn size =
-    let
-        _ =
-            Random.List.choose
-    in
-    [ newPoint 10 10
-    , newPoint 11 11
-    ]
+    Random.step (bar size 1000) (Random.initialSeed 0)
+        |> Tuple.first
+
+
+bar : Size -> Int -> Random.Generator (List Point)
+bar size max =
+    randomPointGenerator size
+        |> Random.andThen
+            (\start ->
+                foo size max start []
+            )
 
 
 foo : Size -> Int -> Point -> List Point -> Random.Generator (List Point)
