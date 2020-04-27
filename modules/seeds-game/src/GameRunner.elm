@@ -58,8 +58,6 @@ initMoveAnimation moveDetails nextGame =
             initTS StepMoveAnimation
                 ( LeavingTransition, 300 )
                 [ ( EnteringTransition, 300 )
-
-                --, ( EnteringTransition, 300 )
                 ]
     in
     ( AnimatingMove
