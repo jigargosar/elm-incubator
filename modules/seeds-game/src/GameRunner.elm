@@ -90,8 +90,8 @@ delay for msg =
     Process.sleep for |> Task.perform (always msg)
 
 
-stepTS : msg -> TransitionSteps a -> Maybe ( TransitionSteps a, Cmd msg )
-stepTS msg (TransitionSteps _ steps) =
+updateTS : msg -> TransitionSteps a -> Maybe ( TransitionSteps a, Cmd msg )
+updateTS msg (TransitionSteps _ steps) =
     case steps of
         [] ->
             Nothing
@@ -164,7 +164,7 @@ update message model =
         StepMoveAnimation ->
             case model of
                 AnimatingMove anim ->
-                    case stepTS StepMoveAnimation anim.steps of
+                    case updateTS StepMoveAnimation anim.steps of
                         Just ( transitionSteps, cmd ) ->
                             ( AnimatingMove { anim | steps = transitionSteps }
                             , cmd
