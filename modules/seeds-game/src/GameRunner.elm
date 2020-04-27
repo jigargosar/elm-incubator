@@ -339,7 +339,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
                         CellEnterStart
 
                     else
-                        CellStaticNoTransition
+                        CellStatic
             in
             Grid.map
                 (\idx cell ->
@@ -410,7 +410,6 @@ type CellState
     | CellLeaving
     | CellFallingTo GI
     | CellEnterStart
-    | CellStaticNoTransition
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -472,16 +471,7 @@ viewCell idx vm =
                     ]
 
                 CellEnterStart ->
-                    --[ style "transform" "translate(0,-300px) scale(0)"
-                    --, noTransitionStyle
-                    --]
                     [ class "cell_enter" ]
-
-                CellStaticNoTransition ->
-                    [ noTransitionStyle
-
-                    --, style "transform" "translate(0,0) scale(1.0)"
-                    ]
     in
     div
         (animProps
