@@ -135,12 +135,12 @@ update message model =
         ToggleSelection idx wasSelected ->
             case model of
                 Settled game ->
-                    let
-                        nm =
-                            (updateSelection idx wasSelected game |> Maybe.withDefault game)
-                                |> Settled
-                    in
-                    ( nm, Cmd.none )
+                    ( Settled
+                        (updateSelection idx wasSelected game
+                            |> Maybe.withDefault game
+                        )
+                    , Cmd.none
+                    )
 
                 _ ->
                     ( model, Cmd.none )
