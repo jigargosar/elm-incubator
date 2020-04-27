@@ -1,3 +1,13 @@
+.cell_selection_inactive {
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+}
+
+.cell_selection_active {
+  transform: translate(0, 0) scale(0.8);
+  opacity: 1;
+}
+
 .cell_leave {
   animation-name: cell_leave;
   animation-duration: 300ms;
