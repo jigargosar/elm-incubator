@@ -9,6 +9,7 @@ import Random.List
 import Svg
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
+import TypedSvg.Types exposing (Opacity(..))
 
 
 
@@ -137,6 +138,7 @@ renderDot x y =
         , TypedSvg.Attributes.InPx.y y
         , TypedSvg.Attributes.InPx.width dotWidth
         , TypedSvg.Attributes.InPx.height dotWidth
+        , TypedSvg.Attributes.opacity (Opacity 0.2)
         ]
         []
 
