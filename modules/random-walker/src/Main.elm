@@ -75,11 +75,6 @@ viewRW =
         ]
 
 
-random : Random.Generator Float
-random =
-    Random.float 0 1
-
-
 randomPointsIn size =
     let
         _ =
@@ -90,12 +85,58 @@ randomPointsIn size =
     ]
 
 
+nextPointGenerator : Point -> Random.Generator Point
 nextPointGenerator point =
+    Random.map2 (\func by -> func by point)
+        (Random.uniform mapX [ mapY ])
+        (Random.uniform inc [ dec ])
+
+
+
+-- Dot
+
+
+renderDotAtPoint { x, y } =
+    renderDot x y
+
+
+renderDot x y =
     let
-        _ =
+        dotWidth =
             1
     in
-    1
+    Svg.rect
+        [ TypedSvg.Attributes.InPx.x x
+        , TypedSvg.Attributes.InPx.y y
+        , TypedSvg.Attributes.InPx.width dotWidth
+        , TypedSvg.Attributes.InPx.height dotWidth
+        ]
+        []
+
+
+
+-- Random
+
+
+random : Random.Generator Float
+random =
+    Random.float 0 1
+
+
+
+-- Basics
+
+
+inc =
+    add 1
+
+
+dec =
+    add -1
+
+
+add =
+    (+)
 
 
 
@@ -126,6 +167,11 @@ constrainPointInSize size point =
     Point (clamp 0 (size.width - 1) point.x) (clamp 0 (size.height - 1) point.y)
 
 
+randomPoint : Random.Generator Point
+randomPoint =
+    Random.map2 newPoint random random
+
+
 
 -- Size
 
@@ -137,28 +183,6 @@ type alias Size =
 newSize : Float -> Float -> Size
 newSize w h =
     Size w h
-
-
-
--- Dot
-
-
-renderDotAtPoint { x, y } =
-    renderDot x y
-
-
-renderDot x y =
-    let
-        dotWidth =
-            1
-    in
-    Svg.rect
-        [ TypedSvg.Attributes.InPx.x x
-        , TypedSvg.Attributes.InPx.y y
-        , TypedSvg.Attributes.InPx.width dotWidth
-        , TypedSvg.Attributes.InPx.height dotWidth
-        ]
-        []
 
 
 
