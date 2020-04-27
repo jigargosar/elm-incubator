@@ -90,11 +90,6 @@ randomPointsIn size =
     ]
 
 
-constrainPointInSize : Size -> Point -> Point
-constrainPointInSize size point =
-    Point (clamp 0 (size.width - 1) point.x) (clamp 0 (size.height - 1) point.y)
-
-
 
 -- Point
 
@@ -106,6 +101,11 @@ type alias Point =
 newPoint : Float -> Float -> Point
 newPoint x y =
     { x = x, y = y }
+
+
+constrainPointInSize : Size -> Point -> Point
+constrainPointInSize size point =
+    Point (clamp 0 (size.width - 1) point.x) (clamp 0 (size.height - 1) point.y)
 
 
 
