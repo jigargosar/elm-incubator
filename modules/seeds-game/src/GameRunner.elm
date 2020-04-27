@@ -312,21 +312,21 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             let
                 idxToCellState idx =
                     if Set.member idx moveDetails.collected.indexSet then
-                        CellLeaving
+                        CellLeavingAnimation
 
                     else
                         case Dict.get idx moveDetails.fallen.lookup of
                             Just to ->
-                                CellFallingTo to
+                                CellFallingAnimation to
 
                             Nothing ->
-                                CellStatic
+                                CellNoAnimation
             in
             Grid.map
                 (\idx cell ->
                     { selectionMsg = Nothing
                     , cell = cell
-                    , state = idxToCellState idx
+                    , animation = idxToCellState idx
                     , selectionState = toCellSelectionState moveDetails.initial.selectionStack idx
                     }
                 )
@@ -336,16 +336,16 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             let
                 idxToCellState idx =
                     if Set.member idx moveDetails.generated.indexSet then
-                        CellEntering
+                        CellEnteringAnimation
 
                     else
-                        CellStatic
+                        CellNoAnimation
             in
             Grid.map
                 (\idx cell ->
                     { selectionMsg = Nothing
                     , cell = cell
-                    , state = idxToCellState idx
+                    , animation = idxToCellState idx
                     , selectionState = toCellSelectionState [] idx
                     }
                 )
@@ -369,7 +369,7 @@ selectionStackToCellGridViewModel selectionStack =
             in
             { selectionMsg = Just selectionMsg
             , cell = cell
-            , state = CellStatic
+            , animation = CellNoAnimation
             , selectionState = toCellSelectionState selectionStack idx
             }
     in
@@ -389,7 +389,7 @@ toCellSelectionState selectionStack idx =
 type alias CellViewModel =
     { selectionMsg : Maybe Msg
     , cell : Game.Cell
-    , state : CellState
+    , animation : CellAnimation
     , selectionState : CellSelectionState
     }
 
@@ -399,11 +399,11 @@ type CellSelectionState
     | CellSelectionInactive
 
 
-type CellState
-    = CellStatic
-    | CellLeaving
-    | CellFallingTo GI
-    | CellEntering
+type CellAnimation
+    = CellNoAnimation
+    | CellLeavingAnimation
+    | CellFallingAnimation GI
+    | CellEnteringAnimation
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -439,17 +439,17 @@ viewCell : GI -> CellViewModel -> HM
 viewCell idx vm =
     let
         animProps =
-            case vm.state of
-                CellStatic ->
+            case vm.animation of
+                CellNoAnimation ->
                     --[ style "transform" "translate(0,0) scale(1.0)"
                     --, defaultTransitionStyle
                     --]
                     []
 
-                CellLeaving ->
+                CellLeavingAnimation ->
                     [ class "cell_leave" ]
 
-                CellFallingTo toIdx ->
+                CellFallingAnimation toIdx ->
                     let
                         dyFactor =
                             (Tuple.second toIdx - Tuple.second idx)
@@ -459,7 +459,7 @@ viewCell idx vm =
                     , styles [ ( "--cell-fall-dy", "calc( " ++ dyFactor ++ " * 4.50rem )" ) ]
                     ]
 
-                CellEntering ->
+                CellEnteringAnimation ->
                     [ class "cell_enter" ]
     in
     div
