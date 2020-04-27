@@ -336,7 +336,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             let
                 idxToCellState idx =
                     if Set.member idx moveDetails.generated.indexSet then
-                        CellEnterStart
+                        CellEntering
 
                     else
                         CellStatic
@@ -409,7 +409,7 @@ type CellState
     | CellSelected
     | CellLeaving
     | CellFallingTo GI
-    | CellEnterStart
+    | CellEntering
 
 
 maybeAttr : (a -> Html.Attribute msg) -> Maybe a -> Html.Attribute msg
@@ -470,7 +470,7 @@ viewCell idx vm =
                     , styles [ ( "--cell-fall-dy", "calc( " ++ dyFactor ++ " * 4.50rem )" ) ]
                     ]
 
-                CellEnterStart ->
+                CellEntering ->
                     [ class "cell_enter" ]
     in
     div
