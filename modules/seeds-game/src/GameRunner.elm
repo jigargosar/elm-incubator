@@ -314,7 +314,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             , selectionMsg = Nothing
             , cell = cell
             , state = func idx
-            , selectionState = CellSelectionState
+            , selectionState = CellSelectionInactive
             }
 
         toCellGridVMHelp : (GI -> CellState) -> Game.CellGrid -> CellGridViewModel
@@ -374,7 +374,7 @@ selectionStackToCellGridViewModel selectionStack =
 
                 else
                     CellStatic
-            , selectionState = CellSelectionState
+            , selectionState = CellSelectionInactive
             }
     in
     Grid.map toCellViewModel
@@ -390,7 +390,8 @@ type alias CellViewModel =
 
 
 type CellSelectionState
-    = CellSelectionState
+    = CellSelectionActive Int
+    | CellSelectionInactive
 
 
 type CellState
