@@ -80,7 +80,7 @@ viewRW =
 
 randomPointsIn : Size -> List Point
 randomPointsIn size =
-    Random.step (bar size 4000) (Random.initialSeed 0)
+    Random.step (bar size 8000) (Random.initialSeed 3)
         |> Tuple.first
 
 
