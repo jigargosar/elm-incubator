@@ -80,7 +80,7 @@ viewRW =
 
 randomPointsIn : Size -> List Point
 randomPointsIn size =
-    Random.step (bar size 1000) (Random.initialSeed 0)
+    Random.step (bar size 4000) (Random.initialSeed 0)
         |> Tuple.first
 
 
@@ -88,9 +88,7 @@ bar : Size -> Int -> Random.Generator (List Point)
 bar size max =
     randomPointGenerator size
         |> Random.andThen
-            (\start ->
-                foo size max start []
-            )
+            (\start -> foo size max start [])
 
 
 foo : Size -> Int -> Point -> List Point -> Random.Generator (List Point)
@@ -100,10 +98,7 @@ foo size max h t =
 
     else
         nextPointGenerator size h
-            |> Random.andThen
-                (\nh ->
-                    Random.lazy (\_ -> foo size (max - 1) nh (h :: t))
-                )
+            |> Random.andThen (\nh -> Random.lazy (\_ -> foo size (max - 1) nh (h :: t)))
 
 
 nextPointGenerator : Size -> Point -> Random.Generator Point
