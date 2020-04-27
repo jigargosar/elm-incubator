@@ -55,7 +55,7 @@ initMoveAnimation : Game.MoveDetails -> Game.Model -> ( Model, Cmd Msg )
 initMoveAnimation moveDetails nextGame =
     let
         ( transitionSteps, cmd ) =
-            initTS StepMoveAnimation
+            initTS StepMoveAnimationStage
                 ( CellsLeavingAndFallingAnimationStage, 300 )
                 [ ( CellsEnteringAnimationStage, 300 )
                 ]
@@ -111,7 +111,7 @@ type Msg
     | PlayAnother
     | CollectSelection
     | ToggleSelection GI Bool
-    | StepMoveAnimation
+    | StepMoveAnimationStage
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -158,10 +158,10 @@ update message model =
                 _ ->
                     ( model, Cmd.none )
 
-        StepMoveAnimation ->
+        StepMoveAnimationStage ->
             case model of
                 AnimatingMove anim ->
-                    case updateTS StepMoveAnimation anim.steps of
+                    case updateTS StepMoveAnimationStage anim.steps of
                         Just ( transitionSteps, cmd ) ->
                             ( AnimatingMove { anim | steps = transitionSteps }, cmd )
 
