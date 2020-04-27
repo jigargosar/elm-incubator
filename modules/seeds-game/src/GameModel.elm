@@ -85,10 +85,10 @@ type alias Generated =
 
 
 moveDetailsGenerator : List GI -> CellGrid -> Random.Generator MoveDetails
-moveDetailsGenerator indicesToCollect grid =
+moveDetailsGenerator validSelectionStack grid =
     let
         collected =
-            computeCollected indicesToCollect grid
+            computeCollected validSelectionStack grid
 
         fallen =
             computeFallen collected.grid
@@ -474,12 +474,12 @@ selectionStack (Internal state) =
 makeMove : Model -> Maybe ( MoveDetails, Model )
 makeMove (Internal state) =
     selection_ state
-        |> Maybe.andThen selectionToCollectibleIndices
+        |> Maybe.andThen selectionToValidSelectionStack
         |> Maybe.map (flip makeMoveHelp state)
 
 
-selectionToCollectibleIndices : Selection -> Maybe (List GI)
-selectionToCollectibleIndices (Selection stack) =
+selectionToValidSelectionStack : Selection -> Maybe (List GI)
+selectionToValidSelectionStack (Selection stack) =
     if List.length stack < 2 then
         Nothing
 
@@ -488,11 +488,11 @@ selectionToCollectibleIndices (Selection stack) =
 
 
 makeMoveHelp : List GI -> State -> ( MoveDetails, Model )
-makeMoveHelp collectibleIndices state =
+makeMoveHelp validSelectionStack state =
     let
         ( moveDetails, nextRandom ) =
             Random.step
-                (moveDetailsGenerator collectibleIndices state.grid)
+                (moveDetailsGenerator validSelectionStack state.grid)
                 state.random
     in
     ( moveDetails
