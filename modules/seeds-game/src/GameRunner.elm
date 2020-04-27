@@ -324,8 +324,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             in
             Grid.map
                 (\idx cell ->
-                    { selectionIdx = Nothing
-                    , selectionMsg = Nothing
+                    { selectionMsg = Nothing
                     , cell = cell
                     , state = idxToCellState idx
                     , selectionState = toCellSelectionState moveDetails.initial.selectionStack idx
@@ -344,8 +343,7 @@ moveTransitionToCellGridViewModel moveDetails moveTransition =
             in
             Grid.map
                 (\idx cell ->
-                    { selectionIdx = Nothing
-                    , selectionMsg = Nothing
+                    { selectionMsg = Nothing
                     , cell = cell
                     , state = idxToCellState idx
                     , selectionState = toCellSelectionState [] idx
@@ -369,8 +367,7 @@ selectionStackToCellGridViewModel selectionStack =
                 selectionMsg =
                     ToggleSelection idx isSelected
             in
-            { selectionIdx = selIdx
-            , selectionMsg = Just selectionMsg
+            { selectionMsg = Just selectionMsg
             , cell = cell
             , state =
                 if isSelected then
@@ -395,8 +392,7 @@ toCellSelectionState selectionStack idx =
 
 
 type alias CellViewModel =
-    { selectionIdx : Maybe Int
-    , selectionMsg : Maybe Msg
+    { selectionMsg : Maybe Msg
     , cell : Game.Cell
     , state : CellState
     , selectionState : CellSelectionState
