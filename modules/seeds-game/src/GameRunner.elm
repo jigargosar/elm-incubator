@@ -449,14 +449,16 @@ viewCell idx vm =
         animProps =
             case vm.state of
                 CellStatic ->
-                    [ style "transform" "translate(0,0) scale(1.0)"
-                    , defaultTransitionStyle
-                    ]
+                    --[ style "transform" "translate(0,0) scale(1.0)"
+                    --, defaultTransitionStyle
+                    --]
+                    []
 
                 CellSelected ->
-                    [ style "transform" "translate(0,0) scale(0.8)"
-                    , defaultTransitionStyle
-                    ]
+                    --[ style "transform" "translate(0,0) scale(0.8)"
+                    --, defaultTransitionStyle
+                    --]
+                    []
 
                 CellLeaving ->
                     [ class "cell_leave" ]
@@ -478,6 +480,12 @@ viewCell idx vm =
         (animProps
             ++ [ maybeAttr PE.onPrimaryEnterAndDown vm.selectionMsg
                , maybeAttr PE.onPrimaryDown vm.selectionMsg
+               , case vm.selectionState of
+                    CellSelectionActive _ ->
+                        class "cell_selection_active"
+
+                    CellSelectionInactive ->
+                        class "cell_selection_inactive"
                , class "ma1 br3 w3 h3 flex"
                , class
                     (case vm.cell of
