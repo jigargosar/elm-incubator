@@ -307,20 +307,6 @@ type alias CellGridViewModel =
 
 moveTransitionToCellGridViewModel : Game.MoveDetails -> MoveTransition -> CellGridViewModel
 moveTransitionToCellGridViewModel moveDetails moveTransition =
-    let
-        toCellVMHelp : (GI -> CellState) -> GI -> Game.Cell -> CellViewModel
-        toCellVMHelp func idx cell =
-            { selectionIdx = Nothing
-            , selectionMsg = Nothing
-            , cell = cell
-            , state = func idx
-            , selectionState = toCellSelectionState [] idx
-            }
-
-        toCellGridVMHelp : (GI -> CellState) -> Game.CellGrid -> CellGridViewModel
-        toCellGridVMHelp func =
-            Grid.map (toCellVMHelp func)
-    in
     case moveTransition of
         LeavingTransition ->
             let
