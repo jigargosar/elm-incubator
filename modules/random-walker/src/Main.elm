@@ -90,6 +90,14 @@ randomPointsIn size =
     ]
 
 
+nextPointGenerator point =
+    let
+        _ =
+            1
+    in
+    1
+
+
 
 -- Point
 
@@ -101,6 +109,16 @@ type alias Point =
 newPoint : Float -> Float -> Point
 newPoint x y =
     { x = x, y = y }
+
+
+mapX : (Float -> Float) -> Point -> Point
+mapX func point =
+    { point | x = func point.x }
+
+
+mapY : (Float -> Float) -> Point -> Point
+mapY func point =
+    { point | y = func point.y }
 
 
 constrainPointInSize : Size -> Point -> Point
