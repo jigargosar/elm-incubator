@@ -1,11 +1,15 @@
 .cell_selection_inactive {
   transform: translate(0, 0) scale(1);
   opacity: 1;
+  transition-property: opacity, transform;
+  transition-duration: 300ms;
 }
 
 .cell_selection_active {
   transform: translate(0, 0) scale(0.8);
   opacity: 1;
+  transition-property: opacity, transform;
+  transition-duration: 300ms;
 }
 
 .cell_leave {
