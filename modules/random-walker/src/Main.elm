@@ -4,7 +4,6 @@ import Basics.Extra exposing (atMost)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
-import Dict.Extra
 import Html exposing (Html, text)
 import Random
 import Svg
@@ -133,36 +132,36 @@ viewRandomWalker size freqDict =
         ]
 
 
-pointsToFrequencyDict : List Point -> FreqDict
-pointsToFrequencyDict =
-    List.map pointToTuple >> Dict.Extra.frequencies
+
+--pointsToFrequencyDict : List Point -> FreqDict
+--pointsToFrequencyDict =
+--    List.map pointToTuple >> Dict.Extra.frequencies
 
 
 renderFrequencyDict =
     Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.05 |> atMost 1))
 
 
-randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
-randomWalkerPointsGenerator size len =
-    let
-        func2 _ ( ( h, t ), seed0 ) =
-            Random.step (nextPointGenerator size h) seed0
-                |> Tuple.mapFirst (\np -> ( np, h :: t ))
 
-        func startPoint seed =
-            List.range 0 (len - 1)
-                |> List.foldl func2 ( ( startPoint, [] ), seed )
-                |> Tuple.first
-                |> consToList
-                |> List.reverse
-    in
-    Random.map2 func
-        (randomPointGenerator size)
-        Random.independentSeed
-
-
-consToList ( h, t ) =
-    h :: t
+--randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
+--randomWalkerPointsGenerator size len =
+--    let
+--        func2 _ ( ( h, t ), seed0 ) =
+--            Random.step (nextPointGenerator size h) seed0
+--                |> Tuple.mapFirst (\np -> ( np, h :: t ))
+--
+--        func startPoint seed =
+--            List.range 0 (len - 1)
+--                |> List.foldl func2 ( ( startPoint, [] ), seed )
+--                |> Tuple.first
+--                |> consToList
+--                |> List.reverse
+--    in
+--    Random.map2 func
+--        (randomPointGenerator size)
+--        Random.independentSeed
+--consToList ( h, t ) =
+--    h :: t
 
 
 nextPointGenerator : Size -> Point -> Random.Generator Point
@@ -257,20 +256,21 @@ constrainPointInSize size point =
     Point (clamp 0 (size.width - 1) point.x) (clamp 0 (size.height - 1) point.y)
 
 
-randomPointGenerator : Size -> Random.Generator Point
-randomPointGenerator size =
-    Random.map2
-        (\x y ->
-            newPoint
-                ((x * (size.width - 1))
-                    |> roundFloat
-                )
-                ((y * (size.height - 1))
-                    |> roundFloat
-                )
-        )
-        random
-        random
+
+--randomPointGenerator : Size -> Random.Generator Point
+--randomPointGenerator size =
+--    Random.map2
+--        (\x y ->
+--            newPoint
+--                ((x * (size.width - 1))
+--                    |> roundFloat
+--                )
+--                ((y * (size.height - 1))
+--                    |> roundFloat
+--                )
+--        )
+--        random
+--        random
 
 
 roundFloat : Float -> Float
