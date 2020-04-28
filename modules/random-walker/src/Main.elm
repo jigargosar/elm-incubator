@@ -9,6 +9,7 @@ import Html.Attributes exposing (class)
 import Random exposing (Generator)
 import Random.Extra as Random
 import Svg
+import Svg.Attributes
 import Svg.Keyed
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
@@ -178,16 +179,19 @@ view model =
     --        points |> pointsToFrequencyDict
     --in
     Document "Main"
-        [ text "Hello Main"
-        , div [ class "flex" ]
-            [ div [ class "flex-auto" ] [ viewFreqDict model.size model.freqDict ]
-            , div [ class "flex-auto" ] [ viewRandomWalker2 model.size model.walker ]
+        [ div [] [ text "Hello Main" ]
+        , div []
+            [ viewFreqDict model.size model.freqDict
+            , viewRandomWalker2 model.size model.walker
             ]
         ]
 
 
 viewFreqDict size freqDict =
-    Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
+    Svg.svg
+        [ TypedSvg.Attributes.viewBox 0 0 size.width size.height
+        , Svg.Attributes.width "50%"
+        ]
         [ Svg.g [] []
         , renderFrequencyDict freqDict
         ]
