@@ -117,17 +117,18 @@ init () =
     in
     ( { size = size
       , walker = initRandomWalker size start
-      , seed = Random.initialSeed 0
+      , seed = Random.initialSeed 1
       }
+        |> stepRandomWalker 5000
     , Cmd.none
     )
 
 
-updateRandomWalker : Model -> Model
-updateRandomWalker model =
+stepRandomWalker : Int -> Model -> Model
+stepRandomWalker steps model =
     let
         ( nextRW, nextSeed ) =
-            Random.step (walkSteps model.size 1 model.walker) model.seed
+            Random.step (walkSteps model.size steps model.walker) model.seed
     in
     { model
         | seed = nextSeed
@@ -153,7 +154,7 @@ update message model =
 
         Tick ->
             model
-                |> updateRandomWalker
+                |> stepRandomWalker 1
                 |> addCmd Cmd.none
 
 
@@ -193,7 +194,12 @@ viewRandomWalker size (RandomWalker _ fd) =
 viewFreqDict size freqDict =
     Svg.svg
         [ TypedSvg.Attributes.viewBox 0 0 size.width size.height
-        , Svg.Attributes.width "50%"
+
+        --, Svg.Attributes.width "50%"
+        , Svg.Attributes.style """
+            margin: auto;
+            display: block;
+        """
         ]
         [ Svg.g [] []
         , renderFrequencyDict freqDict
@@ -221,7 +227,8 @@ renderDot x y o =
         [ TypedSvg.Attributes.InPx.cx x
         , TypedSvg.Attributes.InPx.cy y
         , TypedSvg.Attributes.InPx.r 1
-        , Svg.Attributes.fill "pink"
+
+        --, Svg.Attributes.fill "pink"
         , Svg.Attributes.opacity (String.fromInt o ++ "%")
         ]
         []
