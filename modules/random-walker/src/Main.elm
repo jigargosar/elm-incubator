@@ -28,7 +28,16 @@ freqDictInsertPoint point =
 
 freqDictSingleton : Point -> FreqDict
 freqDictSingleton point =
-    freqDictInsertPoint point Dict.empty
+    freqDictInsertPoint point freqDictEmpty
+
+
+freqDictEmpty =
+    Dict.empty
+
+
+freqDictFromPoints : List Point -> FreqDict
+freqDictFromPoints =
+    List.foldl freqDictInsertPoint freqDictEmpty
 
 
 
@@ -39,9 +48,18 @@ type RandomWalker
     = RandomWalker Point FreqDict
 
 
-initRandomWalker : Point -> RandomWalker
-initRandomWalker point =
+initRandomWalker : Size -> Point -> RandomWalker
+initRandomWalker size point =
     RandomWalker point (freqDictSingleton point)
+
+
+
+--RandomWalker point
+--    (size
+--        |> sizeToPoints
+--        |> freqDictFromPoints
+--        |> freqDictInsertPoint point
+--    )
 
 
 walkSteps : Size -> Int -> RandomWalker -> Generator RandomWalker
@@ -90,7 +108,7 @@ init : Flags -> ( Model, Cmd Msg )
 init () =
     let
         size =
-            newSize 200 200
+            newSize 100 100
 
         start =
             size
@@ -98,7 +116,7 @@ init () =
                 |> roundPoint
     in
     ( { size = size
-      , walker = initRandomWalker start
+      , walker = initRandomWalker size start
       , seed = Random.initialSeed 0
       }
     , Cmd.none
@@ -199,15 +217,11 @@ renderFrequencyDict =
 
 
 renderDot x y o =
-    let
-        dotWidth =
-            1
-    in
-    Svg.rect
-        [ TypedSvg.Attributes.InPx.x x
-        , TypedSvg.Attributes.InPx.y y
-        , TypedSvg.Attributes.InPx.width dotWidth
-        , TypedSvg.Attributes.InPx.height dotWidth
+    Svg.circle
+        [ TypedSvg.Attributes.InPx.cx x
+        , TypedSvg.Attributes.InPx.cy y
+        , TypedSvg.Attributes.InPx.r 1
+        , Svg.Attributes.fill "pink"
         , Svg.Attributes.opacity (String.fromInt o ++ "%")
         ]
         []
@@ -287,6 +301,16 @@ newSize w h =
 sizeMidPoint : Size -> Point
 sizeMidPoint size =
     newPoint (size.width / 2) (size.height / 2)
+
+
+sizeToPoints : Size -> List Point
+sizeToPoints size =
+    List.range 0 (round size.height - 1)
+        |> List.concatMap
+            (\y ->
+                List.range 0 (round size.width - 1)
+                    |> List.map (\x -> newPoint (toFloat x) (toFloat y))
+            )
 
 
 
