@@ -70,10 +70,10 @@ view _ =
 viewRW =
     let
         size =
-            newSize 100 100
+            newSize 200 200
 
         points =
-            Random.step (randomWalkerPointsGenerator size 10000) (Random.initialSeed 3)
+            Random.step (randomWalkerPointsGenerator size 50000) (Random.initialSeed 1)
                 |> Tuple.first
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
