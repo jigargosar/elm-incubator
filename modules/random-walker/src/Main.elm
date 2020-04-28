@@ -78,8 +78,6 @@ viewRW =
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-
-        --, points |> renderPoints |> always [] |> Svg.g []
         , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
         ]
 
@@ -91,10 +89,6 @@ pointsToFrequencyDict =
 
 renderFrequencyDict =
     Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.05 |> atMost 1))
-
-
-renderPoints =
-    List.map (\{ x, y } -> renderDot x y 0.1)
 
 
 randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
