@@ -45,7 +45,7 @@ init : Flags -> ( Model, Cmd Msg )
 init () =
     let
         size =
-            newSize 300 300
+            newSize 200 200
 
         start =
             size
@@ -89,25 +89,25 @@ type alias DM =
 
 
 view : Model -> DM
-view _ =
+view model =
+    --let
+    --    points =
+    --        Random.step (randomWalkerPointsGenerator model.size 50000) (Random.initialSeed 1)
+    --            |> Tuple.first
+    --
+    --    freqDict =
+    --        points |> pointsToFrequencyDict
+    --in
     Document "Main"
         [ text "Hello Main"
-        , viewRW
+        , viewRandomWalker model.size model.freqDict
         ]
 
 
-viewRW =
-    let
-        size =
-            newSize 200 200
-
-        points =
-            Random.step (randomWalkerPointsGenerator size 50000) (Random.initialSeed 1)
-                |> Tuple.first
-    in
+viewRandomWalker size freqDict =
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-        , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
+        , renderFrequencyDict freqDict |> Svg.g []
         ]
 
 
