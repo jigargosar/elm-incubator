@@ -76,25 +76,29 @@ viewRW =
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-        , points |> List.map renderDotAtPoint |> Svg.g []
-        , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
+        , points |> renderPoints |> Svg.g []
+
+        --, renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
         ]
+
+
+pointsToFrequencyDict : List Point -> Dict ( Float, Float ) Int
+pointsToFrequencyDict =
+    List.map pointToTuple >> Dict.Extra.frequencies
+
+
+renderFrequencyDict =
+    Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.1))
+
+
+renderPoints =
+    List.map (\{ x, y } -> renderDot x y 0.2)
 
 
 randomPointsIn : Size -> List Point
 randomPointsIn size =
     Random.step (randomWalkerPointsGenerator size 10000) (Random.initialSeed 3)
         |> Tuple.first
-
-
-renderFrequencyDict =
-    Dict.toList
-        >> List.map (\( ( x, y ), freq ) -> renderDot2 x y (toFloat freq * 0.1))
-
-
-pointsToFrequencyDict : List Point -> Dict ( Float, Float ) Int
-pointsToFrequencyDict =
-    List.map pointToTuple >> Dict.Extra.frequencies
 
 
 randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
@@ -135,26 +139,7 @@ nextPointGenerator size point =
 -- Dot
 
 
-renderDotAtPoint { x, y } =
-    renderDot x y
-
-
-renderDot x y =
-    let
-        dotWidth =
-            1
-    in
-    Svg.rect
-        [ TypedSvg.Attributes.InPx.x x
-        , TypedSvg.Attributes.InPx.y y
-        , TypedSvg.Attributes.InPx.width dotWidth
-        , TypedSvg.Attributes.InPx.height dotWidth
-        , TypedSvg.Attributes.opacity (Opacity 0.2)
-        ]
-        []
-
-
-renderDot2 x y o =
+renderDot x y o =
     let
         dotWidth =
             1
