@@ -128,7 +128,7 @@ view model =
 viewRandomWalker size freqDict =
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-        , renderFrequencyDict freqDict |> Svg.g []
+        , renderFrequencyDict freqDict
         ]
 
 
@@ -139,7 +139,9 @@ viewRandomWalker size freqDict =
 
 
 renderFrequencyDict =
-    Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.05 |> atMost 1))
+    Dict.toList
+        >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.05 |> atMost 1))
+        >> Svg.g []
 
 
 
