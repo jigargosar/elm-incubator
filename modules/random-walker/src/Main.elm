@@ -73,12 +73,13 @@ viewRW =
             newSize 300 300
 
         points =
-            Random.step (randomWalkerPointsGenerator size 50000) (Random.initialSeed 3)
+            Random.step (randomWalkerPointsGenerator size 50000) (Random.initialSeed 1)
                 |> Tuple.first
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-        , points |> renderPoints |> always [] |> Svg.g []
+
+        --, points |> renderPoints |> always [] |> Svg.g []
         , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
         ]
 
