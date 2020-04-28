@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
+import Dict.Extra
 import Html exposing (Html, text)
 import List.Extra
 import Random
@@ -72,8 +73,14 @@ viewRW =
             newSize 300 300
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
-        [ randomPointsIn size
+        [ Svg.g [] []
+        , randomPointsIn size
             |> List.map renderDotAtPoint
+            |> Svg.g []
+        , randomPointsIn size
+            |> pointsToFadedDots
+            |> List.map renderFadedDot
+            |> always []
             |> Svg.g []
         ]
 
@@ -82,6 +89,34 @@ randomPointsIn : Size -> List Point
 randomPointsIn size =
     Random.step (randomWalkerPointsGenerator size 10000) (Random.initialSeed 3)
         |> Tuple.first
+
+
+type FadedDot
+    = FadedDot Point Float
+
+
+pointsToFadedDots : List Point -> List FadedDot
+pointsToFadedDots =
+    List.Extra.gatherEquals
+        >> List.map
+            (\( pt, ptList ) ->
+                FadedDot pt (toFloat (List.length ptList) * 0.05)
+            )
+
+
+renderFadedDot (FadedDot { x, y } o) =
+    let
+        dotWidth =
+            1
+    in
+    Svg.rect
+        [ TypedSvg.Attributes.InPx.x x
+        , TypedSvg.Attributes.InPx.y y
+        , TypedSvg.Attributes.InPx.width dotWidth
+        , TypedSvg.Attributes.InPx.height dotWidth
+        , TypedSvg.Attributes.opacity (Opacity o)
+        ]
+        []
 
 
 
