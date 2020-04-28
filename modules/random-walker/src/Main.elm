@@ -196,14 +196,9 @@ renderDot x y o =
 
 
 -- Random
-
-
-random : Random.Generator Float
-random =
-    Random.float 0 1
-
-
-
+--random : Random.Generator Float
+--random =
+--    Random.float 0 1
 -- Basics
 
 
