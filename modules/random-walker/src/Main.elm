@@ -44,6 +44,12 @@ initRandomWalker point =
     RandomWalker point (freqDictSingleton point)
 
 
+walkSteps : Size -> Int -> RandomWalker -> Generator RandomWalker
+walkSteps size steps rw =
+    List.range 0 (steps - 1)
+        |> List.foldl (always (Random.andThen (walk size))) (Random.constant rw)
+
+
 walk : Size -> RandomWalker -> Generator RandomWalker
 walk size (RandomWalker last fd) =
     let
@@ -63,12 +69,6 @@ nextPointGenerator size point =
         )
         (Random.uniform mapX [ mapY ])
         (Random.uniform inc [ dec ])
-
-
-walkSteps : Size -> Int -> RandomWalker -> Generator RandomWalker
-walkSteps size steps rw =
-    List.range 0 (steps - 1)
-        |> List.foldl (always (Random.andThen (walk size))) (Random.constant rw)
 
 
 
