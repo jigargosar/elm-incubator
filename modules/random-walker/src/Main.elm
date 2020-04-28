@@ -20,8 +20,16 @@ type alias FreqDict =
     Dict ( Float, Float ) Int
 
 
+freqDictInsertPoint : Point -> FreqDict -> FreqDict
+freqDictInsertPoint point =
+    Dict.update (pointToTuple point) (Maybe.map inc >> Maybe.withDefault 1 >> Just)
+
+
 type alias Model =
-    { freqDict : FreqDict }
+    { freqDict : FreqDict
+    , start : ( Float, Float )
+    , size : Size
+    }
 
 
 type alias Flags =
@@ -30,7 +38,20 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { freqDict = Dict.empty }
+    let
+        size =
+            newSize 300 300
+
+        start =
+            size
+                |> sizeMidPoint
+                |> roundPoint
+                |> pointToTuple
+    in
+    ( { freqDict = Dict.empty
+      , start = start
+      , size = size
+      }
     , Cmd.none
     )
 
@@ -186,6 +207,11 @@ newPoint x y =
     { x = x, y = y }
 
 
+roundPoint : Point -> Point
+roundPoint =
+    mapX roundFloat >> mapY roundFloat
+
+
 pointToTuple point =
     ( point.x, point.y )
 
@@ -237,6 +263,11 @@ type alias Size =
 newSize : Float -> Float -> Size
 newSize w h =
     Size w h
+
+
+sizeMidPoint : Size -> Point
+sizeMidPoint size =
+    newPoint (size.width / 2) (size.height / 2)
 
 
 
