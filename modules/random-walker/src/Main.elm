@@ -70,10 +70,10 @@ view _ =
 viewRW =
     let
         size =
-            newSize 300 300
+            newSize 100 100
 
         points =
-            Random.step (randomWalkerPointsGenerator size 50000) (Random.initialSeed 1)
+            Random.step (randomWalkerPointsGenerator size 10000) (Random.initialSeed 3)
                 |> Tuple.first
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
@@ -90,7 +90,7 @@ pointsToFrequencyDict =
 
 
 renderFrequencyDict =
-    Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.1 |> atMost 1))
+    Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.05 |> atMost 1))
 
 
 renderPoints =
