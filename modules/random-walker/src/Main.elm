@@ -137,14 +137,18 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         NoOp ->
-            ( model, Cmd.none )
+            model
+                |> addCmd Cmd.none
 
         Tick ->
-            ( model
+            model
                 |> updateRandomWalker
                 |> updateRandomWalker2
-            , Cmd.none
-            )
+                |> addCmd Cmd.none
+
+
+addCmd cmd model =
+    ( model, cmd )
 
 
 subscriptions : Model -> Sub Msg
