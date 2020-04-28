@@ -76,9 +76,9 @@ viewRW =
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-        , points |> renderPoints |> Svg.g []
 
-        --, renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
+        --, points |> renderPoints |> Svg.g []
+        , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
         ]
 
 
@@ -92,7 +92,7 @@ renderFrequencyDict =
 
 
 renderPoints =
-    List.map (\{ x, y } -> renderDot x y 0.2)
+    List.map (\{ x, y } -> renderDot x y 0.1)
 
 
 randomPointsIn : Size -> List Point
