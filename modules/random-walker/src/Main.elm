@@ -98,7 +98,7 @@ renderPoints =
 
 randomPointsIn : Size -> List Point
 randomPointsIn size =
-    Random.step (randomWalkerPointsGenerator size 10000) (Random.initialSeed 3)
+    Random.step (randomWalkerPointsGenerator size 50000) (Random.initialSeed 3)
         |> Tuple.first
 
 
