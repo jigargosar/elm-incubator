@@ -25,9 +25,14 @@ freqDictInsertPoint point =
     Dict.update (pointToTuple point) (Maybe.map inc >> Maybe.withDefault 1 >> Just)
 
 
+freqDictSingleton : Point -> FreqDict
+freqDictSingleton point =
+    freqDictInsertPoint point Dict.empty
+
+
 type alias Model =
     { freqDict : FreqDict
-    , start : ( Float, Float )
+    , last : Point
     , size : Size
     }
 
@@ -46,10 +51,9 @@ init () =
             size
                 |> sizeMidPoint
                 |> roundPoint
-                |> pointToTuple
     in
-    ( { freqDict = Dict.empty
-      , start = start
+    ( { freqDict = freqDictSingleton start
+      , last = start
       , size = size
       }
     , Cmd.none
