@@ -16,8 +16,12 @@ import TypedSvg.Types exposing (Opacity(..))
 -- Model
 
 
+type alias FreqDict =
+    Dict ( Float, Float ) Int
+
+
 type alias Model =
-    {}
+    { freqDict : FreqDict }
 
 
 type alias Flags =
@@ -26,7 +30,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
+    ( { freqDict = Dict.empty }
     , Cmd.none
     )
 
@@ -82,7 +86,7 @@ viewRW =
         ]
 
 
-pointsToFrequencyDict : List Point -> Dict ( Float, Float ) Int
+pointsToFrequencyDict : List Point -> FreqDict
 pointsToFrequencyDict =
     List.map pointToTuple >> Dict.Extra.frequencies
 
