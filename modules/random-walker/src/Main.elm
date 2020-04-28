@@ -69,6 +69,7 @@ type alias Model =
     { freqDict : FreqDict
     , last : Point
     , size : Size
+    , walker : RandomWalker
     , seed : Random.Seed
     }
 
@@ -91,6 +92,7 @@ init () =
     ( { freqDict = freqDictSingleton start
       , last = start
       , size = size
+      , walker = initRandomWalker start
       , seed = Random.initialSeed 0
       }
     , Cmd.none
@@ -110,6 +112,18 @@ updateRandomWalker model =
     }
 
 
+updateRandomWalker2 : Model -> Model
+updateRandomWalker2 model =
+    let
+        ( nextRW, nextSeed ) =
+            Random.step (walkSteps model.size 1 model.walker) model.seed
+    in
+    { model
+        | seed = nextSeed
+        , walker = nextRW
+    }
+
+
 
 -- Update
 
@@ -126,7 +140,11 @@ update message model =
             ( model, Cmd.none )
 
         Tick ->
-            ( updateRandomWalker model, Cmd.none )
+            ( model
+                |> updateRandomWalker
+                |> updateRandomWalker2
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
