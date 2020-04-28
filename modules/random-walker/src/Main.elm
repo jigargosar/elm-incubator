@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.Extra exposing (atMost)
 import Browser exposing (Document)
 import Dict exposing (Dict)
 import Dict.Extra
@@ -88,7 +89,7 @@ pointsToFrequencyDict =
 
 
 renderFrequencyDict =
-    Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.1))
+    Dict.toList >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.1 |> atMost 1))
 
 
 renderPoints =
