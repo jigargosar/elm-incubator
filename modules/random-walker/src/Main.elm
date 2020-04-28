@@ -5,7 +5,8 @@ import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
 import Html exposing (Html, text)
-import Random
+import Random exposing (Generator)
+import Random.Extra as Random
 import Svg
 import Svg.Keyed
 import TypedSvg.Attributes
@@ -14,7 +15,7 @@ import TypedSvg.Types exposing (Opacity(..))
 
 
 
--- Model
+-- FreqDict
 
 
 type alias FreqDict =
@@ -29,6 +30,39 @@ freqDictInsertPoint point =
 freqDictSingleton : Point -> FreqDict
 freqDictSingleton point =
     freqDictInsertPoint point Dict.empty
+
+
+
+-- RandomWalker
+
+
+type RandomWalker
+    = RandomWalker Point FreqDict
+
+
+initRandomWalker : Point -> RandomWalker
+initRandomWalker point =
+    RandomWalker point (freqDictSingleton point)
+
+
+walk : Size -> RandomWalker -> Generator RandomWalker
+walk size (RandomWalker last fd) =
+    let
+        func nextPoint =
+            RandomWalker nextPoint (freqDictInsertPoint nextPoint fd)
+    in
+    nextPointGenerator size last
+        |> Random.map func
+
+
+walkSteps : Size -> Int -> RandomWalker -> Generator RandomWalker
+walkSteps size steps rw =
+    List.range 0 (steps - 1)
+        |> List.foldl (always (Random.andThen (walk size))) (Random.constant rw)
+
+
+
+-- Model
 
 
 type alias Model =
