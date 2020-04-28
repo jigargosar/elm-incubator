@@ -178,15 +178,20 @@ view model =
     --in
     Document "Main"
         [ text "Hello Main"
-        , viewRandomWalker model.size model.freqDict
+        , viewFreqDict model.size model.freqDict
+        , viewRandomWalker2 model.size model.walker
         ]
 
 
-viewRandomWalker size freqDict =
+viewFreqDict size freqDict =
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
         , renderFrequencyDict freqDict
         ]
+
+
+viewRandomWalker2 size (RandomWalker _ fd) =
+    viewFreqDict size fd
 
 
 
