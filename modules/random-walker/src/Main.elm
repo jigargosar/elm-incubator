@@ -1,11 +1,10 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
+import Dict exposing (Dict)
 import Dict.Extra
 import Html exposing (Html, text)
-import List.Extra
 import Random
-import Set
 import Svg
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
@@ -71,17 +70,14 @@ viewRW =
     let
         size =
             newSize 300 300
+
+        points =
+            randomPointsIn size
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-        , randomPointsIn size
-            |> List.map renderDotAtPoint
-            |> Svg.g []
-        , randomPointsIn size
-            |> pointsToFadedDots
-            |> List.map renderFadedDot
-            |> always []
-            |> Svg.g []
+        , points |> List.map renderDotAtPoint |> Svg.g []
+        , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
         ]
 
 
@@ -91,36 +87,14 @@ randomPointsIn size =
         |> Tuple.first
 
 
-type FadedDot
-    = FadedDot Point Float
+renderFrequencyDict =
+    Dict.toList
+        >> List.map (\( ( x, y ), freq ) -> renderDot2 x y (toFloat freq * 0.1))
 
 
-pointsToFadedDots : List Point -> List FadedDot
-pointsToFadedDots =
-    List.Extra.gatherEquals
-        >> List.map
-            (\( pt, ptList ) ->
-                FadedDot pt (toFloat (List.length ptList) * 0.05)
-            )
-
-
-renderFadedDot (FadedDot { x, y } o) =
-    let
-        dotWidth =
-            1
-    in
-    Svg.rect
-        [ TypedSvg.Attributes.InPx.x x
-        , TypedSvg.Attributes.InPx.y y
-        , TypedSvg.Attributes.InPx.width dotWidth
-        , TypedSvg.Attributes.InPx.height dotWidth
-        , TypedSvg.Attributes.opacity (Opacity o)
-        ]
-        []
-
-
-
---|> List.Extra.uniqueBy pointToTuple
+pointsToFrequencyDict : List Point -> Dict ( Float, Float ) Int
+pointsToFrequencyDict =
+    List.map pointToTuple >> Dict.Extra.frequencies
 
 
 randomWalkerPointsGenerator : Size -> Int -> Random.Generator (List Point)
@@ -176,6 +150,21 @@ renderDot x y =
         , TypedSvg.Attributes.InPx.width dotWidth
         , TypedSvg.Attributes.InPx.height dotWidth
         , TypedSvg.Attributes.opacity (Opacity 0.2)
+        ]
+        []
+
+
+renderDot2 x y o =
+    let
+        dotWidth =
+            1
+    in
+    Svg.rect
+        [ TypedSvg.Attributes.InPx.x x
+        , TypedSvg.Attributes.InPx.y y
+        , TypedSvg.Attributes.InPx.width dotWidth
+        , TypedSvg.Attributes.InPx.height dotWidth
+        , TypedSvg.Attributes.opacity (Opacity o)
         ]
         []
 
