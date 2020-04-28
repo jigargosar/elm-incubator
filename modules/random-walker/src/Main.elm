@@ -204,7 +204,23 @@ constrainPointInSize size point =
 
 randomPointGenerator : Size -> Random.Generator Point
 randomPointGenerator size =
-    Random.map2 (\x y -> newPoint (x * (size.width - 1)) (y * (size.height - 1))) random random
+    Random.map2
+        (\x y ->
+            newPoint
+                ((x * (size.width - 1))
+                    |> roundFloat
+                )
+                ((y * (size.height - 1))
+                    |> roundFloat
+                )
+        )
+        random
+        random
+
+
+roundFloat : Float -> Float
+roundFloat =
+    round >> toFloat
 
 
 
