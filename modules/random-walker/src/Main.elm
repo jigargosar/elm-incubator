@@ -78,8 +78,7 @@ viewRW =
     in
     Svg.svg [ TypedSvg.Attributes.viewBox 0 0 size.width size.height ]
         [ Svg.g [] []
-
-        --, points |> renderPoints |> Svg.g []
+        , points |> renderPoints |> always [] |> Svg.g []
         , renderFrequencyDict (points |> pointsToFrequencyDict) |> Svg.g []
         ]
 
