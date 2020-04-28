@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Basics.Extra exposing (atMost)
 import Browser exposing (Document)
+import Browser.Events
 import Dict exposing (Dict)
 import Dict.Extra
 import Html exposing (Html, text)
@@ -62,12 +63,26 @@ init () =
     )
 
 
+updateRandomWalker : Model -> Model
+updateRandomWalker model =
+    let
+        ( nextPoint, nextSeed ) =
+            Random.step (nextPointGenerator model.size model.last) model.seed
+    in
+    { model
+        | seed = nextSeed
+        , last = nextPoint
+        , freqDict = freqDictInsertPoint nextPoint model.freqDict
+    }
+
+
 
 -- Update
 
 
 type Msg
     = NoOp
+    | Tick
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -76,10 +91,15 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
+        Tick ->
+            ( updateRandomWalker model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch
+        [ Browser.Events.onAnimationFrame (always Tick)
+        ]
 
 
 
