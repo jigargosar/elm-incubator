@@ -4,7 +4,8 @@ import Basics.Extra exposing (atMost)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
-import Html exposing (Html, text)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
 import Random exposing (Generator)
 import Random.Extra as Random
 import Svg
@@ -178,8 +179,10 @@ view model =
     --in
     Document "Main"
         [ text "Hello Main"
-        , viewFreqDict model.size model.freqDict
-        , viewRandomWalker2 model.size model.walker
+        , div [ class "flex" ]
+            [ div [ class "flex-auto" ] [ viewFreqDict model.size model.freqDict ]
+            , div [ class "flex-auto" ] [ viewRandomWalker2 model.size model.walker ]
+            ]
         ]
 
 
