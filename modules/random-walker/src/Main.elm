@@ -7,6 +7,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, text)
 import Random
 import Svg
+import Svg.Keyed
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
 import TypedSvg.Types exposing (Opacity(..))
@@ -138,10 +139,16 @@ viewRandomWalker size freqDict =
 --    List.map pointToTuple >> Dict.Extra.frequencies
 
 
+renderFrequencyDict : FreqDict -> Svg.Svg msg
 renderFrequencyDict =
     Dict.toList
-        >> List.map (\( ( x, y ), freq ) -> renderDot x y (toFloat freq * 0.05 |> atMost 1))
-        >> Svg.g []
+        >> List.map
+            (\( ( x, y ), freq ) ->
+                ( Debug.toString ( x, y )
+                , renderDot x y (toFloat freq * 0.05 |> atMost 1)
+                )
+            )
+        >> Svg.Keyed.node "g" []
 
 
 
