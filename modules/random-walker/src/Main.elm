@@ -34,6 +34,7 @@ type alias Model =
     { freqDict : FreqDict
     , last : Point
     , size : Size
+    , seed : Random.Seed
     }
 
 
@@ -55,6 +56,7 @@ init () =
     ( { freqDict = freqDictSingleton start
       , last = start
       , size = size
+      , seed = Random.initialSeed 0
       }
     , Cmd.none
     )
