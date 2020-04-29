@@ -41,11 +41,25 @@ initialInput =
 
 
 
+-- Paddle
+
+
+type alias Paddle =
+    {}
+
+
+initPaddle =
+    Paddle
+
+
+
 -- Model
 
 
 type alias Model =
-    { input : Input }
+    { input : Input
+    , paddle : Paddle
+    }
 
 
 type alias Flags =
@@ -54,7 +68,9 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { input = initialInput }
+    ( { input = initialInput
+      , paddle = initPaddle
+      }
     , Cmd.none
     )
 
