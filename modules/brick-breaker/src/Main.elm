@@ -66,7 +66,12 @@ view _ =
     in
     Document "Brick Breaker"
         [ Svg.svg [ TypedSvg.Attributes.viewBox 0 0 w h ]
-            [ rect (w / 2) (h - 60) 80 20
+            [ Svg.g
+                [ Svg.Attributes.fill "none"
+                , Svg.Attributes.stroke "gray"
+                , Svg.Attributes.strokeWidth "1px"
+                ]
+                [ rect (w / 2) (h - 60) 80 20 ]
             ]
         ]
 
@@ -77,9 +82,6 @@ rect x y w h =
         , TypedSvg.Attributes.InPx.y (y - h / 2)
         , TypedSvg.Attributes.InPx.width w
         , TypedSvg.Attributes.InPx.height h
-        , Svg.Attributes.fill "none"
-        , Svg.Attributes.stroke "gray"
-        , Svg.Attributes.strokeWidth "1px"
         ]
         []
 
