@@ -66,22 +66,20 @@ view _ =
     in
     Document "Brick Breaker"
         [ Svg.svg
-            [ TypedSvg.Attributes.viewBox 0 0 w h
+            [ TypedSvg.Attributes.viewBox (-w / 2) (-h / 2) w h
             , Svg.Attributes.fill "none"
             , Svg.Attributes.stroke "gray"
             , Svg.Attributes.strokeWidth "1"
             ]
-            [ Svg.g
-                []
-                [ rect (w / 2) (h - 60) 80 20 ]
+            [ Svg.g [] [ rect 80 20 ]
             ]
         ]
 
 
-rect x y w h =
+rect w h =
     Svg.rect
-        [ TypedSvg.Attributes.InPx.x (x - w / 2)
-        , TypedSvg.Attributes.InPx.y (y - h / 2)
+        [ TypedSvg.Attributes.InPx.x (-w / 2)
+        , TypedSvg.Attributes.InPx.y (-h / 2)
         , TypedSvg.Attributes.InPx.width w
         , TypedSvg.Attributes.InPx.height h
         ]
