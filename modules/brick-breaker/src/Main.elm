@@ -5,7 +5,7 @@ import Browser.Events
 import Json.Decode as D exposing (Decoder)
 import Set exposing (Set)
 import Svg
-import Svg.Attributes
+import Svg.Attributes exposing (fill, stroke, strokeWidth)
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
 import TypedSvg.Types
@@ -110,9 +110,9 @@ view _ =
     Document "Brick Breaker"
         [ Svg.svg
             [ viewBoxOfSize size
-            , Svg.Attributes.fill "none"
-            , Svg.Attributes.stroke "gray"
-            , Svg.Attributes.strokeWidth "1"
+            , fill "none"
+            , stroke "gray"
+            , strokeWidth "1"
             ]
             [ rect size.width size.height []
             , rect
