@@ -15,7 +15,15 @@ import TypedSvg.Types
 
 
 type alias Model =
-    {}
+    { input : Input }
+
+
+type alias Input =
+    { leftDown : Bool, rightDown : Bool }
+
+
+initialInput =
+    Input False False
 
 
 type alias Flags =
@@ -24,7 +32,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
+    ( { input = initialInput }
     , Cmd.none
     )
 
@@ -35,7 +43,7 @@ init () =
 
 type Msg
     = NoOp
-    | OnInput Input
+    | OnKeyDown Key
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -44,8 +52,18 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        OnInput input ->
-            ( model, Cmd.none )
+        OnKeyDown key ->
+            ( { model | input = updateInput key model.input }, Cmd.none )
+
+
+updateInput : Key -> Input -> Input
+updateInput key input =
+    case key of
+        ArrowLeft ->
+            { input | leftDown = True }
+
+        ArrowRight ->
+            { input | rightDown = True }
 
 
 subscriptions : Model -> Sub Msg
@@ -65,7 +83,7 @@ subscriptions _ =
                             _ ->
                                 D.fail ""
                     )
-                |> D.map OnInput
+                |> D.map OnKeyDown
             )
         ]
 
@@ -81,7 +99,7 @@ keyEventDecoder =
         |> D.map2 (|>) (D.field "key" D.string)
 
 
-type Input
+type Key
     = ArrowLeft
     | ArrowRight
 
