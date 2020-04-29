@@ -71,7 +71,8 @@ view _ =
             , Svg.Attributes.stroke "gray"
             , Svg.Attributes.strokeWidth "1"
             ]
-            [ rect 80 20 []
+            [ rect w h []
+            , rect 80 20 []
             ]
         ]
 
