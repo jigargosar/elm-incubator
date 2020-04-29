@@ -58,23 +58,34 @@ type alias DM =
 view : Model -> DM
 view _ =
     let
-        w =
-            600
-
-        h =
-            300
+        size =
+            newSize 600 400
     in
     Document "Brick Breaker"
         [ Svg.svg
-            [ TypedSvg.Attributes.viewBox (-w / 2) (-h / 2) w h
+            [ viewBoxOfSize size
             , Svg.Attributes.fill "none"
             , Svg.Attributes.stroke "gray"
             , Svg.Attributes.strokeWidth "1"
             ]
-            [ rect w h []
+            [ rect size.width size.height []
             , rect 80 20 []
             ]
         ]
+
+
+type alias Size =
+    { width : Float, height : Float }
+
+
+newSize : Float -> Float -> Size
+newSize w h =
+    Size w h
+
+
+viewBoxOfSize : Size -> Svg.Attribute msg
+viewBoxOfSize size =
+    TypedSvg.Attributes.viewBox (-size.width / 2) (-size.height / 2) size.width size.height
 
 
 rect w h attrs =
