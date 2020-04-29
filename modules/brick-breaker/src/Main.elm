@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Browser.Events
 import Json.Decode as D exposing (Decoder)
+import Set exposing (Set)
 import Svg
 import Svg.Attributes
 import TypedSvg.Attributes
@@ -19,11 +20,12 @@ type alias Model =
 
 
 type alias Input =
-    { leftDown : Bool, rightDown : Bool }
+    { leftDown : Bool, rightDown : Bool, keys : Set String }
 
 
+initialInput : Input
 initialInput =
-    Input False False
+    Input False False Set.empty
 
 
 type alias Flags =
@@ -54,30 +56,26 @@ update message model =
             ( model, Cmd.none )
 
         OnKeyDown key ->
-            ( { model | input = recordKeyDown key model.input }, Cmd.none )
+            ( { model | input = recordKey key True model.input }, Cmd.none )
 
         OnKeyUp key ->
-            ( { model | input = recordKeyUp key model.input }, Cmd.none )
+            ( { model | input = recordKey key False model.input }, Cmd.none )
 
 
-recordKeyDown : String -> Input -> Input
-recordKeyDown key input =
-    case key of
-        "ArrowLeft" ->
-            { input | leftDown = True }
+recordKey : String -> Bool -> Input -> Input
+recordKey key isDown input =
+    let
+        keys =
+            if isDown then
+                Set.insert key input.keys
 
-        "ArrowRight" ->
-            { input | rightDown = True }
-
-
-recordKeyUp : String -> Input -> Input
-recordKeyUp key input =
-    case key of
-        "ArrowLeft" ->
-            { input | leftDown = False }
-
-        "ArrowRight" ->
-            { input | rightDown = False }
+            else
+                Set.remove key input.keys
+    in
+    { leftDown = Set.member "ArrowLeft" keys
+    , rightDown = Set.member "ArrowRight" keys
+    , keys = keys
+    }
 
 
 subscriptions : Model -> Sub Msg
