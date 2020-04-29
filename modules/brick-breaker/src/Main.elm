@@ -12,20 +12,40 @@ import TypedSvg.Types
 
 
 
--- Model
-
-
-type alias Model =
-    { input : Input }
+-- Input
 
 
 type alias Input =
     { leftDown : Bool, rightDown : Bool, keys : Set String }
 
 
+recordKey : String -> Bool -> Input -> Input
+recordKey key isDown input =
+    let
+        keys =
+            if isDown then
+                Set.insert key input.keys
+
+            else
+                Set.remove key input.keys
+    in
+    { leftDown = Set.member "ArrowLeft" keys
+    , rightDown = Set.member "ArrowRight" keys
+    , keys = keys
+    }
+
+
 initialInput : Input
 initialInput =
     Input False False Set.empty
+
+
+
+-- Model
+
+
+type alias Model =
+    { input : Input }
 
 
 type alias Flags =
@@ -60,22 +80,6 @@ update message model =
 
         OnKeyUp key ->
             ( { model | input = recordKey key False model.input }, Cmd.none )
-
-
-recordKey : String -> Bool -> Input -> Input
-recordKey key isDown input =
-    let
-        keys =
-            if isDown then
-                Set.insert key input.keys
-
-            else
-                Set.remove key input.keys
-    in
-    { leftDown = Set.member "ArrowLeft" keys
-    , rightDown = Set.member "ArrowRight" keys
-    , keys = keys
-    }
 
 
 subscriptions : Model -> Sub Msg
