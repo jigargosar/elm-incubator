@@ -6,6 +6,7 @@ import Svg
 import Svg.Attributes
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
+import TypedSvg.Types
 
 
 
@@ -69,7 +70,7 @@ view _ =
             , Svg.Attributes.strokeWidth "1"
             ]
             [ rect size.width size.height []
-            , rect 80 20 []
+            , rect 80 20 [ TypedSvg.Attributes.transform [ TypedSvg.Types.Translate 0 (size.height / 2 - 20) ] ]
             ]
         ]
 
