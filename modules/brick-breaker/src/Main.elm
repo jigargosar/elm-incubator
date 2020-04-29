@@ -43,8 +43,8 @@ init () =
 
 type Msg
     = NoOp
-    | OnKeyDown Key
-    | OnKeyUp Key
+    | OnKeyDown String
+    | OnKeyUp String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,23 +60,23 @@ update message model =
             ( { model | input = recordKeyUp key model.input }, Cmd.none )
 
 
-recordKeyDown : Key -> Input -> Input
+recordKeyDown : String -> Input -> Input
 recordKeyDown key input =
     case key of
-        ArrowLeft ->
+        "ArrowLeft" ->
             { input | leftDown = True }
 
-        ArrowRight ->
+        "ArrowRight" ->
             { input | rightDown = True }
 
 
-recordKeyUp : Key -> Input -> Input
+recordKeyUp : String -> Input -> Input
 recordKeyUp key input =
     case key of
-        ArrowLeft ->
+        "ArrowLeft" ->
             { input | leftDown = False }
 
-        ArrowRight ->
+        "ArrowRight" ->
             { input | rightDown = False }
 
 
@@ -84,54 +84,34 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onKeyDown
-            (keyEventDecoder
+            (D.field "key" D.string
                 |> D.andThen
-                    (\ev ->
-                        case ev.key of
-                            "ArrowLeft" ->
-                                D.succeed ArrowLeft
+                    (\key ->
+                        if List.member key interestedKeys then
+                            D.succeed key
 
-                            "ArrowRight" ->
-                                D.succeed ArrowRight
-
-                            _ ->
-                                D.fail ""
+                        else
+                            D.fail ""
                     )
                 |> D.map OnKeyDown
             )
         , Browser.Events.onKeyUp
-            (keyEventDecoder
+            (D.field "key" D.string
                 |> D.andThen
-                    (\ev ->
-                        case ev.key of
-                            "ArrowLeft" ->
-                                D.succeed ArrowLeft
+                    (\key ->
+                        if List.member key interestedKeys then
+                            D.succeed key
 
-                            "ArrowRight" ->
-                                D.succeed ArrowRight
-
-                            _ ->
-                                D.fail ""
+                        else
+                            D.fail ""
                     )
                 |> D.map OnKeyDown
             )
         ]
 
 
-type alias KeyEvent =
-    { key : String
-    }
-
-
-keyEventDecoder : Decoder KeyEvent
-keyEventDecoder =
-    D.succeed KeyEvent
-        |> D.map2 (|>) (D.field "key" D.string)
-
-
-type Key
-    = ArrowLeft
-    | ArrowRight
+interestedKeys =
+    [ "ArrowLeft", "ArrowRight" ]
 
 
 
