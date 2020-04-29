@@ -81,31 +81,9 @@ recordKey key isDown input =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Browser.Events.onKeyDown (interestedKeyDecoder |> D.map OnKeyDown)
-        , Browser.Events.onKeyUp (interestedKeyDecoder |> D.map OnKeyUp)
+        [ Browser.Events.onKeyDown (D.field "key" D.string |> D.map OnKeyDown)
+        , Browser.Events.onKeyUp (D.field "key" D.string |> D.map OnKeyUp)
         ]
-
-
-interestedKeyDecoder : Decoder String
-interestedKeyDecoder =
-    let
-        isInterestedKey key =
-            List.member key [ "ArrowLeft", "ArrowRight" ]
-    in
-    D.field "key" D.string
-        |> filterDecoder isInterestedKey
-
-
-filterDecoder : (a -> Bool) -> Decoder a -> Decoder a
-filterDecoder pred =
-    D.andThen
-        (\a ->
-            if pred a then
-                D.succeed a
-
-            else
-                D.fail ""
-        )
 
 
 
