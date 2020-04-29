@@ -179,8 +179,8 @@ type alias DM =
 
 view : Model -> DM
 view model =
-    Document "Main"
-        [ div [] [ text "Hello Main" ]
+    Document "Random Walker"
+        [ div [] [ text "" ]
         , div []
             [ viewRandomWalker model.size model.walker
             ]
