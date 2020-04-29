@@ -44,6 +44,7 @@ init () =
 type Msg
     = NoOp
     | OnKeyDown Key
+    | OnKeyUp Key
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -53,17 +54,30 @@ update message model =
             ( model, Cmd.none )
 
         OnKeyDown key ->
-            ( { model | input = recordKeyDownInput key model.input }, Cmd.none )
+            ( { model | input = recordKeyDown key model.input }, Cmd.none )
+
+        OnKeyUp key ->
+            ( { model | input = recordKeyUp key model.input }, Cmd.none )
 
 
-recordKeyDownInput : Key -> Input -> Input
-recordKeyDownInput key input =
+recordKeyDown : Key -> Input -> Input
+recordKeyDown key input =
     case key of
         ArrowLeft ->
             { input | leftDown = True }
 
         ArrowRight ->
             { input | rightDown = True }
+
+
+recordKeyUp : Key -> Input -> Input
+recordKeyUp key input =
+    case key of
+        ArrowLeft ->
+            { input | leftDown = False }
+
+        ArrowRight ->
+            { input | rightDown = False }
 
 
 subscriptions : Model -> Sub Msg
