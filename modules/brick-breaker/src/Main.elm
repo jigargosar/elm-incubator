@@ -117,10 +117,10 @@ view _ =
             [ rect size.width size.height []
             , rect
                 80
-                20
+                10
                 [ transform
                     [ moveY canvasBounds.bottom
-                    , moveUp 20
+                    , moveUp 15
                     ]
                 ]
             ]
