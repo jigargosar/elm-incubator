@@ -74,18 +74,8 @@ view _ =
         ]
 
 
-type alias Size =
-    { width : Float, height : Float }
 
-
-newSize : Float -> Float -> Size
-newSize w h =
-    Size w h
-
-
-viewBoxOfSize : Size -> Svg.Attribute msg
-viewBoxOfSize size =
-    TypedSvg.Attributes.viewBox (-size.width / 2) (-size.height / 2) size.width size.height
+-- DRAW
 
 
 rect w h attrs =
@@ -98,6 +88,24 @@ rect w h attrs =
             ++ attrs
         )
         []
+
+
+
+-- SIZE
+
+
+type alias Size =
+    { width : Float, height : Float }
+
+
+newSize : Float -> Float -> Size
+newSize w h =
+    Size w h
+
+
+viewBoxOfSize : Size -> Svg.Attribute msg
+viewBoxOfSize size =
+    TypedSvg.Attributes.viewBox (-size.width / 2) (-size.height / 2) size.width size.height
 
 
 
