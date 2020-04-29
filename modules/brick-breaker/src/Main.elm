@@ -6,7 +6,7 @@ import Json.Decode as D exposing (Decoder)
 import Set exposing (Set)
 import Svg
 import Svg.Attributes exposing (fill, stroke, strokeWidth)
-import TypedSvg.Attributes
+import TypedSvg.Attributes exposing (transform)
 import TypedSvg.Attributes.InPx
 import TypedSvg.Types
 
@@ -118,7 +118,7 @@ view _ =
             , rect
                 80
                 20
-                [ TypedSvg.Attributes.transform
+                [ transform
                     [ moveY canvasBounds.bottom
                     , moveUp 20
                     ]
