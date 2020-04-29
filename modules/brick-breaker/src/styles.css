@@ -1,0 +1,71 @@
+.cell_selection_inactive {
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+  transition-property: opacity, transform;
+  transition-duration: 300ms;
+}
+
+.cell_selection_active {
+  transform: translate(0, 0) scale(0.8);
+  opacity: 1;
+  transition-property: opacity, transform;
+  transition-duration: 300ms;
+}
+
+.cell_leave {
+  animation-name: cell_leave;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+
+@keyframes cell_leave {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(0, -300px) scale(0);
+    opacity: 0;
+  }
+}
+
+.cell_enter {
+  animation-name: cell_enter;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+
+@keyframes cell_enter {
+  from {
+    transform: translate(0, -300px) scale(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.cell_fall {
+  --cell-fall-dy: 0;
+  animation-name: cell_fall;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+
+@keyframes cell_fall {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(0, var(--cell-fall-dy, 0)) scale(1);
+    opacity: 1;
+  }
+}

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/modules/brick-breaker/brick-breaker.iml" filepath="$PROJECT_DIR$/modules/brick-breaker/brick-breaker.iml" />
       <module fileurl="file://$PROJECT_DIR$/elm-incubator.iml" filepath="$PROJECT_DIR$/elm-incubator.iml" />
       <module fileurl="file://$PROJECT_DIR$/modules/esa-flower-menu/esa-flower-menu.iml" filepath="$PROJECT_DIR$/modules/esa-flower-menu/esa-flower-menu.iml" />
       <module fileurl="file://$PROJECT_DIR$/modules/modules.iml" filepath="$PROJECT_DIR$/modules/modules.iml" />
