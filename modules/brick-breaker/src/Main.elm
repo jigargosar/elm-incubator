@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Html exposing (Html, text)
 import Svg
+import Svg.Attributes
 import TypedSvg.Attributes
 import TypedSvg.Attributes.InPx
 
@@ -76,6 +77,9 @@ rect x y w h =
         , TypedSvg.Attributes.InPx.y (y - h / 2)
         , TypedSvg.Attributes.InPx.width w
         , TypedSvg.Attributes.InPx.height h
+        , Svg.Attributes.fill "none"
+        , Svg.Attributes.stroke "gray"
+        , Svg.Attributes.strokeWidth "1px"
         ]
         []
 
