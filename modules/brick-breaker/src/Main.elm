@@ -65,12 +65,14 @@ view _ =
             300
     in
     Document "Brick Breaker"
-        [ Svg.svg [ TypedSvg.Attributes.viewBox 0 0 w h ]
+        [ Svg.svg
+            [ TypedSvg.Attributes.viewBox 0 0 w h
+            , Svg.Attributes.fill "none"
+            , Svg.Attributes.stroke "gray"
+            , Svg.Attributes.strokeWidth "1"
+            ]
             [ Svg.g
-                [ Svg.Attributes.fill "none"
-                , Svg.Attributes.stroke "gray"
-                , Svg.Attributes.strokeWidth "1px"
-                ]
+                []
                 [ rect (w / 2) (h - 60) 80 20 ]
             ]
         ]
