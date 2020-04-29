@@ -61,6 +61,9 @@ view _ =
     let
         size =
             newSize 600 400
+
+        canvasBounds =
+            newBoundsFromSize size
     in
     Document "Brick Breaker"
         [ Svg.svg
@@ -70,7 +73,14 @@ view _ =
             , Svg.Attributes.strokeWidth "1"
             ]
             [ rect size.width size.height []
-            , rect 80 20 [ TypedSvg.Attributes.transform [ moveDown (size.height / 2 - 20) ] ]
+            , rect
+                80
+                20
+                [ TypedSvg.Attributes.transform
+                    [ moveY canvasBounds.bottom
+                    , moveUp 20
+                    ]
+                ]
             ]
         ]
 
@@ -105,6 +115,23 @@ rect w h attrs =
             ++ attrs
         )
         []
+
+
+
+-- Bounds
+
+
+type alias Bounds =
+    { left : Float
+    , right : Float
+    , top : Float
+    , bottom : Float
+    }
+
+
+newBoundsFromSize : Size -> Bounds
+newBoundsFromSize size =
+    Bounds (-size.width / 2) (size.width / 2) (-size.height / 2) (size.height / 2)
 
 
 
