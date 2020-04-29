@@ -53,11 +53,11 @@ update message model =
             ( model, Cmd.none )
 
         OnKeyDown key ->
-            ( { model | input = updateInput key model.input }, Cmd.none )
+            ( { model | input = recordKeyDownInput key model.input }, Cmd.none )
 
 
-updateInput : Key -> Input -> Input
-updateInput key input =
+recordKeyDownInput : Key -> Input -> Input
+recordKeyDownInput key input =
     case key of
         ArrowLeft ->
             { input | leftDown = True }
