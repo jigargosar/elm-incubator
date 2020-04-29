@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, text)
+import Browser.Events
+import Json.Decode as D exposing (Decoder)
 import Svg
 import Svg.Attributes
 import TypedSvg.Attributes
@@ -34,6 +35,7 @@ init () =
 
 type Msg
     = NoOp
+    | OnInput Input
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -42,10 +44,46 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
+        OnInput input ->
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch
+        [ Browser.Events.onKeyDown
+            (keyEventDecoder
+                |> D.andThen
+                    (\ev ->
+                        case ev.key of
+                            "ArrowLeft" ->
+                                D.succeed ArrowLeft
+
+                            "ArrowRight" ->
+                                D.succeed ArrowRight
+
+                            _ ->
+                                D.fail ""
+                    )
+                |> D.map OnInput
+            )
+        ]
+
+
+type alias KeyEvent =
+    { key : String
+    }
+
+
+keyEventDecoder : Decoder KeyEvent
+keyEventDecoder =
+    D.succeed KeyEvent
+        |> D.map2 (|>) (D.field "key" D.string)
+
+
+type Input
+    = ArrowLeft
+    | ArrowRight
 
 
 
