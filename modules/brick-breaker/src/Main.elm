@@ -71,18 +71,20 @@ view _ =
             , Svg.Attributes.stroke "gray"
             , Svg.Attributes.strokeWidth "1"
             ]
-            [ Svg.g [] [ rect 80 20 ]
+            [ rect 80 20 []
             ]
         ]
 
 
-rect w h =
+rect w h attrs =
     Svg.rect
-        [ TypedSvg.Attributes.InPx.x (-w / 2)
-        , TypedSvg.Attributes.InPx.y (-h / 2)
-        , TypedSvg.Attributes.InPx.width w
-        , TypedSvg.Attributes.InPx.height h
-        ]
+        ([ TypedSvg.Attributes.InPx.x (-w / 2)
+         , TypedSvg.Attributes.InPx.y (-h / 2)
+         , TypedSvg.Attributes.InPx.width w
+         , TypedSvg.Attributes.InPx.height h
+         ]
+            ++ attrs
+        )
         []
 
 
