@@ -99,6 +99,22 @@ subscriptions _ =
                     )
                 |> D.map OnKeyDown
             )
+        , Browser.Events.onKeyUp
+            (keyEventDecoder
+                |> D.andThen
+                    (\ev ->
+                        case ev.key of
+                            "ArrowLeft" ->
+                                D.succeed ArrowLeft
+
+                            "ArrowRight" ->
+                                D.succeed ArrowRight
+
+                            _ ->
+                                D.fail ""
+                    )
+                |> D.map OnKeyDown
+            )
         ]
 
 
