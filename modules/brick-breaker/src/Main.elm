@@ -251,7 +251,10 @@ updateBall canvasSize ball =
                 ball.vel.y
     in
     { ball
-        | pos = addVec ball.pos ball.vel
+        | pos =
+            addVec ball.pos ball.vel
+
+        --|> constrainVecInBounds ballBoundary
         , vel = newVec dx dy
     }
 
