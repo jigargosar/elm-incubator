@@ -249,8 +249,8 @@ initBall _ =
     }
 
 
-bounceBallOnPaddle : Paddle -> Ball -> Ball
-bounceBallOnPaddle paddle ball =
+bounceBallOnPaddleTop : Paddle -> Ball -> Ball
+bounceBallOnPaddleTop paddle ball =
     let
         paddleBounds =
             growSizeByRadius ball.radius paddle.size
@@ -374,7 +374,7 @@ update message model =
                 , ball =
                     updateBallPosition model.ball
                         |> bounceBallWithInCanvasEdges model.canvasSize
-                        |> bounceBallOnPaddle model.paddle
+                        |> bounceBallOnPaddleTop model.paddle
               }
             , Cmd.none
             )
