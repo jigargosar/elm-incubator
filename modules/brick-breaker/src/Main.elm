@@ -244,11 +244,8 @@ updateBallPosition ball =
 bounceBallWithInCanvasEdges : Size -> Ball -> Ball
 bounceBallWithInCanvasEdges canvasSize ball =
     let
-        ballSize =
-            newSize (ball.radius * 2) (ball.radius * 2)
-
         ballBoundary =
-            shrinkSizeBy ballSize canvasSize
+            shrinkSizeByRadius ball.radius canvasSize
                 |> newBoundsAtOrigin
 
         dx =
