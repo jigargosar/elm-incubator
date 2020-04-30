@@ -58,9 +58,15 @@ addVec a b =
     newVec (a.x + b.x) (a.y + b.y)
 
 
-clampVecInSize : Size -> Vec -> Vec
-clampVecInSize size vec =
-    newVec (clamp 0 (size.width - 1) vec.x) (clamp 0 (size.height - 1) vec.y)
+
+--clampVecInSize : Size -> Vec -> Vec
+--clampVecInSize size vec =
+--    newVec (clamp 0 (size.width - 1) vec.x) (clamp 0 (size.height - 1) vec.y)
+
+
+constrainVecInBounds : Bounds -> Vec -> Vec
+constrainVecInBounds bounds vec =
+    newVec (clamp bounds.min.x bounds.max.x vec.x) (clamp bounds.min.y bounds.max.y vec.y)
 
 
 
@@ -88,6 +94,23 @@ viewBoxOfSize size =
         (-size.height / 2)
         size.width
         size.height
+
+
+
+-- Bounds
+
+
+type alias Bounds =
+    { min : Vec
+    , max : Vec
+    }
+
+
+newBoundsAtOrigin : Size -> Bounds
+newBoundsAtOrigin size =
+    { min = newVec (size.width * -0.5) (size.height * -0.5)
+    , max = newVec (size.width * 0.5) (size.height * 0.5)
+    }
 
 
 
@@ -134,11 +157,12 @@ updatePaddle canvasSize input paddle =
 
         paddleBoundary =
             shrinkSizeBy paddle.size canvasSize
+                |> newBoundsAtOrigin
     in
     { paddle
         | pos =
             addVec paddle.pos unitVelocity
-                |> clampVecInSize paddleBoundary
+                |> constrainVecInBounds paddleBoundary
     }
 
 
