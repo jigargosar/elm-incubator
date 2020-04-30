@@ -53,6 +53,15 @@ newVec x y =
     Vec x y
 
 
+vecFromRTheta : Float -> Float -> Vec
+vecFromRTheta radius theta =
+    let
+        ( x, y ) =
+            fromPolar ( radius, theta )
+    in
+    newVec x y
+
+
 addVec : Vec -> Vec -> Vec
 addVec a b =
     newVec (a.x + b.x) (a.y + b.y)
@@ -186,6 +195,7 @@ viewPaddle paddle =
 type alias Ball =
     { pos : Vec
     , radius : Float
+    , vel : Vec
     }
 
 
@@ -197,8 +207,24 @@ initBall _ =
 
         radius =
             15
+
+        speed =
+            5
+
+        angle =
+            degrees 90
     in
-    Ball pos radius
+    { pos = pos
+    , radius = radius
+    , vel = vecFromRTheta speed angle
+    }
+
+
+updateBall : Size -> Ball -> Ball
+updateBall canvasSize ball =
+    { ball
+        | pos = addVec ball.pos ball.vel
+    }
 
 
 viewBall : Ball -> Svg msg
@@ -265,7 +291,10 @@ update message model =
             ( { model | input = recordKey key False model.input }, Cmd.none )
 
         Tick ->
-            ( { model | paddle = updatePaddle model.canvasSize model.input model.paddle }
+            ( { model
+                | paddle = updatePaddle model.canvasSize model.input model.paddle
+                , ball = updateBall model.canvasSize model.ball
+              }
             , Cmd.none
             )
 
