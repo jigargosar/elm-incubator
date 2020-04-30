@@ -157,9 +157,12 @@ updatePaddle canvasSize input paddle =
             else
                 0
 
+        speed =
+            1
+
         velocity =
             newVec (dxLeft + dxRight) 0
-                |> scaleVec 10
+                |> scaleVec speed
 
         paddleBoundary =
             shrinkSizeBy paddle.size canvasSize
