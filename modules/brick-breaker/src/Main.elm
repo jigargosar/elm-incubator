@@ -58,6 +58,11 @@ addVec a b =
     newVec (a.x + b.x) (a.y + b.y)
 
 
+scaleVec : Float -> Vec -> Vec
+scaleVec float vec =
+    newVec (vec.x * float) (vec.y * float)
+
+
 
 --clampVecInSize : Size -> Vec -> Vec
 --clampVecInSize size vec =
@@ -152,8 +157,9 @@ updatePaddle canvasSize input paddle =
             else
                 0
 
-        unitVelocity =
+        velocity =
             newVec (dxLeft + dxRight) 0
+                |> scaleVec 10
 
         paddleBoundary =
             shrinkSizeBy paddle.size canvasSize
@@ -161,7 +167,7 @@ updatePaddle canvasSize input paddle =
     in
     { paddle
         | pos =
-            addVec paddle.pos unitVelocity
+            addVec paddle.pos velocity
                 |> constrainVecInBounds paddleBoundary
     }
 
