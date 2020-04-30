@@ -68,7 +68,11 @@ newSize w h =
 
 viewBoxOfSize : Size -> Svg.Attribute msg
 viewBoxOfSize size =
-    TypedSvg.Attributes.viewBox (-size.width / 2) (-size.height / 2) size.width size.height
+    TypedSvg.Attributes.viewBox
+        (-size.width / 2)
+        (-size.height / 2)
+        size.width
+        size.height
 
 
 
