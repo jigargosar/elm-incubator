@@ -4,7 +4,7 @@ import Browser exposing (Document)
 import Browser.Events
 import Json.Decode as D exposing (Decoder)
 import Set exposing (Set)
-import Svg
+import Svg exposing (Svg)
 import Svg.Attributes exposing (fill, stroke, strokeWidth)
 import TypedSvg.Attributes exposing (transform)
 import TypedSvg.Attributes.InPx
@@ -86,6 +86,15 @@ initPaddle canvasSize =
     Paddle (newVec 0 ((canvasSize.height * 0.5) - 20)) (newSize 80 10)
 
 
+viewPaddle : Paddle -> Svg msg
+viewPaddle paddle =
+    rect
+        paddle.size.width
+        paddle.size.height
+        [ transform [ Translate paddle.pos.x paddle.pos.y ]
+        ]
+
+
 
 -- Model
 
@@ -159,13 +168,6 @@ view model =
     let
         canvasSize =
             model.canvasSize
-
-        viewPaddle paddle =
-            rect
-                paddle.size.width
-                paddle.size.height
-                [ transform [ Translate paddle.pos.x paddle.pos.y ]
-                ]
     in
     Document "Brick Breaker"
         [ Svg.svg
