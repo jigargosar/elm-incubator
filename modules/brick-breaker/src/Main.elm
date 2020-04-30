@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Browser.Events
 import Json.Decode as D exposing (Decoder)
+import Random exposing (Generator)
 import Set exposing (Set)
 import Svg exposing (Svg)
 import Svg.Attributes exposing (fill, stroke, strokeWidth)
@@ -310,6 +311,43 @@ viewBall ball =
     Svg.circle
         [ TypedSvg.Attributes.InPx.r ball.radius
         , transform [ Translate ball.pos.x ball.pos.y ]
+        ]
+        []
+
+
+
+-- Brick
+
+
+type alias Brick =
+    { pos : Vec
+    , radius : Float
+    }
+
+
+brickGenerator : Size -> Generator Brick
+brickGenerator canvasSize =
+    let
+        radius =
+            Random.float 20 80
+
+        brickBounds =
+            shrinkSizeBy (newSize 100 100) canvasSize
+                |> newBoundsAtOrigin
+
+        pos =
+            Random.map2 newVec
+                (Random.float brickBounds.min.x brickBounds.max.x)
+                (Random.float brickBounds.min.y brickBounds.max.y)
+    in
+    Random.map2 Brick pos radius
+
+
+viewBrick : Brick -> Svg msg
+viewBrick brick =
+    Svg.circle
+        [ TypedSvg.Attributes.InPx.r brick.radius
+        , transform [ Translate brick.pos.x brick.pos.y ]
         ]
         []
 
