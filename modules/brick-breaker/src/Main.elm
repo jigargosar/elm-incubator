@@ -249,13 +249,10 @@ updateBall canvasSize ball =
 
             else
                 ball.vel.y
-
-        nextVel =
-            newVec dx dy
     in
     { ball
         | pos = addVec ball.pos ball.vel
-        , vel = nextVel
+        , vel = newVec dx dy
     }
 
 
