@@ -41,15 +41,29 @@ initialInput =
 
 
 
+-- Vec
+
+
+type alias Vec =
+    { x : Float, y : Float }
+
+
+newVec : Float -> Float -> Vec
+newVec x y =
+    Vec x y
+
+
+
 -- Paddle
 
 
 type alias Paddle =
-    {}
+    { pos : Vec }
 
 
+initPaddle : Paddle
 initPaddle =
-    Paddle
+    Paddle (newVec 0 0)
 
 
 
