@@ -223,7 +223,7 @@ initBall _ =
 updateBall : Size -> Ball -> Ball
 updateBall canvasSize ball =
     updateBallPosition ball
-        |> updateBallVelocity canvasSize
+        |> bounceBallInCanvas canvasSize
 
 
 updateBallPosition : Ball -> Ball
@@ -231,8 +231,8 @@ updateBallPosition ball =
     { ball | pos = addVec ball.pos ball.vel }
 
 
-updateBallVelocity : Size -> Ball -> Ball
-updateBallVelocity canvasSize ball =
+bounceBallInCanvas : Size -> Ball -> Ball
+bounceBallInCanvas canvasSize ball =
     let
         ballSize =
             newSize (ball.radius * 2) (ball.radius * 2)
