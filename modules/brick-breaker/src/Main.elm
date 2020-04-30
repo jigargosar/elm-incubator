@@ -91,6 +91,7 @@ initPaddle =
 type alias Model =
     { input : Input
     , paddle : Paddle
+    , canvasSize : Size
     }
 
 
@@ -100,8 +101,13 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
+    let
+        canvasSize =
+            newSize 600 300
+    in
     ( { input = initialInput
       , paddle = initPaddle
+      , canvasSize = canvasSize
       }
     , Cmd.none
     )
@@ -147,22 +153,22 @@ type alias DM =
 
 
 view : Model -> DM
-view _ =
+view model =
     let
-        size =
+        canvasSize =
             newSize 600 300
 
         canvasBounds =
-            newBoundsFromSize size
+            newBoundsFromSize canvasSize
     in
     Document "Brick Breaker"
         [ Svg.svg
-            [ viewBoxOfSize size
+            [ viewBoxOfSize canvasSize
             , fill "none"
             , stroke "gray"
             , strokeWidth "1"
             ]
-            [ rect size.width size.height []
+            [ rect canvasSize.width canvasSize.height []
             , rect
                 80
                 10
