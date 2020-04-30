@@ -329,11 +329,12 @@ brickGenerator : Size -> Generator Brick
 brickGenerator canvasSize =
     let
         radius =
-            Random.float 20 80
+            Random.float 10 20
 
         brickBounds =
-            shrinkSizeBy (newSize 100 100) canvasSize
+            shrinkSizeBy (newSize 50 150) canvasSize
                 |> newBoundsAtOrigin
+                |> shiftBounds (newVec 0 -50)
 
         pos =
             Random.map2 newVec
@@ -461,6 +462,7 @@ view model =
             [ rect canvasSize.width canvasSize.height []
             , viewPaddle model.paddle
             , viewBall model.ball
+            , Svg.g [] (List.map viewBrick model.bricks)
             ]
         ]
 
