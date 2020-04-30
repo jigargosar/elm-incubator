@@ -249,13 +249,6 @@ initBall _ =
     }
 
 
-updateBall : Size -> Paddle -> Ball -> Ball
-updateBall canvasSize paddle ball =
-    updateBallPosition ball
-        |> bounceBallWithInCanvasEdges canvasSize
-        |> bounceBallOnPaddle paddle
-
-
 bounceBallOnPaddle : Paddle -> Ball -> Ball
 bounceBallOnPaddle paddle ball =
     let
@@ -378,7 +371,10 @@ update message model =
         Tick ->
             ( { model
                 | paddle = updatePaddle model.canvasSize model.input model.paddle
-                , ball = updateBall model.canvasSize model.paddle model.ball
+                , ball =
+                    updateBallPosition model.ball
+                        |> bounceBallWithInCanvasEdges model.canvasSize
+                        |> bounceBallOnPaddle model.paddle
               }
             , Cmd.none
             )
