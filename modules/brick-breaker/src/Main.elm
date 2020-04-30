@@ -124,13 +124,13 @@ updatePaddle canvasSize input paddle =
             else
                 0
 
-        dx =
-            dxLeft + dxRight
+        unitVelocity =
+            newVec (dxLeft + dxRight) 0
 
         _ =
             shrinkSizeBy paddle.size canvasSize
     in
-    { paddle | pos = addVec paddle.pos (newVec dx 0) }
+    { paddle | pos = addVec paddle.pos unitVelocity }
 
 
 viewPaddle : Paddle -> Svg msg
