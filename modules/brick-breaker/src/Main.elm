@@ -156,7 +156,7 @@ view : Model -> DM
 view model =
     let
         canvasSize =
-            newSize 600 300
+            model.canvasSize
 
         canvasBounds =
             newBoundsFromSize canvasSize
