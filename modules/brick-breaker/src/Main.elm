@@ -209,7 +209,7 @@ initBall _ =
             15
 
         speed =
-            10
+            4
 
         angle =
             degrees 45
