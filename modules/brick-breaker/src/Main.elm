@@ -160,8 +160,6 @@ view model =
         canvasSize =
             model.canvasSize
 
-        --canvasBounds =
-        --    newBoundsFromSize canvasSize
         viewPaddle paddle =
             rect
                 paddle.size.width
