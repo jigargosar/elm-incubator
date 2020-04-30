@@ -97,6 +97,11 @@ shrinkSizeBy b a =
     newSize (a.width - b.width) (a.height - b.height)
 
 
+shrinkSizeByRadius : Float -> Size -> Size
+shrinkSizeByRadius radius a =
+    newSize (a.width - (radius * 2)) (a.height - (radius * 2))
+
+
 viewBoxOfSize : Size -> Svg.Attribute msg
 viewBoxOfSize size =
     TypedSvg.Attributes.viewBox
