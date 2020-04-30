@@ -87,7 +87,14 @@ type alias Paddle =
 
 initPaddle : Size -> Paddle
 initPaddle canvasSize =
-    Paddle (newVec 0 ((canvasSize.height * 0.5) - 20)) (newSize 80 10)
+    let
+        size =
+            newSize 80 10
+
+        pos =
+            newVec 0 ((canvasSize.height * 0.5) - 20)
+    in
+    Paddle pos size
 
 
 viewPaddle : Paddle -> Svg msg
