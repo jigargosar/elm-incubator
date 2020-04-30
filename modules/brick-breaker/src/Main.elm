@@ -158,7 +158,7 @@ updatePaddle canvasSize input paddle =
                 0
 
         speed =
-            1
+            10
 
         velocity =
             newVec (dxLeft + dxRight) 0
