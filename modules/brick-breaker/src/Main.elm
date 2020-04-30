@@ -222,6 +222,17 @@ initBall _ =
 
 updateBall : Size -> Ball -> Ball
 updateBall canvasSize ball =
+    updateBallPosition ball
+        |> updateBallVelocity canvasSize
+
+
+updateBallPosition : Ball -> Ball
+updateBallPosition ball =
+    { ball | pos = addVec ball.pos ball.vel }
+
+
+updateBallVelocity : Size -> Ball -> Ball
+updateBallVelocity canvasSize ball =
     let
         ballSize =
             newSize (ball.radius * 2) (ball.radius * 2)
@@ -250,18 +261,7 @@ updateBall canvasSize ball =
             else
                 ball.vel.y
     in
-    { ball
-        | pos =
-            addVec ball.pos ball.vel
-
-        --|> constrainVecInBounds ballBoundary
-        , vel = newVec dx dy
-    }
-
-
-updateBallPosition : Ball -> Ball
-updateBallPosition ball =
-    { ball | pos = addVec ball.pos ball.vel }
+    { ball | vel = newVec dx dy }
 
 
 viewBall : Ball -> Svg msg
