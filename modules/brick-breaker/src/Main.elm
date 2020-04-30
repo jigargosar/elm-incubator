@@ -209,7 +209,7 @@ initBall _ =
             15
 
         speed =
-            5
+            10
 
         angle =
             degrees 45
@@ -230,13 +230,10 @@ updateBall canvasSize ball =
             shrinkSizeBy ballSize canvasSize
                 |> newBoundsAtOrigin
 
-        nextPos =
-            addVec ball.pos ball.vel
-
         dx =
             if
-                (nextPos.x < ballBoundary.min.x && ball.vel.x < 0)
-                    || (nextPos.x > ballBoundary.max.x && ball.vel.x > 0)
+                (ball.pos.x < ballBoundary.min.x && ball.vel.x < 0)
+                    || (ball.pos.x > ballBoundary.max.x && ball.vel.x > 0)
             then
                 negate ball.vel.x
 
@@ -245,8 +242,8 @@ updateBall canvasSize ball =
 
         dy =
             if
-                (nextPos.y < ballBoundary.min.y && ball.vel.y < 0)
-                    || (nextPos.y > ballBoundary.max.y && ball.vel.y > 0)
+                (ball.pos.y < ballBoundary.min.y && ball.vel.y < 0)
+                    || (ball.pos.y > ballBoundary.max.y && ball.vel.y > 0)
             then
                 negate ball.vel.y
 
@@ -257,7 +254,7 @@ updateBall canvasSize ball =
             newVec dx dy
     in
     { ball
-        | pos = nextPos |> constrainVecInBounds ballBoundary
+        | pos = addVec ball.pos ball.vel
         , vel = nextVel
     }
 
