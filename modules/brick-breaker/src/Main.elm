@@ -229,11 +229,33 @@ updateBall canvasSize ball =
         ballBoundary =
             shrinkSizeBy ballSize canvasSize
                 |> newBoundsAtOrigin
+
+        nextPos =
+            addVec ball.pos ball.vel
+
+        dx =
+            if clamp ballBoundary.min.x ballBoundary.max.x nextPos.x /= nextPos.x then
+                negate ball.vel.x
+
+            else
+                ball.vel.x
+
+        dy =
+            if clamp ballBoundary.min.y ballBoundary.max.y nextPos.y /= nextPos.y then
+                negate ball.vel.y
+
+            else
+                ball.vel.y
+
+        nextVel =
+            newVec dx dy
     in
     { ball
         | pos =
-            addVec ball.pos ball.vel
-                |> constrainVecInBounds ballBoundary
+            nextPos
+
+        --|> constrainVecInBounds ballBoundary
+        , vel = nextVel
     }
 
 
