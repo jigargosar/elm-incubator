@@ -67,6 +67,11 @@ addVec a b =
     newVec (a.x + b.x) (a.y + b.y)
 
 
+mapY : (Float -> Float) -> Vec -> Vec
+mapY func vec =
+    newVec vec.x (func vec.y)
+
+
 
 --scaleVec : Float -> Vec -> Vec
 --scaleVec float vec =
@@ -102,6 +107,11 @@ shrinkSizeByRadius radius a =
     newSize (a.width - (radius * 2)) (a.height - (radius * 2))
 
 
+growSizeByRadius : Float -> Size -> Size
+growSizeByRadius radius =
+    shrinkSizeByRadius -radius
+
+
 viewBoxOfSize : Size -> Svg.Attribute msg
 viewBoxOfSize size =
     TypedSvg.Attributes.viewBox
@@ -126,6 +136,20 @@ newBoundsAtOrigin size =
     { min = newVec (size.width * -0.5) (size.height * -0.5)
     , max = newVec (size.width * 0.5) (size.height * 0.5)
     }
+
+
+shiftBounds : Vec -> Bounds -> Bounds
+shiftBounds vec bounds =
+    { bounds
+        | min = addVec bounds.min vec
+        , max = addVec bounds.max vec
+    }
+
+
+boundsContain : Vec -> Bounds -> Bool
+boundsContain vec bounds =
+    (clamp bounds.min.x bounds.max.x vec.x == vec.x)
+        && (clamp bounds.min.y bounds.max.y vec.y == vec.y)
 
 
 
@@ -229,11 +253,28 @@ updateBall : Size -> Paddle -> Ball -> Ball
 updateBall canvasSize paddle ball =
     updateBallPosition ball
         |> bounceBallWithInCanvasEdges canvasSize
-        |> bounceBallWithPaddle paddle
+        |> bounceBallOnPaddle paddle
 
 
-bounceBallWithPaddle a =
-    identity
+bounceBallOnPaddle : Paddle -> Ball -> Ball
+bounceBallOnPaddle paddle ball =
+    let
+        paddleBounds =
+            growSizeByRadius ball.radius paddle.size
+                |> newBoundsAtOrigin
+                |> shiftBounds paddle.pos
+
+        dyFunc =
+            if boundsContain ball.pos paddleBounds && ball.vel.y > 0 then
+                negate
+
+            else
+                identity
+
+        newVel =
+            mapY dyFunc ball.vel
+    in
+    { ball | vel = newVel }
 
 
 updateBallPosition : Ball -> Ball
