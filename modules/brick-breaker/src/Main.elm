@@ -143,6 +143,7 @@ type Msg
     = NoOp
     | OnKeyDown String
     | OnKeyUp String
+    | Tick
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -157,12 +158,16 @@ update message model =
         OnKeyUp key ->
             ( { model | input = recordKey key False model.input }, Cmd.none )
 
+        Tick ->
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onKeyDown (D.field "key" D.string |> D.map OnKeyDown)
         , Browser.Events.onKeyUp (D.field "key" D.string |> D.map OnKeyUp)
+        , Browser.Events.onAnimationFrameDelta (always Tick)
         ]
 
 
