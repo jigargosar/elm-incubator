@@ -58,6 +58,11 @@ addVec a b =
     newVec (a.x + b.x) (a.y + b.y)
 
 
+clampVecInSize : Size -> Vec -> Vec
+clampVecInSize size vec =
+    newVec (clamp 0 (size.width - 1) vec.x) (clamp 0 (size.height - 1) vec.y)
+
+
 
 -- SIZE
 
@@ -127,10 +132,14 @@ updatePaddle canvasSize input paddle =
         unitVelocity =
             newVec (dxLeft + dxRight) 0
 
-        _ =
+        paddleBoundary =
             shrinkSizeBy paddle.size canvasSize
     in
-    { paddle | pos = addVec paddle.pos unitVelocity }
+    { paddle
+        | pos =
+            addVec paddle.pos unitVelocity
+                |> clampVecInSize paddleBoundary
+    }
 
 
 viewPaddle : Paddle -> Svg msg
