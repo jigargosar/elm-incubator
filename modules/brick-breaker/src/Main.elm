@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Browser.Events
 import Json.Decode as D exposing (Decoder)
-import Random exposing (Generator)
+import Random exposing (Generator, Seed)
 import Set exposing (Set)
 import Svg exposing (Svg)
 import Svg.Attributes exposing (fill, stroke, strokeWidth)
@@ -360,7 +360,9 @@ type alias Model =
     { input : Input
     , paddle : Paddle
     , ball : Ball
+    , bricks : List Brick
     , canvasSize : Size
+    , seed : Seed
     }
 
 
@@ -373,11 +375,19 @@ init () =
     let
         canvasSize =
             newSize 600 300
+
+        seed0 =
+            Random.initialSeed 0
+
+        ( bricks, seed1 ) =
+            Random.step (Random.list 10 (brickGenerator canvasSize)) seed0
     in
     ( { input = initialInput
       , paddle = initPaddle canvasSize
       , ball = initBall canvasSize
+      , bricks = bricks
       , canvasSize = canvasSize
+      , seed = seed1
       }
     , Cmd.none
     )
