@@ -180,12 +180,44 @@ viewPaddle paddle =
 
 
 
+-- Ball
+
+
+type alias Ball =
+    { pos : Vec
+    , radius : Float
+    }
+
+
+initBall : Size -> Ball
+initBall _ =
+    let
+        pos =
+            newVec 0 0
+
+        radius =
+            15
+    in
+    Ball pos radius
+
+
+viewBall : Ball -> Svg msg
+viewBall ball =
+    Svg.circle
+        [ TypedSvg.Attributes.InPx.r ball.radius
+        , transform [ Translate ball.pos.x ball.pos.y ]
+        ]
+        []
+
+
+
 -- Model
 
 
 type alias Model =
     { input : Input
     , paddle : Paddle
+    , ball : Ball
     , canvasSize : Size
     }
 
@@ -202,6 +234,7 @@ init () =
     in
     ( { input = initialInput
       , paddle = initPaddle canvasSize
+      , ball = initBall canvasSize
       , canvasSize = canvasSize
       }
     , Cmd.none
@@ -269,6 +302,7 @@ view model =
             ]
             [ rect canvasSize.width canvasSize.height []
             , viewPaddle model.paddle
+            , viewBall model.ball
             ]
         ]
 
