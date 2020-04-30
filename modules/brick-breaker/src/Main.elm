@@ -212,7 +212,7 @@ initBall _ =
             5
 
         angle =
-            degrees -90
+            degrees 45
     in
     { pos = pos
     , radius = radius
