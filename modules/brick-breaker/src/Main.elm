@@ -234,14 +234,20 @@ updateBall canvasSize ball =
             addVec ball.pos ball.vel
 
         dx =
-            if clamp ballBoundary.min.x ballBoundary.max.x nextPos.x /= nextPos.x then
+            if
+                (nextPos.x < ballBoundary.min.x && ball.vel.x < 0)
+                    || (nextPos.x > ballBoundary.max.x && ball.vel.x > 0)
+            then
                 negate ball.vel.x
 
             else
                 ball.vel.x
 
         dy =
-            if clamp ballBoundary.min.y ballBoundary.max.y nextPos.y /= nextPos.y then
+            if
+                (nextPos.y < ballBoundary.min.y && ball.vel.y < 0)
+                    || (nextPos.y > ballBoundary.max.y && ball.vel.y > 0)
+            then
                 negate ball.vel.y
 
             else
