@@ -259,6 +259,11 @@ updateBall canvasSize ball =
     }
 
 
+updateBallPosition : Ball -> Ball
+updateBallPosition ball =
+    { ball | pos = addVec ball.pos ball.vel }
+
+
 viewBall : Ball -> Svg msg
 viewBall ball =
     Svg.circle
