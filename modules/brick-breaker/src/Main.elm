@@ -220,10 +220,15 @@ initBall _ =
     }
 
 
-updateBall : Size -> Ball -> Ball
-updateBall canvasSize ball =
+updateBall : Size -> Paddle -> Ball -> Ball
+updateBall canvasSize paddle ball =
     updateBallPosition ball
-        |> bounceBallInCanvas canvasSize
+        |> bounceBallWithCanvasEdges canvasSize
+        |> bounceBallWithPaddle paddle
+
+
+bounceBallWithPaddle a =
+    identity
 
 
 updateBallPosition : Ball -> Ball
@@ -231,8 +236,8 @@ updateBallPosition ball =
     { ball | pos = addVec ball.pos ball.vel }
 
 
-bounceBallInCanvas : Size -> Ball -> Ball
-bounceBallInCanvas canvasSize ball =
+bounceBallWithCanvasEdges : Size -> Ball -> Ball
+bounceBallWithCanvasEdges canvasSize ball =
     let
         ballSize =
             newSize (ball.radius * 2) (ball.radius * 2)
@@ -330,7 +335,7 @@ update message model =
         Tick ->
             ( { model
                 | paddle = updatePaddle model.canvasSize model.input model.paddle
-                , ball = updateBall model.canvasSize model.ball
+                , ball = updateBall model.canvasSize model.paddle model.ball
               }
             , Cmd.none
             )
