@@ -212,7 +212,7 @@ initBall _ =
             5
 
         angle =
-            degrees 90
+            degrees -90
     in
     { pos = pos
     , radius = radius
@@ -222,8 +222,18 @@ initBall _ =
 
 updateBall : Size -> Ball -> Ball
 updateBall canvasSize ball =
+    let
+        ballSize =
+            newSize (ball.radius * 2) (ball.radius * 2)
+
+        ballBoundary =
+            shrinkSizeBy ballSize canvasSize
+                |> newBoundsAtOrigin
+    in
     { ball
-        | pos = addVec ball.pos ball.vel
+        | pos =
+            addVec ball.pos ball.vel
+                |> constrainVecInBounds ballBoundary
     }
 
 
