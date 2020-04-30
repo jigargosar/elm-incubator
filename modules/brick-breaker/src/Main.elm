@@ -53,6 +53,11 @@ newVec x y =
     Vec x y
 
 
+addVec : Vec -> Vec -> Vec
+addVec a b =
+    newVec (a.x + b.x) (a.y + b.y)
+
+
 
 -- SIZE
 
@@ -64,6 +69,11 @@ type alias Size =
 newSize : Float -> Float -> Size
 newSize w h =
     Size w h
+
+
+shrinkSizeBy : Size -> Size -> Size
+shrinkSizeBy b a =
+    newSize (a.width - b.width) (a.height - b.height)
 
 
 viewBoxOfSize : Size -> Svg.Attribute msg
@@ -100,20 +110,27 @@ initPaddle canvasSize =
 updatePaddle : Size -> Input -> Paddle -> Paddle
 updatePaddle canvasSize input paddle =
     let
-        dx =
-            if input.leftDown == input.rightDown then
-                0
-
-            else if input.leftDown then
+        dxLeft =
+            if input.leftDown then
                 -1
 
-            else if input.rightDown then
+            else
+                0
+
+        dxRight =
+            if input.rightDown then
                 1
 
             else
                 0
+
+        dx =
+            dxLeft + dxRight
+
+        _ =
+            shrinkSizeBy paddle.size canvasSize
     in
-    paddle
+    { paddle | pos = addVec paddle.pos (newVec dx 0) }
 
 
 viewPaddle : Paddle -> Svg msg
