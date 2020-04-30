@@ -8,7 +8,7 @@ import Svg
 import Svg.Attributes exposing (fill, stroke, strokeWidth)
 import TypedSvg.Attributes exposing (transform)
 import TypedSvg.Attributes.InPx
-import TypedSvg.Types
+import TypedSvg.Types exposing (Transform(..))
 
 
 
@@ -76,12 +76,14 @@ viewBoxOfSize size =
 
 
 type alias Paddle =
-    { pos : Vec }
+    { pos : Vec
+    , size : Size
+    }
 
 
-initPaddle : Paddle
-initPaddle =
-    Paddle (newVec 0 0)
+initPaddle : Size -> Paddle
+initPaddle canvasSize =
+    Paddle (newVec 0 ((canvasSize.height * 0.5) - 20)) (newSize 80 10)
 
 
 
@@ -106,7 +108,7 @@ init () =
             newSize 600 300
     in
     ( { input = initialInput
-      , paddle = initPaddle
+      , paddle = initPaddle canvasSize
       , canvasSize = canvasSize
       }
     , Cmd.none
@@ -158,8 +160,14 @@ view model =
         canvasSize =
             model.canvasSize
 
-        canvasBounds =
-            newBoundsFromSize canvasSize
+        --canvasBounds =
+        --    newBoundsFromSize canvasSize
+        viewPaddle paddle =
+            rect
+                paddle.size.width
+                paddle.size.height
+                [ transform [ Translate paddle.pos.x paddle.pos.y ]
+                ]
     in
     Document "Brick Breaker"
         [ Svg.svg
@@ -169,32 +177,9 @@ view model =
             , strokeWidth "1"
             ]
             [ rect canvasSize.width canvasSize.height []
-            , rect
-                80
-                10
-                [ transform
-                    [ moveY canvasBounds.bottom
-                    , moveUp 15
-                    ]
-                ]
+            , viewPaddle model.paddle
             ]
         ]
-
-
-move =
-    TypedSvg.Types.Translate
-
-
-moveY dy =
-    move 0 dy
-
-
-moveDown =
-    moveY
-
-
-moveUp =
-    negate >> moveDown
 
 
 
@@ -211,23 +196,6 @@ rect w h attrs =
             ++ attrs
         )
         []
-
-
-
--- Bounds
-
-
-type alias Bounds =
-    { left : Float
-    , right : Float
-    , top : Float
-    , bottom : Float
-    }
-
-
-newBoundsFromSize : Size -> Bounds
-newBoundsFromSize size =
-    Bounds (-size.width / 2) (size.width / 2) (-size.height / 2) (size.height / 2)
 
 
 
