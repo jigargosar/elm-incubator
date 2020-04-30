@@ -97,6 +97,25 @@ initPaddle canvasSize =
     Paddle pos size
 
 
+updatePaddle : Size -> Input -> Paddle -> Paddle
+updatePaddle canvasSize input paddle =
+    let
+        dx =
+            if input.leftDown == input.rightDown then
+                0
+
+            else if input.leftDown then
+                -1
+
+            else if input.rightDown then
+                1
+
+            else
+                0
+    in
+    paddle
+
+
 viewPaddle : Paddle -> Svg msg
 viewPaddle paddle =
     rect
@@ -159,7 +178,9 @@ update message model =
             ( { model | input = recordKey key False model.input }, Cmd.none )
 
         Tick ->
-            ( model, Cmd.none )
+            ( { model | paddle = updatePaddle model.canvasSize model.input model.paddle }
+            , Cmd.none
+            )
 
 
 subscriptions : Model -> Sub Msg
