@@ -24,10 +24,11 @@ emptyGrid =
     ]
 
 
+initialGrid : Grid
 initialGrid =
     emptyGrid
         |> gridSetAt 0 0 2
-        |> gridSetAt 1 1 2
+        |> gridSetAt 1 1 4
 
 
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
@@ -82,7 +83,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { grid = emptyGrid }
+    ( { grid = initialGrid }
     , Cmd.none
     )
 
