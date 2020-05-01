@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import List.Extra
+import Random
 
 
 
@@ -21,6 +22,12 @@ emptyGrid =
     , [ 0, 0, 0, 0 ]
     , [ 0, 0, 0, 0 ]
     ]
+
+
+initialGrid =
+    emptyGrid
+        |> gridSetAt 0 0 2
+        |> gridSetAt 1 1 2
 
 
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
@@ -44,10 +51,6 @@ gridPositions =
 gridEmptyPositions : Grid -> List ( Int, Int )
 gridEmptyPositions grid =
     List.filter (\( r, c ) -> gridGetAt r c grid == 0) gridPositions
-
-
-gridGenerator =
-    1
 
 
 viewGrid : Grid -> HM
