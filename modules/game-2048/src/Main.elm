@@ -36,24 +36,6 @@ gridSetAt r c v =
     List.Extra.updateAt r (List.Extra.setAt c v)
 
 
-gridGetAt : Int -> Int -> Grid -> Int
-gridGetAt r c grid =
-    List.Extra.getAt r grid
-        |> Maybe.andThen (List.Extra.getAt c)
-        |> Maybe.withDefault 0
-
-
-gridPositions : List ( Int, Int )
-gridPositions =
-    List.range 0 3
-        |> List.concatMap (\r -> List.range 0 3 |> List.map (Tuple.pair r))
-
-
-gridEmptyPositions : Grid -> List ( Int, Int )
-gridEmptyPositions grid =
-    List.filter (\( r, c ) -> gridGetAt r c grid == 0) gridPositions
-
-
 viewGrid : Grid -> HM
 viewGrid grid =
     let
