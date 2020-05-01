@@ -29,6 +29,8 @@ initialGrid =
     emptyGrid
         |> gridSetAt 0 0 2
         |> gridSetAt 1 1 4
+        |> gridSetAt 1 2 4
+        |> gridSetAt 1 3 4
         |> gridSlideRight
 
 
