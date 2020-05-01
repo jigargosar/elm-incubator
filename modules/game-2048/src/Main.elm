@@ -43,28 +43,36 @@ eq =
     (==)
 
 
+gridCompactRow : List Int -> List Int
+gridCompactRow row =
+    row
+        |> List.filter (eq 0 >> not)
+        |> List.foldr
+            (\v acc ->
+                case acc of
+                    h :: t ->
+                        if v == h then
+                            v + h :: t
+
+                        else
+                            v :: acc
+
+                    _ ->
+                        v :: acc
+            )
+            []
+
+
 gridRowSlideRight : List Int -> List Int
 gridRowSlideRight row =
     let
         compactedRow =
-            row
-                |> List.filter (eq 0 >> not)
-                |> List.foldr
-                    (\v acc ->
-                        case acc of
-                            h :: t ->
-                                if v == h then
-                                    v + h :: t
+            gridCompactRow row
 
-                                else
-                                    v :: acc
-
-                            _ ->
-                                v :: acc
-                    )
-                    []
+        padLength =
+            4 - List.length compactedRow
     in
-    List.repeat (4 - List.length compactedRow) 0 ++ compactedRow
+    List.repeat padLength 0 ++ compactedRow
 
 
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
