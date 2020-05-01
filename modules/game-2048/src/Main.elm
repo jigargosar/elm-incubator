@@ -35,6 +35,35 @@ initialGrid =
 gridSlideRight : Grid -> Grid
 gridSlideRight grid =
     grid
+        |> List.map gridRowSlideRight
+
+
+eq =
+    (==)
+
+
+gridRowSlideRight : List Int -> List Int
+gridRowSlideRight row =
+    let
+        compactedRow =
+            row
+                |> List.filter (eq 0 >> not)
+                |> List.foldr
+                    (\v acc ->
+                        case acc of
+                            h :: t ->
+                                if v == h then
+                                    v + h :: t
+
+                                else
+                                    v :: acc
+
+                            _ ->
+                                v :: acc
+                    )
+                    []
+    in
+    List.repeat (4 - List.length compactedRow) 0 ++ compactedRow
 
 
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
