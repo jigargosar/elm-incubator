@@ -6,11 +6,28 @@ import Html.Attributes exposing (class)
 
 
 
+-- Grid
+
+
+type alias Grid =
+    List (List Int)
+
+
+emptyGrid : Grid
+emptyGrid =
+    [ [ 0, 0, 0, 0 ]
+    , [ 0, 0, 0, 0 ]
+    , [ 0, 0, 0, 0 ]
+    , [ 0, 0, 0, 0 ]
+    ]
+
+
+
 -- Model
 
 
 type alias Model =
-    {}
+    { grid : Grid }
 
 
 type alias Flags =
@@ -19,7 +36,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
+    ( { grid = emptyGrid }
     , Cmd.none
     )
 
@@ -53,21 +70,22 @@ type alias DM =
 
 
 view : Model -> DM
-view _ =
+view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , div [ class "pl5 pv3 " ] [ viewGrid ]
+        , div [ class "pl5 pv3 " ] [ viewGrid model.grid ]
         ]
 
 
-viewGrid =
+type alias HM =
+    Html Msg
+
+
+viewGrid : Grid -> HM
+viewGrid grid =
     let
         rows =
-            [ [ 0, 0, 0, 0 ]
-            , [ 0, 0, 0, 0 ]
-            , [ 0, 0, 0, 0 ]
-            , [ 0, 0, 0, 0 ]
-            ]
+            grid
 
         viewRow row =
             div [ class "flex" ] (List.map viewCell row)
