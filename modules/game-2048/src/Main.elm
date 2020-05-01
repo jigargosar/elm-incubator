@@ -31,9 +31,14 @@ initialGrid =
         |> gridSetAt 1 1 4
         |> gridSetAt 1 2 4
         |> gridSetAt 1 3 4
-        |> List.map gridRowSlideLeft
-        --|> List.map gridRowSlideRight
+        |> mapGridRows gridRowSlideLeft
+        |> mapGridRows gridRowSlideRight
         |> identity
+
+
+mapGridRows : (List Int -> List Int) -> Grid -> Grid
+mapGridRows =
+    List.map
 
 
 gridRowSlideRight : List Int -> List Int
