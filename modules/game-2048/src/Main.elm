@@ -29,6 +29,12 @@ initialGrid =
     emptyGrid
         |> gridSetAt 0 0 2
         |> gridSetAt 1 1 4
+        |> gridSlideRight
+
+
+gridSlideRight : Grid -> Grid
+gridSlideRight grid =
+    grid
 
 
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
