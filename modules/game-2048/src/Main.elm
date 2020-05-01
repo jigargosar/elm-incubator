@@ -41,6 +41,24 @@ mapGridRows =
     List.map
 
 
+mapGridColumns : (List Int -> List Int) -> Grid -> Grid
+mapGridColumns fun grid =
+    grid
+        |> gridToColumns
+        |> List.map fun
+        |> gridFromColumns
+
+
+gridToColumns : Grid -> List (List Int)
+gridToColumns grid =
+    grid
+
+
+gridFromColumns : Grid -> List (List Int)
+gridFromColumns grid =
+    grid
+
+
 gridRowSlideRight : List Int -> List Int
 gridRowSlideRight row =
     let
