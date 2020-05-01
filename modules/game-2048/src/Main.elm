@@ -35,6 +35,7 @@ initialGrid =
         |> up
         |> left
         |> right
+        |> down
         |> identity
 
 
