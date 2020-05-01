@@ -39,6 +39,15 @@ gridSlideRight =
     List.map gridRowSlideRight
 
 
+gridRowSlideRight : List Int -> List Int
+gridRowSlideRight row =
+    let
+        compacted =
+            gridCompactRow row
+    in
+    gridRowPadding compacted ++ compacted
+
+
 eq =
     (==)
 
@@ -63,16 +72,13 @@ gridCompactRow row =
             []
 
 
-gridRowSlideRight : List Int -> List Int
-gridRowSlideRight row =
+gridRowPadding : List Int -> List Int
+gridRowPadding row =
     let
-        compactedRow =
-            gridCompactRow row
-
         padLength =
-            4 - List.length compactedRow
+            4 - List.length row
     in
-    List.repeat padLength 0 ++ compactedRow
+    List.repeat padLength 0
 
 
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
