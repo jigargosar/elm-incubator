@@ -33,9 +33,8 @@ initialGrid =
 
 
 gridSlideRight : Grid -> Grid
-gridSlideRight grid =
-    grid
-        |> List.map gridRowSlideRight
+gridSlideRight =
+    List.map gridRowSlideRight
 
 
 eq =
