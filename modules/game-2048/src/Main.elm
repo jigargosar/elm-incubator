@@ -31,12 +31,9 @@ initialGrid =
         |> gridSetAt 1 1 4
         |> gridSetAt 1 2 4
         |> gridSetAt 1 3 4
-        |> gridSlideRight
-
-
-gridSlideRight : Grid -> Grid
-gridSlideRight =
-    List.map gridRowSlideRight
+        |> List.map gridRowSlideLeft
+        |> List.map gridRowSlideRight
+        |> identity
 
 
 gridRowSlideRight : List Int -> List Int
@@ -46,6 +43,15 @@ gridRowSlideRight row =
             gridCompactRow row
     in
     gridRowPadding compacted ++ compacted
+
+
+gridRowSlideLeft : List Int -> List Int
+gridRowSlideLeft row =
+    let
+        compacted =
+            gridCompactRow row
+    in
+    compacted ++ gridRowPadding compacted
 
 
 eq =
