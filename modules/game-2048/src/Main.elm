@@ -28,12 +28,30 @@ initialGrid : Grid
 initialGrid =
     emptyGrid
         |> gridSetAt 0 0 2
+        |> gridSetAt 1 0 2
         |> gridSetAt 1 1 4
         |> gridSetAt 1 2 4
         |> gridSetAt 1 3 4
-        |> mapGridRows gridRowSlideLeft
-        |> mapGridRows gridRowSlideRight
+        |> up
+        |> left
+        |> right
         |> identity
+
+
+down =
+    mapGridColumns gridListSlideRight
+
+
+up =
+    mapGridColumns gridListSlideLeft
+
+
+left =
+    mapGridRows gridListSlideLeft
+
+
+right =
+    mapGridRows gridListSlideRight
 
 
 mapGridRows : (List Int -> List Int) -> Grid -> Grid
@@ -44,23 +62,33 @@ mapGridRows =
 mapGridColumns : (List Int -> List Int) -> Grid -> Grid
 mapGridColumns fun grid =
     grid
-        |> gridToColumns
+        |> transposeGrid
         |> List.map fun
-        |> gridFromColumns
+        |> transposeGrid
 
 
-gridToColumns : Grid -> List (List Int)
-gridToColumns grid =
-    grid
+gridPositions : List ( Int, Int )
+gridPositions =
+    mapRangeLen 4 (\r -> mapRangeLen 4 (Tuple.pair r))
+        |> List.concat
 
 
-gridFromColumns : Grid -> List (List Int)
-gridFromColumns grid =
-    grid
+mapRangeLen len func =
+    List.range 0 (len - 1) |> List.map func
 
 
-gridRowSlideRight : List Int -> List Int
-gridRowSlideRight row =
+transposeGrid : Grid -> List (List Int)
+transposeGrid grid0 =
+    List.foldl
+        (\( r, c ) grid ->
+            gridSetAt c r (gridGetAt r c grid0) grid
+        )
+        grid0
+        gridPositions
+
+
+gridListSlideRight : List Int -> List Int
+gridListSlideRight row =
     let
         compacted =
             gridCompactRow row
@@ -68,9 +96,9 @@ gridRowSlideRight row =
     gridRowPadding compacted ++ compacted
 
 
-gridRowSlideLeft : List Int -> List Int
-gridRowSlideLeft =
-    List.reverse >> gridRowSlideRight >> List.reverse
+gridListSlideLeft : List Int -> List Int
+gridListSlideLeft =
+    List.reverse >> gridListSlideRight >> List.reverse
 
 
 eq =
@@ -109,6 +137,13 @@ gridRowPadding row =
 gridSetAt : Int -> Int -> Int -> Grid -> Grid
 gridSetAt r c v =
     List.Extra.updateAt r (List.Extra.setAt c v)
+
+
+gridGetAt : Int -> Int -> Grid -> Int
+gridGetAt r c =
+    List.Extra.getAt r
+        >> Maybe.andThen (List.Extra.getAt c)
+        >> Maybe.withDefault 0
 
 
 viewGrid : Grid -> HM
