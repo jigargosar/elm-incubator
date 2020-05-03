@@ -37,29 +37,24 @@ updateGrid2 gridOp grid2 =
         grid2
 
     else
-        let
-            ( filledGrid, nextSeed ) =
-                Random.step (fillRandomEmptyPosition nextGrid) grid2.seed
-        in
-        { grid2 | grid = filledGrid, seed = nextSeed }
+        case gridEmptyPositions nextGrid of
+            [] ->
+                grid2
 
-
-fillRandomEmptyPosition : Grid -> Random.Generator Grid
-fillRandomEmptyPosition grid =
-    let
-        emptyPositions =
-            gridToDict grid
-                |> Dict.filter (\_ v -> v == 0)
-                |> Dict.keys
-    in
-    case emptyPositions of
-        [] ->
-            Random.constant grid
-
-        h :: t ->
-            Random.map2 (\( r, c ) val -> gridSetAt r c val grid)
-                (Random.uniform h t)
-                (Random.uniform 2 [ 4 ])
+            h :: t ->
+                let
+                    ( ( ( ri, ci ), randomVal ), nextSeed ) =
+                        Random.step
+                            (Random.pair
+                                (Random.uniform h t)
+                                (Random.uniform 2 [ 4 ])
+                            )
+                            grid2.seed
+                in
+                { grid = gridSetAt ri ci randomVal nextGrid
+                , lastGen = Just ( ri, ci )
+                , seed = nextSeed
+                }
 
 
 
@@ -94,6 +89,13 @@ gridToDict =
         )
         >> List.concat
         >> Dict.fromList
+
+
+gridEmptyPositions : Grid -> List ( Int, Int )
+gridEmptyPositions grid =
+    gridToDict grid
+        |> Dict.filter (\_ v -> v == 0)
+        |> Dict.keys
 
 
 type GridOp
