@@ -318,9 +318,9 @@ viewGridWithOps ops grid2 =
                 ng2 =
                     updateGrid2 op g2
             in
-            ( viewNamedGrid (Debug.toString op) ng2.grid :: vl, ng2 )
+            ( viewNamedGrid (Debug.toString op) ng2 :: vl, ng2 )
         )
-        ( [ viewNamedGrid "Initial Grid" grid2.grid ], grid2 )
+        ( [ viewNamedGrid "Initial Grid" grid2 ], grid2 )
         ops
         |> (Tuple.first >> List.reverse)
         |> div []
@@ -329,7 +329,7 @@ viewGridWithOps ops grid2 =
 viewNamedGrid name grid =
     div [ class "pl5 pv3" ]
         [ div [ class "f3 pa2 " ] [ text name ]
-        , viewGrid grid
+        , viewGrid2 grid
         ]
 
 
