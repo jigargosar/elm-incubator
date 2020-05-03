@@ -123,7 +123,7 @@ updateGrid gridOp =
             Grid.mapColumnLists gridListSlideLeft
 
         SlideDown ->
-            Grid.mapColumnLists gridListSlideLeft
+            Grid.mapColumnLists gridListSlideRight
 
         SlideLeft ->
             Grid.mapRowLists gridListSlideLeft
@@ -151,7 +151,7 @@ compactNumRight =
     let
         padLeft : List Int -> List Int
         padLeft l =
-            List.repeat 0 (4 - List.length l) ++ l
+            List.repeat (4 - List.length l) 0 ++ l
 
         func v acc =
             case acc of
