@@ -76,7 +76,7 @@ viewGrid2 grid2 =
 
                 _ ->
                     String.fromInt num
-                        |> always "2048"
+                        --|> always "2048"
                         |> identity
 
         cellContainer children =
