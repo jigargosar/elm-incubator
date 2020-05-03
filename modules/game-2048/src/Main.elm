@@ -372,17 +372,15 @@ viewNamedGrid name grid =
 
 viewNamedGridList : List ( String, Grid2 ) -> HM
 viewNamedGridList =
-    List.reverse
-        >> List.map (uncurry viewNamedGrid)
-        >> div [ class "flex flex-wrap justify-center" ]
+    List.map (uncurry viewNamedGrid)
+        >> div [ class "flex flex-column items-center" ]
 
 
 view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewNamedGridList model.list
-        , div []
+        , div [ class "flex justify-center" ]
             ([ SlideLeft
              , SlideRight
              , SlideUp
@@ -390,11 +388,12 @@ view model =
              ]
                 |> List.map opBtn
             )
+        , viewNamedGridList model.list
         ]
 
 
 opBtn op =
-    button [ onClick (OnGridOp op) ] [ text (Debug.toString op) ]
+    div [ class "pa2" ] [ button [ onClick (OnGridOp op) ] [ text (Debug.toString op) ] ]
 
 
 type alias HM =
