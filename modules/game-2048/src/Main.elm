@@ -347,17 +347,20 @@ viewNamedGridList =
 
 view : Model -> DM
 view _ =
+    let
+        initialNamedGridList =
+            toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
+                (initGrid2 (Random.initialSeed 0)
+                    [ [ 2, 0, 0, 0 ]
+                    , [ 2, 4, 4, 4 ]
+                    , [ 0, 0, 0, 0 ]
+                    , [ 0, 0, 0, 0 ]
+                    ]
+                )
+    in
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
-            (initGrid2 (Random.initialSeed 0)
-                [ [ 2, 0, 0, 0 ]
-                , [ 2, 4, 4, 4 ]
-                , [ 0, 0, 0, 0 ]
-                , [ 0, 0, 0, 0 ]
-                ]
-            )
-            |> viewNamedGridList
+        , viewNamedGridList initialNamedGridList
         ]
 
 
