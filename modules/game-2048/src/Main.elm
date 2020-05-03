@@ -22,22 +22,6 @@ type SlideMsg
     | SlideRight
 
 
-updateGrid : SlideMsg -> Grid -> Grid
-updateGrid message =
-    case message of
-        SlideUp ->
-            Grid.mapColumnLists compactLeft
-
-        SlideDown ->
-            Grid.mapColumnLists compactRight
-
-        SlideLeft ->
-            Grid.mapRowLists compactLeft
-
-        SlideRight ->
-            Grid.mapRowLists compactRight
-
-
 compactLeft : List Int -> List Int
 compactLeft =
     List.reverse >> compactRight >> List.reverse
@@ -87,14 +71,25 @@ initBoard seed lists =
 
 
 updateBoard : SlideMsg -> Board -> Board
-updateBoard gridOp board =
+updateBoard message board =
     let
         nextGrid : Grid
         nextGrid =
-            updateGrid gridOp board.grid
+            case message of
+                SlideUp ->
+                    Grid.mapColumnLists compactLeft board.grid
+
+                SlideDown ->
+                    Grid.mapColumnLists compactRight board.grid
+
+                SlideLeft ->
+                    Grid.mapRowLists compactLeft board.grid
+
+                SlideRight ->
+                    Grid.mapRowLists compactRight board.grid
     in
     if nextGrid == board.grid then
-        board
+        { board | lastGen = Nothing }
 
     else
         case
