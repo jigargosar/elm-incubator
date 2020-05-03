@@ -23,14 +23,19 @@ emptyGrid =
     ]
 
 
-initialGrid : Grid
-initialGrid =
+grid1 : Grid
+grid1 =
     emptyGrid
         |> gridSetAt 0 0 2
         |> gridSetAt 1 0 2
         |> gridSetAt 1 1 4
         |> gridSetAt 1 2 4
         |> gridSetAt 1 3 4
+
+
+initialGrid : Grid
+initialGrid =
+    grid1
         |> up
         |> left
         |> right
@@ -208,11 +213,24 @@ type alias DM =
     Document Msg
 
 
+namedGrids =
+    [ ( "grid1", grid1 )
+    , ( "grid1 slideUp", grid1 |> up )
+    ]
+
+
 view : Model -> DM
 view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , div [ class "pl5 pv3 " ] [ viewGrid initialGrid ]
+        , div [] (List.map viewNamedGrid namedGrids)
+        ]
+
+
+viewNamedGrid ( name, grid ) =
+    div [ class "pl5 pv3" ]
+        [ div [ class "f3 pa2 " ] [ text name ]
+        , viewGrid grid
         ]
 
 
