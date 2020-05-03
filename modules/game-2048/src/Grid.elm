@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, set, toDict, toLists, transpose)
+module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromLists, get, init, set, toDict, toLists, transpose)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
@@ -52,8 +52,20 @@ transposeSize size =
     { width = size.height, height = size.width }
 
 
+type alias Lists a =
+    List (List a)
+
+
 type alias PosDict a =
     Dict Pos a
+
+
+posDictToRowLists : PosDict a -> Lists a
+posDictToRowLists d =
+    Dict.toList d
+        |> List.Extra.gatherEqualsBy entryRow
+        |> List.map consToList
+        |> List.map (List.map entryValue)
 
 
 type Grid a
@@ -68,7 +80,7 @@ init size func =
         |> Grid size
 
 
-fromLists : Size -> a -> List (List a) -> Grid a
+fromLists : Size -> a -> Lists a -> Grid a
 fromLists size a lists =
     let
         posDict : PosDict a
@@ -110,12 +122,12 @@ get pos (Grid _ d) =
     Dict.get pos d
 
 
-listsToPosDict : List (List a) -> PosDict a
+listsToPosDict : Lists a -> PosDict a
 listsToPosDict =
     listsToEntries >> Dict.fromList
 
 
-listsToEntries : List (List a) -> List (Entry a)
+listsToEntries : Lists a -> List (Entry a)
 listsToEntries =
     List.indexedMap
         (\y ->
@@ -135,7 +147,7 @@ positionsFromSize s =
         |> List.concat
 
 
-toLists : Grid a -> List (List a)
+toLists : Grid a -> Lists a
 toLists (Grid _ d) =
     Dict.toList d
         |> List.Extra.gatherEqualsBy entryRow
