@@ -44,7 +44,9 @@ fillRandomEmptyPosition : Grid -> Random.Generator Grid
 fillRandomEmptyPosition grid =
     let
         emptyPositions =
-            []
+            gridToDict grid
+                |> Dict.filter (\_ v -> v == 0)
+                |> Dict.keys
 
         _ =
             case emptyPositions of
