@@ -15,12 +15,16 @@ import Random
 type alias Grid2 =
     { seed : Random.Seed
     , grid : Grid
+    , lastGen : Maybe ( Int, Int )
     }
 
 
 initGrid2 : Random.Seed -> List (List Int) -> Grid2
 initGrid2 seed lists =
-    { seed = seed, grid = gridFromLists lists }
+    { seed = seed
+    , grid = gridFromLists lists
+    , lastGen = Nothing
+    }
 
 
 updateGrid2 : GridOp -> Grid2 -> Grid2
