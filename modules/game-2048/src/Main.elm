@@ -84,7 +84,7 @@ viewGrid2 grid2 =
             else
                 div [ class "w2 tc" ] [ text (numToString num) ]
     in
-    div [ class "flex flex-column code f3" ] (List.indexedMap viewRow rows)
+    div [ class "flex flex-column f4" ] (List.indexedMap viewRow rows)
 
 
 
@@ -93,16 +93,6 @@ viewGrid2 grid2 =
 
 type alias Grid =
     List (List Int)
-
-
-
---emptyGrid : Grid
---emptyGrid =
---    [ [ 0, 0, 0, 0 ]
---    , [ 0, 0, 0, 0 ]
---    , [ 0, 0, 0, 0 ]
---    , [ 0, 0, 0, 0 ]
---    ]
 
 
 gridFromLists : List (List Int) -> Grid
@@ -260,19 +250,6 @@ gridGetAt r c =
 
 
 
---viewGrid : Grid -> HM
---viewGrid grid =
---    let
---        rows =
---            grid
---
---        viewRow row =
---            div [ class "flex" ] (List.map viewCell row)
---
---        viewCell num =
---            div [ class "w3 tc" ] [ text (String.fromInt num) ]
---    in
---    div [ class "flex flex-column code f1" ] (List.map viewRow rows)
 -- Model
 
 
