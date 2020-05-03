@@ -282,9 +282,20 @@ type alias Flags =
     ()
 
 
+initialNamedGridList =
+    toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
+        (initGrid2 (Random.initialSeed 0)
+            [ [ 2, 0, 0, 0 ]
+            , [ 2, 4, 4, 4 ]
+            , [ 0, 0, 0, 0 ]
+            , [ 0, 0, 0, 0 ]
+            ]
+        )
+
+
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { list = [] }
+    ( { list = initialNamedGridList }
     , Cmd.none
     )
 
@@ -346,21 +357,10 @@ viewNamedGridList =
 
 
 view : Model -> DM
-view _ =
-    let
-        initialNamedGridList =
-            toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
-                (initGrid2 (Random.initialSeed 0)
-                    [ [ 2, 0, 0, 0 ]
-                    , [ 2, 4, 4, 4 ]
-                    , [ 0, 0, 0, 0 ]
-                    , [ 0, 0, 0, 0 ]
-                    ]
-                )
-    in
+view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewNamedGridList initialNamedGridList
+        , viewNamedGridList model.list
         ]
 
 
