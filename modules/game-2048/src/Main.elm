@@ -47,18 +47,15 @@ fillRandomEmptyPosition grid =
             gridToDict grid
                 |> Dict.filter (\_ v -> v == 0)
                 |> Dict.keys
-
-        _ =
-            case emptyPositions of
-                [] ->
-                    Random.constant grid
-
-                h :: t ->
-                    Random.map2 (\( r, c ) val -> gridSetAt r c val grid)
-                        (Random.uniform h t)
-                        (Random.uniform 2 [ 4 ])
     in
-    Random.constant grid
+    case emptyPositions of
+        [] ->
+            Random.constant grid
+
+        h :: t ->
+            Random.map2 (\( r, c ) val -> gridSetAt r c val grid)
+                (Random.uniform h t)
+                (Random.uniform 2 [ 4 ])
 
 
 
