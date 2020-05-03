@@ -247,17 +247,17 @@ type alias DM =
     Document Msg
 
 
-viewGridWithOps : List GridOp -> Grid -> HM
-viewGridWithOps ops grid =
+viewGridWithOps : List GridOp -> Grid2 -> HM
+viewGridWithOps ops grid2 =
     List.foldl
-        (\op ( vl, g ) ->
+        (\op ( vl, g2 ) ->
             let
-                ng =
-                    updateGrid op g
+                ng2 =
+                    updateGrid2 op g2
             in
-            ( viewNamedGrid (Debug.toString op) ng :: vl, ng )
+            ( viewNamedGrid (Debug.toString op) ng2.grid :: vl, ng2 )
         )
-        ( [ viewNamedGrid "Initial Grid" grid ], grid )
+        ( [ viewNamedGrid "Initial Grid" grid2.grid ], grid2 )
         ops
         |> (Tuple.first >> List.reverse)
         |> div []
@@ -275,7 +275,7 @@ view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
         , viewGridWithOps [ SlideDown, SlideUp ]
-            (gridFromLists
+            (initGrid2 (Random.initialSeed 0)
                 [ [ 2, 0, 0, 0 ]
                 , [ 2, 4, 4, 4 ]
                 , [ 0, 0, 0, 0 ]
