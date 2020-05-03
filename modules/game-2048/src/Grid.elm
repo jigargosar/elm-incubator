@@ -100,6 +100,10 @@ set pos a (Grid s d) =
         |> Maybe.map (\_ -> Dict.insert pos a d |> Grid s)
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 get : Pos -> Grid a -> Maybe a
 get pos (Grid _ d) =
     Dict.get pos d
