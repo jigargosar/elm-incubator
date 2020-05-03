@@ -117,8 +117,8 @@ type SlideMsg
 
 
 updateGrid : SlideMsg -> Grid -> Grid
-updateGrid gridOp =
-    case gridOp of
+updateGrid message =
+    case message of
         SlideUp ->
             Grid.mapColumnLists compactLeft
 
