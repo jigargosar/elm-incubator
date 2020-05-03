@@ -22,7 +22,7 @@ type alias Grid2 =
     }
 
 
-initGrid2 : Random.Seed -> List (List Int) -> Grid2
+initGrid2 : Random.Seed -> Grid.Lists Int -> Grid2
 initGrid2 seed lists =
     { seed = seed
     , grid = gridFromLists lists
@@ -102,7 +102,7 @@ type alias Grid =
     Grid.Grid Int
 
 
-gridFromLists : List (List Int) -> Grid
+gridFromLists : Grid.Lists Int -> Grid
 gridFromLists =
     Grid.fromLists { width = 4, height = 4 } 0
 
