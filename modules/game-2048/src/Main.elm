@@ -72,12 +72,11 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message =
-    slide message
-        >> fillRandomEmptyPos
+    slide message >> addNew
 
 
-fillRandomEmptyPos : Board -> Board
-fillRandomEmptyPos board =
+addNew : Board -> Board
+addNew board =
     case
         Grid.toDict board.grid
             |> Dict.filter (\_ v -> v == 0)
