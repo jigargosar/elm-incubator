@@ -133,12 +133,8 @@ updateGrid gridOp =
 
 
 gridListSlideRight : List Int -> List Int
-gridListSlideRight row =
-    let
-        compacted =
-            compactNumList row
-    in
-    gridRowPadding compacted ++ compacted
+gridListSlideRight =
+    compactNumRight
 
 
 gridListSlideLeft : List Int -> List Int
@@ -150,9 +146,13 @@ eq =
     (==)
 
 
-compactNumList : List Int -> List Int
-compactNumList =
+compactNumRight : List Int -> List Int
+compactNumRight =
     let
+        padLeft : List Int -> List Int
+        padLeft l =
+            List.repeat 0 (4 - List.length l) ++ l
+
         func v acc =
             case acc of
                 h :: t ->
@@ -167,15 +167,7 @@ compactNumList =
     in
     List.filter (eq 0 >> not)
         >> List.foldr func []
-
-
-gridRowPadding : List Int -> List Int
-gridRowPadding row =
-    let
-        padLength =
-            4 - List.length row
-    in
-    List.repeat padLength 0
+        >> padLeft
 
 
 
