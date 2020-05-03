@@ -120,20 +120,20 @@ updateGrid : SlideMsg -> Grid -> Grid
 updateGrid gridOp =
     case gridOp of
         SlideUp ->
-            Grid.mapColumnLists (List.reverse >> compactNumRight >> List.reverse)
+            Grid.mapColumnLists (List.reverse >> compactRight >> List.reverse)
 
         SlideDown ->
-            Grid.mapColumnLists compactNumRight
+            Grid.mapColumnLists compactRight
 
         SlideLeft ->
-            Grid.mapRowLists (List.reverse >> compactNumRight >> List.reverse)
+            Grid.mapRowLists (List.reverse >> compactRight >> List.reverse)
 
         SlideRight ->
-            Grid.mapRowLists compactNumRight
+            Grid.mapRowLists compactRight
 
 
-compactNumRight : List Int -> List Int
-compactNumRight =
+compactRight : List Int -> List Int
+compactRight =
     let
         padLeft : List Int -> List Int
         padLeft l =
