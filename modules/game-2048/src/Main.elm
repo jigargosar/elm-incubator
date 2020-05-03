@@ -120,26 +120,16 @@ updateGrid : SlideMsg -> Grid -> Grid
 updateGrid gridOp =
     case gridOp of
         SlideUp ->
-            Grid.mapColumnLists gridListSlideLeft
+            Grid.mapColumnLists (List.reverse >> compactNumRight >> List.reverse)
 
         SlideDown ->
-            Grid.mapColumnLists gridListSlideRight
+            Grid.mapColumnLists compactNumRight
 
         SlideLeft ->
-            Grid.mapRowLists gridListSlideLeft
+            Grid.mapRowLists (List.reverse >> compactNumRight >> List.reverse)
 
         SlideRight ->
-            Grid.mapRowLists gridListSlideRight
-
-
-gridListSlideRight : List Int -> List Int
-gridListSlideRight =
-    compactNumRight
-
-
-gridListSlideLeft : List Int -> List Int
-gridListSlideLeft =
-    List.reverse >> gridListSlideRight >> List.reverse
+            Grid.mapRowLists compactNumRight
 
 
 eq =
