@@ -4,9 +4,8 @@ import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
 import Json.Decode as D
 import List.Extra
 import Random
@@ -314,7 +313,6 @@ init () =
 
 type Msg
     = NoOp
-    | OnGridOp GridOp
     | OnKeyDown String
 
 
@@ -336,9 +334,6 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
-
-        OnGridOp gridOp ->
-            ( updateGridListWithOp gridOp model, Cmd.none )
 
         OnKeyDown string ->
             let
@@ -415,20 +410,8 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , div [ class "flex justify-center" ]
-            ([ SlideLeft
-             , SlideRight
-             , SlideUp
-             , SlideDown
-             ]
-                |> List.map opBtn
-            )
         , viewNamedGridList (List.take 4 model.list)
         ]
-
-
-opBtn op =
-    div [ class "pa2" ] [ button [ onClick (OnGridOp op) ] [ text (Debug.toString op) ] ]
 
 
 type alias HM =
