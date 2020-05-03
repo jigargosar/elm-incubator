@@ -124,11 +124,11 @@ get pos (Grid _ d) =
 
 listsToPosDict : Lists a -> PosDict a
 listsToPosDict =
-    listsToEntries >> Dict.fromList
+    rowListsToEntries >> Dict.fromList
 
 
-listsToEntries : Lists a -> List (Entry a)
-listsToEntries =
+rowListsToEntries : Lists a -> List (Entry a)
+rowListsToEntries =
     List.indexedMap
         (\y ->
             List.indexedMap (\x a -> ( newPos x y, a ))
@@ -163,7 +163,7 @@ mapRowLists func (Grid s d) =
             d
                 |> posDictToRowLists
                 |> List.map func
-                |> listsToEntries
+                |> rowListsToEntries
     in
     replaceEntries newEntries d
         |> Grid s
