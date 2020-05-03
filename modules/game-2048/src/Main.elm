@@ -2,10 +2,12 @@ module Main exposing (main)
 
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
+import Browser.Events
 import Dict exposing (Dict)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Json.Decode as D
 import List.Extra
 import Random
 
@@ -313,6 +315,20 @@ init () =
 type Msg
     = NoOp
     | OnGridOp GridOp
+    | OnKeyDown String
+
+
+updateGridListWithOp : GridOp -> Model -> Model
+updateGridListWithOp gridOp model =
+    case model.list of
+        [] ->
+            model
+
+        ( _, g2 ) :: _ ->
+            { model
+                | list =
+                    ( Debug.toString gridOp, updateGrid2 gridOp g2 ) :: model.list
+            }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -322,22 +338,41 @@ update message model =
             ( model, Cmd.none )
 
         OnGridOp gridOp ->
-            case model.list of
-                [] ->
-                    ( model, Cmd.none )
+            ( updateGridListWithOp gridOp model, Cmd.none )
 
-                ( _, g2 ) :: _ ->
-                    ( { model
-                        | list =
-                            ( Debug.toString gridOp, updateGrid2 gridOp g2 ) :: model.list
-                      }
-                    , Cmd.none
-                    )
+        OnKeyDown string ->
+            let
+                maybeOp =
+                    case string of
+                        "ArrowUp" ->
+                            Just SlideUp
+
+                        "ArrowDown" ->
+                            Just SlideDown
+
+                        "ArrowLeft" ->
+                            Just SlideLeft
+
+                        "ArrowRight" ->
+                            Just SlideRight
+
+                        _ ->
+                            Nothing
+            in
+            case maybeOp of
+                Just gridOp ->
+                    ( updateGridListWithOp gridOp model, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch
+        [ Browser.Events.onKeyDown
+            (D.field "key" D.string |> D.map OnKeyDown)
+        ]
 
 
 
