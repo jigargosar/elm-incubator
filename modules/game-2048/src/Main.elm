@@ -132,10 +132,6 @@ updateGrid gridOp =
             Grid.mapRowLists compactNumRight
 
 
-eq =
-    (==)
-
-
 compactNumRight : List Int -> List Int
 compactNumRight =
     let
@@ -155,7 +151,7 @@ compactNumRight =
                 _ ->
                     v :: acc
     in
-    List.filter (eq 0 >> not)
+    List.filter (\v -> v /= 0)
         >> List.foldr func []
         >> padLeft
 
