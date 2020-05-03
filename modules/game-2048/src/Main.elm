@@ -15,35 +15,35 @@ import Random
 -- GridWithRandomSeed
 
 
-type alias Grid2 =
+type alias Board =
     { seed : Random.Seed
     , grid : Grid
     , lastGen : Maybe ( Int, Int )
     }
 
 
-initGrid2 : Random.Seed -> Grid.Lists Int -> Grid2
-initGrid2 seed lists =
+initBoard : Random.Seed -> Grid.Lists Int -> Board
+initBoard seed lists =
     { seed = seed
     , grid = gridFromLists lists
     , lastGen = Nothing
     }
 
 
-updateGrid2 : GridOp -> Grid2 -> Grid2
-updateGrid2 gridOp grid2 =
+updateBoard : GridOp -> Board -> Board
+updateBoard gridOp board =
     let
         nextGrid : Grid
         nextGrid =
-            updateGrid gridOp grid2.grid
+            updateGrid gridOp board.grid
     in
-    if nextGrid == grid2.grid then
-        grid2
+    if nextGrid == board.grid then
+        board
 
     else
         case gridEmptyPositions nextGrid of
             [] ->
-                grid2
+                board
 
             h :: t ->
                 let
@@ -53,7 +53,7 @@ updateGrid2 gridOp grid2 =
                                 (Random.uniform h t)
                                 (Random.uniform 2 [ 4 ])
                             )
-                            grid2.seed
+                            board.seed
                 in
                 { grid = Grid.set pos randomVal nextGrid |> Maybe.withDefault nextGrid
                 , lastGen = Just pos
@@ -61,11 +61,11 @@ updateGrid2 gridOp grid2 =
                 }
 
 
-viewGrid2 : Grid2 -> HM
-viewGrid2 grid2 =
+viewBoard : Board -> HM
+viewBoard board =
     let
         rows =
-            Grid.toLists grid2.grid
+            Grid.toLists board.grid
 
         viewRow ri row =
             div [ class "flex br bb b--inherit" ] (List.indexedMap (viewCell ri) row)
@@ -85,7 +85,7 @@ viewGrid2 grid2 =
                 children
 
         viewCell ri ci num =
-            if Just ( ri, ci ) == grid2.lastGen then
+            if Just ( ri, ci ) == board.lastGen then
                 cellContainer [ text (numToString num) ]
 
             else
@@ -213,7 +213,7 @@ type alias Flags =
 
 
 type alias NamedGrid =
-    ( String, Grid2 )
+    ( String, Board )
 
 
 initialNamedGridList : List NamedGrid
@@ -224,7 +224,7 @@ initialNamedGridList =
          --, SlideLeft
          --, SlideDown
         ]
-        (initGrid2 (Random.initialSeed 0)
+        (initBoard (Random.initialSeed 0)
             [ [ 2, 0, 0, 0 ]
             , [ 2, 4, 4, 4 ]
             , [ 0, 0, 0, 0 ]
@@ -258,7 +258,7 @@ updateGridListWithOp gridOp model =
         ( _, g2 ) :: _ ->
             { model
                 | list =
-                    ( Debug.toString gridOp, updateGrid2 gridOp g2 ) :: model.list
+                    ( Debug.toString gridOp, updateBoard gridOp g2 ) :: model.list
             }
 
 
@@ -311,17 +311,17 @@ type alias DM =
     Document Msg
 
 
-toNamedGridList : List GridOp -> Grid2 -> List ( String, Grid2 )
-toNamedGridList ops grid2 =
+toNamedGridList : List GridOp -> Board -> List ( String, Board )
+toNamedGridList ops board =
     List.foldl
         (\op ( stack, g2 ) ->
             let
                 ng2 =
-                    updateGrid2 op g2
+                    updateBoard op g2
             in
             ( ( Debug.toString op, ng2 ) :: stack, ng2 )
         )
-        ( [ ( "Initial Grid", grid2 ) ], grid2 )
+        ( [ ( "Initial Grid", board ) ], board )
         ops
         |> Tuple.first
 
@@ -329,11 +329,11 @@ toNamedGridList ops grid2 =
 viewNamedGrid name grid =
     div [ class "pa3 pv2" ]
         [ div [ class "f4 pa2 " ] [ text name ]
-        , viewGrid2 grid
+        , viewBoard grid
         ]
 
 
-viewNamedGridList : List ( String, Grid2 ) -> HM
+viewNamedGridList : List ( String, Board ) -> HM
 viewNamedGridList =
     List.map (uncurry viewNamedGrid)
         >> div [ class "flex flex-column items-center" ]
