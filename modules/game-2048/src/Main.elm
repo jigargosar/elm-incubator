@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Dict exposing (Dict)
 import Html exposing (Html, div, text)
@@ -316,8 +317,8 @@ type alias DM =
     Document Msg
 
 
-gridWithOpsList : List GridOp -> Grid2 -> List ( String, Grid2 )
-gridWithOpsList ops grid2 =
+toNamedGridList : List GridOp -> Grid2 -> List ( String, Grid2 )
+toNamedGridList ops grid2 =
     List.foldl
         (\op ( stack, g2 ) ->
             let
@@ -331,22 +332,6 @@ gridWithOpsList ops grid2 =
         |> (Tuple.first >> List.reverse)
 
 
-viewGridWithOps : List GridOp -> Grid2 -> HM
-viewGridWithOps ops grid2 =
-    List.foldl
-        (\op ( vl, g2 ) ->
-            let
-                ng2 =
-                    updateGrid2 op g2
-            in
-            ( viewNamedGrid (Debug.toString op) ng2 :: vl, ng2 )
-        )
-        ( [ viewNamedGrid "Initial Grid" grid2 ], grid2 )
-        ops
-        |> (Tuple.first >> List.reverse)
-        |> div [ class "flex flex-wrap justify-center" ]
-
-
 viewNamedGrid name grid =
     div [ class "pa3 pv2" ]
         [ div [ class "f4 pa2 " ] [ text name ]
@@ -354,11 +339,17 @@ viewNamedGrid name grid =
         ]
 
 
+viewNamedGridList : List ( String, Grid2 ) -> HM
+viewNamedGridList =
+    List.map (uncurry viewNamedGrid)
+        >> div [ class "flex flex-wrap justify-center" ]
+
+
 view : Model -> DM
 view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewGridWithOps [ SlideDown, SlideUp, SlideLeft, SlideDown ]
+        , toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
             (initGrid2 (Random.initialSeed 0)
                 [ [ 2, 0, 0, 0 ]
                 , [ 2, 4, 4, 4 ]
@@ -366,6 +357,7 @@ view _ =
                 , [ 0, 0, 0, 0 ]
                 ]
             )
+            |> viewNamedGridList
         ]
 
 
