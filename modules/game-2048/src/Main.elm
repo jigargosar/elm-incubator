@@ -66,12 +66,20 @@ viewGrid2 grid2 =
         viewRow ri row =
             div [ class "flex" ] (List.indexedMap (viewCell ri) row)
 
+        numToString num =
+            case num of
+                0 ->
+                    "-"
+
+                _ ->
+                    String.fromInt num
+
         viewCell ri ci num =
             if Just ( ri, ci ) == grid2.lastGen then
-                div [ class "w2 tc outline" ] [ text (String.fromInt num) ]
+                div [ class "w2 tc outline" ] [ text (numToString num) ]
 
             else
-                div [ class "w2 tc" ] [ text (String.fromInt num) ]
+                div [ class "w2 tc" ] [ text (numToString num) ]
     in
     div [ class "flex flex-column code f3" ] (List.indexedMap viewRow rows)
 
@@ -335,7 +343,7 @@ view : Model -> DM
 view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewGridWithOps [ SlideDown, SlideUp ]
+        , viewGridWithOps [ SlideDown, SlideUp, SlideLeft, SlideDown ]
             (initGrid2 (Random.initialSeed 0)
                 [ [ 2, 0, 0, 0 ]
                 , [ 2, 4, 4, 4 ]
