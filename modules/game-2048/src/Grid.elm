@@ -19,6 +19,11 @@ posRow ( _, y ) =
     y
 
 
+posColumn : Pos -> Int
+posColumn ( x, _ ) =
+    x
+
+
 transposePos : Pos -> Pos
 transposePos ( x, y ) =
     newPos y x
@@ -33,14 +38,19 @@ entryPos ( pos, _ ) =
     pos
 
 
-entryValue : Entry a -> a
-entryValue ( _, a ) =
+getEntryValue : Entry a -> a
+getEntryValue ( _, a ) =
     a
 
 
-entryRow : Entry a -> Int
-entryRow =
+getEntryRowIndex : Entry a -> Int
+getEntryRowIndex =
     entryPos >> posRow
+
+
+getEntryColumnIndex : Entry a -> Int
+getEntryColumnIndex =
+    entryPos >> posColumn
 
 
 type alias Size =
@@ -63,9 +73,15 @@ type alias PosDict a =
 posDictToRowLists : PosDict a -> Lists a
 posDictToRowLists d =
     Dict.toList d
-        |> List.Extra.gatherEqualsBy entryRow
-        |> List.map consToList
-        |> List.map (List.map entryValue)
+        |> List.Extra.gatherEqualsBy getEntryRowIndex
+        |> List.map (consToList >> List.map getEntryValue)
+
+
+posDictToColumnLists : PosDict a -> Lists a
+posDictToColumnLists d =
+    Dict.toList d
+        |> List.Extra.gatherEqualsBy getEntryColumnIndex
+        |> List.map (consToList >> List.map getEntryValue)
 
 
 type Grid a
@@ -136,6 +152,15 @@ rowListsToEntries =
         >> List.concat
 
 
+columnListsToEntries : Lists a -> List (Entry a)
+columnListsToEntries =
+    List.indexedMap
+        (\x ->
+            List.indexedMap (\y a -> ( newPos x y, a ))
+        )
+        >> List.concat
+
+
 positionsFromSize : Size -> List Pos
 positionsFromSize s =
     List.range 0 (s.width - 1)
@@ -150,9 +175,9 @@ positionsFromSize s =
 toLists : Grid a -> Lists a
 toLists (Grid _ d) =
     Dict.toList d
-        |> List.Extra.gatherEqualsBy entryRow
+        |> List.Extra.gatherEqualsBy getEntryRowIndex
         |> List.map consToList
-        |> List.map (List.map entryValue)
+        |> List.map (List.map getEntryValue)
 
 
 mapRowLists : (List a -> List a) -> Grid a -> Grid a
@@ -164,6 +189,20 @@ mapRowLists func (Grid s d) =
                 |> posDictToRowLists
                 |> List.map func
                 |> rowListsToEntries
+    in
+    replaceEntries newEntries d
+        |> Grid s
+
+
+mapColumnLists : (List a -> List a) -> Grid a -> Grid a
+mapColumnLists func (Grid s d) =
+    let
+        newEntries : List (Entry a)
+        newEntries =
+            d
+                |> posDictToColumnLists
+                |> List.map func
+                |> columnListsToEntries
     in
     replaceEntries newEntries d
         |> Grid s
