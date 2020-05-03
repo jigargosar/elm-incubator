@@ -171,7 +171,7 @@ viewGrid grid =
 
 
 type alias Model =
-    { grid : Grid }
+    {}
 
 
 type alias Flags =
@@ -180,7 +180,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { grid = initialGrid }
+    ( {}
     , Cmd.none
     )
 
