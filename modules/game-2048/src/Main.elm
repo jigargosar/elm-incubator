@@ -150,7 +150,6 @@ viewBoard board =
 
 
 
--- Grid
 -- Model
 
 
