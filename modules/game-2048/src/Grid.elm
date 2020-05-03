@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Pos, PosDict, Size, init, toDict, toRows)
+module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, init, toDict, toRows)
 
 import Dict exposing (Dict)
 import List.Extra
@@ -50,6 +50,29 @@ init size func =
         |> List.map (\pos -> ( pos, func pos ))
         |> Dict.fromList
         |> Grid size
+
+
+fromLists : Size -> a -> List (List a) -> Grid a
+fromLists size a lists =
+    let
+        posDict : PosDict a
+        posDict =
+            listsToPosDict lists
+
+        func pos =
+            Dict.get pos posDict |> Maybe.withDefault a
+    in
+    init size func
+
+
+listsToPosDict : List (List a) -> PosDict a
+listsToPosDict =
+    List.indexedMap
+        (\y ->
+            List.indexedMap (\x a -> ( newPos x y, a ))
+        )
+        >> List.concat
+        >> Dict.fromList
 
 
 positionsFromSize : Size -> List Pos
