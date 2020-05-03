@@ -23,6 +23,29 @@ emptyGrid =
     ]
 
 
+type GridOp
+    = SlideUp
+    | SlideDown
+    | SlideLeft
+    | SlideRight
+
+
+updateGrid : GridOp -> Grid -> Grid
+updateGrid gridOp =
+    case gridOp of
+        SlideUp ->
+            up
+
+        SlideDown ->
+            down
+
+        SlideLeft ->
+            left
+
+        SlideRight ->
+            right
+
+
 down =
     mapGridColumns gridListSlideRight
 
@@ -202,24 +225,34 @@ grid1 =
     ]
 
 
-namedGrids =
-    [ ( "grid1", grid1 )
-    , ( "grid1 slideUp", grid1 |> up )
-    ]
+viewGridWithOps : List GridOp -> Grid -> HM
+viewGridWithOps ops grid =
+    List.foldl
+        (\op ( vl, g ) ->
+            let
+                ng =
+                    updateGrid op g
+            in
+            ( viewNamedGrid (Debug.toString op) ng :: vl, ng )
+        )
+        ( [ viewNamedGrid "Initial Grid" grid ], grid )
+        ops
+        |> (Tuple.first >> List.reverse)
+        |> div []
+
+
+viewNamedGrid name grid =
+    div [ class "pl5 pv3" ]
+        [ div [ class "f3 pa2 " ] [ text name ]
+        , viewGrid grid
+        ]
 
 
 view : Model -> DM
 view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , div [] (List.map viewNamedGrid namedGrids)
-        ]
-
-
-viewNamedGrid ( name, grid ) =
-    div [ class "pl5 pv3" ]
-        [ div [ class "f3 pa2 " ] [ text name ]
-        , viewGrid grid
+        , viewGridWithOps [ SlideDown, SlideUp ] grid1
         ]
 
 
