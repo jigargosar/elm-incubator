@@ -136,7 +136,7 @@ gridListSlideRight : List Int -> List Int
 gridListSlideRight row =
     let
         compacted =
-            gridCompactRow row
+            compactNumList row
     in
     gridRowPadding compacted ++ compacted
 
@@ -150,24 +150,23 @@ eq =
     (==)
 
 
-gridCompactRow : List Int -> List Int
-gridCompactRow row =
-    row
-        |> List.filter (eq 0 >> not)
-        |> List.foldr
-            (\v acc ->
-                case acc of
-                    h :: t ->
-                        if v == h then
-                            v + h :: t
+compactNumList : List Int -> List Int
+compactNumList =
+    let
+        func v acc =
+            case acc of
+                h :: t ->
+                    if v == h then
+                        v + h :: t
 
-                        else
-                            v :: acc
-
-                    _ ->
+                    else
                         v :: acc
-            )
-            []
+
+                _ ->
+                    v :: acc
+    in
+    List.filter (eq 0 >> not)
+        >> List.foldr func []
 
 
 gridRowPadding : List Int -> List Int
