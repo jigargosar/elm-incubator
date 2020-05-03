@@ -98,7 +98,7 @@ updateBoard message board =
                 |> Dict.keys
         of
             [] ->
-                { board | lastGen = Nothing }
+                { board | lastGen = Nothing, grid = nextGrid }
 
             h :: t ->
                 let
