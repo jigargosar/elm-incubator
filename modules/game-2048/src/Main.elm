@@ -282,6 +282,7 @@ type alias Flags =
     ()
 
 
+initialNamedGridList : List ( String, Grid2 )
 initialNamedGridList =
     toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
         (initGrid2 (Random.initialSeed 0)
