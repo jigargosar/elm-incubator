@@ -32,7 +32,16 @@ updateGrid2 gridOp grid2 =
         grid2
 
     else
-        { grid2 | grid = nextGrid }
+        let
+            ( filledGrid, nextSeed ) =
+                Random.step (fillRandomEmptyPosition nextGrid) grid2.seed
+        in
+        { grid2 | grid = filledGrid, seed = nextSeed }
+
+
+fillRandomEmptyPosition : Grid -> Random.Generator Grid
+fillRandomEmptyPosition grid =
+    Random.constant grid
 
 
 
