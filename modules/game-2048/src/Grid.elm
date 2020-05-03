@@ -22,9 +22,14 @@ type alias Entry a =
     ( Pos, a )
 
 
-entryToPos : Entry a -> Pos
-entryToPos ( pos, _ ) =
+entryPos : Entry a -> Pos
+entryPos ( pos, _ ) =
     pos
+
+
+entryRow : Entry a -> Int
+entryRow =
+    entryPos >> posRow
 
 
 type alias Size =
@@ -61,13 +66,17 @@ positionsFromSize s =
 toEntryRows : Grid a -> List (List (Entry a))
 toEntryRows (Grid _ d) =
     Dict.toList d
-        |> List.Extra.gatherEqualsBy (entryToPos >> posRow)
+        |> List.Extra.gatherEqualsBy entryRow
         |> List.map consToList
 
 
 toDict : Grid a -> PosDict a
 toDict (Grid _ d) =
     d
+
+
+
+-- Cons
 
 
 type alias Cons a =
