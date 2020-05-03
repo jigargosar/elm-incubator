@@ -43,16 +43,6 @@ updateGrid2 gridOp grid2 =
 fillRandomEmptyPosition : Grid -> Random.Generator Grid
 fillRandomEmptyPosition grid =
     let
-        gridToDict : Grid -> Dict ( Int, Int ) Int
-        gridToDict =
-            List.indexedMap
-                (\ri ->
-                    List.indexedMap
-                        (\ci val -> ( ( ri, ci ), val ))
-                )
-                >> List.concat
-                >> Dict.fromList
-
         emptyPositions =
             []
 
@@ -90,6 +80,17 @@ type alias Grid =
 gridFromLists : List (List Int) -> Grid
 gridFromLists =
     identity
+
+
+gridToDict : Grid -> Dict ( Int, Int ) Int
+gridToDict =
+    List.indexedMap
+        (\ri ->
+            List.indexedMap
+                (\ci val -> ( ( ri, ci ), val ))
+        )
+        >> List.concat
+        >> Dict.fromList
 
 
 type GridOp
