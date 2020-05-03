@@ -67,7 +67,7 @@ viewGrid2 grid2 =
             grid2.grid
 
         viewRow ri row =
-            div [ class "flex  br bb b--inherit" ] (List.indexedMap (viewCell ri) row)
+            div [ class "flex br bb b--inherit" ] (List.indexedMap (viewCell ri) row)
 
         numToString num =
             case num of
@@ -90,7 +90,7 @@ viewGrid2 grid2 =
             else
                 cellContainer [ text (numToString num) ]
     in
-    div [ class "flex flex-column bt f4 b--blue" ] (List.indexedMap viewRow rows)
+    div [ class "flex flex-column bt f4 b--red" ] (List.indexedMap viewRow rows)
 
 
 
