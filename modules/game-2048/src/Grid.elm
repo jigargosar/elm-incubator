@@ -144,7 +144,7 @@ toLists (Grid _ d) =
 
 
 mapRowLists : (List a -> List a) -> Grid a -> Grid a
-mapRowLists func ((Grid _ d) as grid) =
+mapRowLists func (Grid s d) =
     let
         newEntries : List (Entry a)
         newEntries =
@@ -154,12 +154,9 @@ mapRowLists func ((Grid _ d) as grid) =
                 |> List.map (List.map entryValue)
                 |> List.map func
                 |> listsToEntries
-
-        foo : Dict Pos a
-        foo =
-            replaceEntries newEntries d
     in
-    grid
+    replaceEntries newEntries d
+        |> Grid s
 
 
 replaceEntries : List ( comparable, b ) -> Dict comparable b -> Dict comparable b
