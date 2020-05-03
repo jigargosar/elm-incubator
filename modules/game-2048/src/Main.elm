@@ -12,7 +12,7 @@ import Random
 
 
 
--- GridWithRandomSeed
+-- Board
 
 
 type alias Board =
@@ -25,7 +25,7 @@ type alias Board =
 initBoard : Random.Seed -> Grid.Lists Int -> Board
 initBoard seed lists =
     { seed = seed
-    , grid = gridFromLists lists
+    , grid = Grid.fromLists { width = 4, height = 4 } 0 lists
     , lastGen = Nothing
     }
 
@@ -100,11 +100,6 @@ viewBoard board =
 
 type alias Grid =
     Grid.Grid Int
-
-
-gridFromLists : Grid.Lists Int -> Grid
-gridFromLists =
-    Grid.fromLists { width = 4, height = 4 } 0
 
 
 gridEmptyPositions : Grid -> List Grid.Pos
