@@ -71,8 +71,8 @@ initBoard seed lists =
 
 
 updateBoard : SlideMsg -> Board -> Board
-updateBoard message =
-    slide message >> addNew
+updateBoard message board =
+    slide message board |> Maybe.map addNew |> Maybe.withDefault { board | lastGen = Nothing }
 
 
 addNew : Board -> Board
@@ -83,7 +83,7 @@ addNew board =
             |> Dict.keys
     of
         [] ->
-            { board | lastGen = Nothing }
+            board
 
         h :: t ->
             let
@@ -101,7 +101,7 @@ addNew board =
             }
 
 
-slide : SlideMsg -> Board -> Board
+slide : SlideMsg -> Board -> Maybe Board
 slide message board =
     let
         func =
@@ -117,8 +117,15 @@ slide message board =
 
                 SlideRight ->
                     Grid.mapRowLists compactRight
+
+        nextGrid =
+            func board.grid
     in
-    { board | grid = func board.grid }
+    if nextGrid == board.grid then
+        Nothing
+
+    else
+        Just { board | grid = func board.grid }
 
 
 viewBoard : Board -> HM
