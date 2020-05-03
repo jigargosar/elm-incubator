@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, positions, set, toDict, toRows)
+module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, positions, set, toDict, toRows, transpose)
 
 import Dict exposing (Dict)
 import List.Extra
@@ -18,6 +18,11 @@ posRow ( _, y ) =
     y
 
 
+transposePos : Pos -> Pos
+transposePos ( x, y ) =
+    newPos y x
+
+
 type alias Entry a =
     ( Pos, a )
 
@@ -34,6 +39,11 @@ entryRow =
 
 type alias Size =
     { width : Int, height : Int }
+
+
+transposeSize : Size -> Size
+transposeSize size =
+    { width = size.height, height = size.width }
 
 
 type alias PosDict a =
@@ -63,6 +73,20 @@ fromLists size a lists =
             Dict.get pos posDict |> Maybe.withDefault a
     in
     init size func
+
+
+transpose : Grid a -> Grid a
+transpose ((Grid s d) as grid) =
+    case Dict.get (newPos 0 0) d of
+        Nothing ->
+            grid
+
+        Just defaultValue ->
+            let
+                func pos =
+                    Dict.get (transposePos pos) d |> Maybe.withDefault defaultValue
+            in
+            init (transposeSize s) func
 
 
 set : Pos -> a -> Grid a -> Maybe (Grid a)

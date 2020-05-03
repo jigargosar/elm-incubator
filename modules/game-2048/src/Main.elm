@@ -4,6 +4,7 @@ import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
+import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
@@ -98,28 +99,17 @@ viewGrid2 grid2 =
 
 
 type alias Grid =
-    List (List Int)
+    Grid Int
 
 
 gridFromLists : List (List Int) -> Grid
 gridFromLists =
-    identity
+    Grid.fromLists { width = 4, height = 4 } 0
 
 
-gridToDict : Grid -> Dict ( Int, Int ) Int
-gridToDict =
-    List.indexedMap
-        (\ri ->
-            List.indexedMap
-                (\ci val -> ( ( ri, ci ), val ))
-        )
-        >> List.concat
-        >> Dict.fromList
-
-
-gridEmptyPositions : Grid -> List ( Int, Int )
+gridEmptyPositions : Grid -> List Grid.Pos
 gridEmptyPositions grid =
-    gridToDict grid
+    Grid.toDict grid
         |> Dict.filter (\_ v -> v == 0)
         |> Dict.keys
 
