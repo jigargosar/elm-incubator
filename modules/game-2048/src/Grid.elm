@@ -111,12 +111,16 @@ get pos (Grid _ d) =
 
 listsToPosDict : List (List a) -> PosDict a
 listsToPosDict =
+    listsToEntries >> Dict.fromList
+
+
+listsToEntries : List (List a) -> List (Entry a)
+listsToEntries =
     List.indexedMap
         (\y ->
             List.indexedMap (\x a -> ( newPos x y, a ))
         )
         >> List.concat
-        >> Dict.fromList
 
 
 positionsFromSize : Size -> List Pos
@@ -136,6 +140,21 @@ toLists (Grid _ d) =
         |> List.Extra.gatherEqualsBy entryRow
         |> List.map consToList
         |> List.map (List.map entryValue)
+
+
+mapRowLists : (List a -> List a) -> Grid a -> Grid a
+mapRowLists func ((Grid _ d) as grid) =
+    let
+        rowLists : PosDict a
+        rowLists =
+            Dict.toList d
+                |> List.Extra.gatherEqualsBy entryRow
+                |> List.map consToList
+                |> List.map (List.map entryValue)
+                |> List.map func
+                |> listsToPosDict
+    in
+    grid
 
 
 toDict : Grid a -> PosDict a
