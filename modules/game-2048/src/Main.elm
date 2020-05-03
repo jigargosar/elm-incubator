@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
+import Dict exposing (Dict)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import List.Extra
@@ -41,6 +42,30 @@ updateGrid2 gridOp grid2 =
 
 fillRandomEmptyPosition : Grid -> Random.Generator Grid
 fillRandomEmptyPosition grid =
+    let
+        gridToDict : Grid -> Dict ( Int, Int ) Int
+        gridToDict =
+            List.indexedMap
+                (\ri ->
+                    List.indexedMap
+                        (\ci val -> ( ( ri, ci ), val ))
+                )
+                >> List.concat
+                >> Dict.fromList
+
+        emptyPositions =
+            []
+
+        _ =
+            case emptyPositions of
+                [] ->
+                    Random.constant grid
+
+                h :: t ->
+                    Random.map2 (\( r, c ) val -> gridSetAt r c val grid)
+                        (Random.uniform h t)
+                        (Random.uniform 2 [ 4 ])
+    in
     Random.constant grid
 
 
