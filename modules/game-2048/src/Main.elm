@@ -28,7 +28,11 @@ updateGrid2 gridOp grid2 =
         nextGrid =
             updateGrid gridOp grid2.grid
     in
-    { grid2 | grid = nextGrid }
+    if nextGrid == grid2.grid then
+        grid2
+
+    else
+        { grid2 | grid = nextGrid }
 
 
 
