@@ -76,9 +76,12 @@ viewGrid2 grid2 =
 
                 _ ->
                     String.fromInt num
+                        |> always "2048"
+                        |> identity
 
-        cellContainer =
-            div [ class "w3 h3 flex items-center justify-center ba" ]
+        cellContainer children =
+            div [ class "ba w3 h2 flex items-center justify-center" ]
+                children
 
         viewCell ri ci num =
             if Just ( ri, ci ) == grid2.lastGen then
@@ -87,7 +90,7 @@ viewGrid2 grid2 =
             else
                 cellContainer [ text (numToString num) ]
     in
-    div [ class "flex flex-column f4" ] (List.indexedMap viewRow rows)
+    div [ class "flex flex-column f4 ba" ] (List.indexedMap viewRow rows)
 
 
 
