@@ -248,22 +248,20 @@ gridGetAt r c =
         >> Maybe.withDefault 0
 
 
-viewGrid : Grid -> HM
-viewGrid grid =
-    let
-        rows =
-            grid
 
-        viewRow row =
-            div [ class "flex" ] (List.map viewCell row)
-
-        viewCell num =
-            div [ class "w3 tc" ] [ text (String.fromInt num) ]
-    in
-    div [ class "flex flex-column code f1" ] (List.map viewRow rows)
-
-
-
+--viewGrid : Grid -> HM
+--viewGrid grid =
+--    let
+--        rows =
+--            grid
+--
+--        viewRow row =
+--            div [ class "flex" ] (List.map viewCell row)
+--
+--        viewCell num =
+--            div [ class "w3 tc" ] [ text (String.fromInt num) ]
+--    in
+--    div [ class "flex flex-column code f1" ] (List.map viewRow rows)
 -- Model
 
 
