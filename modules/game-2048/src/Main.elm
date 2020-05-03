@@ -14,13 +14,14 @@ type alias Grid =
     List (List Int)
 
 
-emptyGrid : Grid
-emptyGrid =
-    [ [ 0, 0, 0, 0 ]
-    , [ 0, 0, 0, 0 ]
-    , [ 0, 0, 0, 0 ]
-    , [ 0, 0, 0, 0 ]
-    ]
+
+--emptyGrid : Grid
+--emptyGrid =
+--    [ [ 0, 0, 0, 0 ]
+--    , [ 0, 0, 0, 0 ]
+--    , [ 0, 0, 0, 0 ]
+--    , [ 0, 0, 0, 0 ]
+--    ]
 
 
 type GridOp
