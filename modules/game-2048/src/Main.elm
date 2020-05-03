@@ -3,8 +3,9 @@ module Main exposing (main)
 import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Dict exposing (Dict)
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import List.Extra
 import Random
 
@@ -311,12 +312,16 @@ init () =
 
 type Msg
     = NoOp
+    | OnGridOp GridOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         NoOp ->
+            ( model, Cmd.none )
+
+        OnGridOp gridOp ->
             ( model, Cmd.none )
 
 
@@ -366,7 +371,19 @@ view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
         , viewNamedGridList model.list
+        , div []
+            ([ SlideLeft
+             , SlideRight
+             , SlideUp
+             , SlideDown
+             ]
+                |> List.map opBtn
+            )
         ]
+
+
+opBtn op =
+    button [ onClick (OnGridOp op) ] [ text (Debug.toString op) ]
 
 
 type alias HM =
