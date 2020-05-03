@@ -11,6 +11,62 @@ import Json.Decode as D
 import Random
 
 
+type alias Grid =
+    Grid.Grid Int
+
+
+type SlideMsg
+    = SlideUp
+    | SlideDown
+    | SlideLeft
+    | SlideRight
+
+
+updateGrid : SlideMsg -> Grid -> Grid
+updateGrid message =
+    case message of
+        SlideUp ->
+            Grid.mapColumnLists compactLeft
+
+        SlideDown ->
+            Grid.mapColumnLists compactRight
+
+        SlideLeft ->
+            Grid.mapRowLists compactLeft
+
+        SlideRight ->
+            Grid.mapRowLists compactRight
+
+
+compactLeft : List Int -> List Int
+compactLeft =
+    List.reverse >> compactRight >> List.reverse
+
+
+compactRight : List Int -> List Int
+compactRight =
+    let
+        padLeft : List Int -> List Int
+        padLeft l =
+            List.repeat (4 - List.length l) 0 ++ l
+
+        func v acc =
+            case acc of
+                h :: t ->
+                    if v == h then
+                        v + h :: t
+
+                    else
+                        v :: acc
+
+                _ ->
+                    v :: acc
+    in
+    List.filter (\v -> v /= 0)
+        >> List.foldr func []
+        >> padLeft
+
+
 
 -- Board
 
@@ -100,65 +156,6 @@ viewBoard board =
 
 
 -- Grid
-
-
-type alias Grid =
-    Grid.Grid Int
-
-
-type SlideMsg
-    = SlideUp
-    | SlideDown
-    | SlideLeft
-    | SlideRight
-
-
-updateGrid : SlideMsg -> Grid -> Grid
-updateGrid message =
-    case message of
-        SlideUp ->
-            Grid.mapColumnLists compactLeft
-
-        SlideDown ->
-            Grid.mapColumnLists compactRight
-
-        SlideLeft ->
-            Grid.mapRowLists compactLeft
-
-        SlideRight ->
-            Grid.mapRowLists compactRight
-
-
-compactLeft : List Int -> List Int
-compactLeft =
-    List.reverse >> compactRight >> List.reverse
-
-
-compactRight : List Int -> List Int
-compactRight =
-    let
-        padLeft : List Int -> List Int
-        padLeft l =
-            List.repeat (4 - List.length l) 0 ++ l
-
-        func v acc =
-            case acc of
-                h :: t ->
-                    if v == h then
-                        v + h :: t
-
-                    else
-                        v :: acc
-
-                _ ->
-                    v :: acc
-    in
-    List.filter (\v -> v /= 0)
-        >> List.foldr func []
-        >> padLeft
-
-
-
 -- Model
 
 
