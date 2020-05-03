@@ -1,5 +1,6 @@
 module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, set, toDict, toLists, transpose)
 
+import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
 import List.Extra
 
@@ -145,16 +146,30 @@ toLists (Grid _ d) =
 mapRowLists : (List a -> List a) -> Grid a -> Grid a
 mapRowLists func ((Grid _ d) as grid) =
     let
-        rowLists : PosDict a
-        rowLists =
+        newEntries : List (Entry a)
+        newEntries =
             Dict.toList d
                 |> List.Extra.gatherEqualsBy entryRow
                 |> List.map consToList
                 |> List.map (List.map entryValue)
                 |> List.map func
-                |> listsToPosDict
+                |> listsToEntries
+
+        foo : Dict Pos a
+        foo =
+            replaceEntries newEntries d
     in
     grid
+
+
+replaceEntries : List ( comparable, b ) -> Dict comparable b -> Dict comparable b
+replaceEntries entries dict =
+    List.foldl (uncurry replace) dict entries
+
+
+replace : comparable -> b -> Dict comparable b -> Dict comparable b
+replace k v =
+    Dict.update k (Maybe.map (always v))
 
 
 toDict : Grid a -> PosDict a
