@@ -423,7 +423,7 @@ view model =
              ]
                 |> List.map opBtn
             )
-        , viewNamedGridList model.list
+        , viewNamedGridList (List.take 4 model.list)
         ]
 
 
