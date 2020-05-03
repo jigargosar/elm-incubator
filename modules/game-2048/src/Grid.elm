@@ -1,6 +1,7 @@
-module Grid exposing (Grid, Pos, Size, init)
+module Grid exposing (Entry, Grid, Pos, Size, init, toEntryRows)
 
 import Dict exposing (Dict)
+import List.Extra
 
 
 type alias Pos =
@@ -10,6 +11,20 @@ type alias Pos =
 newPos : Int -> Int -> Pos
 newPos x y =
     ( x, y )
+
+
+posRow : Pos -> Int
+posRow ( _, y ) =
+    y
+
+
+type alias Entry a =
+    ( Pos, a )
+
+
+entryToPos : Entry a -> Pos
+entryToPos ( pos, _ ) =
+    pos
 
 
 type alias Size =
@@ -33,11 +48,27 @@ init size func =
 
 
 positionsFromSize : Size -> List Pos
-positionsFromSize size =
-    List.range 0 (size.width - 1)
+positionsFromSize s =
+    List.range 0 (s.width - 1)
         |> List.map
             (\x ->
-                List.range 0 (size.height - 1)
+                List.range 0 (s.height - 1)
                     |> List.map (newPos x)
             )
         |> List.concat
+
+
+toEntryRows : Grid a -> List (List (Entry a))
+toEntryRows (Grid s d) =
+    Dict.toList d
+        |> List.Extra.gatherEqualsBy (entryToPos >> posRow)
+        |> List.map consToList
+
+
+type alias Cons a =
+    ( a, List a )
+
+
+consToList : Cons a -> List a
+consToList ( a, xa ) =
+    a :: xa
