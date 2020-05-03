@@ -8,7 +8,6 @@ import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
-import List.Extra
 import Random
 
 
@@ -34,6 +33,7 @@ initGrid2 seed lists =
 updateGrid2 : GridOp -> Grid2 -> Grid2
 updateGrid2 gridOp grid2 =
     let
+        nextGrid : Grid
         nextGrid =
             updateGrid gridOp grid2.grid
     in
@@ -47,7 +47,7 @@ updateGrid2 gridOp grid2 =
 
             h :: t ->
                 let
-                    ( ( ( ri, ci ), randomVal ), nextSeed ) =
+                    ( ( pos, randomVal ), nextSeed ) =
                         Random.step
                             (Random.pair
                                 (Random.uniform h t)
@@ -55,8 +55,8 @@ updateGrid2 gridOp grid2 =
                             )
                             grid2.seed
                 in
-                { grid = gridSetAt ri ci randomVal nextGrid
-                , lastGen = Just ( ri, ci )
+                { grid = Grid.set pos randomVal nextGrid |> Maybe.withDefault nextGrid
+                , lastGen = Just pos
                 , seed = nextSeed
                 }
 
@@ -65,7 +65,7 @@ viewGrid2 : Grid2 -> HM
 viewGrid2 grid2 =
     let
         rows =
-            grid2.grid
+            Grid.toLists grid2.grid
 
         viewRow ri row =
             div [ class "flex br bb b--inherit" ] (List.indexedMap (viewCell ri) row)
@@ -99,7 +99,7 @@ viewGrid2 grid2 =
 
 
 type alias Grid =
-    Grid Int
+    Grid.Grid Int
 
 
 gridFromLists : List (List Int) -> Grid
@@ -154,36 +154,21 @@ right =
 
 
 mapGridRows : (List Int -> List Int) -> Grid -> Grid
-mapGridRows =
-    List.map
+mapGridRows fun grid =
+    grid
+        |> Grid.toLists
+        |> List.map fun
+        |> Grid.fromLists { width = 4, height = 4 } 0
 
 
 mapGridColumns : (List Int -> List Int) -> Grid -> Grid
 mapGridColumns fun grid =
     grid
-        |> transposeGrid
+        |> Grid.transpose
+        |> Grid.toLists
         |> List.map fun
-        |> transposeGrid
-
-
-gridPositions : List ( Int, Int )
-gridPositions =
-    mapRangeLen 4 (\r -> mapRangeLen 4 (Tuple.pair r))
-        |> List.concat
-
-
-mapRangeLen len func =
-    List.range 0 (len - 1) |> List.map func
-
-
-transposeGrid : Grid -> List (List Int)
-transposeGrid grid0 =
-    List.foldl
-        (\( r, c ) grid ->
-            gridSetAt c r (gridGetAt r c grid0) grid
-        )
-        grid0
-        gridPositions
+        |> Grid.fromLists { width = 4, height = 4 } 0
+        |> Grid.transpose
 
 
 gridListSlideRight : List Int -> List Int
@@ -233,18 +218,6 @@ gridRowPadding row =
     List.repeat padLength 0
 
 
-gridSetAt : Int -> Int -> Int -> Grid -> Grid
-gridSetAt r c v =
-    List.Extra.updateAt r (List.Extra.setAt c v)
-
-
-gridGetAt : Int -> Int -> Grid -> Int
-gridGetAt r c =
-    List.Extra.getAt r
-        >> Maybe.andThen (List.Extra.getAt c)
-        >> Maybe.withDefault 0
-
-
 
 -- Model
 
@@ -263,7 +236,12 @@ type alias NamedGrid =
 
 initialNamedGridList : List NamedGrid
 initialNamedGridList =
-    toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
+    toNamedGridList
+        [--SlideDown
+         --, SlideUp
+         --, SlideLeft
+         --, SlideDown
+        ]
         (initGrid2 (Random.initialSeed 0)
             [ [ 2, 0, 0, 0 ]
             , [ 2, 4, 4, 4 ]

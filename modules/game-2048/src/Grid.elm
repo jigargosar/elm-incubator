@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, positions, set, toDict, toRows, transpose)
+module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, positions, set, toDict, toLists, toRows, transpose)
 
 import Dict exposing (Dict)
 import List.Extra
@@ -30,6 +30,11 @@ type alias Entry a =
 entryPos : Entry a -> Pos
 entryPos ( pos, _ ) =
     pos
+
+
+entryValue : Entry a -> a
+entryValue ( _, a ) =
+    a
 
 
 entryRow : Entry a -> Int
@@ -131,6 +136,11 @@ toRows (Grid _ d) =
     Dict.toList d
         |> List.Extra.gatherEqualsBy entryRow
         |> List.map consToList
+
+
+toLists : Grid a -> List (List a)
+toLists =
+    toRows >> List.map (List.map entryValue)
 
 
 toDict : Grid a -> PosDict a
