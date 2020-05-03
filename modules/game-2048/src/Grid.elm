@@ -160,25 +160,13 @@ mapRowLists func (Grid s d) =
     let
         newEntries : List (Entry a)
         newEntries =
-            Dict.toList d
-                |> List.Extra.gatherEqualsBy entryRow
-                |> List.map consToList
-                |> List.map (List.map entryValue)
+            d
+                |> posDictToRowLists
                 |> List.map func
                 |> listsToEntries
     in
     replaceEntries newEntries d
         |> Grid s
-
-
-replaceEntries : List ( comparable, b ) -> Dict comparable b -> Dict comparable b
-replaceEntries entries dict =
-    List.foldl (uncurry replace) dict entries
-
-
-replace : comparable -> b -> Dict comparable b -> Dict comparable b
-replace k v =
-    Dict.update k (Maybe.map (always v))
 
 
 toDict : Grid a -> PosDict a
@@ -197,3 +185,17 @@ type alias Cons a =
 consToList : Cons a -> List a
 consToList ( a, xa ) =
     a :: xa
+
+
+
+-- Dict Helpers
+
+
+replaceEntries : List ( comparable, b ) -> Dict comparable b -> Dict comparable b
+replaceEntries entries dict =
+    List.foldl (uncurry replace) dict entries
+
+
+replace : comparable -> b -> Dict comparable b -> Dict comparable b
+replace k v =
+    Dict.update k (Maybe.map (always v))
