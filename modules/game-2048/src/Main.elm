@@ -116,6 +116,26 @@ updateBoard message board =
                 }
 
 
+slideBoardGrid : SlideMsg -> Board -> Board
+slideBoardGrid message board =
+    let
+        func =
+            case message of
+                SlideUp ->
+                    Grid.mapColumnLists compactLeft
+
+                SlideDown ->
+                    Grid.mapColumnLists compactRight
+
+                SlideLeft ->
+                    Grid.mapRowLists compactLeft
+
+                SlideRight ->
+                    Grid.mapRowLists compactRight
+    in
+    { board | grid = func board.grid }
+
+
 viewBoard : Board -> HM
 viewBoard board =
     let
