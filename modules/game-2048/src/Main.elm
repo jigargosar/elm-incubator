@@ -22,25 +22,13 @@ initGrid2 seed lists =
     { seed = seed, grid = gridFromLists lists }
 
 
-grid2MapGrid : (Grid -> Grid) -> Grid2 -> Grid2
-grid2MapGrid func grid2 =
-    { grid2 | grid = func grid2.grid }
-
-
 updateGrid2 : GridOp -> Grid2 -> Grid2
-updateGrid2 gridOp =
-    case gridOp of
-        SlideUp ->
-            grid2MapGrid up
-
-        SlideDown ->
-            grid2MapGrid down
-
-        SlideLeft ->
-            grid2MapGrid left
-
-        SlideRight ->
-            grid2MapGrid right
+updateGrid2 gridOp grid2 =
+    let
+        nextGrid =
+            updateGrid gridOp grid2.grid
+    in
+    { grid2 | grid = nextGrid }
 
 
 
