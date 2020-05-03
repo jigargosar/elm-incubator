@@ -138,11 +138,11 @@ updateGrid gridOp =
 
 
 down =
-    mapGridColumns gridListSlideRight
+    Grid.mapColumnLists gridListSlideRight
 
 
 up =
-    mapGridColumns gridListSlideLeft
+    Grid.mapColumnLists gridListSlideLeft
 
 
 left =
@@ -151,16 +151,6 @@ left =
 
 right =
     Grid.mapRowLists gridListSlideRight
-
-
-mapGridColumns : (List Int -> List Int) -> Grid -> Grid
-mapGridColumns fun grid =
-    grid
-        |> Grid.transpose
-        |> Grid.toLists
-        |> List.map fun
-        |> Grid.fromLists { width = 4, height = 4 } 0
-        |> Grid.transpose
 
 
 gridListSlideRight : List Int -> List Int
