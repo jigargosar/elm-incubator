@@ -322,7 +322,17 @@ update message model =
             ( model, Cmd.none )
 
         OnGridOp gridOp ->
-            ( model, Cmd.none )
+            case model.list of
+                [] ->
+                    ( model, Cmd.none )
+
+                ( _, g2 ) :: _ ->
+                    ( { model
+                        | list =
+                            ( Debug.toString gridOp, updateGrid2 gridOp g2 ) :: model.list
+                      }
+                    , Cmd.none
+                    )
 
 
 subscriptions : Model -> Sub Msg
@@ -350,7 +360,7 @@ toNamedGridList ops grid2 =
         )
         ( [ ( "Initial Grid", grid2 ) ], grid2 )
         ops
-        |> (Tuple.first >> List.reverse)
+        |> Tuple.first
 
 
 viewNamedGrid name grid =
@@ -362,7 +372,8 @@ viewNamedGrid name grid =
 
 viewNamedGridList : List ( String, Grid2 ) -> HM
 viewNamedGridList =
-    List.map (uncurry viewNamedGrid)
+    List.reverse
+        >> List.map (uncurry viewNamedGrid)
         >> div [ class "flex flex-wrap justify-center" ]
 
 
