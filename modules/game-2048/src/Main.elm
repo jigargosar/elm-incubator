@@ -275,14 +275,18 @@ gridGetAt r c =
 
 
 type alias Model =
-    { list : List ( String, Grid2 ) }
+    { list : List NamedGrid }
 
 
 type alias Flags =
     ()
 
 
-initialNamedGridList : List ( String, Grid2 )
+type alias NamedGrid =
+    ( String, Grid2 )
+
+
+initialNamedGridList : List NamedGrid
 initialNamedGridList =
     toNamedGridList [ SlideDown, SlideUp, SlideLeft, SlideDown ]
         (initGrid2 (Random.initialSeed 0)
