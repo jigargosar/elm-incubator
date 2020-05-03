@@ -30,7 +30,7 @@ initBoard seed lists =
     }
 
 
-updateBoard : GridOp -> Board -> Board
+updateBoard : SlideMsg -> Board -> Board
 updateBoard gridOp board =
     let
         nextGrid : Grid
@@ -114,14 +114,14 @@ gridEmptyPositions grid =
         |> Dict.keys
 
 
-type GridOp
+type SlideMsg
     = SlideUp
     | SlideDown
     | SlideLeft
     | SlideRight
 
 
-updateGrid : GridOp -> Grid -> Grid
+updateGrid : SlideMsg -> Grid -> Grid
 updateGrid gridOp =
     case gridOp of
         SlideUp ->
@@ -249,7 +249,7 @@ type Msg
     | OnKeyDown String
 
 
-updateGridListWithOp : GridOp -> Model -> Model
+updateGridListWithOp : SlideMsg -> Model -> Model
 updateGridListWithOp gridOp model =
     case model.list of
         [] ->
@@ -311,7 +311,7 @@ type alias DM =
     Document Msg
 
 
-toNamedGridList : List GridOp -> Board -> List ( String, Board )
+toNamedGridList : List SlideMsg -> Board -> List ( String, Board )
 toNamedGridList ops board =
     List.foldl
         (\op ( stack, g2 ) ->
