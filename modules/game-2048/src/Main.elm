@@ -23,26 +23,6 @@ emptyGrid =
     ]
 
 
-grid1 : Grid
-grid1 =
-    emptyGrid
-        |> gridSetAt 0 0 2
-        |> gridSetAt 1 0 2
-        |> gridSetAt 1 1 4
-        |> gridSetAt 1 2 4
-        |> gridSetAt 1 3 4
-
-
-initialGrid : Grid
-initialGrid =
-    grid1
-        |> up
-        |> left
-        |> right
-        |> down
-        |> identity
-
-
 down =
     mapGridColumns gridListSlideRight
 
@@ -211,6 +191,15 @@ subscriptions _ =
 
 type alias DM =
     Document Msg
+
+
+grid1 : Grid
+grid1 =
+    [ [ 2, 0, 0, 0 ]
+    , [ 2, 4, 4, 4 ]
+    , [ 0, 0, 0, 0 ]
+    , [ 0, 0, 0, 0 ]
+    ]
 
 
 namedGrids =
