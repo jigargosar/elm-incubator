@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, positions, set, toDict, toLists, toRows, transpose)
+module Grid exposing (Entry, Grid, Pos, PosDict, Size, fromLists, get, init, set, toDict, toLists, toRows, transpose)
 
 import Dict exposing (Dict)
 import List.Extra
@@ -124,11 +124,6 @@ positionsFromSize s =
                     |> List.map (newPos x)
             )
         |> List.concat
-
-
-positions : Grid a -> List Pos
-positions (Grid _ d) =
-    Dict.keys d
 
 
 toRows : Grid a -> List (List (Entry a))
