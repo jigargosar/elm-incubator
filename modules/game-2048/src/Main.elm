@@ -4,7 +4,6 @@ import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import List.Extra
-import Random
 
 
 
@@ -210,10 +209,10 @@ type alias DM =
 
 
 view : Model -> DM
-view model =
+view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , div [ class "pl5 pv3 " ] [ viewGrid model.grid ]
+        , div [ class "pl5 pv3 " ] [ viewGrid initialGrid ]
         ]
 
 
