@@ -274,7 +274,7 @@ gridGetAt r c =
 
 
 type alias Model =
-    {}
+    { list : List ( String, Grid2 ) }
 
 
 type alias Flags =
@@ -283,7 +283,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
+    ( { list = [] }
     , Cmd.none
     )
 
@@ -314,6 +314,21 @@ subscriptions _ =
 
 type alias DM =
     Document Msg
+
+
+gridWithOpsList : List GridOp -> Grid2 -> List ( String, Grid2 )
+gridWithOpsList ops grid2 =
+    List.foldl
+        (\op ( stack, g2 ) ->
+            let
+                ng2 =
+                    updateGrid2 op g2
+            in
+            ( ( Debug.toString op, ng2 ) :: stack, ng2 )
+        )
+        ( [ ( "Initial Grid", grid2 ) ], grid2 )
+        ops
+        |> (Tuple.first >> List.reverse)
 
 
 viewGridWithOps : List GridOp -> Grid2 -> HM
