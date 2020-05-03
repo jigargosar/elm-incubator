@@ -216,15 +216,6 @@ type alias DM =
     Document Msg
 
 
-grid1 : Grid
-grid1 =
-    [ [ 2, 0, 0, 0 ]
-    , [ 2, 4, 4, 4 ]
-    , [ 0, 0, 0, 0 ]
-    , [ 0, 0, 0, 0 ]
-    ]
-
-
 viewGridWithOps : List GridOp -> Grid -> HM
 viewGridWithOps ops grid =
     List.foldl
@@ -252,7 +243,12 @@ view : Model -> DM
 view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewGridWithOps [ SlideDown, SlideUp ] grid1
+        , viewGridWithOps [ SlideDown, SlideUp ]
+            [ [ 2, 0, 0, 0 ]
+            , [ 2, 4, 4, 4 ]
+            , [ 0, 0, 0, 0 ]
+            , [ 0, 0, 0, 0 ]
+            ]
         ]
 
 
