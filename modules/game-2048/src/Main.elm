@@ -41,7 +41,11 @@ updateBoard gridOp board =
         board
 
     else
-        case gridEmptyPositions nextGrid of
+        case
+            Grid.toDict nextGrid
+                |> Dict.filter (\_ v -> v == 0)
+                |> Dict.keys
+        of
             [] ->
                 board
 
@@ -100,13 +104,6 @@ viewBoard board =
 
 type alias Grid =
     Grid.Grid Int
-
-
-gridEmptyPositions : Grid -> List Grid.Pos
-gridEmptyPositions grid =
-    Grid.toDict grid
-        |> Dict.filter (\_ v -> v == 0)
-        |> Dict.keys
 
 
 type SlideMsg
