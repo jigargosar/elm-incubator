@@ -79,10 +79,10 @@ viewGrid2 grid2 =
 
         viewCell ri ci num =
             if Just ( ri, ci ) == grid2.lastGen then
-                div [ class "w3 h3 tc outline" ] [ text (numToString num) ]
+                div [ class "w3 h3 tc ba" ] [ text (numToString num) ]
 
             else
-                div [ class "w3 h3 tc" ] [ text (numToString num) ]
+                div [ class "w3 h3 tc ba" ] [ text (numToString num) ]
     in
     div [ class "flex flex-column f4" ] (List.indexedMap viewRow rows)
 
