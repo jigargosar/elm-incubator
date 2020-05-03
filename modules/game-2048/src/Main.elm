@@ -57,6 +57,21 @@ updateGrid2 gridOp grid2 =
                 }
 
 
+viewGrid2 : Grid2 -> HM
+viewGrid2 grid2 =
+    let
+        rows =
+            grid2.grid
+
+        viewRow row =
+            div [ class "flex" ] (List.map viewCell row)
+
+        viewCell num =
+            div [ class "w3 tc" ] [ text (String.fromInt num) ]
+    in
+    div [ class "flex flex-column code f1" ] (List.map viewRow rows)
+
+
 
 -- Grid
 
