@@ -120,32 +120,16 @@ updateGrid : SlideMsg -> Grid -> Grid
 updateGrid gridOp =
     case gridOp of
         SlideUp ->
-            up
+            Grid.mapColumnLists gridListSlideLeft
 
         SlideDown ->
-            down
+            Grid.mapColumnLists gridListSlideLeft
 
         SlideLeft ->
-            left
+            Grid.mapRowLists gridListSlideLeft
 
         SlideRight ->
-            right
-
-
-down =
-    Grid.mapColumnLists gridListSlideRight
-
-
-up =
-    Grid.mapColumnLists gridListSlideLeft
-
-
-left =
-    Grid.mapRowLists gridListSlideLeft
-
-
-right =
-    Grid.mapRowLists gridListSlideRight
+            Grid.mapRowLists gridListSlideRight
 
 
 gridListSlideRight : List Int -> List Int
