@@ -24,6 +24,11 @@ type alias Grid =
 --    ]
 
 
+gridFromLists : List (List Int) -> Grid
+gridFromLists =
+    identity
+
+
 type GridOp
     = SlideUp
     | SlideDown
@@ -245,11 +250,13 @@ view _ =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
         , viewGridWithOps [ SlideDown, SlideUp ]
-            [ [ 2, 0, 0, 0 ]
-            , [ 2, 4, 4, 4 ]
-            , [ 0, 0, 0, 0 ]
-            , [ 0, 0, 0, 0 ]
-            ]
+            (gridFromLists
+                [ [ 2, 0, 0, 0 ]
+                , [ 2, 4, 4, 4 ]
+                , [ 0, 0, 0, 0 ]
+                , [ 0, 0, 0, 0 ]
+                ]
+            )
         ]
 
 
