@@ -70,8 +70,8 @@ initBoard seed lists =
     }
 
 
-updateBoard : SlideMsg -> Board -> Board
-updateBoard message board =
+updateBoard_ : SlideMsg -> Board -> Board
+updateBoard_ message board =
     let
         nextGrid : Grid
         nextGrid =
@@ -114,6 +114,38 @@ updateBoard message board =
                 , lastGen = Just pos
                 , seed = nextSeed
                 }
+
+
+updateBoard : SlideMsg -> Board -> Board
+updateBoard message =
+    slideBoardGrid message
+        >> fillRandomEmptyPos
+
+
+fillRandomEmptyPos : Board -> Board
+fillRandomEmptyPos board =
+    case
+        Grid.toDict board.grid
+            |> Dict.filter (\_ v -> v == 0)
+            |> Dict.keys
+    of
+        [] ->
+            { board | lastGen = Nothing }
+
+        h :: t ->
+            let
+                ( ( pos, randomVal ), nextSeed ) =
+                    Random.step
+                        (Random.pair
+                            (Random.uniform h t)
+                            (Random.uniform 2 [ 4 ])
+                        )
+                        board.seed
+            in
+            { grid = Grid.set pos randomVal board.grid |> Maybe.withDefault board.grid
+            , lastGen = Just pos
+            , seed = nextSeed
+            }
 
 
 slideBoardGrid : SlideMsg -> Board -> Board
