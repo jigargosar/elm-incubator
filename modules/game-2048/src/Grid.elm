@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromLists, get, init, set, toDict, toLists, transpose)
+module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromLists, get, init, mapRowLists, set, toDict, toLists, transpose)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)

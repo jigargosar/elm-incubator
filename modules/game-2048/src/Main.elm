@@ -146,19 +146,11 @@ up =
 
 
 left =
-    mapGridRows gridListSlideLeft
+    Grid.mapRowLists gridListSlideLeft
 
 
 right =
-    mapGridRows gridListSlideRight
-
-
-mapGridRows : (List Int -> List Int) -> Grid -> Grid
-mapGridRows fun grid =
-    grid
-        |> Grid.toLists
-        |> List.map fun
-        |> Grid.fromLists { width = 4, height = 4 } 0
+    Grid.mapRowLists gridListSlideRight
 
 
 mapGridColumns : (List Int -> List Int) -> Grid -> Grid
