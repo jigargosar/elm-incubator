@@ -63,13 +63,17 @@ viewGrid2 grid2 =
         rows =
             grid2.grid
 
-        viewRow row =
-            div [ class "flex" ] (List.map viewCell row)
+        viewRow ri row =
+            div [ class "flex" ] (List.indexedMap (viewCell ri) row)
 
-        viewCell num =
-            div [ class "w3 tc" ] [ text (String.fromInt num) ]
+        viewCell ri ci num =
+            if Just ( ri, ci ) == grid2.lastGen then
+                div [ class "w3 tc outline" ] [ text (String.fromInt num) ]
+
+            else
+                div [ class "w3 tc" ] [ text (String.fromInt num) ]
     in
-    div [ class "flex flex-column code f1" ] (List.map viewRow rows)
+    div [ class "flex flex-column code f1" ] (List.indexedMap viewRow rows)
 
 
 
