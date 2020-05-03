@@ -70,55 +70,9 @@ initBoard seed lists =
     }
 
 
-updateBoard_ : SlideMsg -> Board -> Board
-updateBoard_ message board =
-    let
-        nextGrid : Grid
-        nextGrid =
-            case message of
-                SlideUp ->
-                    Grid.mapColumnLists compactLeft board.grid
-
-                SlideDown ->
-                    Grid.mapColumnLists compactRight board.grid
-
-                SlideLeft ->
-                    Grid.mapRowLists compactLeft board.grid
-
-                SlideRight ->
-                    Grid.mapRowLists compactRight board.grid
-    in
-    if nextGrid == board.grid then
-        { board | lastGen = Nothing }
-
-    else
-        case
-            Grid.toDict nextGrid
-                |> Dict.filter (\_ v -> v == 0)
-                |> Dict.keys
-        of
-            [] ->
-                { board | lastGen = Nothing, grid = nextGrid }
-
-            h :: t ->
-                let
-                    ( ( pos, randomVal ), nextSeed ) =
-                        Random.step
-                            (Random.pair
-                                (Random.uniform h t)
-                                (Random.uniform 2 [ 4 ])
-                            )
-                            board.seed
-                in
-                { grid = Grid.set pos randomVal nextGrid |> Maybe.withDefault nextGrid
-                , lastGen = Just pos
-                , seed = nextSeed
-                }
-
-
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message =
-    slideBoardGrid message
+    slide message
         >> fillRandomEmptyPos
 
 
@@ -148,8 +102,8 @@ fillRandomEmptyPos board =
             }
 
 
-slideBoardGrid : SlideMsg -> Board -> Board
-slideBoardGrid message board =
+slide : SlideMsg -> Board -> Board
+slide message board =
     let
         func =
             case message of
