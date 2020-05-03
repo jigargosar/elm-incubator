@@ -72,7 +72,7 @@ viewGrid2 grid2 =
         numToString num =
             case num of
                 0 ->
-                    "-"
+                    ""
 
                 _ ->
                     String.fromInt num
