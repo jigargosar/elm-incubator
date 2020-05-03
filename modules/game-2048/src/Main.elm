@@ -77,12 +77,15 @@ viewGrid2 grid2 =
                 _ ->
                     String.fromInt num
 
+        cellContainer =
+            div [ class "w3 h3 flex items-center justify-center ba" ]
+
         viewCell ri ci num =
             if Just ( ri, ci ) == grid2.lastGen then
-                div [ class "w3 h3 tc ba" ] [ text (numToString num) ]
+                cellContainer [ text (numToString num) ]
 
             else
-                div [ class "w3 h3 tc ba" ] [ text (numToString num) ]
+                cellContainer [ text (numToString num) ]
     in
     div [ class "flex flex-column f4" ] (List.indexedMap viewRow rows)
 
