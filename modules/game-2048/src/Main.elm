@@ -200,23 +200,14 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
-    case
-        slideNumGrid message board.grid
-            |> Maybe.andThen numGridWithNewEntryGenerator
-    of
-        Just ( entryGen, slidedGrid ) ->
-            let
-                ( ( pos, num ), nextSeed ) =
-                    Random.step entryGen board.seed
-            in
+    let
+        ( maybeReturn, nextSeed ) =
+            Random.step (slideNumGridGenerator message board.grid) board.seed
+    in
+    case maybeReturn of
+        Just ( pos, grid ) ->
             { board
-                | grid =
-                    case Grid.set pos num slidedGrid of
-                        Just ng ->
-                            ng
-
-                        Nothing ->
-                            Debug.todo "should never happen"
+                | grid = grid
                 , lastGen = Just pos
                 , seed = nextSeed
             }
