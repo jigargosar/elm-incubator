@@ -158,6 +158,7 @@ updateBoard message board =
                     let
                         ( ( pos, num ), nextSeed ) =
                             Random.step entryGenerator board.seed
+                                |> Debug.log "debug"
                     in
                     { board
                         | grid =
