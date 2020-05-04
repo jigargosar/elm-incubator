@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
@@ -9,34 +9,6 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
 import Random
-
-
-
--- Basics Extra
-
-
-notEq =
-    (/=)
-
-
-pairTo b a =
-    ( a, b )
-
-
-
---noinspection ElmUnusedSymbol
-
-
-eq =
-    (==)
-
-
-justWhen pred val =
-    if pred val then
-        Just val
-
-    else
-        Nothing
 
 
 
@@ -113,16 +85,6 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridWithNewEntryGenerator : NumGrid -> Maybe ( Random.Generator NumEntry, NumGrid )
-numGridWithNewEntryGenerator grid =
-    numGridNewEntryGenerator grid |> Maybe.map (pairTo grid)
-
-
-numGridNewEntryGenerator : NumGrid -> Maybe (Random.Generator NumEntry)
-numGridNewEntryGenerator =
-    numGridEmptyPositionsCons >> Maybe.map numEntryGenerator
-
-
 numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
 numGridEmptyPositionsCons grid =
     Grid.toDict grid
@@ -148,12 +110,6 @@ slideNumGridGenerator message oldGrid =
 
         _ ->
             Random.constant Nothing
-
-
-slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
-slideNumGrid message grid =
-    slideNumGridHelp message grid
-        |> justWhen (notEq grid)
 
 
 slideNumGridHelp : SlideMsg -> NumGrid -> NumGrid
