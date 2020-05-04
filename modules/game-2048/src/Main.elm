@@ -12,6 +12,26 @@ import Random
 
 
 
+-- Basics Extra
+
+
+notEq =
+    (/=)
+
+
+eq =
+    (==)
+
+
+justWhen pred val =
+    if pred val then
+        Just val
+
+    else
+        Nothing
+
+
+
 -- Cons
 
 
@@ -87,29 +107,24 @@ type alias NumEntry =
 
 slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
 slideNumGrid message grid =
-    let
-        func =
-            case message of
-                SlideUp ->
-                    Grid.mapColumnLists compactLeft
+    slideNumGridHelp message grid
+        |> justWhen (notEq grid)
 
-                SlideDown ->
-                    Grid.mapColumnLists compactRight
 
-                SlideLeft ->
-                    Grid.mapRowLists compactLeft
+slideNumGridHelp : SlideMsg -> NumGrid -> NumGrid
+slideNumGridHelp message =
+    case message of
+        SlideUp ->
+            Grid.mapColumnLists compactLeft
 
-                SlideRight ->
-                    Grid.mapRowLists compactRight
+        SlideDown ->
+            Grid.mapColumnLists compactRight
 
-        nextGrid =
-            func grid
-    in
-    if nextGrid == grid then
-        Nothing
+        SlideLeft ->
+            Grid.mapRowLists compactLeft
 
-    else
-        Just nextGrid
+        SlideRight ->
+            Grid.mapRowLists compactRight
 
 
 numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
