@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromLists, get, init, mapColumnLists, mapRowLists, set, toDict, toLists)
+module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromRowLists, get, init, mapColumnLists, mapRowLists, set, toDict, toLists)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
@@ -96,8 +96,8 @@ init size func =
         |> Grid size
 
 
-fromLists : Size -> a -> Lists a -> Grid a
-fromLists size a lists =
+fromRowLists : Size -> a -> Lists a -> Grid a
+fromRowLists size a lists =
     let
         posDict : PosDict a
         posDict =

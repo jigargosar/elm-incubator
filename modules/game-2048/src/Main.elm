@@ -15,6 +15,10 @@ type alias NumGrid =
     Grid.Grid Int
 
 
+type alias NumList =
+    List Int
+
+
 type SlideMsg
     = SlideUp
     | SlideDown
@@ -22,15 +26,15 @@ type SlideMsg
     | SlideRight
 
 
-compactLeft : List Int -> List Int
+compactLeft : NumList -> NumList
 compactLeft =
     List.reverse >> compactRight >> List.reverse
 
 
-compactRight : List Int -> List Int
+compactRight : NumList -> NumList
 compactRight =
     let
-        padLeft : List Int -> List Int
+        padLeft : NumList -> NumList
         padLeft l =
             List.repeat (4 - List.length l) 0 ++ l
 
@@ -58,14 +62,14 @@ compactRight =
 type alias Board =
     { seed : Random.Seed
     , grid : NumGrid
-    , lastGen : Maybe ( Int, Int )
+    , lastGen : Maybe Grid.Pos
     }
 
 
 initBoard : Random.Seed -> Grid.Lists Int -> Board
 initBoard seed lists =
     { seed = seed
-    , grid = Grid.fromLists { width = 4, height = 4 } 0 lists
+    , grid = Grid.fromRowLists { width = 4, height = 4 } 0 lists
     , lastGen = Nothing
     }
 
