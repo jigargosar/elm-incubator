@@ -199,7 +199,7 @@ viewBoard board =
 
         viewCell ri ci num =
             if Just ( ri, ci ) == board.lastGen then
-                div [ cellContainerStyle ] [ viewNumString num ]
+                div [ cellContainerStyle, class "b--red" ] [ viewNumString num ]
 
             else
                 div [ cellContainerStyle ] [ viewNumString num ]
