@@ -176,11 +176,7 @@ updateBoard message board =
                     { board | grid = slidedGrid, lastGen = Nothing }
 
         Nothing ->
-            if board.lastGen == Nothing then
-                board
-
-            else
-                { board | lastGen = Nothing }
+            board
 
 
 viewBoard : Board -> HM
