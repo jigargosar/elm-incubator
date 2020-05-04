@@ -97,7 +97,7 @@ numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( 
 numGridSlideAndFillGenerator message oldGrid =
     let
         newGrid =
-            slideNumGridHelp message oldGrid
+            numGridSlide message oldGrid
     in
     if newGrid /= oldGrid then
         numGridFillRandomEmptyPos newGrid
@@ -121,8 +121,8 @@ numGridFillRandomEmptyPos grid =
             Random.constant Nothing
 
 
-slideNumGridHelp : SlideMsg -> NumGrid -> NumGrid
-slideNumGridHelp message =
+numGridSlide : SlideMsg -> NumGrid -> NumGrid
+numGridSlide message =
     case message of
         SlideUp ->
             Grid.mapColumnLists compactLeft
