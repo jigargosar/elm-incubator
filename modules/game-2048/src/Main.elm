@@ -199,7 +199,7 @@ viewBoard board =
             class "ba w3 h2 flex items-center justify-center"
 
         viewCell ri ci num =
-            if Just ( ri, ci ) == board.lastGen then
+            if Just ( ci, ri ) == board.lastGen then
                 div [ cellContainerStyle, class "b--red" ] [ viewNumString num ]
 
             else
