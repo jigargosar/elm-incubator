@@ -107,7 +107,7 @@ addNew board =
             }
 
 
-slideNumGrid : SlideMsg -> NumGrid -> NumGrid
+slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
 slideNumGrid message grid =
     let
         func =
@@ -123,8 +123,15 @@ slideNumGrid message grid =
 
                 SlideRight ->
                     Grid.mapRowLists compactRight
+
+        nextGrid =
+            func grid
     in
-    func grid
+    if nextGrid == grid then
+        Nothing
+
+    else
+        Just grid
 
 
 slide : SlideMsg -> Board -> Maybe Board
