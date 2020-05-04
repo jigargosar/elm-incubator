@@ -93,8 +93,8 @@ numGridEmptyPositionsCons grid =
         |> consFromList
 
 
-slideNumGridGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
-slideNumGridGenerator message oldGrid =
+numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
+numGridSlideAndFillGenerator message oldGrid =
     let
         newGrid =
             slideNumGridHelp message oldGrid
@@ -167,7 +167,7 @@ updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
     let
         ( maybePosGrid, nextSeed ) =
-            Random.step (slideNumGridGenerator message board.grid) board.seed
+            Random.step (numGridSlideAndFillGenerator message board.grid) board.seed
     in
     case maybePosGrid of
         Just ( pos, grid ) ->
