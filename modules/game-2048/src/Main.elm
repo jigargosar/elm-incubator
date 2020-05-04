@@ -85,6 +85,40 @@ type alias NumEntry =
     Grid.Entry Int
 
 
+slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
+slideNumGrid message grid =
+    let
+        func =
+            case message of
+                SlideUp ->
+                    Grid.mapColumnLists compactLeft
+
+                SlideDown ->
+                    Grid.mapColumnLists compactRight
+
+                SlideLeft ->
+                    Grid.mapRowLists compactLeft
+
+                SlideRight ->
+                    Grid.mapRowLists compactRight
+
+        nextGrid =
+            func grid
+    in
+    if nextGrid == grid then
+        Nothing
+
+    else
+        Just grid
+
+
+numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
+numEntryGenerator ( pos, posList ) =
+    Random.pair
+        (Random.uniform pos posList)
+        (Random.uniform 2 [ 4 ])
+
+
 
 -- 2048 Board
 
@@ -124,13 +158,6 @@ updateBoard message board =
         |> Maybe.withDefault { board | lastGen = Nothing }
 
 
-numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
-numEntryGenerator ( pos, posList ) =
-    Random.pair
-        (Random.uniform pos posList)
-        (Random.uniform 2 [ 4 ])
-
-
 addNew : Board -> Board
 addNew board =
     case
@@ -155,33 +182,6 @@ addNew board =
             , lastGen = Just pos
             , seed = nextSeed
             }
-
-
-slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
-slideNumGrid message grid =
-    let
-        func =
-            case message of
-                SlideUp ->
-                    Grid.mapColumnLists compactLeft
-
-                SlideDown ->
-                    Grid.mapColumnLists compactRight
-
-                SlideLeft ->
-                    Grid.mapRowLists compactLeft
-
-                SlideRight ->
-                    Grid.mapRowLists compactRight
-
-        nextGrid =
-            func grid
-    in
-    if nextGrid == grid then
-        Nothing
-
-    else
-        Just grid
 
 
 slide : SlideMsg -> Board -> Maybe Board
