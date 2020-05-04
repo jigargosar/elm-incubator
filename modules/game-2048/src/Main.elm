@@ -109,6 +109,24 @@ type alias NumEntry =
     Grid.Entry Int
 
 
+slideNumGridAndGetEmptyPositions : SlideMsg -> NumGrid -> Maybe ( Cons Grid.Pos, NumGrid )
+slideNumGridAndGetEmptyPositions message =
+    slideNumGrid message
+        >> Maybe.andThen
+            (\g ->
+                numGridEmptyPositionsCons g
+                    |> Maybe.map (\ps -> ( ps, g ))
+            )
+
+
+numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
+numGridEmptyPositionsCons grid =
+    Grid.toDict grid
+        |> Dict.filter (\_ v -> v == 0)
+        |> Dict.keys
+        |> consFromList
+
+
 slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
 slideNumGrid message grid =
     slideNumGridHelp message grid
@@ -138,14 +156,6 @@ numEntryGenerator ( pos, posList ) =
         (Random.uniform 2 [ 4 ])
 
 
-numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
-numGridEmptyPositionsCons grid =
-    Grid.toDict grid
-        |> Dict.filter (\_ v -> v == 0)
-        |> Dict.keys
-        |> consFromList
-
-
 
 -- 2048 Board
 
@@ -167,32 +177,23 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
-    case slideNumGrid message board.grid of
-        Just slidedGrid ->
-            case
-                numGridEmptyPositionsCons slidedGrid
-                    |> Maybe.map numEntryGenerator
-            of
-                Just entryGenerator ->
-                    let
-                        ( ( pos, num ), nextSeed ) =
-                            Random.step entryGenerator board.seed
-                                |> Debug.log "debug"
-                    in
-                    { board
-                        | grid =
-                            case Grid.set pos num slidedGrid of
-                                Just ng ->
-                                    ng
+    case slideNumGridAndGetEmptyPositions message board.grid of
+        Just ( emptyPosCons, slidedGrid ) ->
+            let
+                ( ( pos, num ), nextSeed ) =
+                    Random.step (numEntryGenerator emptyPosCons) board.seed
+            in
+            { board
+                | grid =
+                    case Grid.set pos num slidedGrid of
+                        Just ng ->
+                            ng
 
-                                Nothing ->
-                                    Debug.todo "should never happen"
-                        , lastGen = Just pos
-                        , seed = nextSeed
-                    }
-
-                Nothing ->
-                    { board | grid = slidedGrid, lastGen = Nothing }
+                        Nothing ->
+                            Debug.todo "should never happen"
+                , lastGen = Just pos
+                , seed = nextSeed
+            }
 
         Nothing ->
             board
