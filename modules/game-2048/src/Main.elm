@@ -19,6 +19,10 @@ notEq =
     (/=)
 
 
+pairTo b a =
+    ( a, b )
+
+
 
 --noinspection ElmUnusedSymbol
 
@@ -110,9 +114,13 @@ type alias NumEntry =
 
 
 numGridWithNewEntryGenerator : NumGrid -> Maybe ( Random.Generator NumEntry, NumGrid )
-numGridWithNewEntryGenerator numGrid =
-    numGridEmptyPositionsCons numGrid
-        |> Maybe.map (numEntryGenerator >> (\gen -> ( gen, numGrid )))
+numGridWithNewEntryGenerator grid =
+    numGridNewEntryGenerator grid |> Maybe.map (pairTo grid)
+
+
+numGridNewEntryGenerator : NumGrid -> Maybe (Random.Generator NumEntry)
+numGridNewEntryGenerator =
+    numGridEmptyPositionsCons >> Maybe.map numEntryGenerator
 
 
 numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
