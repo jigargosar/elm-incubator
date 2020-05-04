@@ -76,6 +76,19 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
+    let
+        _ =
+            case slideNumGrid message board.grid of
+                Just slidedGrid ->
+                    { board | grid = slidedGrid }
+
+                Nothing ->
+                    if board.lastGen == Nothing then
+                        board
+
+                    else
+                        { board | lastGen = Nothing }
+    in
     slide message board
         |> Maybe.map addNew
         |> Maybe.withDefault { board | lastGen = Nothing }
