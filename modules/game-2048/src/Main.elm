@@ -201,10 +201,10 @@ initBoard seed lists =
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
     let
-        ( maybeReturn, nextSeed ) =
+        ( maybePosGrid, nextSeed ) =
             Random.step (slideNumGridGenerator message board.grid) board.seed
     in
-    case maybeReturn of
+    case maybePosGrid of
         Just ( pos, grid ) ->
             { board
                 | grid = grid
