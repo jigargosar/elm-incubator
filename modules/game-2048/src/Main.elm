@@ -56,20 +56,28 @@ compactRight =
         padLeft l =
             List.repeat (4 - List.length l) 0 ++ l
 
-        func v acc =
-            case acc of
-                h :: t ->
-                    if v == h then
-                        v + h :: t
+        func v ( maybeUnprocessed, acc ) =
+            case maybeUnprocessed of
+                Nothing ->
+                    ( Just v, acc )
+
+                Just unprocessed ->
+                    if unprocessed == v then
+                        ( Nothing, unprocessed + v :: acc )
 
                     else
-                        v :: acc
-
-                _ ->
-                    v :: acc
+                        ( Just v, unprocessed :: acc )
     in
     List.filter (\v -> v /= 0)
-        >> List.foldr func []
+        >> List.foldr func ( Nothing, [] )
+        >> (\( maybeHead, rest ) ->
+                case maybeHead of
+                    Just head ->
+                        head :: rest
+
+                    Nothing ->
+                        rest
+           )
         >> padLeft
 
 
