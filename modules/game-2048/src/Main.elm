@@ -11,16 +11,30 @@ import Json.Decode as D
 import Random
 
 
-type alias NumGrid =
-    Grid.Grid Int
+
+-- Cons
+
+
+type alias Cons a =
+    ( a, List a )
+
+
+consFromList : List a -> Maybe (Cons a)
+consFromList list =
+    case list of
+        [] ->
+            Nothing
+
+        h :: t ->
+            Just ( h, t )
+
+
+
+-- NumList
 
 
 type alias NumList =
     List Int
-
-
-type alias NumEntry =
-    Grid.Entry Int
 
 
 type SlideMsg
@@ -60,7 +74,19 @@ compactRight =
 
 
 
--- Board
+-- NumGrid
+
+
+type alias NumGrid =
+    Grid.Grid Int
+
+
+type alias NumEntry =
+    Grid.Entry Int
+
+
+
+-- 2048 Board
 
 
 type alias Board =
@@ -96,10 +122,6 @@ updateBoard message board =
     slide message board
         |> Maybe.map addNew
         |> Maybe.withDefault { board | lastGen = Nothing }
-
-
-type alias Cons a =
-    ( a, List a )
 
 
 numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
