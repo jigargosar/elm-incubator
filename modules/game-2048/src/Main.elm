@@ -19,6 +19,10 @@ notEq =
     (/=)
 
 
+
+--noinspection ElmUnusedSymbol
+
+
 eq =
     (==)
 
