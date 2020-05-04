@@ -152,7 +152,26 @@ updateBoard message board =
         _ =
             case slideNumGrid message board.grid of
                 Just slidedGrid ->
-                    { board | grid = slidedGrid }
+                    case
+                        numGridEmptyPositionsCons slidedGrid
+                            |> Maybe.map numEntryGenerator
+                    of
+                        Just entryGenerator ->
+                            let
+                                ( ( pos, num ), nextSeed ) =
+                                    Random.step entryGenerator board.seed
+                            in
+                            { board
+                                | grid =
+                                    slidedGrid
+                                        |> Grid.set pos num
+                                        |> Maybe.withDefault slidedGrid
+                                , lastGen = Just pos
+                                , seed = nextSeed
+                            }
+
+                        Nothing ->
+                            { board | grid = slidedGrid, lastGen = Nothing }
 
                 Nothing ->
                     if board.lastGen == Nothing then
