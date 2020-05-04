@@ -1,4 +1,4 @@
-module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromRowLists, get, init, mapColumnLists, mapRowLists, set, toDict, toLists)
+module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromRowLists, get, init, mapColumnLists, mapRowLists, set, setEntry, toDict, toLists)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
@@ -113,6 +113,11 @@ set : Pos -> a -> Grid a -> Maybe (Grid a)
 set pos a (Grid s d) =
     Dict.get pos d
         |> Maybe.map (\_ -> Dict.insert pos a d |> Grid s)
+
+
+setEntry : Entry a -> Grid a -> Maybe (Grid a)
+setEntry ( pos, a ) =
+    set pos a
 
 
 

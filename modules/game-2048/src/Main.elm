@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
@@ -129,6 +129,25 @@ numGridEmptyPositionsCons grid =
         |> Dict.filter (\_ v -> v == 0)
         |> Dict.keys
         |> consFromList
+
+
+slideNumGridGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
+slideNumGridGenerator message oldGrid =
+    let
+        newGrid =
+            slideNumGridHelp message oldGrid
+
+        setEntryIn grid ( pos, num ) =
+            Grid.set pos num grid
+                |> Maybe.map (Tuple.pair pos)
+    in
+    case ( newGrid == oldGrid, numGridEmptyPositionsCons newGrid ) of
+        ( False, Just posCons ) ->
+            numEntryGenerator posCons
+                |> Random.map (setEntryIn newGrid)
+
+        _ ->
+            Random.constant Nothing
 
 
 slideNumGrid : SlideMsg -> NumGrid -> Maybe NumGrid
