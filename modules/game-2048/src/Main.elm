@@ -119,6 +119,14 @@ numEntryGenerator ( pos, posList ) =
         (Random.uniform 2 [ 4 ])
 
 
+numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
+numGridEmptyPositionsCons grid =
+    Grid.toDict grid
+        |> Dict.filter (\_ v -> v == 0)
+        |> Dict.keys
+        |> consFromList
+
+
 
 -- 2048 Board
 
