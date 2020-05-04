@@ -107,6 +107,26 @@ addNew board =
             }
 
 
+slideNumGrid : SlideMsg -> NumGrid -> NumGrid
+slideNumGrid message grid =
+    let
+        func =
+            case message of
+                SlideUp ->
+                    Grid.mapColumnLists compactLeft
+
+                SlideDown ->
+                    Grid.mapColumnLists compactRight
+
+                SlideLeft ->
+                    Grid.mapRowLists compactLeft
+
+                SlideRight ->
+                    Grid.mapRowLists compactRight
+    in
+    func grid
+
+
 slide : SlideMsg -> Board -> Maybe Board
 slide message board =
     let
