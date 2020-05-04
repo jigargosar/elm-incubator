@@ -109,14 +109,10 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-slideNumGridAndGetEmptyPositions : SlideMsg -> NumGrid -> Maybe ( Cons Grid.Pos, NumGrid )
-slideNumGridAndGetEmptyPositions message =
-    slideNumGrid message
-        >> Maybe.andThen
-            (\g ->
-                numGridEmptyPositionsCons g
-                    |> Maybe.map (\ps -> ( ps, g ))
-            )
+numGridWithEmptyPositionsCons : NumGrid -> Maybe ( Cons Grid.Pos, NumGrid )
+numGridWithEmptyPositionsCons numGrid =
+    numGridEmptyPositionsCons numGrid
+        |> Maybe.map (\epc -> ( epc, numGrid ))
 
 
 numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
@@ -177,7 +173,10 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
-    case slideNumGridAndGetEmptyPositions message board.grid of
+    case
+        slideNumGrid message board.grid
+            |> Maybe.andThen numGridWithEmptyPositionsCons
+    of
         Just ( emptyPosCons, slidedGrid ) ->
             let
                 ( ( pos, num ), nextSeed ) =
