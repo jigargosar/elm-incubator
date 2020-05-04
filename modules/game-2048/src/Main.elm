@@ -182,18 +182,17 @@ updateBoard message board =
 viewBoard : Board -> HM
 viewBoard board =
     let
-        numToString num =
-            case num of
-                0 ->
-                    ""
-
-                _ ->
-                    String.fromInt num
-                        --|> always "2048"
-                        |> identity
-
         viewNumString num =
-            text (numToString num)
+            text
+                (case num of
+                    0 ->
+                        ""
+
+                    _ ->
+                        String.fromInt num
+                            --|> always "2048"
+                            |> identity
+                )
 
         cellContainerStyle =
             class "ba w3 h2 flex items-center justify-center"
