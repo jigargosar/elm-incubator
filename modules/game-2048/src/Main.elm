@@ -11,7 +11,7 @@ import Json.Decode as D
 import Random
 
 
-type alias Grid =
+type alias NumGrid =
     Grid.Grid Int
 
 
@@ -57,7 +57,7 @@ compactRight =
 
 type alias Board =
     { seed : Random.Seed
-    , grid : Grid
+    , grid : NumGrid
     , lastGen : Maybe ( Int, Int )
     }
 
