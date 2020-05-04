@@ -109,7 +109,7 @@ slideNumGrid message grid =
         Nothing
 
     else
-        Just grid
+        Just nextGrid
 
 
 numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
