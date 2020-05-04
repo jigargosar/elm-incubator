@@ -67,17 +67,18 @@ compactRight =
 
                     else
                         ( Just v, unprocessed :: acc )
+
+        unprocessedTupleToList ( maybeUnprocessed, acc ) =
+            case maybeUnprocessed of
+                Just head ->
+                    head :: acc
+
+                Nothing ->
+                    acc
     in
     List.filter (\v -> v /= 0)
         >> List.foldr func ( Nothing, [] )
-        >> (\( maybeHead, rest ) ->
-                case maybeHead of
-                    Just head ->
-                        head :: rest
-
-                    Nothing ->
-                        rest
-           )
+        >> unprocessedTupleToList
         >> padLeft
 
 
