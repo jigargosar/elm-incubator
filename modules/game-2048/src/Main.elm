@@ -162,9 +162,12 @@ updateBoard message board =
                     in
                     { board
                         | grid =
-                            slidedGrid
-                                |> Grid.set pos num
-                                |> Maybe.withDefault slidedGrid
+                            case Grid.set pos num slidedGrid of
+                                Just ng ->
+                                    ng
+
+                                Nothing ->
+                                    Debug.todo "should never happen"
                         , lastGen = Just pos
                         , seed = nextSeed
                     }
