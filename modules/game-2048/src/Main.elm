@@ -98,17 +98,26 @@ slideNumGridGenerator message oldGrid =
     let
         newGrid =
             slideNumGridHelp message oldGrid
-
-        setEntryIn grid ( pos, num ) =
-            Grid.set pos num grid
-                |> Maybe.map (Tuple.pair pos)
     in
-    case ( newGrid == oldGrid, numGridEmptyPositionsCons newGrid ) of
-        ( False, Just posCons ) ->
-            numEntryGenerator posCons
-                |> Random.map (setEntryIn newGrid)
+    if newGrid /= oldGrid then
+        numGridFillRandomEmptyPos newGrid
 
-        _ ->
+    else
+        Random.constant Nothing
+
+
+numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
+numGridFillRandomEmptyPos grid =
+    case numGridEmptyPositionsCons grid of
+        Just posCons ->
+            numEntryGenerator posCons
+                |> Random.map
+                    (\( pos, num ) ->
+                        Grid.set pos num grid
+                            |> Maybe.map (Tuple.pair pos)
+                    )
+
+        Nothing ->
             Random.constant Nothing
 
 
