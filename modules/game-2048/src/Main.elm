@@ -52,10 +52,6 @@ compactLeft =
 compactRight : NumList -> NumList
 compactRight =
     let
-        padLeft : NumList -> NumList
-        padLeft l =
-            List.repeat (4 - List.length l) 0 ++ l
-
         func v ( maybeUnprocessed, acc ) =
             case maybeUnprocessed of
                 Nothing ->
@@ -79,7 +75,12 @@ compactRight =
     List.filter (\v -> v /= 0)
         >> List.foldr func ( Nothing, [] )
         >> unprocessedTupleToList
-        >> padLeft
+        >> numListPadLeft
+
+
+numListPadLeft : NumList -> NumList
+numListPadLeft l =
+    List.repeat (4 - List.length l) 0 ++ l
 
 
 
