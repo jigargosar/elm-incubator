@@ -19,6 +19,10 @@ type alias NumList =
     List Int
 
 
+type alias NumEntry =
+    Grid.Entry Int
+
+
 type SlideMsg
     = SlideUp
     | SlideDown
@@ -92,6 +96,17 @@ updateBoard message board =
     slide message board
         |> Maybe.map addNew
         |> Maybe.withDefault { board | lastGen = Nothing }
+
+
+type alias Cons a =
+    ( a, List a )
+
+
+numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
+numEntryGenerator ( pos, posList ) =
+    Random.pair
+        (Random.uniform pos posList)
+        (Random.uniform 2 [ 4 ])
 
 
 addNew : Board -> Board
