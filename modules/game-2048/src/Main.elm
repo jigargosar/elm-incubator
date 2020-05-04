@@ -109,10 +109,10 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridWithEmptyPositionsCons : NumGrid -> Maybe ( Cons Grid.Pos, NumGrid )
-numGridWithEmptyPositionsCons numGrid =
+numGridWithNewEntryGenerator : NumGrid -> Maybe ( Random.Generator NumEntry, NumGrid )
+numGridWithNewEntryGenerator numGrid =
     numGridEmptyPositionsCons numGrid
-        |> Maybe.map (\epc -> ( epc, numGrid ))
+        |> Maybe.map (numEntryGenerator >> (\gen -> ( gen, numGrid )))
 
 
 numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
@@ -175,12 +175,12 @@ updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
     case
         slideNumGrid message board.grid
-            |> Maybe.andThen numGridWithEmptyPositionsCons
+            |> Maybe.andThen numGridWithNewEntryGenerator
     of
-        Just ( emptyPosCons, slidedGrid ) ->
+        Just ( entryGen, slidedGrid ) ->
             let
                 ( ( pos, num ), nextSeed ) =
-                    Random.step (numEntryGenerator emptyPosCons) board.seed
+                    Random.step entryGen board.seed
             in
             { board
                 | grid =
