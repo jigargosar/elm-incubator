@@ -76,7 +76,9 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
-    slide message board |> Maybe.map addNew |> Maybe.withDefault { board | lastGen = Nothing }
+    slide message board
+        |> Maybe.map addNew
+        |> Maybe.withDefault { board | lastGen = Nothing }
 
 
 addNew : Board -> Board
