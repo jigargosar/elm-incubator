@@ -148,105 +148,40 @@ initBoard seed lists =
 
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
-    let
-        _ =
-            case slideNumGrid message board.grid of
-                Just slidedGrid ->
-                    case
-                        numGridEmptyPositionsCons slidedGrid
-                            |> Maybe.map numEntryGenerator
-                    of
-                        Just entryGenerator ->
-                            let
-                                ( ( pos, num ), nextSeed ) =
-                                    Random.step entryGenerator board.seed
-                            in
-                            { board
-                                | grid =
-                                    slidedGrid
-                                        |> Grid.set pos num
-                                        |> Maybe.withDefault slidedGrid
-                                , lastGen = Just pos
-                                , seed = nextSeed
-                            }
-
-                        Nothing ->
-                            { board | grid = slidedGrid, lastGen = Nothing }
+    case slideNumGrid message board.grid of
+        Just slidedGrid ->
+            case
+                numGridEmptyPositionsCons slidedGrid
+                    |> Maybe.map numEntryGenerator
+            of
+                Just entryGenerator ->
+                    let
+                        ( ( pos, num ), nextSeed ) =
+                            Random.step entryGenerator board.seed
+                    in
+                    { board
+                        | grid =
+                            slidedGrid
+                                |> Grid.set pos num
+                                |> Maybe.withDefault slidedGrid
+                        , lastGen = Just pos
+                        , seed = nextSeed
+                    }
 
                 Nothing ->
-                    if board.lastGen == Nothing then
-                        board
+                    { board | grid = slidedGrid, lastGen = Nothing }
 
-                    else
-                        { board | lastGen = Nothing }
-    in
-    slide message board
-        |> Maybe.map addNew
-        |> Maybe.withDefault { board | lastGen = Nothing }
+        Nothing ->
+            if board.lastGen == Nothing then
+                board
 
-
-addNew : Board -> Board
-addNew board =
-    case
-        Grid.toDict board.grid
-            |> Dict.filter (\_ v -> v == 0)
-            |> Dict.keys
-    of
-        [] ->
-            board
-
-        h :: t ->
-            let
-                ( ( pos, randomVal ), nextSeed ) =
-                    Random.step
-                        (Random.pair
-                            (Random.uniform h t)
-                            (Random.uniform 2 [ 4 ])
-                        )
-                        board.seed
-            in
-            { grid = Grid.set pos randomVal board.grid |> Maybe.withDefault board.grid
-            , lastGen = Just pos
-            , seed = nextSeed
-            }
-
-
-slide : SlideMsg -> Board -> Maybe Board
-slide message board =
-    let
-        func =
-            case message of
-                SlideUp ->
-                    Grid.mapColumnLists compactLeft
-
-                SlideDown ->
-                    Grid.mapColumnLists compactRight
-
-                SlideLeft ->
-                    Grid.mapRowLists compactLeft
-
-                SlideRight ->
-                    Grid.mapRowLists compactRight
-
-        nextGrid =
-            func board.grid
-    in
-    if nextGrid == board.grid then
-        Nothing
-
-    else
-        Just { board | grid = func board.grid }
+            else
+                { board | lastGen = Nothing }
 
 
 viewBoard : Board -> HM
 viewBoard board =
     let
-        rows =
-            Grid.toLists board.grid
-
-        viewRow ri row =
-            div [ class "flex br bb b--inherit" ] (List.indexedMap (viewCell ri) row)
-
         numToString num =
             case num of
                 0 ->
@@ -257,18 +192,26 @@ viewBoard board =
                         --|> always "2048"
                         |> identity
 
-        cellContainer children =
-            div [ class "bl  b--inherit w3 h2 flex items-center justify-center" ]
-                children
+        viewNumString num =
+            text (numToString num)
+
+        cellContainerStyle =
+            class "ba w3 h2 flex items-center justify-center"
 
         viewCell ri ci num =
             if Just ( ri, ci ) == board.lastGen then
-                cellContainer [ text (numToString num) ]
+                div [ cellContainerStyle ] [ viewNumString num ]
 
             else
-                cellContainer [ text (numToString num) ]
+                div [ cellContainerStyle ] [ viewNumString num ]
+
+        rows =
+            Grid.toLists board.grid
+
+        viewRow ri row =
+            div [ class "flex" ] (List.indexedMap (viewCell ri) row)
     in
-    div [ class "flex flex-column bt f4 b--red" ] (List.indexedMap viewRow rows)
+    div [ class "flex flex-column ba f4" ] (List.indexedMap viewRow rows)
 
 
 
