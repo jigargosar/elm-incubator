@@ -121,20 +121,18 @@ numGridSlideAndFillGenerator message oldGrid =
 
 numGridSlide : SlideMsg -> NumGrid -> ( Int, NumGrid )
 numGridSlide message =
-    (case message of
+    case message of
         SlideUp ->
-            Grid.mapColumnLists compactLeft
+            Grid.mapColumnLists compactLeft >> Tuple.pair 0
 
         SlideDown ->
-            Grid.mapColumnLists compactRight
+            Grid.mapColumnLists compactRight >> Tuple.pair 0
 
         SlideLeft ->
-            Grid.mapRowLists compactLeft
+            Grid.mapRowLists compactLeft >> Tuple.pair 0
 
         SlideRight ->
-            Grid.mapRowLists compactRight
-    )
-        >> Tuple.pair 0
+            Grid.mapRowLists compactRight >> Tuple.pair 0
 
 
 numGridCompactRight : NumGrid -> ( Int, NumGrid )
