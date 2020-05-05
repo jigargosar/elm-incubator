@@ -141,14 +141,14 @@ numGridCompactRight grid =
         func : List NumEntry -> ( Int, List NumEntry )
         func entries =
             let
-                rowPositions =
+                positions =
                     List.map Tuple.first entries
 
-                rowValues =
+                numValues =
                     List.map Tuple.second entries
             in
-            compactRight2 rowValues
-                |> Tuple.mapSecond (List.Extra.zip rowPositions)
+            compactRight2 numValues
+                |> Tuple.mapSecond (List.Extra.zip positions)
 
         ( score, updatedEntries ) =
             List.map func (Grid.toRowEntries grid)
