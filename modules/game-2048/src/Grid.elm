@@ -15,6 +15,7 @@ module Grid exposing
     , setEntry
     , toDict
     , toLists
+    , toRowEntries
     )
 
 import Basics.Extra exposing (uncurry)
@@ -221,6 +222,13 @@ mapColumnLists func (Grid s d) =
 toDict : Grid a -> PosDict a
 toDict (Grid _ d) =
     d
+
+
+toRowEntries : Grid a -> List (List (Entry a))
+toRowEntries (Grid _ d) =
+    Dict.toList d
+        |> List.Extra.gatherEqualsBy getEntryRowIndex
+        |> List.map consToList
 
 
 
