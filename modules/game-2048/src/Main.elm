@@ -161,6 +161,7 @@ numEntryGenerator ( pos, posList ) =
 type alias Board =
     { seed : Random.Seed
     , grid : NumGrid
+    , score : Int
     , lastGen : Maybe Grid.Pos
     }
 
@@ -169,6 +170,7 @@ initBoard : Random.Seed -> Grid.Lists Int -> Board
 initBoard seed lists =
     { seed = seed
     , grid = Grid.fromRowLists { width = 4, height = 4 } 0 lists
+    , score = 0
     , lastGen = Nothing
     }
 
