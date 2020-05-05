@@ -7,6 +7,7 @@ import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
+import Maybe.Extra as Maybe
 import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
@@ -193,9 +194,9 @@ update message model =
 
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
 updateAndGenerateBoard message model =
-    updateBoard message model.board
-        |> Maybe.map (\a -> Seedy.generate a model |> uncurry setBoard)
-        |> Maybe.withDefault model
+    model
+        |> Seedy.maybeGenerate (updateBoard message model.board)
+        |> Maybe.unwrap model (uncurry setBoard)
 
 
 setBoard board model =
