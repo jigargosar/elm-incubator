@@ -27,9 +27,15 @@ type Msg
     | SlideRight
 
 
+update : Msg -> Model -> Random.Generator (Maybe ( Int, Grid.Pos, Model ))
 update message (Model grid) =
-    updateNumGrid message grid
-        |> Random.map (Maybe.map (\( a, b, c ) -> ( a, b, Model c )))
+    numGridUpdate message grid
+        |> Random.map
+            (Maybe.map
+                (\( score, pos, nextNumGrid ) ->
+                    ( score, pos, Model nextNumGrid )
+                )
+            )
 
 
 toGrid : Model -> Grid.Grid Int
@@ -109,8 +115,8 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-updateNumGrid : Msg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
-updateNumGrid message oldGrid =
+numGridUpdate : Msg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
+numGridUpdate message oldGrid =
     let
         ( score, newGrid ) =
             numGridSlide message oldGrid
