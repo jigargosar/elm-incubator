@@ -15,31 +15,18 @@ import Random
 
 
 type alias Board =
-    { seed : Random.Seed
-    , grid : NumGrid.Model
+    { grid : NumGrid.Model
     , score : Int
     , lastGen : Maybe Grid.Pos
     }
 
 
-initBoard : Random.Seed -> Grid.Lists Int -> Board
-initBoard seed lists =
-    { seed = seed
-    , grid = NumGrid.fromRowLists lists
+initBoard : Grid.Lists Int -> Board
+initBoard lists =
+    { grid = NumGrid.fromRowLists lists
     , score = 0
     , lastGen = Nothing
     }
-
-
-updateBoard : NumGrid.Msg -> Board -> Board
-updateBoard message board =
-    let
-        ( maybeBoard, nextSeed ) =
-            Random.step (updateBoardGenerator message board) board.seed
-    in
-    maybeBoard
-        |> Maybe.withDefault board
-        |> setSeed nextSeed
 
 
 setSeed : a -> { b | seed : a } -> { b | seed : a }
@@ -151,7 +138,7 @@ init () =
             Random.initialSeed 0
     in
     ( { board =
-            initBoard initialSeed
+            initBoard
                 ([ [ 0, 2, 2, 0 ]
                  , [ 2, 4, 2, 2 ]
                  , [ 2, 2, 4, 2 ]
@@ -212,12 +199,8 @@ updateBoardInModel message model =
         ( maybeBoard, nextSeed ) =
             Random.step (updateBoardGenerator message model.board) model.seed
     in
-    { model
-        | board =
-            maybeBoard
-                |> Maybe.withDefault model.board
-                |> setSeed nextSeed
-    }
+    { model | board = maybeBoard |> Maybe.withDefault model.board }
+        |> setSeed nextSeed
 
 
 subscriptions : Model -> Sub Msg
