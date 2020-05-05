@@ -9,6 +9,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as D
 import NumGrid
 import Random
+import Random.Extra
 import Seedy
 
 
