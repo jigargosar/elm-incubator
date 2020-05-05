@@ -105,22 +105,23 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
+numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
 numGridSlideAndFillGenerator message oldGrid =
     let
-        newGrid =
+        ( score, newGrid ) =
             numGridSlide message oldGrid
     in
     if newGrid /= oldGrid then
         numGridFillRandomEmptyPos newGrid
+            |> Random.map (Maybe.map (\( p, g ) -> ( score, p, g )))
 
     else
         Random.constant Nothing
 
 
-numGridSlide : SlideMsg -> NumGrid -> NumGrid
+numGridSlide : SlideMsg -> NumGrid -> ( Int, NumGrid )
 numGridSlide message =
-    case message of
+    (case message of
         SlideUp ->
             Grid.mapColumnLists compactLeft
 
@@ -132,6 +133,8 @@ numGridSlide message =
 
         SlideRight ->
             Grid.mapRowLists compactRight
+    )
+        >> Tuple.pair 0
 
 
 numGridCompactRight : NumGrid -> ( Int, NumGrid )
@@ -240,15 +243,16 @@ initBoard seed lists =
 updateBoard : SlideMsg -> Board -> Board
 updateBoard message board =
     let
-        ( maybePosGrid, nextSeed ) =
+        ( maybeScorePosGrid, nextSeed ) =
             Random.step (numGridSlideAndFillGenerator message board.grid) board.seed
     in
-    case maybePosGrid of
-        Just ( pos, grid ) ->
+    case maybeScorePosGrid of
+        Just ( score, pos, grid ) ->
             { board
                 | grid = grid
                 , lastGen = Just pos
                 , seed = nextSeed
+                , score = board.score + score
             }
 
         Nothing ->
