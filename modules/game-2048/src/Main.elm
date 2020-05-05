@@ -8,7 +8,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
 import List.Extra
-import NumGrid exposing (NumGrid)
+import NumGrid
 import Random
 
 
@@ -18,7 +18,7 @@ import Random
 
 type alias Board =
     { seed : Random.Seed
-    , grid : NumGrid
+    , grid : NumGrid.Model
     , score : Int
     , lastGen : Maybe Grid.Pos
     }
@@ -27,7 +27,7 @@ type alias Board =
 initBoard : Random.Seed -> Grid.Lists Int -> Board
 initBoard seed lists =
     { seed = seed
-    , grid = Grid.fromRowLists { width = 4, height = 4 } 0 lists
+    , grid = NumGrid.fromRowLists lists
     , score = 0
     , lastGen = Nothing
     }
@@ -66,7 +66,9 @@ viewBoard : Board -> HM
 viewBoard board =
     let
         rows =
-            Grid.toLists board.grid
+            board.grid
+                |> NumGrid.toGrid
+                |> Grid.toLists
     in
     div [ class "measure center" ]
         [ div (class "inline-flex flex-column f4" :: borderStyles)

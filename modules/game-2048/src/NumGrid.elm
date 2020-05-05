@@ -1,9 +1,40 @@
-module NumGrid exposing (Msg(..), NumGrid, update)
+module NumGrid exposing (Model, Msg(..), fromRowLists, toGrid, update)
 
 import Dict
 import Grid
 import List.Extra
 import Random
+
+
+
+-- PUBLIC
+
+
+type Model
+    = Model NumGrid
+
+
+fromRowLists : List (List Int) -> Model
+fromRowLists =
+    Grid.fromRowLists { width = 4, height = 4 } 0
+        >> Model
+
+
+type Msg
+    = SlideUp
+    | SlideDown
+    | SlideLeft
+    | SlideRight
+
+
+update message (Model grid) =
+    updateNumGrid message grid
+        |> Random.map (Maybe.map (\( a, b, c ) -> ( a, b, Model c )))
+
+
+toGrid : Model -> Grid.Grid Int
+toGrid (Model grid) =
+    grid
 
 
 
@@ -78,15 +109,8 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-type Msg
-    = SlideUp
-    | SlideDown
-    | SlideLeft
-    | SlideRight
-
-
-update : Msg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
-update message oldGrid =
+updateNumGrid : Msg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
+updateNumGrid message oldGrid =
     let
         ( score, newGrid ) =
             numGridSlide message oldGrid
