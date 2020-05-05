@@ -229,13 +229,13 @@ viewBoard board =
 -- NamedGrid
 
 
-type alias NamedGrid =
+type alias NamedBoard =
     ( String, Board )
 
 
-initialNamedGridList : List NamedGrid
-initialNamedGridList =
-    toNamedGridList
+initialNamedBoardList : List NamedBoard
+initialNamedBoardList =
+    toNamedBoardList
         [--SlideDown
          --, SlideUp
          --, SlideLeft
@@ -252,8 +252,8 @@ initialNamedGridList =
         )
 
 
-toNamedGridList : List SlideMsg -> Board -> List NamedGrid
-toNamedGridList ops board =
+toNamedBoardList : List SlideMsg -> Board -> List NamedBoard
+toNamedBoardList slideMsgList board =
     List.foldl
         (\op ( stack, g2 ) ->
             let
@@ -263,7 +263,7 @@ toNamedGridList ops board =
             ( ( Debug.toString op, ng2 ) :: stack, ng2 )
         )
         ( [ ( "Initial Grid", board ) ], board )
-        ops
+        slideMsgList
         |> Tuple.first
 
 
@@ -272,7 +272,7 @@ toNamedGridList ops board =
 
 
 type alias Model =
-    { list : List NamedGrid }
+    { list : List NamedBoard }
 
 
 type alias Flags =
@@ -281,7 +281,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { list = initialNamedGridList }
+    ( { list = initialNamedBoardList }
     , Cmd.none
     )
 
