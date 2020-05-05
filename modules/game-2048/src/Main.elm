@@ -29,7 +29,7 @@ initBoard lists =
     }
 
 
-updateBoardGenerator : NumGrid.Msg -> Board -> Random.Generator (Maybe Board)
+updateBoardGenerator : NumGrid.Msg -> Board -> Random.Generator Board
 updateBoardGenerator message board =
     NumGrid.update message board.grid
         |> Random.map
@@ -37,6 +37,7 @@ updateBoardGenerator message board =
                 (\( score, pos, numGrid ) ->
                     updateBoardHelp score pos numGrid board
                 )
+                >> Maybe.withDefault board
             )
 
 
@@ -192,19 +193,10 @@ update message model =
 updateBoard : NumGrid.Msg -> Model -> Model
 updateBoard message model =
     let
-        ( maybeBoard, nextSeed ) =
+        ( board, nextSeed ) =
             Random.step (updateBoardGenerator message model.board) model.seed
     in
-    case maybeBoard of
-        Just board ->
-            { model | board = board, seed = nextSeed }
-
-        Nothing ->
-            if model.seed /= nextSeed then
-                Debug.todo "should never happen"
-
-            else
-                model
+    { model | board = board, seed = nextSeed }
 
 
 subscriptions : Model -> Sub Msg
