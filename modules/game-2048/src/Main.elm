@@ -202,11 +202,14 @@ updateBoard message model =
     in
     case maybeBoard of
         Just board ->
-            { model | board = board }
-                |> setSeed nextSeed
+            { model | board = board, seed = nextSeed }
 
         Nothing ->
-            model
+            if model.seed /= nextSeed then
+                Debug.todo "should never happen"
+
+            else
+                model
 
 
 subscriptions : Model -> Sub Msg
