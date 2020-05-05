@@ -10,8 +10,8 @@ module Grid exposing
     , init
     , mapColumnLists
     , mapRowLists
+    , replaceEntries
     , replaceFromDict
-    , replaceFromEntries
     , reverseRows
     , set
     , setEntry
@@ -152,8 +152,8 @@ replaceFromDict posDict (Grid s d) =
         |> Grid s
 
 
-replaceFromEntries : List (Entry a) -> Grid a -> Grid a
-replaceFromEntries entries (Grid s d) =
+replaceEntries : List (Entry a) -> Grid a -> Grid a
+replaceEntries entries (Grid s d) =
     replaceEntries entries d |> Grid s
 
 

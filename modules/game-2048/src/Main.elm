@@ -126,7 +126,7 @@ numGridSlide message =
             Grid.mapColumnLists compactLeft >> Tuple.pair 0
 
         SlideDown ->
-            Grid.mapColumnLists compactRight >> Tuple.pair 0
+            numGridCompactDown
 
         SlideLeft ->
             Grid.reverseRows >> numGridCompactRight >> Tuple.mapSecond Grid.reverseRows
@@ -142,7 +142,7 @@ numGridCompactRight grid =
             List.map compactNumEntriesRight (Grid.toRowEntries grid)
                 |> List.foldl (\( a, b ) ( accA, accB ) -> ( a + accA, b ++ accB )) ( 0, [] )
     in
-    ( score, Grid.replaceFromEntries updatedEntries grid )
+    ( score, Grid.replaceEntries updatedEntries grid )
 
 
 numGridCompactDown : NumGrid -> ( Int, NumGrid )
@@ -152,7 +152,7 @@ numGridCompactDown grid =
             List.map compactNumEntriesRight (Grid.toColumnEntries grid)
                 |> List.foldl (\( a, b ) ( accA, accB ) -> ( a + accA, b ++ accB )) ( 0, [] )
     in
-    ( score, Grid.replaceFromEntries updatedEntries grid )
+    ( score, Grid.replaceEntries updatedEntries grid )
 
 
 compactNumEntriesRight : List NumEntry -> ( Int, List NumEntry )
