@@ -95,14 +95,6 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
-numGridEmptyPositionsCons grid =
-    Grid.toDict grid
-        |> Dict.filter (\_ v -> v == 0)
-        |> Dict.keys
-        |> consFromList
-
-
 numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
 numGridSlideAndFillGenerator message oldGrid =
     let
@@ -114,6 +106,22 @@ numGridSlideAndFillGenerator message oldGrid =
 
     else
         Random.constant Nothing
+
+
+numGridSlide : SlideMsg -> NumGrid -> NumGrid
+numGridSlide message =
+    case message of
+        SlideUp ->
+            Grid.mapColumnLists compactLeft
+
+        SlideDown ->
+            Grid.mapColumnLists compactRight
+
+        SlideLeft ->
+            Grid.mapRowLists compactLeft
+
+        SlideRight ->
+            Grid.mapRowLists compactRight
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
@@ -131,20 +139,12 @@ numGridFillRandomEmptyPos grid =
             Random.constant Nothing
 
 
-numGridSlide : SlideMsg -> NumGrid -> NumGrid
-numGridSlide message =
-    case message of
-        SlideUp ->
-            Grid.mapColumnLists compactLeft
-
-        SlideDown ->
-            Grid.mapColumnLists compactRight
-
-        SlideLeft ->
-            Grid.mapRowLists compactLeft
-
-        SlideRight ->
-            Grid.mapRowLists compactRight
+numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)
+numGridEmptyPositionsCons grid =
+    Grid.toDict grid
+        |> Dict.filter (\_ v -> v == 0)
+        |> Dict.keys
+        |> consFromList
 
 
 numEntryGenerator : Cons Grid.Pos -> Random.Generator NumEntry
