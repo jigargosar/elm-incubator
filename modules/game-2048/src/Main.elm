@@ -34,16 +34,6 @@ initBoard seed lists =
 updateBoard : NumGrid.Msg -> Board -> Board
 updateBoard message board =
     let
-        gen : Random.Generator (Maybe Board)
-        gen =
-            NumGrid.update message board.grid
-                |> Random.map
-                    (Maybe.map
-                        (\( score, pos, numGrid ) ->
-                            updateBoardHelp score pos numGrid board
-                        )
-                    )
-
         ( maybeBoard, nextSeed ) =
             Random.step (updateBoardGenerator message board) board.seed
     in
