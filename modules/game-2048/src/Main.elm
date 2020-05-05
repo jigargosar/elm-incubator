@@ -203,10 +203,12 @@ viewBoard board =
         ]
 
 
+viewRow : Board -> Int -> NumList -> HM
 viewRow board ri row =
     div [ class "flex" ] (List.indexedMap (viewCell board ri) row)
 
 
+viewCell : Board -> Int -> Int -> Int -> HM
 viewCell board ri ci num =
     let
         cellContainerStyle =
