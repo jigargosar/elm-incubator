@@ -226,15 +226,7 @@ viewBoard board =
 
 
 
--- Model
-
-
-type alias Model =
-    { list : List NamedGrid }
-
-
-type alias Flags =
-    ()
+-- NamedGrid
 
 
 type alias NamedGrid =
@@ -260,6 +252,33 @@ initialNamedGridList =
         )
 
 
+toNamedGridList : List SlideMsg -> Board -> List NamedGrid
+toNamedGridList ops board =
+    List.foldl
+        (\op ( stack, g2 ) ->
+            let
+                ng2 =
+                    updateBoard op g2
+            in
+            ( ( Debug.toString op, ng2 ) :: stack, ng2 )
+        )
+        ( [ ( "Initial Grid", board ) ], board )
+        ops
+        |> Tuple.first
+
+
+
+-- Model
+
+
+type alias Model =
+    { list : List NamedGrid }
+
+
+type alias Flags =
+    ()
+
+
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { list = initialNamedGridList }
@@ -276,19 +295,6 @@ type Msg
     | OnKeyDown String
 
 
-updateGridListWithOp : SlideMsg -> Model -> Model
-updateGridListWithOp gridOp model =
-    case model.list of
-        [] ->
-            model
-
-        ( _, g2 ) :: _ ->
-            { model
-                | list =
-                    ( Debug.toString gridOp, updateBoard gridOp g2 ) :: model.list
-            }
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
@@ -297,7 +303,7 @@ update message model =
 
         OnKeyDown string ->
             let
-                maybeOp =
+                maybeSlideMsg =
                     case string of
                         "ArrowUp" ->
                             Just SlideUp
@@ -314,9 +320,19 @@ update message model =
                         _ ->
                             Nothing
             in
-            case maybeOp of
-                Just gridOp ->
-                    ( updateGridListWithOp gridOp model, Cmd.none )
+            case maybeSlideMsg of
+                Just slideMsg ->
+                    ( case model.list of
+                        [] ->
+                            model
+
+                        ( _, g2 ) :: _ ->
+                            { model
+                                | list =
+                                    ( Debug.toString slideMsg, updateBoard slideMsg g2 ) :: model.list
+                            }
+                    , Cmd.none
+                    )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -336,21 +352,6 @@ subscriptions _ =
 
 type alias DM =
     Document Msg
-
-
-toNamedGridList : List SlideMsg -> Board -> List ( String, Board )
-toNamedGridList ops board =
-    List.foldl
-        (\op ( stack, g2 ) ->
-            let
-                ng2 =
-                    updateBoard op g2
-            in
-            ( ( Debug.toString op, ng2 ) :: stack, ng2 )
-        )
-        ( [ ( "Initial Grid", board ) ], board )
-        ops
-        |> Tuple.first
 
 
 viewNamedGrid name grid =
