@@ -207,7 +207,7 @@ viewBoard board =
                 )
 
         cellContainerStyle =
-            class "ba w3 h2 flex items-center justify-center"
+            class "ba b--silver w3 h2 flex items-center justify-center"
 
         viewCell ri ci num =
             if Just ( ci, ri ) == board.lastGen then
@@ -223,7 +223,7 @@ viewBoard board =
             div [ class "flex" ] (List.indexedMap (viewCell ri) row)
     in
     div [ class "measure center" ]
-        [ div [ class "inline-flex flex-column ba f4" ]
+        [ div [ class "inline-flex flex-column ba b--silver f4" ]
             (List.indexedMap viewRow rows)
         ]
 
