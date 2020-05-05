@@ -33,9 +33,9 @@ initBoard lists =
     }
 
 
-updateBoardMaybeGenerator : NumGrid.Msg -> Board -> MaybeGenerator Board
-updateBoardMaybeGenerator message board =
-    NumGrid.updateMaybeGenerator message board.grid
+updateBoard : NumGrid.Msg -> Board -> MaybeGenerator Board
+updateBoard message board =
+    NumGrid.update message board.grid
         |> MaybeGenerator.map
             (\( score, pos, numGrid ) ->
                 updateBoardHelp score pos numGrid board
@@ -185,15 +185,15 @@ update message model =
             in
             case maybeSlideMsg of
                 Just slideMsg ->
-                    ( updateBoard slideMsg model, Cmd.none )
+                    ( updateAndGenerateBoard slideMsg model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
 
-updateBoard : NumGrid.Msg -> Model -> Model
-updateBoard message model =
-    updateBoardMaybeGenerator message model.board
+updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
+updateAndGenerateBoard message model =
+    updateBoard message model.board
         |> Maybe.map (\a -> Seedy.step a model |> uncurry setBoard)
         |> Maybe.withDefault model
 

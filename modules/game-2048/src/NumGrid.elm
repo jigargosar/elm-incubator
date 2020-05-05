@@ -1,4 +1,4 @@
-module NumGrid exposing (Model, Msg(..), fromRowLists, toGrid, updateMaybeGenerator)
+module NumGrid exposing (Model, Msg(..), fromRowLists, toGrid, update)
 
 import Dict
 import Grid
@@ -28,8 +28,8 @@ type Msg
     | SlideRight
 
 
-updateMaybeGenerator : Msg -> Model -> MaybeGenerator ( Int, Grid.Pos, Model )
-updateMaybeGenerator message (Model grid) =
+update : Msg -> Model -> MaybeGenerator ( Int, Grid.Pos, Model )
+update message (Model grid) =
     numGridUpdate message grid
         |> MaybeGenerator.map
             (\( score, pos, nextNumGrid ) ->
