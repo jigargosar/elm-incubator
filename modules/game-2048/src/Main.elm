@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
@@ -11,7 +11,6 @@ import Maybe.Extra as Maybe
 import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
-import Random.Extra
 import Seedy
 
 
