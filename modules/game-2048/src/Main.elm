@@ -2,12 +2,10 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Browser.Events
-import Dict exposing (Dict)
 import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
-import List.Extra
 import NumGrid
 import Random
 
