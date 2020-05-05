@@ -147,13 +147,12 @@ numGridCompactRight grid =
                     List.map Tuple.second entries
             in
             List.Extra.zip rowPositions (compactRight rowValues)
-
-        updatedEntries : List NumEntry
-        updatedEntries =
-            List.map func (Grid.toRowEntries grid)
-                |> List.concat
     in
-    Grid.replaceFromEntries updatedEntries grid
+    Grid.replaceFromEntries
+        (List.map func (Grid.toRowEntries grid)
+            |> List.concat
+        )
+        grid
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
