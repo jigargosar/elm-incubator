@@ -250,11 +250,13 @@ initialNamedGridList =
          --, SlideDown
         ]
         (initBoard (Random.initialSeed 0)
-            [ [ 0, 2, 2, 0 ]
-            , [ 2, 4, 2, 2 ]
-            , [ 2, 2, 4, 2 ]
-            , [ 0, 2, 2, 0 ]
-            ]
+            ([ [ 0, 2, 2, 0 ]
+             , [ 2, 4, 2, 2 ]
+             , [ 2, 2, 4, 2 ]
+             , [ 0, 2, 2, 0 ]
+             ]
+                |> always [ [ 2 ] ]
+            )
         )
 
 
