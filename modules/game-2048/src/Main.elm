@@ -267,6 +267,19 @@ toNamedBoardList slideMsgList board =
         |> Tuple.first
 
 
+viewNamedBoardList : List ( String, Board ) -> HM
+viewNamedBoardList =
+    List.map (uncurry viewNamedBoard)
+        >> div [ class "flex flex-column items-center" ]
+
+
+viewNamedBoard name grid =
+    div [ class "pa3 pv2" ]
+        [ div [ class "f4 pa2 " ] [ text name ]
+        , viewBoard grid
+        ]
+
+
 
 -- Model
 
@@ -354,24 +367,11 @@ type alias DM =
     Document Msg
 
 
-viewNamedGrid name grid =
-    div [ class "pa3 pv2" ]
-        [ div [ class "f4 pa2 " ] [ text name ]
-        , viewBoard grid
-        ]
-
-
-viewNamedGridList : List ( String, Board ) -> HM
-viewNamedGridList =
-    List.map (uncurry viewNamedGrid)
-        >> div [ class "flex flex-column items-center" ]
-
-
 view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewNamedGridList (List.take 4 model.list)
+        , viewNamedBoardList (List.take 4 model.list)
         ]
 
 
