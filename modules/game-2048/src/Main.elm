@@ -193,6 +193,16 @@ updateBoard message board =
             board
 
 
+viewScore : Board -> HM
+viewScore board =
+    div [ class "measure center" ]
+        [ div [ class " pa2" ]
+            [ text "Score: "
+            , text (String.fromInt board.score)
+            ]
+        ]
+
+
 viewBoard : Board -> HM
 viewBoard board =
     let
@@ -353,6 +363,7 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
+        , viewScore model.board
         , viewBoard model.board
         ]
 
