@@ -148,13 +148,13 @@ get pos (Grid _ d) =
 
 replaceFromDict : PosDict a -> Grid a -> Grid a
 replaceFromDict posDict (Grid s d) =
-    replaceEntries (Dict.toList posDict) d
+    dictReplaceEntries (Dict.toList posDict) d
         |> Grid s
 
 
 replaceEntries : List (Entry a) -> Grid a -> Grid a
 replaceEntries entries (Grid s d) =
-    replaceEntries entries d |> Grid s
+    dictReplaceEntries entries d |> Grid s
 
 
 listsToPosDict : Lists a -> PosDict a
@@ -222,7 +222,7 @@ mapRowLists func (Grid s d) =
                 |> List.map func
                 |> rowListsToEntries
     in
-    replaceEntries newEntries d
+    dictReplaceEntries newEntries d
         |> Grid s
 
 
@@ -236,7 +236,7 @@ mapColumnLists func (Grid s d) =
                 |> List.map func
                 |> columnListsToEntries
     in
-    replaceEntries newEntries d
+    dictReplaceEntries newEntries d
         |> Grid s
 
 
@@ -276,11 +276,11 @@ consToList ( a, xa ) =
 -- Dict Helpers
 
 
-replaceEntries : List ( comparable, b ) -> Dict comparable b -> Dict comparable b
-replaceEntries entries dict =
-    List.foldl (uncurry replace) dict entries
+dictReplaceEntries : List ( comparable, b ) -> Dict comparable b -> Dict comparable b
+dictReplaceEntries entries dict =
+    List.foldl (uncurry dictReplace) dict entries
 
 
-replace : comparable -> b -> Dict comparable b -> Dict comparable b
-replace k v =
+dictReplace : comparable -> b -> Dict comparable b -> Dict comparable b
+dictReplace k v =
     Dict.update k (Maybe.map (always v))
