@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
