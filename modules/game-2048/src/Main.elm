@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (flip)
+import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
@@ -9,6 +9,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as D
 import NumGrid
 import Random
+import Seedy
 
 
 
@@ -193,11 +194,12 @@ update message model =
 
 updateBoard : NumGrid.Msg -> Model -> Model
 updateBoard message model =
-    let
-        ( board, nextSeed ) =
-            Random.step (updateBoardGenerator message model.board) model.seed
-    in
-    { model | board = board, seed = nextSeed }
+    Seedy.step (updateBoardGenerator message model.board) model
+        |> uncurry setBoard
+
+
+setBoard board model =
+    { model | board = board }
 
 
 subscriptions : Model -> Sub Msg
