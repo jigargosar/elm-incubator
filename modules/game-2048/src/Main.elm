@@ -38,17 +38,12 @@ updateBoard message board =
     NumGrid.update message board.grid
         |> MaybeGenerator.map
             (\( score, pos, numGrid ) ->
-                updateBoardHelp score pos numGrid board
+                { board
+                    | grid = numGrid
+                    , lastGen = Just pos
+                    , score = board.score + score
+                }
             )
-
-
-updateBoardHelp : Int -> Grid.Pos -> NumGrid.Model -> Board -> Board
-updateBoardHelp score lastGenPos numGrid board =
-    { board
-        | grid = numGrid
-        , lastGen = Just lastGenPos
-        , score = board.score + score
-    }
 
 
 viewScore : Board -> HM
