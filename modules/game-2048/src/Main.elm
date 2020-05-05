@@ -44,6 +44,114 @@ type SlideMsg
     | SlideRight
 
 
+slideGrid : NumGrid -> ( Int, NumGrid )
+slideGrid grid =
+    let
+        _ =
+            1
+
+        --    for every position get its right
+        -- if current is zero; continue
+        -- if current is non-zero;
+        --      get first non zero right;
+        --          if right doesn't exist ; continue with next row
+        --          if current/=right; continue; from right index;
+        --          if current == right; set current to zero; set right to double and add to score; continue from next to right;
+    in
+    ( 0, grid )
+
+
+type alias CombineAcc =
+    {}
+
+
+type CombineMsg
+    = ContinueWithNextPos
+    | ContinueWithNextRow
+    | ContinueFromPos Grid.Pos
+    | CombineCurrent
+
+
+accNextPos : CombineAcc -> Maybe CombineAcc
+accNextPos acc =
+    Debug.todo "impl"
+
+
+accToReturn : CombineAcc -> ( Int, NumPosDict )
+accToReturn acc =
+    Debug.todo "impl"
+
+
+accNextRow : CombineAcc -> Maybe CombineAcc
+accNextRow acc =
+    Debug.todo "impl"
+
+
+accGotoPos : Grid.Pos -> CombineAcc -> Maybe CombineAcc
+accGotoPos pos acc =
+    Debug.todo "impl"
+
+
+accCurrentNum : CombineAcc -> Int
+accCurrentNum acc =
+    Debug.todo "impl"
+
+
+accFindNonZeroEntry : CombineAcc -> Maybe NumEntry
+accFindNonZeroEntry acc =
+    Debug.todo "impl"
+
+
+accCombineAndGotoEntry : NumEntry -> CombineAcc -> CombineAcc
+accCombineAndGotoEntry numEntry acc =
+    Debug.todo "impl"
+
+
+combineRight : CombineMsg -> CombineAcc -> ( Int, NumPosDict )
+combineRight message acc =
+    case message of
+        ContinueWithNextPos ->
+            case accNextPos acc of
+                Just nac ->
+                    combineRight CombineCurrent nac
+
+                Nothing ->
+                    accToReturn acc
+
+        ContinueWithNextRow ->
+            case accNextRow acc of
+                Just nac ->
+                    combineRight CombineCurrent nac
+
+                Nothing ->
+                    accToReturn acc
+
+        ContinueFromPos pos ->
+            case accGotoPos pos acc of
+                Just nac ->
+                    combineRight CombineCurrent nac
+
+                Nothing ->
+                    accToReturn acc
+
+        CombineCurrent ->
+            case accCurrentNum acc of
+                0 ->
+                    combineRight ContinueWithNextPos acc
+
+                currentVal ->
+                    case accFindNonZeroEntry acc of
+                        Nothing ->
+                            combineRight ContinueWithNextRow acc
+
+                        Just ( rightPos, rightVal ) ->
+                            if currentVal == rightVal then
+                                combineRight ContinueWithNextPos (accCombineAndGotoEntry ( rightPos, rightVal ) acc)
+
+                            else
+                                combineRight ContinueWithNextPos acc
+
+
 compactLeft : NumList -> NumList
 compactLeft =
     List.reverse >> compactRight >> List.reverse
@@ -89,6 +197,10 @@ numListPadLeft l =
 
 type alias NumGrid =
     Grid.Grid Int
+
+
+type alias NumPosDict =
+    Grid.PosDict Int
 
 
 type alias NumEntry =
