@@ -243,6 +243,25 @@ viewNumString num =
 
 
 
+-- GameStatus
+
+
+type GameStatus
+    = Over OverStatus
+    | PlayerTurn
+
+
+type OverStatus
+    = Lost
+    | Won WonStatus
+
+
+type WonStatus
+    = WonPromptContinue
+    | WonContinuePlaying
+
+
+
 -- Model
 
 
