@@ -1,4 +1,21 @@
-module Grid exposing (Entry, Grid, Lists, Pos, PosDict, Size, fromRowLists, get, init, mapColumnLists, mapRowLists, set, setEntry, toDict, toLists)
+module Grid exposing
+    ( Entry
+    , Grid
+    , Lists
+    , Pos
+    , PosDict
+    , Size
+    , fromRowLists
+    , get
+    , init
+    , mapColumnLists
+    , mapRowLists
+    , replaceFromDict
+    , set
+    , setEntry
+    , toDict
+    , toLists
+    )
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
@@ -120,13 +137,15 @@ setEntry ( pos, a ) =
     set pos a
 
 
-
---noinspection ElmUnusedSymbol
-
-
 get : Pos -> Grid a -> Maybe a
 get pos (Grid _ d) =
     Dict.get pos d
+
+
+replaceFromDict : PosDict a -> Grid a -> Grid a
+replaceFromDict posDict (Grid s d) =
+    replaceEntries (Dict.toList posDict) d
+        |> Grid s
 
 
 listsToPosDict : Lists a -> PosDict a

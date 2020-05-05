@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.Extra exposing (flip)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
@@ -7,6 +8,7 @@ import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
+import List.Extra
 import Random
 
 
@@ -26,6 +28,11 @@ consFromList list =
 
         h :: t ->
             Just ( h, t )
+
+
+consToList : Cons a -> List a
+consToList ( h, t ) =
+    h :: t
 
 
 
@@ -125,6 +132,34 @@ numGridSlide message =
 
         SlideRight ->
             Grid.mapRowLists compactRight
+
+
+numGridCompactRight : NumGrid -> NumGrid
+numGridCompactRight initialGrid =
+    let
+        initialDict =
+            Grid.toDict initialGrid
+
+        func : List Grid.Pos -> NumPosDict -> NumPosDict
+        func rowIndices d =
+            List.Extra.zip rowIndices
+                (List.filterMap (\pos -> Dict.get pos d) rowIndices
+                    |> compactRight
+                )
+                |> Dict.fromList
+                |> flip Dict.union d
+
+        updatedDict : NumPosDict
+        updatedDict =
+            List.foldl func
+                initialDict
+                (initialDict
+                    |> Dict.keys
+                    |> List.Extra.gatherEqualsBy Tuple.second
+                    |> List.map consToList
+                )
+    in
+    Grid.replaceFromDict updatedDict initialGrid
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
