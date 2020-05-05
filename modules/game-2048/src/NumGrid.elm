@@ -3,6 +3,7 @@ module NumGrid exposing (Model, Msg(..), fromRowLists, toGrid, update)
 import Dict
 import Grid
 import List.Extra
+import MaybeGenerator exposing (MaybeGenerator)
 import Random
 
 
@@ -27,14 +28,12 @@ type Msg
     | SlideRight
 
 
-update : Msg -> Model -> Maybe (Random.Generator ( Int, Grid.Pos, Model ))
+update : Msg -> Model -> MaybeGenerator ( Int, Grid.Pos, Model )
 update message (Model grid) =
     numGridUpdate message grid
-        |> Maybe.map
-            (Random.map
-                (\( score, pos, nextNumGrid ) ->
-                    ( score, pos, Model nextNumGrid )
-                )
+        |> MaybeGenerator.map
+            (\( score, pos, nextNumGrid ) ->
+                ( score, pos, Model nextNumGrid )
             )
 
 
@@ -115,7 +114,7 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridUpdate : Msg -> NumGrid -> Maybe (Random.Generator ( Int, Grid.Pos, NumGrid ))
+numGridUpdate : Msg -> NumGrid -> MaybeGenerator ( Int, Grid.Pos, NumGrid )
 numGridUpdate message oldGrid =
     let
         ( score, newGrid ) =
@@ -191,7 +190,7 @@ numEntriesCompactRight entries =
         |> Tuple.mapSecond (List.Extra.zip positions)
 
 
-numGridFillRandomEmptyPos : NumGrid -> Maybe (Random.Generator ( Grid.Pos, NumGrid ))
+numGridFillRandomEmptyPos : NumGrid -> MaybeGenerator ( Grid.Pos, NumGrid )
 numGridFillRandomEmptyPos grid =
     let
         func ( pos, num ) =
