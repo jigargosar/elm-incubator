@@ -15,6 +15,7 @@ module Grid exposing
     , reverseRows
     , set
     , setEntry
+    , toColumnEntries
     , toDict
     , toLists
     , toRowEntries
@@ -248,6 +249,13 @@ toRowEntries : Grid a -> List (List (Entry a))
 toRowEntries (Grid _ d) =
     Dict.toList d
         |> List.Extra.gatherEqualsBy getEntryRowIndex
+        |> List.map consToList
+
+
+toColumnEntries : Grid a -> List (List (Entry a))
+toColumnEntries (Grid _ d) =
+    Dict.toList d
+        |> List.Extra.gatherEqualsBy getEntryColumnIndex
         |> List.map consToList
 
 

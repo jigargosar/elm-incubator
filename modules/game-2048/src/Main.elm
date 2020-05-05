@@ -138,23 +138,34 @@ numGridSlide message =
 numGridCompactRight : NumGrid -> ( Int, NumGrid )
 numGridCompactRight grid =
     let
-        func : List NumEntry -> ( Int, List NumEntry )
-        func entries =
-            let
-                positions =
-                    List.map Tuple.first entries
-
-                numValues =
-                    List.map Tuple.second entries
-            in
-            compactRight2 numValues
-                |> Tuple.mapSecond (List.Extra.zip positions)
-
         ( score, updatedEntries ) =
-            List.map func (Grid.toRowEntries grid)
+            List.map compactNumEntriesRight (Grid.toRowEntries grid)
                 |> List.foldl (\( a, b ) ( accA, accB ) -> ( a + accA, b ++ accB )) ( 0, [] )
     in
     ( score, Grid.replaceFromEntries updatedEntries grid )
+
+
+numGridCompactDown : NumGrid -> ( Int, NumGrid )
+numGridCompactDown grid =
+    let
+        ( score, updatedEntries ) =
+            List.map compactNumEntriesRight (Grid.toColumnEntries grid)
+                |> List.foldl (\( a, b ) ( accA, accB ) -> ( a + accA, b ++ accB )) ( 0, [] )
+    in
+    ( score, Grid.replaceFromEntries updatedEntries grid )
+
+
+compactNumEntriesRight : List NumEntry -> ( Int, List NumEntry )
+compactNumEntriesRight entries =
+    let
+        positions =
+            List.map Tuple.first entries
+
+        numValues =
+            List.map Tuple.second entries
+    in
+    compactRight2 numValues
+        |> Tuple.mapSecond (List.Extra.zip positions)
 
 
 compactRight2 : NumList -> ( Int, NumList )
