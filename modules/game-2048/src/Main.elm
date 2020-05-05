@@ -188,13 +188,14 @@ update message model =
             in
             case maybeSlideMsg of
                 Just slideMsg ->
-                    ( updateBoardInModel slideMsg model, Cmd.none )
+                    ( updateBoard slideMsg model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
 
-updateBoardInModel message model =
+updateBoard : NumGrid.Msg -> Model -> Model
+updateBoard message model =
     let
         ( maybeBoard, nextSeed ) =
             Random.step (updateBoardGenerator message model.board) model.seed
