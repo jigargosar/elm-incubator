@@ -194,10 +194,23 @@ update message model =
             in
             case maybeSlideMsg of
                 Just slideMsg ->
-                    ( { model | board = updateBoard slideMsg model.board }, Cmd.none )
+                    ( updateBoardInModel slideMsg model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
+
+
+updateBoardInModel message model =
+    let
+        ( maybeBoard, nextSeed ) =
+            Random.step (updateBoardGenerator message model.board) model.seed
+    in
+    { model
+        | board =
+            maybeBoard
+                |> Maybe.withDefault model.board
+                |> setSeed nextSeed
+    }
 
 
 subscriptions : Model -> Sub Msg
