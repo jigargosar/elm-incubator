@@ -209,19 +209,22 @@ viewRow board ri row =
 
 viewCell board ri ci num =
     let
-        cellContainerStyles =
+        cellContainerStyle =
             class "w3 h2 flex items-center justify-center"
-                :: borderStyles
     in
     if Just ( ci, ri ) == board.lastGen then
-        div (cellContainerStyles ++ [ class "b--red" ]) [ viewNumString num ]
+        div (cellContainerStyle :: highlightedBorderStyles) [ viewNumString num ]
 
     else
-        div cellContainerStyles [ viewNumString num ]
+        div (cellContainerStyle :: borderStyles) [ viewNumString num ]
 
 
 borderStyles =
     [ class "ba b--silver" ]
+
+
+highlightedBorderStyles =
+    [ class "ba b--red" ]
 
 
 viewNumString num =
