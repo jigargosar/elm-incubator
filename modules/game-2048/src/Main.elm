@@ -123,13 +123,13 @@ numGridSlide : SlideMsg -> NumGrid -> ( Int, NumGrid )
 numGridSlide message =
     case message of
         SlideUp ->
-            Grid.mapColumnLists compactLeft >> Tuple.pair 0
+            numGridCompactUp
 
         SlideDown ->
             numGridCompactDown
 
         SlideLeft ->
-            Grid.reverseRows >> numGridCompactRight >> Tuple.mapSecond Grid.reverseRows
+            numGridCompactLeft
 
         SlideRight ->
             numGridCompactRight
@@ -140,9 +140,19 @@ numGridCompactRight =
     numGridCompactHelp Grid.toRowEntries
 
 
+numGridCompactLeft : NumGrid -> ( Int, NumGrid )
+numGridCompactLeft =
+    Grid.reverseRows >> numGridCompactRight >> Tuple.mapSecond Grid.reverseRows
+
+
 numGridCompactDown : NumGrid -> ( Int, NumGrid )
 numGridCompactDown =
     numGridCompactHelp Grid.toColumnEntries
+
+
+numGridCompactUp : NumGrid -> ( Int, NumGrid )
+numGridCompactUp =
+    Grid.reverseColumns >> numGridCompactHelp Grid.toColumnEntries >> Tuple.mapSecond Grid.reverseColumns
 
 
 numGridCompactHelp : (NumGrid -> List (List NumEntry)) -> NumGrid -> ( Int, NumGrid )

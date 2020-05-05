@@ -12,6 +12,7 @@ module Grid exposing
     , mapRowLists
     , replaceEntries
     , replaceFromDict
+    , reverseColumns
     , reverseRows
     , set
     , setEntry
@@ -206,8 +207,19 @@ reverseRows (Grid s d) =
             ( s.width - 1 - x, y )
 
         func pos v =
-            Dict.get (reverseXPos pos) d
-                |> Maybe.withDefault v
+            Dict.get (reverseXPos pos) d |> Maybe.withDefault v
+    in
+    Grid s (Dict.map func d)
+
+
+reverseColumns : Grid a -> Grid a
+reverseColumns (Grid s d) =
+    let
+        reverseYPos ( x, y ) =
+            ( x, s.height - 1 - y )
+
+        func pos v =
+            Dict.get (reverseYPos pos) d |> Maybe.withDefault v
     in
     Grid s (Dict.map func d)
 
