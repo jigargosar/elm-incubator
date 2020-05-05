@@ -132,7 +132,7 @@ numGridSlide message =
             Grid.mapRowLists compactLeft >> Tuple.pair 0
 
         SlideRight ->
-            Grid.mapRowLists compactRight >> Tuple.pair 0
+            numGridCompactRight
 
 
 numGridCompactRight : NumGrid -> ( Int, NumGrid )
