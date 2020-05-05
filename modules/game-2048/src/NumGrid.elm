@@ -27,11 +27,11 @@ type Msg
     | SlideRight
 
 
-update : Msg -> Model -> Random.Generator (Maybe ( Int, Grid.Pos, Model ))
+update : Msg -> Model -> Maybe (Random.Generator ( Int, Grid.Pos, Model ))
 update message (Model grid) =
     numGridUpdate message grid
-        |> Random.map
-            (Maybe.map
+        |> Maybe.map
+            (Random.map
                 (\( score, pos, nextNumGrid ) ->
                     ( score, pos, Model nextNumGrid )
                 )
@@ -115,18 +115,21 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridUpdate : Msg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
+numGridUpdate : Msg -> NumGrid -> Maybe (Random.Generator ( Int, Grid.Pos, NumGrid ))
 numGridUpdate message oldGrid =
     let
         ( score, newGrid ) =
             numGridSlide message oldGrid
     in
     if newGrid /= oldGrid then
-        numGridFillRandomEmptyPos newGrid
-            |> Random.map (Maybe.map (\( p, g ) -> ( score, p, g )))
+        numGridFillRandomEmptyPos2 newGrid
+            |> Maybe.map
+                (Random.map
+                    (\( p, g ) -> ( score, p, g ))
+                )
 
     else
-        Random.constant Nothing
+        Nothing
 
 
 numGridSlide : Msg -> NumGrid -> ( Int, NumGrid )
@@ -201,6 +204,21 @@ numGridFillRandomEmptyPos grid =
 
         Nothing ->
             Random.constant Nothing
+
+
+numGridFillRandomEmptyPos2 : NumGrid -> Maybe (Random.Generator ( Grid.Pos, NumGrid ))
+numGridFillRandomEmptyPos2 grid =
+    let
+        func ( pos, num ) =
+            case Grid.set pos num grid of
+                Nothing ->
+                    Debug.todo "This should never happen"
+
+                Just filledGrid ->
+                    ( pos, filledGrid )
+    in
+    numGridEmptyPositionsCons grid
+        |> Maybe.map (numEntryGenerator >> Random.map func)
 
 
 numGridEmptyPositionsCons : NumGrid -> Maybe (Cons Grid.Pos)

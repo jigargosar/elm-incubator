@@ -32,15 +32,14 @@ initBoard lists =
     }
 
 
-updateBoardGenerator : NumGrid.Msg -> Board -> Random.Generator Board
+updateBoardGenerator : NumGrid.Msg -> Board -> Maybe (Random.Generator Board)
 updateBoardGenerator message board =
     NumGrid.update message board.grid
-        |> Random.map
-            (Maybe.map
+        |> Maybe.map
+            (Random.map
                 (\( score, pos, numGrid ) ->
                     updateBoardHelp score pos numGrid board
                 )
-                >> Maybe.withDefault board
             )
 
 
@@ -195,8 +194,9 @@ update message model =
 
 updateBoard : NumGrid.Msg -> Model -> Model
 updateBoard message model =
-    Seedy.step (updateBoardGenerator message model.board) model
-        |> uncurry setBoard
+    updateBoardGenerator message model.board
+        |> Maybe.map (\a -> Seedy.step a model |> uncurry setBoard)
+        |> Maybe.withDefault model
 
 
 setBoard board model =
