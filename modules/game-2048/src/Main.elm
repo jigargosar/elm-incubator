@@ -200,8 +200,13 @@ updateBoard message model =
         ( maybeBoard, nextSeed ) =
             Random.step (updateBoardGenerator message model.board) model.seed
     in
-    { model | board = maybeBoard |> Maybe.withDefault model.board }
-        |> setSeed nextSeed
+    case maybeBoard of
+        Just board ->
+            { model | board = board }
+                |> setSeed nextSeed
+
+        Nothing ->
+            model
 
 
 subscriptions : Model -> Sub Msg
