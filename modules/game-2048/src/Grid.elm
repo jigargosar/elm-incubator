@@ -12,6 +12,7 @@ module Grid exposing
     , mapRowLists
     , replaceFromDict
     , replaceFromEntries
+    , reverseRows
     , set
     , setEntry
     , toDict
@@ -195,6 +196,19 @@ toLists (Grid _ d) =
         |> List.Extra.gatherEqualsBy getEntryRowIndex
         |> List.map consToList
         |> List.map (List.map getEntryValue)
+
+
+reverseRows : Grid a -> Grid a
+reverseRows (Grid s d) =
+    let
+        reverseXPos ( x, y ) =
+            ( s.width - 1 - x, y )
+
+        func pos v =
+            Dict.get (reverseXPos pos) d
+                |> Maybe.withDefault v
+    in
+    Grid s (Dict.map func d)
 
 
 mapRowLists : (List a -> List a) -> Grid a -> Grid a

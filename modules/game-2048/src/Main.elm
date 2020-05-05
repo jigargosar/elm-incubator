@@ -129,7 +129,7 @@ numGridSlide message =
             Grid.mapColumnLists compactRight >> Tuple.pair 0
 
         SlideLeft ->
-            Grid.mapRowLists compactLeft >> Tuple.pair 0
+            Grid.reverseRows >> numGridCompactRight >> Tuple.mapSecond Grid.reverseRows
 
         SlideRight ->
             numGridCompactRight
