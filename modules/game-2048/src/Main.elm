@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (flip)
 import Browser exposing (Document)
 import Browser.Events
 import Dict exposing (Dict)
@@ -30,11 +29,6 @@ consFromList list =
             Just ( h, t )
 
 
-consToList : Cons a -> List a
-consToList ( h, t ) =
-    h :: t
-
-
 
 -- NumList
 
@@ -43,32 +37,20 @@ type alias NumList =
     List Int
 
 
-type SlideMsg
-    = SlideUp
-    | SlideDown
-    | SlideLeft
-    | SlideRight
-
-
-compactLeft : NumList -> NumList
-compactLeft =
-    List.reverse >> compactRight >> List.reverse
-
-
-compactRight : NumList -> NumList
-compactRight =
+numListCompactRight : NumList -> ( Int, NumList )
+numListCompactRight =
     let
-        func v ( maybeUnprocessed, acc ) =
+        func v ( score, ( maybeUnprocessed, processed ) ) =
             case maybeUnprocessed of
                 Nothing ->
-                    ( Just v, acc )
+                    ( score, ( Just v, processed ) )
 
                 Just unprocessed ->
                     if unprocessed == v then
-                        ( Nothing, unprocessed + v :: acc )
+                        ( score + unprocessed + v, ( Nothing, unprocessed + v :: processed ) )
 
                     else
-                        ( Just v, unprocessed :: acc )
+                        ( score, ( Just v, unprocessed :: processed ) )
 
         unprocessedTupleToList ( maybeUnprocessed, acc ) =
             case maybeUnprocessed of
@@ -79,9 +61,9 @@ compactRight =
                     acc
     in
     List.filter (\v -> v /= 0)
-        >> List.foldr func ( Nothing, [] )
-        >> unprocessedTupleToList
-        >> numListPadLeft
+        >> List.foldr func ( 0, ( Nothing, [] ) )
+        >> Tuple.mapSecond
+            (unprocessedTupleToList >> numListPadLeft)
 
 
 numListPadLeft : NumList -> NumList
@@ -103,6 +85,13 @@ type alias NumPosDict =
 
 type alias NumEntry =
     Grid.Entry Int
+
+
+type SlideMsg
+    = SlideUp
+    | SlideDown
+    | SlideLeft
+    | SlideRight
 
 
 numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
@@ -174,39 +163,8 @@ numEntriesCompactRight entries =
         numValues =
             List.map Tuple.second entries
     in
-    compactRight2 numValues
+    numListCompactRight numValues
         |> Tuple.mapSecond (List.Extra.zip positions)
-
-
-compactRight2 : NumList -> ( Int, NumList )
-compactRight2 =
-    let
-        func v ( score, ( maybeUnprocessed, processed ) ) =
-            case maybeUnprocessed of
-                Nothing ->
-                    ( score, ( Just v, processed ) )
-
-                Just unprocessed ->
-                    if unprocessed == v then
-                        ( score + unprocessed + v, ( Nothing, unprocessed + v :: processed ) )
-
-                    else
-                        ( score, ( Just v, unprocessed :: processed ) )
-
-        unprocessedTupleToList ( maybeUnprocessed, acc ) =
-            case maybeUnprocessed of
-                Just head ->
-                    head :: acc
-
-                Nothing ->
-                    acc
-    in
-    List.filter (\v -> v /= 0)
-        >> List.foldr func ( 0, ( Nothing, [] ) )
-        >> Tuple.mapSecond
-            (unprocessedTupleToList
-                >> numListPadLeft
-            )
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
