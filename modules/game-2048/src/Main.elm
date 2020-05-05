@@ -79,10 +79,6 @@ type alias NumGrid =
     Grid.Grid Int
 
 
-type alias NumPosDict =
-    Grid.PosDict Int
-
-
 type alias NumEntry =
     Grid.Entry Int
 
