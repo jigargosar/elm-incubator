@@ -196,17 +196,15 @@ viewBoard board =
     let
         rows =
             Grid.toLists board.grid
-
-        viewRow ri row =
-            div [ class "flex" ] (List.indexedMap (viewCell board ri) row)
     in
     div [ class "measure center" ]
-        [ div
-            (class "inline-flex flex-column f4"
-                :: borderStyles
-            )
-            (List.indexedMap viewRow rows)
+        [ div (class "inline-flex flex-column f4" :: borderStyles)
+            (List.indexedMap (viewRow board) rows)
         ]
+
+
+viewRow board ri row =
+    div [ class "flex" ] (List.indexedMap (viewCell board ri) row)
 
 
 viewCell board ri ci num =
