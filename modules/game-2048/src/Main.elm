@@ -34,20 +34,47 @@ initBoard seed lists =
 updateBoard : NumGrid.Msg -> Board -> Board
 updateBoard message board =
     let
-        ( maybeScorePosGrid, nextSeed ) =
-            Random.step (NumGrid.update message board.grid) board.seed
-    in
-    case maybeScorePosGrid of
-        Just ( score, pos, grid ) ->
-            { board
-                | grid = grid
-                , lastGen = Just pos
-                , seed = nextSeed
-                , score = board.score + score
-            }
+        gen : Random.Generator (Maybe Board)
+        gen =
+            NumGrid.update message board.grid
+                |> Random.map
+                    (Maybe.map
+                        (\( score, pos, numGrid ) ->
+                            updateBoardHelp score pos numGrid board
+                        )
+                    )
 
-        Nothing ->
-            board
+        ( maybeBoard, nextSeed ) =
+            Random.step (updateBoardGenerator message board) board.seed
+    in
+    maybeBoard
+        |> Maybe.withDefault board
+        |> setSeed nextSeed
+
+
+setSeed : a -> { b | seed : a } -> { b | seed : a }
+setSeed seed model =
+    { model | seed = seed }
+
+
+updateBoardGenerator : NumGrid.Msg -> Board -> Random.Generator (Maybe Board)
+updateBoardGenerator message board =
+    NumGrid.update message board.grid
+        |> Random.map
+            (Maybe.map
+                (\( score, pos, numGrid ) ->
+                    updateBoardHelp score pos numGrid board
+                )
+            )
+
+
+updateBoardHelp : Int -> Grid.Pos -> NumGrid.Model -> Board -> Board
+updateBoardHelp score lastGenPos numGrid board =
+    { board
+        | grid = numGrid
+        , lastGen = Just lastGenPos
+        , score = board.score + score
+    }
 
 
 viewScore : Board -> HM
