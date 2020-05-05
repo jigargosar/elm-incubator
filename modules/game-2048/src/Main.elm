@@ -194,18 +194,6 @@ updateBoard message board =
 viewBoard : Board -> HM
 viewBoard board =
     let
-        viewNumString num =
-            text
-                (case num of
-                    0 ->
-                        ""
-
-                    _ ->
-                        String.fromInt num
-                            --|> always "2048"
-                            |> identity
-                )
-
         borderStyles =
             [ class "ba b--silver" ]
 
@@ -233,6 +221,19 @@ viewBoard board =
             )
             (List.indexedMap viewRow rows)
         ]
+
+
+viewNumString num =
+    text
+        (case num of
+            0 ->
+                ""
+
+            _ ->
+                String.fromInt num
+                    --|> always "2048"
+                    |> identity
+        )
 
 
 
