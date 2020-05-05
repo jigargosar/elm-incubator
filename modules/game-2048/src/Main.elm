@@ -134,10 +134,10 @@ numGridSlide message =
             Grid.mapRowLists compactRight
 
 
-numGridCompactRight : NumGrid -> NumGrid
+numGridCompactRight : NumGrid -> ( Int, NumGrid )
 numGridCompactRight grid =
     let
-        func : List NumEntry -> List NumEntry
+        func : List NumEntry -> ( Int, List NumEntry )
         func entries =
             let
                 rowPositions =
@@ -146,13 +146,44 @@ numGridCompactRight grid =
                 rowValues =
                     List.map Tuple.second entries
             in
-            List.Extra.zip rowPositions (compactRight rowValues)
+            compactRight2 rowValues
+                |> Tuple.mapSecond (List.Extra.zip rowPositions)
+
+        ( score, updatedEntries ) =
+            List.map func (Grid.toRowEntries grid)
+                |> List.foldl (\( a, b ) ( accA, accB ) -> ( a + accA, b ++ accB )) ( 0, [] )
     in
-    Grid.replaceFromEntries
-        (List.map func (Grid.toRowEntries grid)
-            |> List.concat
-        )
-        grid
+    ( score, Grid.replaceFromEntries updatedEntries grid )
+
+
+compactRight2 : NumList -> ( Int, NumList )
+compactRight2 =
+    let
+        func v ( maybeUnprocessed, acc ) =
+            case maybeUnprocessed of
+                Nothing ->
+                    ( Just v, acc )
+
+                Just unprocessed ->
+                    if unprocessed == v then
+                        ( Nothing, unprocessed + v :: acc )
+
+                    else
+                        ( Just v, unprocessed :: acc )
+
+        unprocessedTupleToList ( maybeUnprocessed, acc ) =
+            case maybeUnprocessed of
+                Just head ->
+                    head :: acc
+
+                Nothing ->
+                    acc
+    in
+    List.filter (\v -> v /= 0)
+        >> List.foldr func ( Nothing, [] )
+        >> unprocessedTupleToList
+        >> numListPadLeft
+        >> Tuple.pair 0
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
