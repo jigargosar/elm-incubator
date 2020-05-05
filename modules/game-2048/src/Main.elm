@@ -135,7 +135,9 @@ viewNumString num =
 
 
 type alias Model =
-    { board : Board }
+    { board : Board
+    , seed : Random.Seed
+    }
 
 
 type alias Flags =
@@ -144,8 +146,12 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
+    let
+        initialSeed =
+            Random.initialSeed 0
+    in
     ( { board =
-            initBoard (Random.initialSeed 0)
+            initBoard initialSeed
                 ([ [ 0, 2, 2, 0 ]
                  , [ 2, 4, 2, 2 ]
                  , [ 2, 2, 4, 2 ]
@@ -153,6 +159,7 @@ init () =
                  ]
                     |> always [ [ 2 ] ]
                 )
+      , seed = initialSeed
       }
     , Cmd.none
     )
