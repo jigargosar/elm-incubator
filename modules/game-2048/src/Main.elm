@@ -194,7 +194,7 @@ update message model =
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
 updateAndGenerateBoard message model =
     updateBoard message model.board
-        |> Maybe.map (\a -> Seedy.step a model |> uncurry setBoard)
+        |> Maybe.map (\a -> Seedy.generate a model |> uncurry setBoard)
         |> Maybe.withDefault model
 
 

@@ -1,10 +1,10 @@
-module Seedy exposing (step)
+module Seedy exposing (generate)
 
 import Random
 
 
-step : Random.Generator a -> { b | seed : Random.Seed } -> ( a, { b | seed : Random.Seed } )
-step generator model =
+generate : Random.Generator a -> { b | seed : Random.Seed } -> ( a, { b | seed : Random.Seed } )
+generate generator model =
     let
         ( generated, seed ) =
             Random.step generator model.seed
