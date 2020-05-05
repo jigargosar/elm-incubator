@@ -206,15 +206,19 @@ viewBoard board =
                             |> identity
                 )
 
-        cellContainerStyle =
-            class "ba b--silver w3 h2 flex items-center justify-center"
+        borderStyles =
+            [ class "ba b--silver" ]
+
+        cellContainerStyles =
+            class "w3 h2 flex items-center justify-center"
+                :: borderStyles
 
         viewCell ri ci num =
             if Just ( ci, ri ) == board.lastGen then
-                div [ cellContainerStyle, class "b--red" ] [ viewNumString num ]
+                div (cellContainerStyles ++ [ class "b--red" ]) [ viewNumString num ]
 
             else
-                div [ cellContainerStyle ] [ viewNumString num ]
+                div cellContainerStyles [ viewNumString num ]
 
         rows =
             Grid.toLists board.grid
@@ -223,7 +227,10 @@ viewBoard board =
             div [ class "flex" ] (List.indexedMap (viewCell ri) row)
     in
     div [ class "measure center" ]
-        [ div [ class "inline-flex flex-column ba b--silver f4" ]
+        [ div
+            (class "inline-flex flex-column f4"
+                :: borderStyles
+            )
             (List.indexedMap viewRow rows)
         ]
 
