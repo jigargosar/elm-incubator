@@ -121,11 +121,8 @@ numGridUpdate message oldGrid =
             numGridSlide message oldGrid
     in
     if newGrid /= oldGrid then
-        numGridFillRandomEmptyPos newGrid
-            |> Maybe.map
-                (Random.map
-                    (\( p, g ) -> ( score, p, g ))
-                )
+        numGridFillRandom newGrid
+            |> MaybeGenerator.map (\( p, g ) -> ( score, p, g ))
 
     else
         Nothing
@@ -190,8 +187,8 @@ numEntriesCompactRight entries =
         |> Tuple.mapSecond (List.Extra.zip positions)
 
 
-numGridFillRandomEmptyPos : NumGrid -> MaybeGenerator ( Grid.Pos, NumGrid )
-numGridFillRandomEmptyPos grid =
+numGridFillRandom : NumGrid -> MaybeGenerator ( Grid.Pos, NumGrid )
+numGridFillRandom grid =
     let
         func ( pos, num ) =
             case Grid.set pos num grid of
