@@ -117,8 +117,8 @@ combineRightLoop message acc =
                 Nothing ->
                     accToReturn acc
 
-        CombineEntry ne ->
-            case accCombineAndGotoEntry ne acc of
+        CombineEntry numEntry ->
+            case accCombineAndGotoEntry numEntry acc of
                 Just nac ->
                     combineRightLoop CombineCurrent nac
 
