@@ -29,11 +29,6 @@ initBoard lists =
     }
 
 
-setSeed : a -> { b | seed : a } -> { b | seed : a }
-setSeed seed model =
-    { model | seed = seed }
-
-
 updateBoardGenerator : NumGrid.Msg -> Board -> Random.Generator (Maybe Board)
 updateBoardGenerator message board =
     NumGrid.update message board.grid
