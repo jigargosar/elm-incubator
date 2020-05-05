@@ -194,25 +194,11 @@ updateBoard message board =
 viewBoard : Board -> HM
 viewBoard board =
     let
-        borderStyles =
-            [ class "ba b--silver" ]
-
-        cellContainerStyles =
-            class "w3 h2 flex items-center justify-center"
-                :: borderStyles
-
-        viewCell ri ci num =
-            if Just ( ci, ri ) == board.lastGen then
-                div (cellContainerStyles ++ [ class "b--red" ]) [ viewNumString num ]
-
-            else
-                div cellContainerStyles [ viewNumString num ]
-
         rows =
             Grid.toLists board.grid
 
         viewRow ri row =
-            div [ class "flex" ] (List.indexedMap (viewCell ri) row)
+            div [ class "flex" ] (List.indexedMap (viewCell board ri) row)
     in
     div [ class "measure center" ]
         [ div
@@ -221,6 +207,23 @@ viewBoard board =
             )
             (List.indexedMap viewRow rows)
         ]
+
+
+viewCell board ri ci num =
+    let
+        cellContainerStyles =
+            class "w3 h2 flex items-center justify-center"
+                :: borderStyles
+    in
+    if Just ( ci, ri ) == board.lastGen then
+        div (cellContainerStyles ++ [ class "b--red" ]) [ viewNumString num ]
+
+    else
+        div cellContainerStyles [ viewNumString num ]
+
+
+borderStyles =
+    [ class "ba b--silver" ]
 
 
 viewNumString num =
