@@ -67,9 +67,8 @@ type alias CombineAcc =
 
 type CombineMsg
     = ContinueWithNextPos
-    | ContinueWithNextRow
-    | ContinueFromPos Grid.Pos
     | CombineCurrent
+    | CombineEntry NumEntry
 
 
 accNextPos : CombineAcc -> Maybe CombineAcc
@@ -102,54 +101,46 @@ accFindNonZeroEntry acc =
     Debug.todo "impl"
 
 
-accCombineAndGotoEntry : NumEntry -> CombineAcc -> CombineAcc
+accCombineAndGotoEntry : NumEntry -> CombineAcc -> Maybe CombineAcc
 accCombineAndGotoEntry numEntry acc =
     Debug.todo "impl"
 
 
-combineRight : CombineMsg -> CombineAcc -> ( Int, NumPosDict )
-combineRight message acc =
+combineRightLoop : CombineMsg -> CombineAcc -> ( Int, NumPosDict )
+combineRightLoop message acc =
     case message of
         ContinueWithNextPos ->
             case accNextPos acc of
                 Just nac ->
-                    combineRight CombineCurrent nac
+                    combineRightLoop CombineCurrent nac
 
                 Nothing ->
                     accToReturn acc
 
-        ContinueWithNextRow ->
-            case accNextRow acc of
+        CombineEntry ne ->
+            case accCombineAndGotoEntry ne acc of
                 Just nac ->
-                    combineRight CombineCurrent nac
+                    combineRightLoop CombineCurrent nac
 
                 Nothing ->
-                    accToReturn acc
-
-        ContinueFromPos pos ->
-            case accGotoPos pos acc of
-                Just nac ->
-                    combineRight CombineCurrent nac
-
-                Nothing ->
-                    accToReturn acc
+                    Debug.todo "should never happen"
 
         CombineCurrent ->
             case accCurrentNum acc of
                 0 ->
-                    combineRight ContinueWithNextPos acc
+                    combineRightLoop ContinueWithNextPos acc
 
                 currentVal ->
                     case accFindNonZeroEntry acc of
                         Nothing ->
-                            combineRight ContinueWithNextRow acc
+                            combineRightLoop ContinueWithNextPos acc
 
                         Just ( rightPos, rightVal ) ->
                             if currentVal == rightVal then
-                                combineRight ContinueWithNextPos (accCombineAndGotoEntry ( rightPos, rightVal ) acc)
+                                combineRightLoop (CombineEntry ( rightPos, rightVal )) acc
 
                             else
-                                combineRight ContinueWithNextPos acc
+                                combineRightLoop ContinueWithNextPos acc
 
 
 compactLeft : NumList -> NumList
