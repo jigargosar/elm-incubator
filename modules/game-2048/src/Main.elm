@@ -222,61 +222,9 @@ viewBoard board =
         viewRow ri row =
             div [ class "flex" ] (List.indexedMap (viewCell ri) row)
     in
-    div [ class "flex flex-column ba f4" ] (List.indexedMap viewRow rows)
-
-
-
--- NamedGrid
-
-
-type alias NamedBoard =
-    ( String, Board )
-
-
-initialNamedBoardList : List NamedBoard
-initialNamedBoardList =
-    toNamedBoardList
-        [--SlideDown
-         --, SlideUp
-         --, SlideLeft
-         --, SlideDown
-        ]
-        (initBoard (Random.initialSeed 0)
-            ([ [ 0, 2, 2, 0 ]
-             , [ 2, 4, 2, 2 ]
-             , [ 2, 2, 4, 2 ]
-             , [ 0, 2, 2, 0 ]
-             ]
-                |> always [ [ 2 ] ]
-            )
-        )
-
-
-toNamedBoardList : List SlideMsg -> Board -> List NamedBoard
-toNamedBoardList slideMsgList board =
-    List.foldl
-        (\op ( stack, g2 ) ->
-            let
-                ng2 =
-                    updateBoard op g2
-            in
-            ( ( Debug.toString op, ng2 ) :: stack, ng2 )
-        )
-        ( [ ( "Initial Grid", board ) ], board )
-        slideMsgList
-        |> Tuple.first
-
-
-viewNamedBoardList : List ( String, Board ) -> HM
-viewNamedBoardList =
-    List.map (uncurry viewNamedBoard)
-        >> div [ class "flex flex-column items-center" ]
-
-
-viewNamedBoard name grid =
-    div [ class "pa3 pv2" ]
-        [ div [ class "f4 pa2 " ] [ text name ]
-        , viewBoard grid
+    div [ class "measure center" ]
+        [ div [ class "inline-flex flex-column ba f4" ]
+            (List.indexedMap viewRow rows)
         ]
 
 
@@ -285,7 +233,7 @@ viewNamedBoard name grid =
 
 
 type alias Model =
-    { list : List NamedBoard }
+    { board : Board }
 
 
 type alias Flags =
@@ -294,7 +242,16 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { list = initialNamedBoardList }
+    ( { board =
+            initBoard (Random.initialSeed 0)
+                ([ [ 0, 2, 2, 0 ]
+                 , [ 2, 4, 2, 2 ]
+                 , [ 2, 2, 4, 2 ]
+                 , [ 0, 2, 2, 0 ]
+                 ]
+                    |> always [ [ 2 ] ]
+                )
+      }
     , Cmd.none
     )
 
@@ -335,17 +292,7 @@ update message model =
             in
             case maybeSlideMsg of
                 Just slideMsg ->
-                    ( case model.list of
-                        [] ->
-                            model
-
-                        ( _, g2 ) :: _ ->
-                            { model
-                                | list =
-                                    ( Debug.toString slideMsg, updateBoard slideMsg g2 ) :: model.list
-                            }
-                    , Cmd.none
-                    )
+                    ( { model | board = updateBoard slideMsg model.board }, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -371,7 +318,7 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewNamedBoardList (List.take 4 model.list)
+        , viewBoard model.board
         ]
 
 
