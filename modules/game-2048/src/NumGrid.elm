@@ -1,4 +1,4 @@
-module NumGrid exposing (NumGrid, SlideMsg(..), numGridSlideAndFillGenerator)
+module NumGrid exposing (Msg(..), NumGrid, update)
 
 import Dict
 import Grid
@@ -78,15 +78,15 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-type SlideMsg
+type Msg
     = SlideUp
     | SlideDown
     | SlideLeft
     | SlideRight
 
 
-numGridSlideAndFillGenerator : SlideMsg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
-numGridSlideAndFillGenerator message oldGrid =
+update : Msg -> NumGrid -> Random.Generator (Maybe ( Int, Grid.Pos, NumGrid ))
+update message oldGrid =
     let
         ( score, newGrid ) =
             numGridSlide message oldGrid
@@ -99,7 +99,7 @@ numGridSlideAndFillGenerator message oldGrid =
         Random.constant Nothing
 
 
-numGridSlide : SlideMsg -> NumGrid -> ( Int, NumGrid )
+numGridSlide : Msg -> NumGrid -> ( Int, NumGrid )
 numGridSlide message =
     case message of
         SlideUp ->

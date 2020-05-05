@@ -33,11 +33,11 @@ initBoard seed lists =
     }
 
 
-updateBoard : NumGrid.SlideMsg -> Board -> Board
+updateBoard : NumGrid.Msg -> Board -> Board
 updateBoard message board =
     let
         ( maybeScorePosGrid, nextSeed ) =
-            Random.step (NumGrid.numGridSlideAndFillGenerator message board.grid) board.seed
+            Random.step (NumGrid.update message board.grid) board.seed
     in
     case maybeScorePosGrid of
         Just ( score, pos, grid ) ->
