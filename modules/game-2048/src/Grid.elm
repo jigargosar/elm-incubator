@@ -11,6 +11,7 @@ module Grid exposing
     , mapColumnLists
     , mapRowLists
     , replaceFromDict
+    , replaceFromEntries
     , set
     , setEntry
     , toDict
@@ -147,6 +148,11 @@ replaceFromDict : PosDict a -> Grid a -> Grid a
 replaceFromDict posDict (Grid s d) =
     replaceEntries (Dict.toList posDict) d
         |> Grid s
+
+
+replaceFromEntries : List (Entry a) -> Grid a -> Grid a
+replaceFromEntries entries (Grid s d) =
+    replaceEntries entries d |> Grid s
 
 
 listsToPosDict : Lists a -> PosDict a

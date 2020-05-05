@@ -135,31 +135,25 @@ numGridSlide message =
 
 
 numGridCompactRight : NumGrid -> NumGrid
-numGridCompactRight initialGrid =
+numGridCompactRight grid =
     let
-        initialDict =
-            Grid.toDict initialGrid
+        func : List NumEntry -> List NumEntry
+        func entries =
+            let
+                rowPositions =
+                    List.map Tuple.first entries
 
-        func : List Grid.Pos -> NumPosDict -> NumPosDict
-        func rowIndices d =
-            List.Extra.zip rowIndices
-                (List.filterMap (\pos -> Dict.get pos d) rowIndices
-                    |> compactRight
-                )
-                |> Dict.fromList
-                |> flip Dict.union d
+                rowValues =
+                    List.map Tuple.second entries
+            in
+            List.Extra.zip rowPositions (compactRight rowValues)
 
-        updatedDict : NumPosDict
-        updatedDict =
-            List.foldl func
-                initialDict
-                (initialDict
-                    |> Dict.keys
-                    |> List.Extra.gatherEqualsBy Tuple.second
-                    |> List.map consToList
-                )
+        updatedEntries : List NumEntry
+        updatedEntries =
+            List.map func (Grid.toRowEntries grid)
+                |> List.concat
     in
-    Grid.replaceFromDict updatedDict initialGrid
+    Grid.replaceFromEntries updatedEntries grid
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
