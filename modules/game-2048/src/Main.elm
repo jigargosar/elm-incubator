@@ -7,6 +7,7 @@ import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as D
+import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
 import Random.Extra
@@ -32,14 +33,12 @@ initBoard lists =
     }
 
 
-updateBoardGenerator : NumGrid.Msg -> Board -> Maybe (Random.Generator Board)
-updateBoardGenerator message board =
-    NumGrid.update message board.grid
-        |> Maybe.map
-            (Random.map
-                (\( score, pos, numGrid ) ->
-                    updateBoardHelp score pos numGrid board
-                )
+updateBoardMaybeGenerator : NumGrid.Msg -> Board -> MaybeGenerator Board
+updateBoardMaybeGenerator message board =
+    NumGrid.updateMaybeGenerator message board.grid
+        |> MaybeGenerator.map
+            (\( score, pos, numGrid ) ->
+                updateBoardHelp score pos numGrid board
             )
 
 
@@ -194,7 +193,7 @@ update message model =
 
 updateBoard : NumGrid.Msg -> Model -> Model
 updateBoard message model =
-    updateBoardGenerator message model.board
+    updateBoardMaybeGenerator message model.board
         |> Maybe.map (\a -> Seedy.step a model |> uncurry setBoard)
         |> Maybe.withDefault model
 
