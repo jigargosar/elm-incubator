@@ -167,7 +167,7 @@ compactRight2 =
 
                 Just unprocessed ->
                     if unprocessed == v then
-                        ( score, ( Nothing, unprocessed + v :: processed ) )
+                        ( score + unprocessed + v, ( Nothing, unprocessed + v :: processed ) )
 
                     else
                         ( score, ( Just v, unprocessed :: processed ) )
