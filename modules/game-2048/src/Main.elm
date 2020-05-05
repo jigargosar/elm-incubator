@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.Extra exposing (flip)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
@@ -188,6 +189,20 @@ update message model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+
+stepSeed : Random.Generator a -> { b | seed : Random.Seed } -> ( a, { b | seed : Random.Seed } )
+stepSeed generator model =
+    let
+        ( generated, seed ) =
+            Random.step generator model.seed
+    in
+    ( generated, setSeed seed model )
+
+
+setSeed : a -> { b | seed : a } -> { b | seed : a }
+setSeed seed model =
+    { model | seed = seed }
 
 
 updateBoard : NumGrid.Msg -> Model -> Model
