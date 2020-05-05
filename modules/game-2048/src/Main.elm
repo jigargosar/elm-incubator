@@ -160,17 +160,17 @@ numGridCompactRight grid =
 compactRight2 : NumList -> ( Int, NumList )
 compactRight2 =
     let
-        func v ( maybeUnprocessed, acc ) =
+        func v ( score, ( maybeUnprocessed, processed ) ) =
             case maybeUnprocessed of
                 Nothing ->
-                    ( Just v, acc )
+                    ( score, ( Just v, processed ) )
 
                 Just unprocessed ->
                     if unprocessed == v then
-                        ( Nothing, unprocessed + v :: acc )
+                        ( score, ( Nothing, unprocessed + v :: processed ) )
 
                     else
-                        ( Just v, unprocessed :: acc )
+                        ( score, ( Just v, unprocessed :: processed ) )
 
         unprocessedTupleToList ( maybeUnprocessed, acc ) =
             case maybeUnprocessed of
@@ -181,10 +181,11 @@ compactRight2 =
                     acc
     in
     List.filter (\v -> v /= 0)
-        >> List.foldr func ( Nothing, [] )
-        >> unprocessedTupleToList
-        >> numListPadLeft
-        >> Tuple.pair 0
+        >> List.foldr func ( 0, ( Nothing, [] ) )
+        >> Tuple.mapSecond
+            (unprocessedTupleToList
+                >> numListPadLeft
+            )
 
 
 numGridFillRandomEmptyPos : NumGrid -> Random.Generator (Maybe ( Grid.Pos, NumGrid ))
