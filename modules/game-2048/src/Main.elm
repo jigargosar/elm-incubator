@@ -188,7 +188,7 @@ update message model =
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
 updateAndGenerateBoard message model =
     model.board
-        |> Seeded.maybeGenerate (updateBoard message)
+        |> Seeded.maybeStep (updateBoard message)
         |> Maybe.unwrap model (flip setBoard model)
 
 

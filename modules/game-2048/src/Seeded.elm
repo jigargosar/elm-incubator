@@ -1,5 +1,6 @@
-module Seeded exposing (Seeded, get, init, maybeGenerate)
+module Seeded exposing (Seeded, get, init, maybeStep)
 
+import Basics.Extra exposing (uncurry)
 import MaybeGenerator exposing (MaybeGenerator)
 import Random
 
@@ -12,17 +13,10 @@ init =
     Seeded
 
 
-maybeGenerate : (a -> MaybeGenerator a) -> Seeded a -> Maybe (Seeded a)
-maybeGenerate func (Seeded seed a) =
-    func a
-        |> Maybe.map
-            (\generator ->
-                let
-                    ( nextA, nextSeed ) =
-                        Random.step generator seed
-                in
-                Seeded nextSeed nextA
-            )
+maybeStep : (a -> MaybeGenerator a) -> Seeded a -> Maybe (Seeded a)
+maybeStep func (Seeded seed a) =
+    MaybeGenerator.step seed (func a)
+        |> Maybe.map (uncurry Seeded)
 
 
 get : Seeded a -> a
