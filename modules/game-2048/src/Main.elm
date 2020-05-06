@@ -275,9 +275,16 @@ type alias DM =
 view : Model -> DM
 view model =
     Document "2048"
-        [ div []
-            [ UndoList.view viewBoardHeader model.undoBoard
-            , UndoList.view viewBoard model.undoBoard
+        [ div [ class "relative" ]
+            [ div []
+                [ UndoList.view viewBoardHeader model.undoBoard
+                , UndoList.view viewBoard model.undoBoard
+                ]
+            , div [ class "absolute absolute--fill" ]
+                [ div [ class "mt5 measure center pa4 br3 bg-white o-90 shadow-1" ]
+                    [ div [ class "pa4 ba" ] [ text "foo bar" ]
+                    ]
+                ]
             ]
         ]
 
