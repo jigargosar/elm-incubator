@@ -56,7 +56,8 @@ slideBoardHelp board generator =
 viewBoardHeader : Board -> HM
 viewBoardHeader board =
     div [ class "measure center" ]
-        [ div [ class "flex items-center" ]
+        [ div [ class "f3 pa3" ] [ text "2048 grid" ]
+        , div [ class "flex items-center" ]
             [ div [ class " pa2" ] [ text "Score: ", text (String.fromInt board.score) ]
             , button [ onClick UndoClicked ] [ text "Undo" ]
             , button [ onClick NewClicked ] [ text "New" ]
@@ -274,8 +275,7 @@ type alias DM =
 view : Model -> DM
 view model =
     Document "2048"
-        [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , UndoList.view viewBoardHeader model.undoBoard
+        [ UndoList.view viewBoardHeader model.undoBoard
         , UndoList.view viewBoard model.undoBoard
         ]
 
