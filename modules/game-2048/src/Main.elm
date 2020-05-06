@@ -59,6 +59,7 @@ viewBoardHeader board =
         [ div [ class "flex items-center" ]
             [ div [ class " pa2" ] [ text "Score: ", text (String.fromInt board.score) ]
             , button [ onClick UndoClicked ] [ text "Undo" ]
+            , button [ onClick NewClicked ] [ text "New" ]
             ]
         ]
 
@@ -155,6 +156,7 @@ type Msg
     = NoOp
     | OnKeyDown String
     | UndoClicked
+    | NewClicked
 
 
 type UpdateBoardMsg
@@ -204,6 +206,9 @@ update message model =
 
         UndoClicked ->
             ( undoMove model, Cmd.none )
+
+        NewClicked ->
+            init ()
 
 
 undoMove : Model -> Model
