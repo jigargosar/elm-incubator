@@ -275,8 +275,10 @@ type alias DM =
 view : Model -> DM
 view model =
     Document "2048"
-        [ UndoList.view viewBoardHeader model.undoBoard
-        , UndoList.view viewBoard model.undoBoard
+        [ div []
+            [ UndoList.view viewBoardHeader model.undoBoard
+            , UndoList.view viewBoard model.undoBoard
+            ]
         ]
 
 
