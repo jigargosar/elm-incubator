@@ -313,7 +313,8 @@ view model =
                 Won ->
                     dialogContainer
                         [ div [] [ text "Won" ]
-                        , div [ onClick NewClicked ] [ button [] [ text "Continue" ] ]
+                        , div [ onClick NewClicked ] [ button [] [ text "Try Again" ] ]
+                        , div [ onClick ContinueClicked ] [ button [] [ text "Continue Playing" ] ]
                         ]
 
                 Lost ->
