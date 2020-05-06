@@ -154,7 +154,7 @@ init () =
 type Msg
     = NoOp
     | OnKeyDown String
-    | Undo
+    | UndoClicked
 
 
 type UpdateBoardMsg
@@ -202,7 +202,7 @@ update message model =
                 Nothing ->
                     ( model, Cmd.none )
 
-        Undo ->
+        UndoClicked ->
             ( undoMove model, Cmd.none )
 
 
@@ -245,7 +245,7 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , button [ onClick Undo ] [ text "Undo" ]
+        , button [ onClick UndoClicked ] [ text "Undo" ]
         , UndoList.view viewScore model
         , UndoList.view viewBoard model
         ]
