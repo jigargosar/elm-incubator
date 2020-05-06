@@ -209,11 +209,16 @@ undoMove model =
     { model | board = UndoList.undo model.board }
 
 
+slideSeededBoard : NumGrid.SlideMsg -> Seeded Board -> Maybe (Seeded Board)
+slideSeededBoard slideMsg =
+    Seeded.maybeStep (slideBoard slideMsg)
+
+
 updateAndGenerateUndoListSeededBoard : NumGrid.SlideMsg -> Model -> Model
 updateAndGenerateUndoListSeededBoard message model =
     model.board
         |> UndoList.view identity
-        |> Seeded.maybeStep (slideBoard message)
+        |> slideSeededBoard message
         |> Maybe.map (flip UndoList.new model.board >> flip setBoard model)
         |> Maybe.withDefault model
 
