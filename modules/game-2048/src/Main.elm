@@ -248,8 +248,20 @@ update message model =
 undoMove : Model -> Model
 undoMove model =
     case model.state of
-        Turn _ ->
-            { model | undoBoard = UndoList.undo model.undoBoard }
+        Turn isContinuingAfterVictory ->
+            let
+                newUndoBoard =
+                    UndoList.undo model.undoBoard
+            in
+            { model
+                | undoBoard = newUndoBoard
+                , state =
+                    if isContinuingAfterVictory && not (UndoList.view hasWon newUndoBoard) then
+                        Turn False
+
+                    else
+                        model.state
+            }
 
         _ ->
             model
@@ -257,21 +269,17 @@ undoMove model =
 
 updateUndoListBoard : NumGrid.SlideMsg -> Model -> Model
 updateUndoListBoard slideMsg model =
-    let
-        board =
-            UndoList.view identity model.undoBoard
-    in
     case model.state of
         Turn isContinuingAfterVictory ->
-            case slideBoard slideMsg board of
+            case UndoList.view (slideBoard slideMsg) model.undoBoard of
                 Just newBoard ->
                     { model
                         | undoBoard = UndoList.new newBoard model.undoBoard
                         , state =
-                            if not isContinuingAfterVictory && hasWon board then
+                            if not isContinuingAfterVictory && hasWon newBoard then
                                 Won
 
-                            else if hasLost board then
+                            else if hasLost newBoard then
                                 Lost
 
                             else

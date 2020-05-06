@@ -46,7 +46,8 @@ toGrid (Model grid) =
 hasWon : Model -> Bool
 hasWon (Model grid) =
     Grid.toDict grid
-        |> Dict.filter (\_ v -> v >= 2048)
+        --|> Dict.filter (\_ v -> v >= 2048)
+        |> Dict.filter (\_ v -> v >= 4)
         |> Dict.isEmpty
         |> not
 
