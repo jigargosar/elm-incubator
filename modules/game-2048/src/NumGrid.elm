@@ -122,7 +122,7 @@ numGridUpdate message oldGrid =
     in
     if newGrid /= oldGrid then
         numGridFillRandom newGrid
-            |> MaybeGenerator.map (\( p, g ) -> ( score, p, g ))
+            |> Maybe.map (Random.map (\( p, g ) -> ( score, p, g )))
 
     else
         Nothing
