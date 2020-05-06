@@ -193,7 +193,7 @@ update message model =
                 Just updateBoardMsg ->
                     case updateBoardMsg of
                         SlideMsg slideMsg ->
-                            ( updateAndGenerateBoard slideMsg model, Cmd.none )
+                            ( updateAndGenerateUndoListSeededBoard slideMsg model, Cmd.none )
 
                         UndoMove ->
                             ( undoMove model, Cmd.none )
@@ -210,8 +210,8 @@ undoMove model =
     { model | board = UndoList.undo model.board }
 
 
-updateAndGenerateBoard : NumGrid.SlideMsg -> Model -> Model
-updateAndGenerateBoard message model =
+updateAndGenerateUndoListSeededBoard : NumGrid.SlideMsg -> Model -> Model
+updateAndGenerateUndoListSeededBoard message model =
     model.board
         |> UndoList.view identity
         |> Seeded.maybeStep (slideBoard message)
