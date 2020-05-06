@@ -121,8 +121,20 @@ viewNumString num =
 -- Model
 
 
-type alias Model =
+type alias UndoBoard =
     UndoList Board
+
+
+type alias Model =
+    { undoBoard : UndoBoard
+    , state : State
+    }
+
+
+type State
+    = Turn
+    | Won
+    | Lost
 
 
 type alias Flags =
@@ -135,15 +147,18 @@ init () =
         initialSeed =
             Random.initialSeed 0
     in
-    ( initBoard initialSeed
-        ([ [ 0, 2, 2, 0 ]
-         , [ 2, 4, 2, 2 ]
-         , [ 2, 2, 4, 2 ]
-         , [ 0, 2, 2, 0 ]
-         ]
-            |> always [ [ 2 ] ]
-        )
-        |> UndoList.fresh
+    ( { undoBoard =
+            initBoard initialSeed
+                ([ [ 0, 2, 2, 0 ]
+                 , [ 2, 4, 2, 2 ]
+                 , [ 2, 2, 4, 2 ]
+                 , [ 0, 2, 2, 0 ]
+                 ]
+                    |> always [ [ 2 ] ]
+                )
+                |> UndoList.fresh
+      , state = Turn
+      }
     , Cmd.none
     )
 
@@ -212,22 +227,32 @@ update message model =
 
 
 undoMove : Model -> Model
-undoMove =
-    UndoList.undo
+undoMove model =
+    case model.state of
+        Turn ->
+            { model | undoBoard = UndoList.undo model.undoBoard }
+
+        _ ->
+            model
 
 
 updateUndoListBoard : NumGrid.SlideMsg -> Model -> Model
 updateUndoListBoard message model =
-    model
-        |> UndoList.view
-            (\board ->
-                case slideBoard message board of
-                    Just newBoard ->
-                        UndoList.new newBoard model
+    case model.state of
+        Turn ->
+            model.undoBoard
+                |> UndoList.view
+                    (\board ->
+                        case slideBoard message board of
+                            Just newBoard ->
+                                { model | undoBoard = UndoList.new newBoard model.undoBoard }
 
-                    Nothing ->
-                        model
-            )
+                            Nothing ->
+                                model
+                    )
+
+        _ ->
+            model
 
 
 subscriptions : Model -> Sub Msg
@@ -250,8 +275,8 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , UndoList.view viewBoardHeader model
-        , UndoList.view viewBoard model
+        , UndoList.view viewBoardHeader model.undoBoard
+        , UndoList.view viewBoard model.undoBoard
         ]
 
 
