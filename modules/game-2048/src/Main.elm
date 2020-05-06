@@ -218,14 +218,15 @@ undoMove model =
 updateAndGenerateUndoListSeededBoard : NumGrid.SlideMsg -> Model -> Model
 updateAndGenerateUndoListSeededBoard message model =
     model.board
-        |> UndoList.view identity
-        |> slideBoard message
-        |> Maybe.map (flip UndoList.new model.board >> flip setBoard model)
-        |> Maybe.withDefault model
+        |> UndoList.view
+            (\board ->
+                case slideBoard message board of
+                    Just newBoard ->
+                        { model | board = UndoList.new newBoard model.board }
 
-
-setBoard board model =
-    { model | board = board }
+                    Nothing ->
+                        model
+            )
 
 
 subscriptions : Model -> Sub Msg
