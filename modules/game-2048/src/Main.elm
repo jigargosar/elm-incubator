@@ -283,14 +283,14 @@ view model =
             , case model.state of
                 Won ->
                     dialogContainer
-                        [ div [ class "" ] [ text "Won" ]
-                        , div [ class "" ] [ button [] [ text "Continue" ] ]
+                        [ div [] [ text "Won" ]
+                        , div [ onClick NewClicked ] [ button [] [ text "Continue" ] ]
                         ]
 
                 Lost ->
                     dialogContainer
-                        [ div [ class "" ] [ text "Lost" ]
-                        , div [ class "" ] [ button [] [ text "Continue" ] ]
+                        [ div [] [ text "Lost" ]
+                        , div [ onClick NewClicked ] [ button [] [ text "Continue" ] ]
                         ]
 
                 Turn ->
