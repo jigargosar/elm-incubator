@@ -280,12 +280,29 @@ view model =
                 [ UndoList.view viewBoardHeader model.undoBoard
                 , UndoList.view viewBoard model.undoBoard
                 ]
-            , div [ class "absolute absolute--fill" ]
-                [ div [ class "mt5 measure center pa4 br3 bg-white o-90 shadow-1" ]
-                    [ div [ class "pa4 ba" ] [ text "foo bar" ]
-                    ]
-                ]
+            , case model.state of
+                Won ->
+                    dialogContainer
+                        [ div [ class "" ] [ text "Won" ]
+                        , div [ class "" ] [ button [] [ text "Continue" ] ]
+                        ]
+
+                Lost ->
+                    dialogContainer
+                        [ div [ class "" ] [ text "Lost" ]
+                        , div [ class "" ] [ button [] [ text "Continue" ] ]
+                        ]
+
+                Turn ->
+                    text ""
             ]
+        ]
+
+
+dialogContainer content =
+    div [ class "absolute absolute--fill" ]
+        [ div [ class "mt5 measure center pa4 br3 bg-white o-90 shadow-1" ]
+            content
         ]
 
 
