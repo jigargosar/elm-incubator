@@ -1,4 +1,4 @@
-module Seeded exposing (..)
+module Seeded exposing (Seeded, get, init, maybeGenerate)
 
 import MaybeGenerator exposing (MaybeGenerator)
 import Random
@@ -23,15 +23,6 @@ maybeGenerate func (Seeded seed a) =
                 in
                 Seeded nextSeed nextA
             )
-
-
-generate : (a -> Random.Generator a) -> Seeded a -> Seeded a
-generate func (Seeded seed a) =
-    let
-        ( nextA, nextSeed ) =
-            Random.step (func a) seed
-    in
-    Seeded nextSeed nextA
 
 
 get : Seeded a -> a
