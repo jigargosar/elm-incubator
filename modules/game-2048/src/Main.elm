@@ -192,7 +192,8 @@ updateAndGenerateBoard message model =
     model.board
         |> UndoList.view identity
         |> Seeded.maybeStep (updateBoard message)
-        |> Maybe.unwrap model (flip UndoList.new model.board >> flip setBoard model)
+        |> Maybe.map (flip UndoList.new model.board >> flip setBoard model)
+        |> Maybe.withDefault model
 
 
 setBoard board model =
