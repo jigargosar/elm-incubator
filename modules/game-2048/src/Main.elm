@@ -210,7 +210,7 @@ update message model =
             ( undoMove model, Cmd.none )
 
 
-undoMove : { a | board : UndoList state } -> { a | board : UndoList state }
+undoMove : Model -> Model
 undoMove model =
     { model | board = UndoList.undo model.board }
 
