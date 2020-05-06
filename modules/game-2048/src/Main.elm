@@ -11,7 +11,6 @@ import Json.Decode as D
 import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
-import Seeded exposing (Seeded)
 import UndoList exposing (UndoList)
 
 
@@ -23,31 +22,37 @@ type alias Board =
     { grid : NumGrid.Model
     , score : Int
     , lastGen : Maybe Grid.Pos
+    , seed : Random.Seed
     }
 
 
-initBoard : Grid.Lists Int -> Board
-initBoard lists =
+initBoard : Random.Seed -> Grid.Lists Int -> Board
+initBoard initialSeed lists =
     { grid = NumGrid.fromRowLists lists
     , score = 0
     , lastGen = Nothing
+    , seed = initialSeed
     }
 
 
-slideSeededBoard : NumGrid.SlideMsg -> Seeded Board -> Maybe (Seeded Board)
-slideSeededBoard message =
-    Seeded.maybeStep
-        (\board ->
-            NumGrid.update message board.grid
-                |> MaybeGenerator.map
-                    (\( score, pos, numGrid ) ->
-                        { board
-                            | grid = numGrid
-                            , lastGen = Just pos
-                            , score = board.score + score
-                        }
-                    )
-        )
+slideBoard : NumGrid.SlideMsg -> Board -> Maybe Board
+slideBoard message board =
+    NumGrid.update message board.grid
+        |> Maybe.map (slideBoardHelp board)
+
+
+slideBoardHelp : Board -> Random.Generator ( Int, Grid.Pos, NumGrid.Model ) -> Board
+slideBoardHelp board generator =
+    let
+        ( ( score, pos, numGrid ), seed ) =
+            Random.step generator board.seed
+    in
+    { board
+        | grid = numGrid
+        , lastGen = Just pos
+        , score = board.score + score
+        , seed = seed
+    }
 
 
 viewScore : Board -> HM
@@ -118,7 +123,7 @@ viewNumString num =
 
 
 type alias Model =
-    { board : UndoList (Seeded Board)
+    { board : UndoList Board
     }
 
 
@@ -133,7 +138,7 @@ init () =
             Random.initialSeed 0
     in
     ( { board =
-            initBoard
+            initBoard initialSeed
                 ([ [ 0, 2, 2, 0 ]
                  , [ 2, 4, 2, 2 ]
                  , [ 2, 2, 4, 2 ]
@@ -141,7 +146,6 @@ init () =
                  ]
                     |> always [ [ 2 ] ]
                 )
-                |> Seeded.init initialSeed
                 |> UndoList.fresh
       }
     , Cmd.none
@@ -216,7 +220,7 @@ updateAndGenerateUndoListSeededBoard : NumGrid.SlideMsg -> Model -> Model
 updateAndGenerateUndoListSeededBoard message model =
     model.board
         |> UndoList.view identity
-        |> slideSeededBoard message
+        |> slideBoard message
         |> Maybe.map (flip UndoList.new model.board >> flip setBoard model)
         |> Maybe.withDefault model
 
@@ -246,8 +250,8 @@ view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
         , button [ onClick Undo ] [ text "Undo" ]
-        , UndoList.view (\board -> viewScore (Seeded.get board)) model.board
-        , UndoList.view (\board -> viewBoard (Seeded.get board)) model.board
+        , UndoList.view viewScore model.board
+        , UndoList.view viewBoard model.board
         ]
 
 
