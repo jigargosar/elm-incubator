@@ -13,7 +13,7 @@ init =
     Seeded
 
 
-maybeStep : (a -> MaybeGenerator a) -> Seeded a -> Maybe (Seeded a)
+maybeStep : (a -> MaybeGenerator b) -> Seeded a -> Maybe (Seeded b)
 maybeStep func (Seeded seed a) =
     MaybeGenerator.step seed (func a)
         |> Maybe.map (uncurry Seeded)
