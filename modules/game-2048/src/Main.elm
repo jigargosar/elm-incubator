@@ -142,22 +142,21 @@ type alias Flags =
     ()
 
 
+initialUndoBoard =
+    initBoard (Random.initialSeed 0)
+        ([ [ 0, 2, 2, 0 ]
+         , [ 2, 4, 2, 2 ]
+         , [ 2, 2, 4, 2 ]
+         , [ 0, 2, 2, 0 ]
+         ]
+            |> always [ [ 2 ] ]
+        )
+        |> UndoList.fresh
+
+
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    let
-        initialSeed =
-            Random.initialSeed 0
-    in
-    ( { undoBoard =
-            initBoard initialSeed
-                ([ [ 0, 2, 2, 0 ]
-                 , [ 2, 4, 2, 2 ]
-                 , [ 2, 2, 4, 2 ]
-                 , [ 0, 2, 2, 0 ]
-                 ]
-                    |> always [ [ 2 ] ]
-                )
-                |> UndoList.fresh
+    ( { undoBoard = initialUndoBoard
       , state = Turn
       }
     , Cmd.none
@@ -224,7 +223,7 @@ update message model =
             ( undoMove model, Cmd.none )
 
         NewClicked ->
-            init ()
+            ( { undoBoard = initialUndoBoard, state = Turn }, Cmd.none )
 
 
 undoMove : Model -> Model
