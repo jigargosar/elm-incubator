@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (flip)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
