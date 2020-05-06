@@ -122,8 +122,7 @@ viewNumString num =
 
 
 type alias Model =
-    { board : UndoList Board
-    }
+    UndoList Board
 
 
 type alias Flags =
@@ -136,17 +135,15 @@ init () =
         initialSeed =
             Random.initialSeed 0
     in
-    ( { board =
-            initBoard initialSeed
-                ([ [ 0, 2, 2, 0 ]
-                 , [ 2, 4, 2, 2 ]
-                 , [ 2, 2, 4, 2 ]
-                 , [ 0, 2, 2, 0 ]
-                 ]
-                    |> always [ [ 2 ] ]
-                )
-                |> UndoList.fresh
-      }
+    ( initBoard initialSeed
+        ([ [ 0, 2, 2, 0 ]
+         , [ 2, 4, 2, 2 ]
+         , [ 2, 2, 4, 2 ]
+         , [ 0, 2, 2, 0 ]
+         ]
+            |> always [ [ 2 ] ]
+        )
+        |> UndoList.fresh
     , Cmd.none
     )
 
@@ -211,18 +208,18 @@ update message model =
 
 
 undoMove : Model -> Model
-undoMove model =
-    { model | board = UndoList.undo model.board }
+undoMove =
+    UndoList.undo
 
 
 updateUndoListBoard : NumGrid.SlideMsg -> Model -> Model
 updateUndoListBoard message model =
-    model.board
+    model
         |> UndoList.view
             (\board ->
                 case slideBoard message board of
                     Just newBoard ->
-                        { model | board = UndoList.new newBoard model.board }
+                        UndoList.new newBoard model
 
                     Nothing ->
                         model
@@ -250,8 +247,8 @@ view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
         , button [ onClick Undo ] [ text "Undo" ]
-        , UndoList.view viewScore model.board
-        , UndoList.view viewBoard model.board
+        , UndoList.view viewScore model
+        , UndoList.view viewBoard model
         ]
 
 
