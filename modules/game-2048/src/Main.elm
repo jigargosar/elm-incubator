@@ -133,7 +133,7 @@ type alias Model =
 
 
 type State
-    = Turn
+    = Turn Bool
     | Won
     | Lost
 
@@ -157,7 +157,7 @@ initialUndoBoard =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { undoBoard = initialUndoBoard
-      , state = Turn
+      , state = Turn False
       }
     , Cmd.none
     )
@@ -172,6 +172,7 @@ type Msg
     | OnKeyDown String
     | UndoClicked
     | NewClicked
+    | ContinueClicked
 
 
 type UpdateBoardMsg
@@ -223,13 +224,21 @@ update message model =
             ( undoMove model, Cmd.none )
 
         NewClicked ->
-            ( { undoBoard = initialUndoBoard, state = Turn }, Cmd.none )
+            ( { undoBoard = initialUndoBoard, state = Turn False }, Cmd.none )
+
+        ContinueClicked ->
+            case model.state of
+                Won ->
+                    ( { model | state = Turn True }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 undoMove : Model -> Model
 undoMove model =
     case model.state of
-        Turn ->
+        Turn _ ->
             { model | undoBoard = UndoList.undo model.undoBoard }
 
         _ ->
@@ -239,7 +248,7 @@ undoMove model =
 updateUndoListBoard : NumGrid.SlideMsg -> Model -> Model
 updateUndoListBoard message model =
     case model.state of
-        Turn ->
+        Turn _ ->
             model.undoBoard
                 |> UndoList.view
                     (\board ->
@@ -292,7 +301,7 @@ view model =
                         , div [ onClick NewClicked ] [ button [] [ text "Continue" ] ]
                         ]
 
-                Turn ->
+                Turn _ ->
                     text ""
             ]
         ]
