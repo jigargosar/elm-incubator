@@ -8,7 +8,6 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Json.Decode as D
-import Maybe.Extra as Maybe
 import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
