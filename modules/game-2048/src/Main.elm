@@ -34,17 +34,20 @@ initBoard lists =
     }
 
 
-slideBoard : NumGrid.SlideMsg -> Board -> MaybeGenerator Board
-slideBoard message board =
-    NumGrid.update message board.grid
-        |> MaybeGenerator.map
-            (\( score, pos, numGrid ) ->
-                { board
-                    | grid = numGrid
-                    , lastGen = Just pos
-                    , score = board.score + score
-                }
-            )
+slideSeededBoard : NumGrid.SlideMsg -> Seeded Board -> Maybe (Seeded Board)
+slideSeededBoard message =
+    Seeded.maybeStep
+        (\board ->
+            NumGrid.update message board.grid
+                |> MaybeGenerator.map
+                    (\( score, pos, numGrid ) ->
+                        { board
+                            | grid = numGrid
+                            , lastGen = Just pos
+                            , score = board.score + score
+                        }
+                    )
+        )
 
 
 viewScore : Board -> HM
@@ -207,11 +210,6 @@ update message model =
 undoMove : { a | board : UndoList state } -> { a | board : UndoList state }
 undoMove model =
     { model | board = UndoList.undo model.board }
-
-
-slideSeededBoard : NumGrid.SlideMsg -> Seeded Board -> Maybe (Seeded Board)
-slideSeededBoard slideMsg =
-    Seeded.maybeStep (slideBoard slideMsg)
 
 
 updateAndGenerateUndoListSeededBoard : NumGrid.SlideMsg -> Model -> Model
