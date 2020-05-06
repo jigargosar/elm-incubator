@@ -4,8 +4,9 @@ import Basics.Extra exposing (flip)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import Json.Decode as D
 import Maybe.Extra as Maybe
 import MaybeGenerator exposing (MaybeGenerator)
@@ -152,6 +153,7 @@ init () =
 type Msg
     = NoOp
     | OnKeyDown String
+    | Undo
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -185,6 +187,9 @@ update message model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        Undo ->
+            ( { model | board = UndoList.undo model.board }, Cmd.none )
 
 
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
@@ -220,6 +225,7 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
+        , button [ onClick Undo ] [ text "Undo" ]
         , UndoList.view (\board -> viewScore (Seeded.get board)) model.board
         , UndoList.view (\board -> viewBoard (Seeded.get board)) model.board
         ]
