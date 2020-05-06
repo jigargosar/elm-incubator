@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
@@ -11,6 +11,7 @@ import Maybe.Extra as Maybe
 import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
+import Seeded
 import Seedy
 
 
@@ -114,7 +115,7 @@ viewNumString num =
 
 
 type alias Model =
-    { board : Board
+    { board : Seeded.Seeded Board
     , seed : Random.Seed
     }
 
@@ -138,6 +139,7 @@ init () =
                  ]
                     |> always [ [ 2 ] ]
                 )
+                |> Seeded.init initialSeed
       , seed = initialSeed
       }
     , Cmd.none
@@ -188,9 +190,9 @@ update message model =
 
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
 updateAndGenerateBoard message model =
-    model
-        |> Seedy.maybeGenerate (updateBoard message model.board)
-        |> Maybe.unwrap model (uncurry setBoard)
+    model.board
+        |> Seeded.maybeGenerate (updateBoard message)
+        |> Maybe.unwrap model (flip setBoard model)
 
 
 setBoard board model =
@@ -217,8 +219,8 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewScore model.board
-        , viewBoard model.board
+        , viewScore (Seeded.get model.board)
+        , viewBoard (Seeded.get model.board)
         ]
 
 
