@@ -1,4 +1,4 @@
-module NumGrid exposing (Model, SlideMsg(..), fromRowLists, toGrid, update)
+module NumGrid exposing (Model, SlideMsg(..), fromRowLists, hasLost, hasWon, toGrid, update)
 
 import Dict
 import Grid
@@ -41,6 +41,21 @@ update message (Model grid) =
 toGrid : Model -> Grid.Grid Int
 toGrid (Model grid) =
     grid
+
+
+hasWon : Model -> Bool
+hasWon (Model grid) =
+    Grid.toDict grid
+        |> Dict.filter (\_ v -> v >= 2048)
+        |> Dict.isEmpty
+        |> not
+
+
+hasLost : Model -> Bool
+hasLost (Model grid) =
+    Grid.toDict grid
+        |> Dict.filter (\_ v -> v == 0)
+        |> Dict.isEmpty
 
 
 

@@ -53,6 +53,16 @@ slideBoardHelp board generator =
     }
 
 
+hasWon : Board -> Bool
+hasWon board =
+    NumGrid.hasWon board.grid
+
+
+hasLost : Board -> Bool
+hasLost board =
+    NumGrid.hasLost board.grid
+
+
 viewBoardHeader : Board -> HM
 viewBoardHeader board =
     div [ class "measure center" ]
@@ -248,13 +258,24 @@ undoMove model =
 updateUndoListBoard : NumGrid.SlideMsg -> Model -> Model
 updateUndoListBoard message model =
     case model.state of
-        Turn _ ->
+        Turn isContinuingAfterVictory ->
             model.undoBoard
                 |> UndoList.view
                     (\board ->
                         case slideBoard message board of
                             Just newBoard ->
-                                { model | undoBoard = UndoList.new newBoard model.undoBoard }
+                                { model
+                                    | undoBoard = UndoList.new newBoard model.undoBoard
+                                    , state =
+                                        if not isContinuingAfterVictory && hasWon board then
+                                            Won
+
+                                        else if hasLost board then
+                                            Lost
+
+                                        else
+                                            model.state
+                                }
 
                             Nothing ->
                                 model
