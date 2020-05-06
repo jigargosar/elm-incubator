@@ -11,7 +11,8 @@ import Maybe.Extra as Maybe
 import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
-import Seeded
+import Seeded exposing (Seeded)
+import UndoList exposing (UndoList)
 
 
 
@@ -114,7 +115,7 @@ viewNumString num =
 
 
 type alias Model =
-    { board : Seeded.Seeded Board
+    { board : UndoList (Seeded Board)
     }
 
 
@@ -138,6 +139,7 @@ init () =
                     |> always [ [ 2 ] ]
                 )
                 |> Seeded.init initialSeed
+                |> UndoList.fresh
       }
     , Cmd.none
     )
@@ -188,8 +190,9 @@ update message model =
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
 updateAndGenerateBoard message model =
     model.board
+        |> UndoList.view identity
         |> Seeded.maybeStep (updateBoard message)
-        |> Maybe.unwrap model (flip setBoard model)
+        |> Maybe.unwrap model (flip UndoList.new model.board >> flip setBoard model)
 
 
 setBoard board model =
@@ -216,8 +219,8 @@ view : Model -> DM
 view model =
     Document "2048"
         [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , viewScore (Seeded.get model.board)
-        , viewBoard (Seeded.get model.board)
+        , UndoList.view (\board -> viewScore (Seeded.get board)) model.board
+        , UndoList.view (\board -> viewBoard (Seeded.get board)) model.board
         ]
 
 
