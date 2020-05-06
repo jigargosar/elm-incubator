@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (flip)
 import Browser exposing (Document)
 import Browser.Events
 import Grid
@@ -12,7 +12,6 @@ import MaybeGenerator exposing (MaybeGenerator)
 import NumGrid
 import Random
 import Seeded
-import Seedy
 
 
 
@@ -116,7 +115,6 @@ viewNumString num =
 
 type alias Model =
     { board : Seeded.Seeded Board
-    , seed : Random.Seed
     }
 
 
@@ -140,7 +138,6 @@ init () =
                     |> always [ [ 2 ] ]
                 )
                 |> Seeded.init initialSeed
-      , seed = initialSeed
       }
     , Cmd.none
     )
