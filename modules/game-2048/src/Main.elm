@@ -256,14 +256,14 @@ undoMove model =
 
 
 updateUndoListBoard : NumGrid.SlideMsg -> Model -> Model
-updateUndoListBoard message model =
+updateUndoListBoard slideMsg model =
     let
         board =
             UndoList.view identity model.undoBoard
     in
     case model.state of
         Turn isContinuingAfterVictory ->
-            case slideBoard message board of
+            case slideBoard slideMsg board of
                 Just newBoard ->
                     { model
                         | undoBoard = UndoList.new newBoard model.undoBoard
