@@ -1,4 +1,4 @@
-module NumGrid exposing (Model, Msg(..), fromRowLists, toGrid, update)
+module NumGrid exposing (Model, SlideMsg(..), fromRowLists, toGrid, update)
 
 import Dict
 import Grid
@@ -21,14 +21,14 @@ fromRowLists =
         >> Model
 
 
-type Msg
+type SlideMsg
     = SlideUp
     | SlideDown
     | SlideLeft
     | SlideRight
 
 
-update : Msg -> Model -> MaybeGenerator ( Int, Grid.Pos, Model )
+update : SlideMsg -> Model -> MaybeGenerator ( Int, Grid.Pos, Model )
 update message (Model grid) =
     numGridUpdate message grid
         |> MaybeGenerator.map
@@ -114,7 +114,7 @@ type alias NumEntry =
     Grid.Entry Int
 
 
-numGridUpdate : Msg -> NumGrid -> MaybeGenerator ( Int, Grid.Pos, NumGrid )
+numGridUpdate : SlideMsg -> NumGrid -> MaybeGenerator ( Int, Grid.Pos, NumGrid )
 numGridUpdate message oldGrid =
     let
         ( score, newGrid ) =
@@ -128,7 +128,7 @@ numGridUpdate message oldGrid =
         Nothing
 
 
-numGridSlide : Msg -> NumGrid -> ( Int, NumGrid )
+numGridSlide : SlideMsg -> NumGrid -> ( Int, NumGrid )
 numGridSlide message =
     case message of
         SlideUp ->
