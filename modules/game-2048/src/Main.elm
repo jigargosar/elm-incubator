@@ -56,9 +56,9 @@ slideBoardHelp board generator =
 viewBoardHeader : Board -> HM
 viewBoardHeader board =
     div [ class "measure center" ]
-        [ div [ class "f3 pa3" ] [ text "2048 grid" ]
-        , div [ class "flex items-center" ]
-            [ div [ class " pa2" ] [ text "Score: ", text (String.fromInt board.score) ]
+        [ div [ class "f3 pv3" ] [ text "2048 grid" ]
+        , div [ class "pv1 flex items-center" ]
+            [ div [ class "pa2" ] [ text "Score: ", text (String.fromInt board.score) ]
             , button [ onClick UndoClicked ] [ text "Undo" ]
             , button [ onClick NewClicked ] [ text "New" ]
             ]
