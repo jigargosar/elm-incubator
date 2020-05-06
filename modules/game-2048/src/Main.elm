@@ -156,6 +156,11 @@ type Msg
     | Undo
 
 
+type UpdateBoardMsg
+    = SlideMsg NumGrid.Msg
+    | UndoMove
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
@@ -164,32 +169,45 @@ update message model =
 
         OnKeyDown string ->
             let
-                maybeSlideMsg =
+                maybeUpdateBoardMsg =
                     case string of
                         "ArrowUp" ->
-                            Just NumGrid.SlideUp
+                            Just (SlideMsg NumGrid.SlideUp)
 
                         "ArrowDown" ->
-                            Just NumGrid.SlideDown
+                            Just (SlideMsg NumGrid.SlideDown)
 
                         "ArrowLeft" ->
-                            Just NumGrid.SlideLeft
+                            Just (SlideMsg NumGrid.SlideLeft)
 
                         "ArrowRight" ->
-                            Just NumGrid.SlideRight
+                            Just (SlideMsg NumGrid.SlideRight)
+
+                        "u" ->
+                            Just UndoMove
 
                         _ ->
                             Nothing
             in
-            case maybeSlideMsg of
-                Just slideMsg ->
-                    ( updateAndGenerateBoard slideMsg model, Cmd.none )
+            case maybeUpdateBoardMsg of
+                Just updateBoardMsg ->
+                    case updateBoardMsg of
+                        SlideMsg slideMsg ->
+                            ( updateAndGenerateBoard slideMsg model, Cmd.none )
+
+                        UndoMove ->
+                            ( undoMove model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
         Undo ->
-            ( { model | board = UndoList.undo model.board }, Cmd.none )
+            ( undoMove model, Cmd.none )
+
+
+undoMove : { a | board : UndoList state } -> { a | board : UndoList state }
+undoMove model =
+    { model | board = UndoList.undo model.board }
 
 
 updateAndGenerateBoard : NumGrid.Msg -> Model -> Model
