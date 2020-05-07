@@ -77,6 +77,30 @@ initTileCollection =
     }
 
 
+slideTileCollection : TileCollection -> TileCollection
+slideTileCollection _ =
+    let
+        initialTileId =
+            TileId 0
+
+        tile2Id =
+            TileId 1
+
+        initialTile =
+            Tile initialTileId 2 ( 2, 0 ) NewTile
+
+        tile2 =
+            Tile tile2Id 4 ( 3, 0 ) NewTile
+    in
+    { nextId = 2
+    , dict =
+        Dict.empty
+            |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
+            |> Dict.insert (tile2.id |> tileIdToInt) tile2
+    , seed = Random.initialSeed 0
+    }
+
+
 viewTileCollection : TileCollection -> HM
 viewTileCollection tc =
     tc.dict
@@ -246,6 +270,7 @@ type alias UndoBoard =
 type alias Model =
     { undoBoard : UndoBoard
     , state : State
+    , tc : TileCollection
     }
 
 
@@ -275,6 +300,7 @@ init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { undoBoard = initialUndoBoard
       , state = Turn False
+      , tc = initTileCollection
       }
     , Cmd.none
     )
@@ -341,7 +367,7 @@ update message model =
             ( undoMove model, Cmd.none )
 
         NewClicked ->
-            ( { undoBoard = initialUndoBoard, state = Turn False }, Cmd.none )
+            ( { model | undoBoard = initialUndoBoard, state = Turn False }, Cmd.none )
 
         ContinueClicked ->
             case model.state of
