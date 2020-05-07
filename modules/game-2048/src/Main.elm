@@ -10,7 +10,9 @@ import Html.Events exposing (onClick)
 import Html.Keyed
 import Json.Decode as D
 import NumGrid
+import Process
 import Random
+import Task
 import UndoList exposing (UndoList)
 
 
@@ -302,8 +304,13 @@ init () =
       , state = Turn False
       , tc = initTileCollection
       }
-    , Cmd.none
+    , delayN 1000 SlideTC
     )
+
+
+delayN n msg =
+    Process.sleep n
+        |> Task.perform (always msg)
 
 
 
@@ -472,8 +479,7 @@ view model =
                     text ""
             ]
         , div [ class "measure center pv4 debug" ]
-            [ initTileCollection
-                |> viewTileCollection
+            [ viewTileCollection model.tc
             ]
         ]
 
