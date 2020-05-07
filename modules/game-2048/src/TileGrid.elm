@@ -1,12 +1,13 @@
 module TileGrid exposing (TileGrid)
 
+import Basics.Extra exposing (swap, uncurry)
 import Grid
 import List.Extra
 import PosDict
 
 
 type TileGrid
-    = TileGrid (Grid.Grid Cell)
+    = TileGrid CellIdGenerator (Grid.Grid Cell)
 
 
 size =
@@ -17,13 +18,10 @@ fromNumRows : List (List Int) -> TileGrid
 fromNumRows lists =
     lists
         |> List.Extra.mapAccuml
-            (\acc0 row ->
-                List.Extra.mapAccuml (\acc num -> ( acc, Cell (CellId "0") num )) acc0 row
-            )
+            (List.Extra.mapAccuml (\idGen num -> newCell num idGen |> swap))
             initCellIdGenerator
-        |> Tuple.second
-        |> Grid.fromRowLists size (Cell (CellId "0") 0)
-        |> TileGrid
+        |> Tuple.mapSecond (Grid.fromRowLists size (Cell (CellId "0") 0))
+        |> uncurry TileGrid
 
 
 
