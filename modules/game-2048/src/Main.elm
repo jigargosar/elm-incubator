@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Browser.Events
+import Dict exposing (Dict)
 import Grid
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
@@ -20,10 +21,44 @@ type TileId
     = TileId Int
 
 
+tileIdToInt : TileId -> Int
+tileIdToInt (TileId i) =
+    i
+
+
+type TileKind
+    = NewTile
+    | MergedTile
+    | SimpleTile
+
+
 type alias Tile =
     { id : TileId
     , num : Int
     , pos : Grid.Pos
+    , kind : TileKind
+    }
+
+
+type alias TileCollection =
+    { nextId : Int
+    , dict : Dict Int Tile
+    , seed : Random.Seed
+    }
+
+
+initTileCollection : Random.Seed -> TileCollection
+initTileCollection seed =
+    let
+        initialTileId =
+            TileId 0
+
+        initialTile =
+            Tile initialTileId 2 ( 0, 0 ) NewTile
+    in
+    { nextId = 1
+    , dict = Dict.empty |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
+    , seed = seed
     }
 
 
