@@ -72,3 +72,52 @@ type CellKind
 newCell : Int -> CellKind -> CellIdGenerator -> ( Cell, CellIdGenerator )
 newCell num kind =
     newCellId >> Tuple.mapFirst (\id -> NumCell id num kind)
+
+
+
+-- Cell List
+
+
+type alias CellList =
+    List Cell
+
+
+cellListCompactRight : CellList -> ( Int, CellList )
+cellListCompactRight =
+    let
+        func : Cell -> ( Int, ( Maybe Cell, CellList ) ) -> ( Int, ( Maybe Cell, CellList ) )
+        func cell (( score, ( maybeUnprocessed, processed ) ) as acc) =
+            case ( cell, maybeUnprocessed ) of
+                ( EmptyCell, _ ) ->
+                    acc
+
+                ( _, Nothing ) ->
+                    ( score, ( Just cell, processed ) )
+
+                ( NumCell id num _, Just ((NumCell id2 num2 _) as unprocessed) ) ->
+                    if num == num2 then
+                        let
+                            mergedCell =
+                                Debug.todo "impl"
+                        in
+                        ( score + (num * 2), ( Nothing, mergedCell :: processed ) )
+
+                    else
+                        ( score, ( Just cell, unprocessed :: processed ) )
+
+        unprocessedTupleToList ( maybeUnprocessed, processed ) =
+            case maybeUnprocessed of
+                Just head ->
+                    head :: processed
+
+                Nothing ->
+                    processed
+    in
+    List.foldr func ( 0, ( Nothing, [] ) )
+        >> Tuple.mapSecond
+            (unprocessedTupleToList >> cellListPadLeft)
+
+
+cellListPadLeft : CellList -> CellList
+cellListPadLeft l =
+    List.repeat (4 - List.length l) EmptyCell ++ l
