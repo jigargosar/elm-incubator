@@ -1,9 +1,8 @@
-module TileGrid exposing (TileGrid)
+module TileGrid exposing (TileGrid, fromNumRows)
 
 import Basics.Extra exposing (swap, uncurry)
 import Grid
 import List.Extra
-import PosDict
 
 
 type TileGrid
