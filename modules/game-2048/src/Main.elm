@@ -54,7 +54,7 @@ type alias TileCollection =
 initTileCollection : TileCollection
 initTileCollection =
     [ Tile (TileId 0) 2 ( 3, 0 ) SimpleTile
-    , Tile (TileId 1) 2 ( 3, 0 ) SimpleTile
+    , Tile (TileId 1) 2 ( 2, 0 ) SimpleTile
     ]
 
 
@@ -108,7 +108,16 @@ viewTile tile =
         [ div
             [ style "width" "50px"
             , style "height" "50px"
-            , style "background-color" "rgba(255, 255, 255, .9)"
+            , class "white"
+            , case tile.num of
+                2 ->
+                    style "background-color" "rgba(206, 52, 52, 1)"
+
+                4 ->
+                    style "background-color" "rgba(191, 127, 85, 1)"
+
+                _ ->
+                    style "background-color" "rgba(255, 255, 255, 1)"
             , case tile.kind of
                 SimpleTile ->
                     class ""
