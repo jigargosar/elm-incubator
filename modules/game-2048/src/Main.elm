@@ -2,7 +2,6 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Browser.Events
-import Dict exposing (Dict)
 import Grid
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
