@@ -68,7 +68,7 @@ initTileCollection =
             Tile initialTileId 2 ( 0, 0 ) NewTile
 
         tile2 =
-            Tile tile2Id 4 ( 1, 0 ) NewTile
+            Tile tile2Id 2 ( 1, 0 ) NewTile
     in
     { nextId = 2
     , dict =
@@ -92,7 +92,7 @@ slideTileCollection _ =
             Tile initialTileId 2 ( 2, 0 ) NewTile
 
         tile2 =
-            Tile tile2Id 4 ( 3, 0 ) NewTile
+            Tile tile2Id 2 ( 3, 0 ) NewTile
     in
     { nextId = 2
     , dict =
