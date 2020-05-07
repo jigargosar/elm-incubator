@@ -59,10 +59,6 @@ initTileCollection =
     ]
 
 
-insertTile t =
-    Dict.insert (t.id |> tileIdToInt) t
-
-
 slideTileCollection : TileCollection -> TileCollection
 slideTileCollection _ =
     [ Tile (TileId 0) 2 ( 3, 0 ) NewTile
