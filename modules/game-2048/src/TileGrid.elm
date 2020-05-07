@@ -75,6 +75,27 @@ newCell num kind =
 
 
 
+-- CellEntry
+
+
+type alias CellEntry =
+    Grid.Entry Cell
+
+
+cellEntriesCompactRight : CellIdGenerator -> List CellEntry -> ( ( Int, CellIdGenerator ), List CellEntry )
+cellEntriesCompactRight idGen entries =
+    let
+        positions =
+            List.map Tuple.first entries
+
+        cellValues =
+            List.map Tuple.second entries
+    in
+    cellListCompactRight idGen cellValues
+        |> Tuple.mapSecond (List.Extra.zip positions)
+
+
+
 -- Cell List
 
 
@@ -86,7 +107,7 @@ type alias CompactAcc =
     ( Int, ( ( Maybe Cell, CellList ), CellIdGenerator ) )
 
 
-cellListCompactRight : CellIdGenerator -> CellList -> ( Int, CellIdGenerator, CellList )
+cellListCompactRight : CellIdGenerator -> CellList -> ( ( Int, CellIdGenerator ), CellList )
 cellListCompactRight idGen0 =
     let
         func : Cell -> CompactAcc -> CompactAcc
@@ -126,8 +147,9 @@ cellListCompactRight idGen0 =
                 |> cellListPadLeft
 
         compactAccToReturn ( score, ( unprocessedTuple, idGen ) ) =
-            ( score
-            , idGen
+            ( ( score
+              , idGen
+              )
             , unprocessedTupleToCellList unprocessedTuple
             )
     in
