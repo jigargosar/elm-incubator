@@ -7,6 +7,7 @@ import Grid
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Html.Keyed
 import Json.Decode as D
 import NumGrid
 import Random
@@ -24,6 +25,11 @@ type TileId
 tileIdToInt : TileId -> Int
 tileIdToInt (TileId i) =
     i
+
+
+tileIdToString : TileId -> String
+tileIdToString =
+    tileIdToInt >> String.fromInt
 
 
 type TileKind
@@ -60,6 +66,19 @@ initTileCollection seed =
     , dict = Dict.empty |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
     , seed = seed
     }
+
+
+viewTileCollection : TileCollection -> HM
+viewTileCollection tc =
+    tc.dict
+        |> Dict.values
+        |> List.map viewKeyedTile
+        |> Html.Keyed.node "div" []
+
+
+viewKeyedTile : Tile -> ( String, HM )
+viewKeyedTile tile =
+    ( tile.id |> tileIdToString, text "" )
 
 
 
