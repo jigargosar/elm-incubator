@@ -316,6 +316,7 @@ type Msg
     | UndoClicked
     | NewClicked
     | ContinueClicked
+    | SlideTC
 
 
 type UpdateBoardMsg
@@ -376,6 +377,9 @@ update message model =
 
                 _ ->
                     ( model, Cmd.none )
+
+        SlideTC ->
+            ( { model | tc = slideTileCollection model.tc }, Cmd.none )
 
 
 undoMove : Model -> Model
