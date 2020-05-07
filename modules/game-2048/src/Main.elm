@@ -59,10 +59,16 @@ initTileCollection =
         initialTileId =
             TileId 0
 
+        tile2Id =
+            TileId 1
+
         initialTile =
             Tile initialTileId 2 ( 0, 0 ) NewTile
+
+        tile2 =
+            Tile tile2Id 4 ( 0, 1 ) NewTile
     in
-    { nextId = 1
+    { nextId = 2
     , dict = Dict.empty |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
     , seed = Random.initialSeed 0
     }
