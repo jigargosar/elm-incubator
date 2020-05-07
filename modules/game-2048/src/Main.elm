@@ -89,7 +89,7 @@ slideTileCollection _ =
             TileId 1
 
         initialTile =
-            Tile initialTileId 2 ( 2, 0 ) NewTile
+            Tile initialTileId 2 ( 3, 0 ) NewTile
 
         tile2 =
             Tile tile2Id 2 ( 3, 0 ) NewTile
