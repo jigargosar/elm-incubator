@@ -101,10 +101,16 @@ cellListCompactRight idGen0 =
                 ( NumCell id num _, Just ((NumCell id2 num2 _) as unprocessed) ) ->
                     if num == num2 then
                         let
+                            mergedNum =
+                                num * 2
+
                             ( mergedCell, nextIdGen ) =
-                                newCell (num * 2) (MergedCell id id2) idGen
+                                newCell mergedNum (MergedCell id id2) idGen
+
+                            updatedScore =
+                                score + mergedNum
                         in
-                        ( score + (num * 2), ( ( Nothing, mergedCell :: processed ), nextIdGen ) )
+                        ( updatedScore, ( ( Nothing, mergedCell :: processed ), nextIdGen ) )
 
                     else
                         ( score, ( ( Just cell, unprocessed :: processed ), idGen ) )
