@@ -104,11 +104,11 @@ viewTile tile =
         , styleTransforms [ tileTranslate tile ]
         , class "absolute"
         , style "transition" "transform 1s , opacity 1s"
-        , style "background-color" "rgba(255, 255, 255, .9)"
         ]
         [ div
             [ style "width" "50px"
             , style "height" "50px"
+            , style "background-color" "rgba(255, 255, 255, .9)"
             , case tile.kind of
                 SimpleTile ->
                     class ""
