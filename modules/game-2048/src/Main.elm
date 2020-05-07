@@ -35,8 +35,7 @@ tileIdToString =
 
 
 type TileKind
-    = NewTile
-    | MergedTile
+    = MergedTile
     | SimpleTile
 
 
@@ -54,16 +53,16 @@ type alias TileCollection =
 
 initTileCollection : TileCollection
 initTileCollection =
-    [ Tile (TileId 0) 2 ( 0, 0 ) NewTile
-    , Tile (TileId 1) 2 ( 1, 0 ) NewTile
+    [ Tile (TileId 0) 2 ( 0, 0 ) SimpleTile
+    , Tile (TileId 1) 2 ( 1, 0 ) SimpleTile
     ]
 
 
 slideTileCollection : TileCollection -> TileCollection
 slideTileCollection _ =
-    [ Tile (TileId 0) 2 ( 3, 0 ) NewTile
-    , Tile (TileId 1) 2 ( 3, 0 ) NewTile
-    , Tile (TileId 2) 4 ( 3, 0 ) NewTile
+    [ Tile (TileId 0) 2 ( 3, 0 ) SimpleTile
+    , Tile (TileId 1) 2 ( 3, 0 ) SimpleTile
+    , Tile (TileId 2) 4 ( 3, 0 ) MergedTile
     ]
 
 
