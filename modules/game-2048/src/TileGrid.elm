@@ -1,10 +1,8 @@
 module TileGrid exposing (TileGrid)
 
-import Grid
-
 
 type TileGrid
-    = TileGrid (Grid.Grid Cell)
+    = TileGrid
 
 
 
