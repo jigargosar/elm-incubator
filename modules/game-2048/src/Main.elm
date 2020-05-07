@@ -13,6 +13,21 @@ import UndoList exposing (UndoList)
 
 
 
+-- Tile
+
+
+type TileId
+    = TileId Int
+
+
+type alias Tile =
+    { id : TileId
+    , num : Int
+    , pos : Grid.Pos
+    }
+
+
+
 -- 2048 Board
 
 
