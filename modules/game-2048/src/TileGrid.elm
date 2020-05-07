@@ -82,28 +82,32 @@ type alias CellList =
     List Cell
 
 
-cellListCompactRight : CellList -> ( Int, CellList )
-cellListCompactRight =
+type alias CompactAcc =
+    ( Int, ( ( Maybe Cell, CellList ), CellIdGenerator ) )
+
+
+cellListCompactRight : CellIdGenerator -> CellList -> ( Int, ( CellList, CellIdGenerator ) )
+cellListCompactRight idGen0 =
     let
-        func : Cell -> ( Int, ( Maybe Cell, CellList ) ) -> ( Int, ( Maybe Cell, CellList ) )
-        func cell (( score, ( maybeUnprocessed, processed ) ) as acc) =
+        func : Cell -> CompactAcc -> CompactAcc
+        func cell (( score, ( ( maybeUnprocessed, processed ), idGen ) ) as acc) =
             case ( cell, maybeUnprocessed ) of
                 ( EmptyCell, _ ) ->
                     acc
 
                 ( _, Nothing ) ->
-                    ( score, ( Just cell, processed ) )
+                    ( score, ( ( Just cell, processed ), idGen ) )
 
                 ( NumCell id num _, Just ((NumCell id2 num2 _) as unprocessed) ) ->
                     if num == num2 then
                         let
-                            mergedCell =
-                                Debug.todo "impl"
+                            ( mergedCell, nextIdGen ) =
+                                newCell (num * 2) (MergedCell id id2) idGen
                         in
-                        ( score + (num * 2), ( Nothing, mergedCell :: processed ) )
+                        ( score + (num * 2), ( ( Nothing, mergedCell :: processed ), nextIdGen ) )
 
                     else
-                        ( score, ( Just cell, unprocessed :: processed ) )
+                        ( score, ( ( Just cell, unprocessed :: processed ), idGen ) )
 
         unprocessedTupleToList ( maybeUnprocessed, processed ) =
             case maybeUnprocessed of
@@ -113,9 +117,9 @@ cellListCompactRight =
                 Nothing ->
                     processed
     in
-    List.foldr func ( 0, ( Nothing, [] ) )
+    List.foldr func ( 0, ( ( Nothing, [] ), idGen0 ) )
         >> Tuple.mapSecond
-            (unprocessedTupleToList >> cellListPadLeft)
+            (Tuple.mapFirst (unprocessedTupleToList >> cellListPadLeft))
 
 
 cellListPadLeft : CellList -> CellList
