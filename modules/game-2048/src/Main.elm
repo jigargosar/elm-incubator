@@ -81,10 +81,27 @@ viewKeyedTile tile =
     ( tile.id |> tileIdToString, text "" )
 
 
+tileTranslate : Tile -> String
+tileTranslate tile =
+    let
+        ( x, y ) =
+            tile.pos
+    in
+    [ "translate", "(", String.fromInt (x * 50), "px", ",", String.fromInt (y * 50), "px", ")" ]
+        |> String.join ""
+
+
+styleTransforms =
+    String.join " "
+        >> style "transform"
+
+
 viewTile tile =
     div
         [ style "width" "50px"
         , style "height" "50px"
+        , styleTransforms [ tileTranslate tile ]
+        , class "absolute"
         ]
         []
 
