@@ -109,7 +109,12 @@ viewTile tile =
         [ div
             [ style "width" "50px"
             , style "height" "50px"
-            , class "animated zoomIn"
+            , case tile.kind of
+                SimpleTile ->
+                    class ""
+
+                MergedTile ->
+                    class "animated zoomIn"
             ]
             [ text (String.fromInt tile.num) ]
         ]
