@@ -59,10 +59,10 @@ newCellId (CellIdGenerator nextId) =
 
 
 type Cell
-    = Cell CellId Int
+    = NumCell CellId Int
     | EmptyCell
 
 
 newCell : Int -> CellIdGenerator -> ( Cell, CellIdGenerator )
 newCell num =
-    newCellId >> Tuple.mapFirst (\id -> Cell id num)
+    newCellId >> Tuple.mapFirst (\id -> NumCell id num)
