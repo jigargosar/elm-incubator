@@ -73,12 +73,16 @@ viewTileCollection tc =
     tc.dict
         |> Dict.values
         |> List.map viewKeyedTile
-        |> Html.Keyed.node "div" []
+        |> Html.Keyed.node "div"
+            [ style "width" "200px"
+            , style "height" "200px"
+            , class "outline debug"
+            ]
 
 
 viewKeyedTile : Tile -> ( String, HM )
 viewKeyedTile tile =
-    ( tile.id |> tileIdToString, text "" )
+    ( tile.id |> tileIdToString, viewTile tile )
 
 
 tileTranslate : Tile -> String
@@ -96,6 +100,7 @@ styleTransforms =
         >> style "transform"
 
 
+viewTile : Tile -> HM
 viewTile tile =
     div
         [ style "width" "50px"
@@ -103,7 +108,7 @@ viewTile tile =
         , styleTransforms [ tileTranslate tile ]
         , class "absolute"
         ]
-        []
+        [ text (String.fromInt tile.num) ]
 
 
 
@@ -428,6 +433,8 @@ view model =
                 Turn _ ->
                     text ""
             ]
+        , initTileCollection (Random.initialSeed 0)
+            |> viewTileCollection
         ]
 
 
