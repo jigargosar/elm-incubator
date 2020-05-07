@@ -76,7 +76,6 @@ viewTileCollection tc =
         |> Html.Keyed.node "div"
             [ style "width" "200px"
             , style "height" "200px"
-            , class "outline debug"
             ]
 
 
@@ -433,8 +432,10 @@ view model =
                 Turn _ ->
                     text ""
             ]
-        , initTileCollection (Random.initialSeed 0)
-            |> viewTileCollection
+        , div [ class "measure center pv4 debug" ]
+            [ initTileCollection (Random.initialSeed 0)
+                |> viewTileCollection
+            ]
         ]
 
 
