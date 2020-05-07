@@ -1,10 +1,14 @@
-module TileGrid exposing (SlideMsg(..), TileGrid, fromNumRows, hasLost, hasWon, toGrid, update)
+module TileGrid exposing (Model, SlideMsg(..), TileGrid, fromNumRowLists, hasLost, hasWon, toGrid, update)
 
 import Basics.Extra exposing (flip, swap, uncurry)
 import Dict
 import Grid
 import List.Extra
 import Random
+
+
+type alias Model =
+    TileGrid
 
 
 type TileGrid
@@ -15,8 +19,8 @@ size =
     { width = 4, height = 4 }
 
 
-fromNumRows : List (List Int) -> TileGrid
-fromNumRows lists =
+fromNumRowLists : List (List Int) -> TileGrid
+fromNumRowLists lists =
     lists
         |> List.Extra.mapAccuml
             (List.Extra.mapAccuml
@@ -296,9 +300,6 @@ cellListCompactRight acc0 =
                 ( EmptyCell, _ ) ->
                     acc
 
-                ( _, Nothing ) ->
-                    ( ( score, idGen ), ( Just cell, processed ) )
-
                 ( NumCell id num _, Just ((NumCell id2 num2 _) as unprocessed) ) ->
                     if num == num2 then
                         let
@@ -315,6 +316,9 @@ cellListCompactRight acc0 =
 
                     else
                         ( ( score, idGen ), ( Just cell, unprocessed :: processed ) )
+
+                _ ->
+                    ( ( score, idGen ), ( Just cell, processed ) )
 
         unprocessedTupleToCellList ( maybeUnprocessed, processed ) =
             (case maybeUnprocessed of

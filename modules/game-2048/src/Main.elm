@@ -8,10 +8,10 @@ import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Html.Keyed
 import Json.Decode as D
-import NumGrid
 import Process
 import Random
 import Task
+import TileGrid as NumGrid
 import UndoList exposing (UndoList)
 
 
@@ -148,7 +148,7 @@ type alias Board =
 
 initBoard : Random.Seed -> Grid.Lists Int -> Board
 initBoard initialSeed lists =
-    { grid = NumGrid.fromRowLists lists
+    { grid = NumGrid.fromNumRowLists lists
     , score = 0
     , lastGen = Nothing
     , seed = initialSeed
