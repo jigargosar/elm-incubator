@@ -115,17 +115,20 @@ cellListCompactRight idGen0 =
                     else
                         ( score, ( ( Just cell, unprocessed :: processed ), idGen ) )
 
-        compactAccToReturn ( score, ( ( maybeUnprocessed, processed ), idGen ) ) =
-            ( score
-            , idGen
-            , (case maybeUnprocessed of
+        unprocessedTupleToCellList ( maybeUnprocessed, processed ) =
+            (case maybeUnprocessed of
                 Just head ->
                     head :: processed
 
                 Nothing ->
                     processed
-              )
+            )
                 |> cellListPadLeft
+
+        compactAccToReturn ( score, ( unprocessedTuple, idGen ) ) =
+            ( score
+            , idGen
+            , unprocessedTupleToCellList unprocessedTuple
             )
     in
     List.foldr func ( 0, ( ( Nothing, [] ), idGen0 ) )
