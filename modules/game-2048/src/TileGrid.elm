@@ -41,6 +41,17 @@ type SlideMsg
     | SlideRight
 
 
+update : SlideMsg -> TileGrid -> Maybe (Random.Generator ( Int, Grid.Pos, TileGrid ))
+update message (TileGrid idGen0 grid0) =
+    cellGridUpdate message idGen0 grid0
+        |> Maybe.map
+            (Random.map
+                (\( ( score, pos, idGen ), grid ) ->
+                    ( score, pos, TileGrid idGen grid )
+                )
+            )
+
+
 
 -- CellId
 
