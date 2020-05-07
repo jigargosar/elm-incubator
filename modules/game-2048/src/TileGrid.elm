@@ -86,7 +86,7 @@ type alias CompactAcc =
     ( Int, ( ( Maybe Cell, CellList ), CellIdGenerator ) )
 
 
-cellListCompactRight : CellIdGenerator -> CellList -> ( Int, ( CellList, CellIdGenerator ) )
+cellListCompactRight : CellIdGenerator -> CellList -> ( Int, CellIdGenerator, CellList )
 cellListCompactRight idGen0 =
     let
         func : Cell -> CompactAcc -> CompactAcc
@@ -115,17 +115,21 @@ cellListCompactRight idGen0 =
                     else
                         ( score, ( ( Just cell, unprocessed :: processed ), idGen ) )
 
-        unprocessedTupleToList ( maybeUnprocessed, processed ) =
-            case maybeUnprocessed of
+        compactAccToReturn ( score, ( ( maybeUnprocessed, processed ), idGen ) ) =
+            ( score
+            , idGen
+            , (case maybeUnprocessed of
                 Just head ->
                     head :: processed
 
                 Nothing ->
                     processed
+              )
+                |> cellListPadLeft
+            )
     in
     List.foldr func ( 0, ( ( Nothing, [] ), idGen0 ) )
-        >> Tuple.mapSecond
-            (Tuple.mapFirst (unprocessedTupleToList >> cellListPadLeft))
+        >> compactAccToReturn
 
 
 cellListPadLeft : CellList -> CellList
