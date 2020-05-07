@@ -141,6 +141,7 @@ viewTile tile =
         , style "height" "50px"
         , styleTransforms [ tileTranslate tile ]
         , class "absolute"
+        , style "transition" "transform 1s , opacity 1s"
         ]
         [ text (String.fromInt tile.num) ]
 
