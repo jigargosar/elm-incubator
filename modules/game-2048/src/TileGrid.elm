@@ -102,7 +102,7 @@ cellListCompactRight idGen0 =
                     if num == num2 then
                         let
                             mergedNum =
-                                num * 2
+                                num + num2
 
                             ( mergedCell, nextIdGen ) =
                                 newCell mergedNum (MergedCell id id2) idGen
