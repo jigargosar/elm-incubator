@@ -53,8 +53,8 @@ type alias TileCollection =
     }
 
 
-initTileCollection : Random.Seed -> TileCollection
-initTileCollection seed =
+initTileCollection : TileCollection
+initTileCollection =
     let
         initialTileId =
             TileId 0
@@ -64,7 +64,7 @@ initTileCollection seed =
     in
     { nextId = 1
     , dict = Dict.empty |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
-    , seed = seed
+    , seed = Random.initialSeed 0
     }
 
 
@@ -433,7 +433,7 @@ view model =
                     text ""
             ]
         , div [ class "measure center pv4 debug" ]
-            [ initTileCollection (Random.initialSeed 0)
+            [ initTileCollection
                 |> viewTileCollection
             ]
         ]
