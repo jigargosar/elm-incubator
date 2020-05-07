@@ -24,7 +24,7 @@ fromNumRows lists =
                             ( idGen, EmptyCell )
 
                         _ ->
-                            newCell num idGen |> swap
+                            newCell num InitialCell idGen |> swap
                 )
             )
             initCellIdGenerator
@@ -59,10 +59,16 @@ newCellId (CellIdGenerator nextId) =
 
 
 type Cell
-    = NumCell CellId Int
+    = NumCell CellId Int CellKind
     | EmptyCell
 
 
-newCell : Int -> CellIdGenerator -> ( Cell, CellIdGenerator )
-newCell num =
-    newCellId >> Tuple.mapFirst (\id -> NumCell id num)
+type CellKind
+    = InitialCell
+    | GeneratedCell
+    | MergedCell CellId CellId
+
+
+newCell : Int -> CellKind -> CellIdGenerator -> ( Cell, CellIdGenerator )
+newCell num kind =
+    newCellId >> Tuple.mapFirst (\id -> NumCell id num kind)
