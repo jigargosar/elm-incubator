@@ -1,4 +1,4 @@
-module TileGrid exposing (SlideMsg(..), TileGrid, fromNumRows, update)
+module TileGrid exposing (SlideMsg(..), TileGrid, fromNumRows, hasLost, hasWon, toGrid, update)
 
 import Basics.Extra exposing (flip, swap, uncurry)
 import Dict
