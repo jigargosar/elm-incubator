@@ -49,64 +49,31 @@ type alias Tile =
 
 
 type alias TileCollection =
-    { nextId : Int
-    , dict : Dict Int Tile
-    , seed : Random.Seed
-    }
+    List Tile
 
 
 initTileCollection : TileCollection
 initTileCollection =
-    let
-        initialTileId =
-            TileId 0
+    [ Tile (TileId 0) 2 ( 0, 0 ) NewTile
+    , Tile (TileId 1) 2 ( 1, 0 ) NewTile
+    ]
 
-        tile2Id =
-            TileId 1
 
-        initialTile =
-            Tile initialTileId 2 ( 0, 0 ) NewTile
-
-        tile2 =
-            Tile tile2Id 2 ( 1, 0 ) NewTile
-    in
-    { nextId = 2
-    , dict =
-        Dict.empty
-            |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
-            |> Dict.insert (tile2.id |> tileIdToInt) tile2
-    , seed = Random.initialSeed 0
-    }
+insertTile t =
+    Dict.insert (t.id |> tileIdToInt) t
 
 
 slideTileCollection : TileCollection -> TileCollection
 slideTileCollection _ =
-    let
-        initialTileId =
-            TileId 0
-
-        tile2Id =
-            TileId 1
-
-        initialTile =
-            Tile initialTileId 2 ( 3, 0 ) NewTile
-
-        tile2 =
-            Tile tile2Id 2 ( 3, 0 ) NewTile
-    in
-    { nextId = 2
-    , dict =
-        Dict.empty
-            |> Dict.insert (initialTile.id |> tileIdToInt) initialTile
-            |> Dict.insert (tile2.id |> tileIdToInt) tile2
-    , seed = Random.initialSeed 0
-    }
+    [ Tile (TileId 0) 2 ( 3, 0 ) NewTile
+    , Tile (TileId 1) 2 ( 3, 0 ) NewTile
+    , Tile (TileId 2) 4 ( 3, 0 ) NewTile
+    ]
 
 
 viewTileCollection : TileCollection -> HM
 viewTileCollection tc =
-    tc.dict
-        |> Dict.values
+    tc
         |> List.map viewKeyedTile
         |> Html.Keyed.node "div"
             [ style "width" "200px"
