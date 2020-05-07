@@ -5,7 +5,7 @@ import Browser.Events
 import Dict exposing (Dict)
 import Grid
 import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Html.Keyed
 import Json.Decode as D
@@ -79,6 +79,14 @@ viewTileCollection tc =
 viewKeyedTile : Tile -> ( String, HM )
 viewKeyedTile tile =
     ( tile.id |> tileIdToString, text "" )
+
+
+viewTile tile =
+    div
+        [ style "width" "50px"
+        , style "height" "50px"
+        ]
+        []
 
 
 
