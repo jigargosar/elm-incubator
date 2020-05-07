@@ -18,9 +18,13 @@ fromNumRows : List (List Int) -> TileGrid
 fromNumRows lists =
     lists
         |> List.Extra.mapAccuml
-            (List.Extra.mapAccuml (\idGen num -> newCell num idGen |> swap))
+            (List.Extra.mapAccuml
+                (\idGen num ->
+                    newCell num idGen |> swap
+                )
+            )
             initCellIdGenerator
-        |> Tuple.mapSecond (Grid.fromRowLists size (Cell (CellId "0") 0))
+        |> Tuple.mapSecond (Grid.fromRowLists size EmptyCell)
         |> uncurry TileGrid
 
 
@@ -50,10 +54,9 @@ newCellId (CellIdGenerator nextId) =
 -- Cell
 
 
-type alias Cell =
-    { id : CellId
-    , num : Int
-    }
+type Cell
+    = Cell CellId Int
+    | EmptyCell
 
 
 newCell : Int -> CellIdGenerator -> ( Cell, CellIdGenerator )
