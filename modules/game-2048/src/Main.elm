@@ -304,7 +304,7 @@ init () =
       , state = Turn False
       , tc = initTileCollection
       }
-    , delayN 1000 SlideTC
+    , delayN 2000 SlideTC
     )
 
 
