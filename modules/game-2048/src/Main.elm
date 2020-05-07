@@ -111,7 +111,7 @@ viewTile tile =
         , style "transition" "transform 1s , opacity 1s"
         , style "background-color" "rgba(255, 255, 255, .9)"
         ]
-        [ text (String.fromInt tile.num) ]
+        [ div [ class "animated zoomIn" ] [ text (String.fromInt tile.num) ] ]
 
 
 
