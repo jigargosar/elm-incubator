@@ -103,7 +103,7 @@ viewTile tile =
         , style "height" "50px"
         , styleTransforms [ tileTranslate tile ]
         , class "absolute"
-        , style "transition" "transform 1s , opacity 1s"
+        , style "transition" "transform 1s"
         ]
         [ div
             [ style "width" "50px"
