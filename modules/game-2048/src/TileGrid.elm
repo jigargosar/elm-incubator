@@ -20,7 +20,12 @@ fromNumRows lists =
         |> List.Extra.mapAccuml
             (List.Extra.mapAccuml
                 (\idGen num ->
-                    newCell num idGen |> swap
+                    case num of
+                        0 ->
+                            ( idGen, EmptyCell )
+
+                        _ ->
+                            newCell num idGen |> swap
                 )
             )
             initCellIdGenerator
