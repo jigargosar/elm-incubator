@@ -1,4 +1,4 @@
-module TileGrid exposing (TileGrid, fromNumRows)
+module TileGrid exposing (SlideMsg(..), TileGrid, fromNumRows, update)
 
 import Basics.Extra exposing (flip, swap, uncurry)
 import Dict
@@ -52,6 +52,32 @@ update message (TileGrid idGen0 grid0) =
             )
 
 
+toGrid : TileGrid -> Grid.Grid Int
+toGrid (TileGrid _ grid) =
+    grid
+        |> Grid.map (always cellToNum)
+
+
+hasWon : TileGrid -> Bool
+hasWon (TileGrid _ grid) =
+    grid
+        |> Grid.map (always cellToNum)
+        |> Grid.toDict
+        --|> Dict.filter (\_ v -> v >= 2048)
+        |> Dict.filter (\_ v -> v >= 4)
+        |> Dict.isEmpty
+        |> not
+
+
+hasLost : TileGrid -> Bool
+hasLost (TileGrid _ grid) =
+    grid
+        |> Grid.map (always cellToNum)
+        |> Grid.toDict
+        |> Dict.filter (\_ v -> v == 0)
+        |> Dict.isEmpty
+
+
 
 -- CellId
 
@@ -92,6 +118,16 @@ type CellKind
 newCell : Int -> CellKind -> CellIdGenerator -> ( Cell, CellIdGenerator )
 newCell num kind =
     newCellId >> Tuple.mapFirst (\id -> NumCell id num kind)
+
+
+cellToNum : Cell -> Int
+cellToNum cell =
+    case cell of
+        NumCell _ num _ ->
+            num
+
+        EmptyCell ->
+            0
 
 
 

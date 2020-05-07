@@ -8,6 +8,7 @@ module Grid exposing
     , fromRowLists
     , get
     , init
+    , map
     , mapColumnLists
     , mapRowLists
     , replaceEntries
@@ -156,6 +157,11 @@ replaceFromDict posDict (Grid s d) =
 replaceEntries : List (Entry a) -> Grid a -> Grid a
 replaceEntries entries (Grid s d) =
     dictReplaceEntries entries d |> Grid s
+
+
+map : (Pos -> a -> b) -> Grid a -> Grid b
+map func (Grid s d) =
+    Dict.map func d |> Grid s
 
 
 listsToPosDict : Lists a -> PosDict a
