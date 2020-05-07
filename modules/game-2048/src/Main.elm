@@ -109,6 +109,7 @@ viewTile tile =
         , styleTransforms [ tileTranslate tile ]
         , class "absolute"
         , style "transition" "transform 1s , opacity 1s"
+        , style "background-color" "rgba(255, 255, 255, .9)"
         ]
         [ text (String.fromInt tile.num) ]
 
