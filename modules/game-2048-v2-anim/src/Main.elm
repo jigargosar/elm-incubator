@@ -62,6 +62,12 @@ view _ =
         ]
 
 
+type alias Tile =
+    { id : String
+    , num : Int
+    }
+
+
 initialGrid =
     [ [ 0, 0, 0, 0 ]
     , [ 0, 2, 0, 0 ]
