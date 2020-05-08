@@ -144,7 +144,15 @@ viewTile tile =
         , style "transform" (renderTileTransform tile)
         , style "transition" "transform 500ms"
         ]
-        [ text (String.fromInt tile.num) ]
+        [ div
+            [ if tile.fadeIn then
+                class "animated bounceIn"
+
+              else
+                class ""
+            ]
+            [ text (String.fromInt tile.num) ]
+        ]
 
 
 renderTileTransform tile =
