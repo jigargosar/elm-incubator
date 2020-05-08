@@ -116,9 +116,6 @@ tilesLists =
       ]
     , [ Tile "a" 2 ( 3, 1 ) None
       , Tile "b" 4 ( 3, 2 ) None
-      ]
-    , [ Tile "a" 2 ( 3, 1 ) None
-      , Tile "b" 4 ( 3, 2 ) None
       , Tile "c" 2 ( 2, 1 ) Generated
       ]
     , [ Tile "a" 2 ( 0, 1 ) None
