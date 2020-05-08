@@ -122,10 +122,10 @@ tilesLists =
       ]
     , [ Tile "b" 4 ( 0, 0 ) False
       , Tile "d" 4 ( 0, 0 ) False
-      ]
-    , [ Tile "b" 4 ( 0, 0 ) False
-      , Tile "d" 4 ( 0, 0 ) False
       , Tile "e" 8 ( 0, 0 ) True
+      ]
+    , [ Tile "e" 8 ( 0, 0 ) False
+      , Tile "f" 2 ( 1, 1 ) True
       ]
     ]
 
