@@ -90,7 +90,7 @@ type alias Tile =
     { id : String
     , num : Int
     , pos : Pos
-    , fadeIn : Bool
+    , popIn : Bool
     }
 
 
