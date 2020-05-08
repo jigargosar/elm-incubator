@@ -72,7 +72,7 @@ initialGrid =
 
 viewGrid =
     List.map viewRow
-        >> div [ class "" ]
+        >> div [ class "code f4" ]
 
 
 viewRow =
