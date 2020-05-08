@@ -125,9 +125,6 @@ tilesLists =
       , Tile "d" 4 ( 0, 0 ) None
       , Tile "e" 2 ( 1, 0 ) None
       , Tile "f" 8 ( 0, 0 ) Merged
-      ]
-    , [ Tile "e" 2 ( 1, 0 ) None
-      , Tile "f" 8 ( 0, 0 ) None
       , Tile "g" 4 ( 1, 1 ) Generated
       ]
     , [ Tile "e" 2 ( 3, 0 ) None
