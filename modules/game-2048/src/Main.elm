@@ -271,6 +271,16 @@ undoMove model =
                         model.state
             }
 
+        Lost ->
+            let
+                newUndoBoard =
+                    UndoList.undo model.undoBoard
+            in
+            { model
+                | undoBoard = newUndoBoard
+                , state = Turn False
+            }
+
         _ ->
             model
 
