@@ -84,6 +84,7 @@ viewCell num =
     div
         [ style "width" "50px"
         , style "height" "50px"
+        , class "flex justify-center items-center"
         ]
         [ text (String.fromInt num) ]
 
