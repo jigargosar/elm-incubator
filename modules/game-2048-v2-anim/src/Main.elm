@@ -105,6 +105,9 @@ tilesLists =
       ]
     , [ Tile "a" 2 ( 3, 1 )
       , Tile "b" 4 ( 3, 2 )
+      ]
+    , [ Tile "a" 2 ( 3, 1 )
+      , Tile "b" 4 ( 3, 2 )
       , Tile "c" 2 ( 2, 1 )
       ]
     , [ Tile "a" 2 ( 0, 1 )
