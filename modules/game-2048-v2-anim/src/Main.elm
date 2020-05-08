@@ -100,8 +100,8 @@ initialTiles =
 
 
 tilesLists =
-    [ [ Tile "a" 2 ( 3, 3 )
-      , Tile "b" 4 ( 3, 3 )
+    [ [ Tile "a" 2 ( 3, 1 )
+      , Tile "b" 4 ( 3, 2 )
       , Tile "c" 8 ( 3, 3 )
       ]
     ]
