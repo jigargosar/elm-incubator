@@ -111,10 +111,11 @@ initialTiles =
 
 
 tilesLists =
-    [ [ Tile "a" 2 ( 3, 1 ) None
-      , Tile "b" 4 ( 3, 2 ) None
-      ]
-    , [ Tile "a" 2 ( 3, 1 ) None
+    [ --[ Tile "a" 2 ( 3, 1 ) None
+      -- , Tile "b" 4 ( 3, 2 ) None
+      -- ]
+      --,
+      [ Tile "a" 2 ( 3, 1 ) None
       , Tile "b" 4 ( 3, 2 ) None
       , Tile "c" 2 ( 2, 1 ) Generated
       ]
@@ -176,7 +177,7 @@ viewTile tile =
             , class "flex justify-center items-center"
             , case tile.foo of
                 Generated ->
-                    class "animate__animated  animate__zoomIn"
+                    class "animate__animated  animate__zoomIn animate__delay-2s"
 
                 Merged ->
                     class "animate__animated  animate__bounceIn"
