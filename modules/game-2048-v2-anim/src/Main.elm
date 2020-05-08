@@ -73,11 +73,11 @@ type alias DM =
 
 
 view : Model -> DM
-view _ =
+view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , viewTilesGrid initialTiles
+            , viewTilesGrid model.tiles
             ]
         ]
 
