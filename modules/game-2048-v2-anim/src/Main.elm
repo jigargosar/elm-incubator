@@ -57,8 +57,31 @@ view _ =
     Document "2048 Animated"
         [ div [ class "pa3 measure-center" ]
             [ div [ class "f3" ] [ text "Play 2048" ]
+            , viewGrid initialGrid
             ]
         ]
+
+
+initialGrid =
+    [ [ 0, 0, 0, 0 ]
+    , [ 0, 2, 0, 0 ]
+    , [ 0, 0, 4, 0 ]
+    , [ 0, 0, 0, 0 ]
+    ]
+
+
+viewGrid =
+    List.map viewRow
+        >> div [ class "" ]
+
+
+viewRow =
+    List.map viewCell
+        >> div [ class "" ]
+
+
+viewCell num =
+    div [] [ text (String.fromInt num) ]
 
 
 
