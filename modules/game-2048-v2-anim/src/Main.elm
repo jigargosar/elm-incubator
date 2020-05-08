@@ -72,6 +72,10 @@ type alias DM =
     Document Msg
 
 
+type alias HM =
+    Html Msg
+
+
 view : Model -> DM
 view model =
     Document "2048 Animated"
@@ -135,6 +139,7 @@ viewKeyedTile tile =
     ( tile.id, viewTile tile )
 
 
+viewTile : Tile -> HM
 viewTile tile =
     div
         [ style "width" "100px"
@@ -148,7 +153,7 @@ viewTile tile =
             [ style "width" "100px"
             , style "height" "100px"
             , class "flex justify-center items-center"
-            , if tile.fadeIn then
+            , if tile.popIn then
                 class "animated bounceIn"
 
               else
