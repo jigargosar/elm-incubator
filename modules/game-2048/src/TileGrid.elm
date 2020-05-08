@@ -67,8 +67,8 @@ hasWon (TileGrid _ grid) =
     grid
         |> Grid.map (always cellToNum)
         |> Grid.toDict
-        --|> Dict.filter (\_ v -> v >= 2048)
-        |> Dict.filter (\_ v -> v >= 4)
+        |> Dict.filter (\_ v -> v >= 2048)
+        --|> Dict.filter (\_ v -> v >= 4)
         |> Dict.isEmpty
         |> not
 
