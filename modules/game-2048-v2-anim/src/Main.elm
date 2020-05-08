@@ -145,7 +145,10 @@ viewTile tile =
         , style "transition" "transform 500ms"
         ]
         [ div
-            [ if tile.fadeIn then
+            [ style "width" "100px"
+            , style "height" "100px"
+            , class "flex justify-center items-center"
+            , if tile.fadeIn then
                 class "animated bounceIn"
 
               else
