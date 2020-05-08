@@ -105,6 +105,7 @@ viewTile tile =
     div
         [ style "width" "100px"
         , style "height" "100px"
+        , style "background-color" "rgba(255,255,255,0.9)"
         , class "absolute flex justify-center items-center"
         ]
         [ text (String.fromInt tile.num) ]
