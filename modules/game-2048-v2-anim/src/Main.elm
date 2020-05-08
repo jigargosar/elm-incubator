@@ -179,10 +179,10 @@ viewTile tile =
             , class "flex justify-center items-center"
             , case tile.foo of
                 Generated ->
-                    class "animated pulse"
+                    class "animate__animated  animate__zoomIn"
 
                 Merged ->
-                    class "animated bounceIn"
+                    class "animate__animated  animate__bounceIn"
 
                 None ->
                     class ""
