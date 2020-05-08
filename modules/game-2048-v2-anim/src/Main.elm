@@ -123,11 +123,13 @@ tilesLists =
       , Tile "b" 4 ( 0, 2 ) None
       , Tile "c" 2 ( 0, 1 ) None
       , Tile "d" 4 ( 0, 1 ) Merged
-      ]
-    , [ Tile "b" 4 ( 0, 2 ) None
-      , Tile "d" 4 ( 0, 1 ) None
       , Tile "e" 2 ( 1, 1 ) Generated
       ]
+
+    --, [ Tile "b" 4 ( 0, 2 ) None
+    --  , Tile "d" 4 ( 0, 1 ) None
+    --  , Tile "e" 2 ( 1, 1 ) Generated
+    --  ]
     , [ Tile "b" 4 ( 0, 0 ) None
       , Tile "d" 4 ( 0, 0 ) None
       , Tile "e" 2 ( 1, 0 ) None
