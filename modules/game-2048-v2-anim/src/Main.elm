@@ -73,6 +73,16 @@ type alias Tile =
     }
 
 
+newTile =
+    Tile
+
+
+initialTiles =
+    [ Tile "a" 2 ( 1, 1 )
+    , Tile "b" 4 ( 2, 2 )
+    ]
+
+
 initialGrid =
     [ [ 0, 0, 0, 0 ]
     , [ 0, 2, 0, 0 ]
