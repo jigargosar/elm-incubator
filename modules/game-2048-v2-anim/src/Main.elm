@@ -130,7 +130,7 @@ viewTile tile =
         , style "background-color" "rgba(255,255,255,0.9)"
         , class "absolute flex justify-center items-center"
         , style "transform" (renderTileTransform tile)
-        , style "transition" "translate 500ms"
+        , style "transition" "transform 500ms"
         ]
         [ text (String.fromInt tile.num) ]
 
