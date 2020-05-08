@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, text)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
 
 
 
@@ -53,8 +54,11 @@ type alias DM =
 
 view : Model -> DM
 view _ =
-    Document "Main"
-        [ text "Hello Main" ]
+    Document "2048 Animated"
+        [ div [ class "pa3 measure-center" ]
+            [ div [ class "f3" ] [ text "Play 2048" ]
+            ]
+        ]
 
 
 
