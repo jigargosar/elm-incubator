@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 
 
 
@@ -81,7 +81,11 @@ viewRow =
 
 
 viewCell num =
-    div [] [ text (String.fromInt num) ]
+    div
+        [ style "width" "50px"
+        , style "height" "50px"
+        ]
+        [ text (String.fromInt num) ]
 
 
 
