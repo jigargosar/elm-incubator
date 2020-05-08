@@ -55,8 +55,8 @@ type alias DM =
 view : Model -> DM
 view _ =
     Document "2048 Animated"
-        [ div [ class "pa3 measure-center" ]
-            [ div [ class "f3" ] [ text "Play 2048" ]
+        [ div [ class "pa3 measure center" ]
+            [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , viewGrid initialGrid
             ]
         ]
@@ -72,7 +72,7 @@ initialGrid =
 
 viewGrid =
     List.map viewRow
-        >> div [ class "code f4" ]
+        >> div [ class "flex flex-column items-center code f2 debug" ]
 
 
 viewRow =
@@ -82,8 +82,8 @@ viewRow =
 
 viewCell num =
     div
-        [ style "width" "50px"
-        , style "height" "50px"
+        [ style "width" "100px"
+        , style "height" "100px"
         , class "flex justify-center items-center"
         ]
         [ text (String.fromInt num) ]
