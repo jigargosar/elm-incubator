@@ -8,130 +8,11 @@ import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Html.Keyed
 import Json.Decode as D
+import NumGrid
 import Process
 import Random
 import Task
-import TileGrid as NumGrid
 import UndoList exposing (UndoList)
-
-
-
--- Tile
-
-
-type TileId
-    = TileId Int
-
-
-tileIdToInt : TileId -> Int
-tileIdToInt (TileId i) =
-    i
-
-
-tileIdToString : TileId -> String
-tileIdToString =
-    tileIdToInt >> String.fromInt
-
-
-type TileKind
-    = MergedTile
-    | SimpleTile
-
-
-type alias Tile =
-    { id : TileId
-    , num : Int
-    , pos : Grid.Pos
-    , kind : TileKind
-    }
-
-
-type alias TileCollection =
-    List Tile
-
-
-initTileCollection : TileCollection
-initTileCollection =
-    [ Tile (TileId 0) 2 ( 3, 0 ) SimpleTile
-    , Tile (TileId 1) 2 ( 2, 0 ) SimpleTile
-    ]
-
-
-slideTileCollection : TileCollection -> TileCollection
-slideTileCollection _ =
-    [ Tile (TileId 0) 2 ( 0, 0 ) SimpleTile
-    , Tile (TileId 1) 2 ( 0, 0 ) SimpleTile
-    , Tile (TileId 2) 4 ( 0, 0 ) MergedTile
-    ]
-
-
-viewTileCollection : TileCollection -> HM
-viewTileCollection tc =
-    tc
-        |> List.map viewKeyedTile
-        |> Html.Keyed.node "div"
-            [ style "width" "200px"
-            , style "height" "200px"
-            ]
-
-
-viewKeyedTile : Tile -> ( String, HM )
-viewKeyedTile tile =
-    ( tile.id |> tileIdToString, viewTile tile )
-
-
-tileTranslate : Tile -> String
-tileTranslate tile =
-    let
-        ( x, y ) =
-            tile.pos
-    in
-    [ "translate", "(", String.fromInt (x * 50), "px", ",", String.fromInt (y * 50), "px", ")" ]
-        |> String.join ""
-
-
-styleTransforms =
-    String.join " "
-        >> style "transform"
-
-
-viewTile : Tile -> HM
-viewTile tile =
-    div
-        [ style "width" "50px"
-        , style "height" "50px"
-        , styleTransforms [ tileTranslate tile ]
-        , class "absolute"
-        , style "transition" "transform 1s"
-        , case tile.kind of
-            SimpleTile ->
-                class "z-0"
-
-            MergedTile ->
-                class "z-1"
-        ]
-        [ div
-            [ style "width" "50px"
-            , style "height" "50px"
-            , class "white absolute"
-            , case tile.num of
-                2 ->
-                    style "background-color" "rgba(206, 52, 52, 1)"
-
-                4 ->
-                    style "background-color" "rgba(191, 127, 85, 1)"
-
-                _ ->
-                    style "background-color" "rgba(255, 255, 255, 1)"
-            , case tile.kind of
-                SimpleTile ->
-                    class ""
-
-                MergedTile ->
-                    class "animated zoomIn"
-            ]
-            [ text (String.fromInt tile.num) ]
-        ]
 
 
 
@@ -148,7 +29,7 @@ type alias Board =
 
 initBoard : Random.Seed -> Grid.Lists Int -> Board
 initBoard initialSeed lists =
-    { grid = NumGrid.fromNumRowLists lists
+    { grid = NumGrid.fromRowLists lists
     , score = 0
     , lastGen = Nothing
     , seed = initialSeed
@@ -261,7 +142,6 @@ type alias UndoBoard =
 type alias Model =
     { undoBoard : UndoBoard
     , state : State
-    , tc : TileCollection
     }
 
 
@@ -291,9 +171,8 @@ init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { undoBoard = initialUndoBoard
       , state = Turn False
-      , tc = initTileCollection
       }
-    , delayN 2000 SlideTC
+    , Cmd.none
     )
 
 
@@ -312,7 +191,6 @@ type Msg
     | UndoClicked
     | NewClicked
     | ContinueClicked
-    | SlideTC
 
 
 type UpdateBoardMsg
@@ -373,9 +251,6 @@ update message model =
 
                 _ ->
                     ( model, Cmd.none )
-
-        SlideTC ->
-            ( { model | tc = slideTileCollection model.tc }, Cmd.none )
 
 
 undoMove : Model -> Model
@@ -466,9 +341,6 @@ view model =
 
                 Turn _ ->
                     text ""
-            ]
-        , div [ class "measure center pv4 debug" ]
-            [ viewTileCollection model.tc
             ]
         ]
 
