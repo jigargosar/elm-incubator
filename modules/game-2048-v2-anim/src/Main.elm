@@ -94,48 +94,54 @@ type alias Tile =
     { id : String
     , num : Int
     , pos : Pos
-    , popIn : Bool
+    , foo : TileFoo
     }
 
 
+type TileFoo
+    = Generated
+    | Merged
+    | None
+
+
 initialTiles =
-    [ Tile "a" 2 ( 1, 1 ) False
-    , Tile "b" 4 ( 2, 2 ) False
+    [ Tile "a" 2 ( 1, 1 ) None
+    , Tile "b" 4 ( 2, 2 ) None
     ]
 
 
 tilesLists =
-    [ [ Tile "a" 2 ( 3, 1 ) False
-      , Tile "b" 4 ( 3, 2 ) False
+    [ [ Tile "a" 2 ( 3, 1 ) None
+      , Tile "b" 4 ( 3, 2 ) None
       ]
-    , [ Tile "a" 2 ( 3, 1 ) False
-      , Tile "b" 4 ( 3, 2 ) False
+    , [ Tile "a" 2 ( 3, 1 ) None
+      , Tile "b" 4 ( 3, 2 ) None
       ]
-    , [ Tile "a" 2 ( 3, 1 ) False
-      , Tile "b" 4 ( 3, 2 ) False
-      , Tile "c" 2 ( 2, 1 ) True
+    , [ Tile "a" 2 ( 3, 1 ) None
+      , Tile "b" 4 ( 3, 2 ) None
+      , Tile "c" 2 ( 2, 1 ) Generated
       ]
-    , [ Tile "a" 2 ( 0, 1 ) False
-      , Tile "b" 4 ( 0, 2 ) False
-      , Tile "c" 2 ( 0, 1 ) False
-      , Tile "d" 4 ( 0, 1 ) True
+    , [ Tile "a" 2 ( 0, 1 ) None
+      , Tile "b" 4 ( 0, 2 ) None
+      , Tile "c" 2 ( 0, 1 ) None
+      , Tile "d" 4 ( 0, 1 ) Merged
       ]
-    , [ Tile "b" 4 ( 0, 2 ) False
-      , Tile "d" 4 ( 0, 1 ) False
-      , Tile "e" 2 ( 1, 1 ) True
+    , [ Tile "b" 4 ( 0, 2 ) None
+      , Tile "d" 4 ( 0, 1 ) None
+      , Tile "e" 2 ( 1, 1 ) Generated
       ]
-    , [ Tile "b" 4 ( 0, 0 ) False
-      , Tile "d" 4 ( 0, 0 ) False
-      , Tile "e" 2 ( 1, 0 ) False
-      , Tile "f" 8 ( 0, 0 ) True
+    , [ Tile "b" 4 ( 0, 0 ) None
+      , Tile "d" 4 ( 0, 0 ) None
+      , Tile "e" 2 ( 1, 0 ) None
+      , Tile "f" 8 ( 0, 0 ) Merged
       ]
-    , [ Tile "e" 2 ( 1, 0 ) False
-      , Tile "f" 8 ( 0, 0 ) False
-      , Tile "g" 4 ( 1, 1 ) True
+    , [ Tile "e" 2 ( 1, 0 ) None
+      , Tile "f" 8 ( 0, 0 ) None
+      , Tile "g" 4 ( 1, 1 ) Generated
       ]
-    , [ Tile "e" 2 ( 3, 0 ) False
-      , Tile "f" 8 ( 2, 0 ) False
-      , Tile "g" 4 ( 3, 1 ) False
+    , [ Tile "e" 2 ( 3, 0 ) None
+      , Tile "f" 8 ( 2, 0 ) None
+      , Tile "g" 4 ( 3, 1 ) None
       ]
     , []
     ]
@@ -171,11 +177,15 @@ viewTile tile =
             [ style "width" "100px"
             , style "height" "100px"
             , class "flex justify-center items-center"
-            , if tile.popIn then
-                class "animated bounceIn"
+            , case tile.foo of
+                Generated ->
+                    class "animated pulse"
 
-              else
-                class ""
+                Merged ->
+                    class "animated bounceIn"
+
+                None ->
+                    class ""
             ]
             [ text (String.fromInt tile.num) ]
         ]
