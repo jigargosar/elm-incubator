@@ -72,7 +72,7 @@ initialGrid =
 
 viewGrid =
     List.map viewRow
-        >> div [ class "pa3 flex flex-column items-center code f2 debug" ]
+        >> div [ class "pa3 dib code f2 debug" ]
 
 
 viewRow =
