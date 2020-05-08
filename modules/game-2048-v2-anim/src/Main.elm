@@ -80,6 +80,14 @@ initialTiles =
     ]
 
 
+tilesLists =
+    [ [ Tile "a" 2 ( 3, 3 )
+      , Tile "b" 4 ( 3, 3 )
+      , Tile "c" 8 ( 3, 3 )
+      ]
+    ]
+
+
 viewTilesGrid tiles =
     div
         [ class "pa3 code f2 debug"
