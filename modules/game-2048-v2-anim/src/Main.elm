@@ -90,30 +90,31 @@ type alias Tile =
     { id : String
     , num : Int
     , pos : Pos
+    , fadeIn : Bool
     }
 
 
 initialTiles =
-    [ Tile "a" 2 ( 1, 1 )
-    , Tile "b" 4 ( 2, 2 )
+    [ Tile "a" 2 ( 1, 1 ) False
+    , Tile "b" 4 ( 2, 2 ) False
     ]
 
 
 tilesLists =
-    [ [ Tile "a" 2 ( 3, 1 )
-      , Tile "b" 4 ( 3, 2 )
+    [ [ Tile "a" 2 ( 3, 1 ) False
+      , Tile "b" 4 ( 3, 2 ) False
       ]
-    , [ Tile "a" 2 ( 3, 1 )
-      , Tile "b" 4 ( 3, 2 )
+    , [ Tile "a" 2 ( 3, 1 ) False
+      , Tile "b" 4 ( 3, 2 ) False
       ]
-    , [ Tile "a" 2 ( 3, 1 )
-      , Tile "b" 4 ( 3, 2 )
-      , Tile "c" 2 ( 2, 1 )
+    , [ Tile "a" 2 ( 3, 1 ) False
+      , Tile "b" 4 ( 3, 2 ) False
+      , Tile "c" 2 ( 2, 1 ) True
       ]
-    , [ Tile "a" 2 ( 0, 1 )
-      , Tile "b" 4 ( 0, 2 )
-      , Tile "c" 2 ( 0, 1 )
-      , Tile "d" 4 ( 0, 1 )
+    , [ Tile "a" 2 ( 0, 1 ) False
+      , Tile "b" 4 ( 0, 2 ) False
+      , Tile "c" 2 ( 0, 1 ) False
+      , Tile "d" 4 ( 0, 1 ) True
       ]
     ]
 
