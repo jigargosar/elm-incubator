@@ -62,9 +62,14 @@ view _ =
         ]
 
 
+type alias Pos =
+    ( Int, Int )
+
+
 type alias Tile =
     { id : String
     , num : Int
+    , pos : Pos
     }
 
 
