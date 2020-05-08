@@ -107,8 +107,22 @@ viewTile tile =
         , style "height" "100px"
         , style "background-color" "rgba(255,255,255,0.9)"
         , class "absolute flex justify-center items-center"
+        , style "transform" (renderTileTransform tile)
         ]
         [ text (String.fromInt tile.num) ]
+
+
+renderTileTransform tile =
+    let
+        postPartToPx n =
+            String.fromInt (n * 100) ++ "px"
+
+        ( sx, sy ) =
+            tile.pos
+                |> Tuple.mapBoth postPartToPx postPartToPx
+    in
+    [ "translate(", sx, ",", sy, ")" ]
+        |> String.join " "
 
 
 initialGrid =
