@@ -107,7 +107,7 @@ viewTile tile =
         , style "height" "100px"
         , class "absolute flex justify-center items-center"
         ]
-        []
+        [ text (String.fromInt tile.num) ]
 
 
 initialGrid =
