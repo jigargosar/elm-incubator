@@ -77,7 +77,7 @@ viewGrid =
 
 viewRow =
     List.map viewCell
-        >> div [ class "" ]
+        >> div [ class "flex" ]
 
 
 viewCell num =
