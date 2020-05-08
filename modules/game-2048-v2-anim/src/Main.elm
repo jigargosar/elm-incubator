@@ -4,6 +4,8 @@ import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
+import Process
+import Task
 
 
 
@@ -11,7 +13,9 @@ import Html.Keyed
 
 
 type alias Model =
-    {}
+    { tiles : List Tile
+    , tilesLists : List (List Tile)
+    }
 
 
 type alias Flags =
@@ -20,9 +24,15 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
-    , Cmd.none
+    ( { tiles = initialTiles
+      , tilesLists = tilesLists
+      }
+    , stepTiles
     )
+
+
+stepTiles =
+    Process.sleep 500 |> Task.perform (always StepTiles)
 
 
 
@@ -31,6 +41,7 @@ init () =
 
 type Msg
     = NoOp
+    | StepTiles
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -38,6 +49,14 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        StepTiles ->
+            case model.tilesLists of
+                [] ->
+                    init ()
+
+                h :: t ->
+                    ( { model | tiles = h, tilesLists = t }, stepTiles )
 
 
 subscriptions : Model -> Sub Msg
