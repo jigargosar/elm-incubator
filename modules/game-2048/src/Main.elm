@@ -336,6 +336,7 @@ view model =
                 Lost ->
                     dialogContainer
                         [ div [] [ text "Lost" ]
+                        , div [ onClick UndoClicked ] [ button [] [ text "Undo" ] ]
                         , div [ onClick NewClicked ] [ button [] [ text "Try Again" ] ]
                         ]
 
