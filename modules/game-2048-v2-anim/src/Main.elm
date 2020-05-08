@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
+import Html.Keyed
 
 
 
@@ -58,6 +59,7 @@ view _ =
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , viewGrid initialGrid
+            , viewTilesGrid initialTiles
             ]
         ]
 
@@ -81,6 +83,31 @@ initialTiles =
     [ Tile "a" 2 ( 1, 1 )
     , Tile "b" 4 ( 2, 2 )
     ]
+
+
+viewTilesGrid tiles =
+    div
+        [ class "pa3 code f2 debug"
+        ]
+        [ Html.Keyed.node "div"
+            [ style "width" "400px"
+            , style "height" "400px"
+            ]
+            (List.map viewKeyedTile tiles)
+        ]
+
+
+viewKeyedTile tile =
+    ( tile.id, viewTile tile )
+
+
+viewTile tile =
+    div
+        [ style "width" "100px"
+        , style "height" "100px"
+        , class "absolute flex justify-center items-center"
+        ]
+        []
 
 
 initialGrid =
