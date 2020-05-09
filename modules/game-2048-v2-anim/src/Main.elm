@@ -228,7 +228,7 @@ viewTile tile =
         , style "height" "100px"
         , class "absolute flex justify-center items-center"
         , style "transform" (renderTileTransform tile)
-        , style "transition" "transform 750ms"
+        , style "transition" "transform 500ms"
         , style "outline" "none"
         ]
         [ div
