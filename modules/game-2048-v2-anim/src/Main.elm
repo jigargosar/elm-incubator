@@ -104,6 +104,11 @@ type TileFoo
     | None
 
 
+type TileView
+    = TileVisible Tile
+    | TileToBeRemoved String
+
+
 
 -- Grid
 
