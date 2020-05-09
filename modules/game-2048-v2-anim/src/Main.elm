@@ -249,6 +249,18 @@ renderGridViewModel tiles =
             (List.map renderKeyedTileView tiles)
         ]
 
+renderGridModel : GridModel -> HM
+renderGridModel tiles =
+    div
+        [ class "pa3 code f2 debug"
+        ]
+        [ Html.Keyed.node "div"
+            [ style "width" "400px"
+            , style "height" "400px"
+            ]
+            (List.map renderKeyedTile tiles)
+        ]
+
 
 renderKeyedTileView : TileView -> ( String, HM )
 renderKeyedTileView tileView =
