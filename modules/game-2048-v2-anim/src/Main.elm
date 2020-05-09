@@ -86,6 +86,10 @@ view model =
         ]
 
 
+
+-- Tile
+
+
 type alias Tile =
     { id : String
     , num : Int
@@ -98,6 +102,10 @@ type TileFoo
     = Generated
     | Merged
     | None
+
+
+
+-- Grid
 
 
 type alias GridModel =
