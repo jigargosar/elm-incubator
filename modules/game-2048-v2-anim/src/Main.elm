@@ -246,18 +246,22 @@ viewGridViewModel tiles =
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (List.map viewKeyedTile tiles)
+            (List.map renderKeyedTileView tiles)
         ]
 
 
-viewKeyedTile : TileView -> ( String, HM )
-viewKeyedTile tileView =
+renderKeyedTileView : TileView -> ( String, HM )
+renderKeyedTileView tileView =
     case tileView of
         TileVisible tile ->
-            ( tile.id, if tile.foo == ReadyForRemoval then text "" else  viewTile tile )
+            renderKeyedTile tile
 
         TileToBeRemoved id ->
             ( id, text "" )
+
+renderKeyedTile: Tile -> ( String, HM )
+renderKeyedTile tile =
+    ( tile.id, if tile.foo == ReadyForRemoval then text "" else  viewTile tile )
 
 
 viewTile : Tile -> HM
