@@ -238,14 +238,31 @@ initialGridModelCons =
         reducer: GridModel -> (GridModel, List GridModel) -> (GridModel, List GridModel)
         reducer tiles (previousTiles, lists) =
             let
-                _ =
-                    1
+                newIdSet =
+                    List.map (.id) tiles |> Set.fromList
+
+
+                tilesWithReadyForRemoval =
+                    previousTiles
+                        |> List.filterMap (
+                            \t -> if t.foo /= ReadyForRemoval && not (Set.member t.id newIdSet) then
+                                        Just {t| foo = ReadyForRemoval}
+                                  else
+                                    Nothing
+
+
+                        )
+
+                finalTiles =
+                    tiles ++ tilesWithReadyForRemoval
+                        |> List.sortBy .id
+
             in
-                (tiles, tiles::lists)
+                (finalTiles, finalTiles::lists)
 
 
         updatedRestTileList = List.foldl reducer (initialTileList, []) restTileList
-            |> Tuple.second
+            |> (Tuple.second >> List.reverse)
     in
     Cons.init initialTileList updatedRestTileList
 
