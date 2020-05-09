@@ -105,7 +105,7 @@ type alias Tile =
 
 type TileAnim
     = Generated
-    | Merged
+    | Merged ( String, String )
     | Existing
     | ReadyForRemoval
 
@@ -133,6 +133,9 @@ initialGridModelCons =
                 , Tile "b" 4 ( 2, 2 ) Existing
                 ]
 
+        rt =
+            Tile "c" 2 ( 0, 1 ) Existing
+
         restTileList : List GridModel
         restTileList =
             List.map gridFromTiles
@@ -145,14 +148,14 @@ initialGridModelCons =
                   [ Tile "a" 2 ( 0, 1 ) Existing
                   , Tile "b" 4 ( 0, 2 ) Existing
                   , Tile "c" 2 ( 0, 1 ) Existing
-                  , Tile "d" 4 ( 0, 1 ) Merged
+                  , Tile "d" 4 ( 0, 1 ) (Merged ( "rt", "" ))
                   , Tile "e" 2 ( 1, 1 ) Generated
                   ]
                 , -- Up
                   [ Tile "b" 4 ( 0, 0 ) Existing
                   , Tile "d" 4 ( 0, 0 ) Existing
                   , Tile "e" 2 ( 1, 0 ) Existing
-                  , Tile "f" 8 ( 0, 0 ) Merged
+                  , Tile "f" 8 ( 0, 0 ) (Merged ( "rt", "" ))
                   , Tile "g" 4 ( 1, 1 ) Generated
                   ]
 
@@ -240,7 +243,7 @@ viewTile tile =
                 Generated ->
                     class "animate__animated  animate__zoomIn animate__delay-2s "
 
-                Merged ->
+                Merged _ ->
                     --class "animate__animated  animate__bounceIn "
                     class "animate__animated  animate__zoomIn "
 
