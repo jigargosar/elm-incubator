@@ -108,7 +108,6 @@ type TileAnim
     = Generated
     | Merged
     | Existing
-    | ReadyForRemoval
 
 
 
@@ -186,11 +185,11 @@ initialGridModelCons =
                     previousTiles
                         |> List.filterMap
                             (\t ->
-                                if t.anim /= ReadyForRemoval && not (Set.member t.id newIdSet) then
-                                    Just { t | anim = ReadyForRemoval }
+                                if t.removed || Set.member t.id newIdSet then
+                                    Nothing
 
                                 else
-                                    Nothing
+                                    Just { t | removed = True }
                             )
 
                 finalTiles =
@@ -223,7 +222,7 @@ renderGridModel tiles =
 renderKeyedTile : Tile -> ( String, HM )
 renderKeyedTile tile =
     ( tile.id
-    , if tile.anim == ReadyForRemoval then
+    , if tile.removed then
         text ""
 
       else
@@ -255,9 +254,6 @@ viewTile tile =
                     class "animate__animated  animate__zoomIn "
 
                 Existing ->
-                    class ""
-
-                ReadyForRemoval ->
                     class ""
             ]
             [ text (String.fromInt tile.num) ]
