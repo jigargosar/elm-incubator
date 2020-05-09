@@ -148,14 +148,14 @@ initialGridModelCons =
                   [ Tile "a" 2 ( 0, 1 ) Existing
                   , Tile "b" 4 ( 0, 2 ) Existing
                   , Tile "c" 2 ( 0, 1 ) Existing
-                  , Tile "d" 4 ( 0, 1 ) (Merged ( "rt", "" ))
+                  , Tile "d" 4 ( 0, 1 ) (Merged ( "a", "b" ))
                   , Tile "e" 2 ( 1, 1 ) Generated
                   ]
                 , -- Up
                   [ Tile "b" 4 ( 0, 0 ) Existing
                   , Tile "d" 4 ( 0, 0 ) Existing
                   , Tile "e" 2 ( 1, 0 ) Existing
-                  , Tile "f" 8 ( 0, 0 ) (Merged ( "rt", "" ))
+                  , Tile "f" 8 ( 0, 0 ) (Merged ( "b", "d" ))
                   , Tile "g" 4 ( 1, 1 ) Generated
                   ]
 
