@@ -60,7 +60,12 @@ update message model =
                     init ()
 
                 Just gridCons ->
-                    ( { model | gridCons = gridCons }, stepTiles )
+                    ( { model
+                        | gridCons = gridCons
+                        , gridViewModel = updateGridViewModel (Cons.head gridCons) model.gridViewModel
+                      }
+                    , stepTiles
+                    )
 
 
 subscriptions : Model -> Sub Msg
@@ -120,6 +125,11 @@ type alias GridViewModel =
 initGridViewModel : GridModel -> GridViewModel
 initGridViewModel tiles =
     List.map TileVisible tiles
+
+
+updateGridViewModel : GridModel -> GridViewModel -> GridViewModel
+updateGridViewModel tiles tileViews =
+    Debug.todo "impl"
 
 
 
