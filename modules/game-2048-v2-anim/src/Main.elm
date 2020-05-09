@@ -17,7 +17,6 @@ import Task
 
 type alias Model =
     { gridCons : Cons GridModel
-    , gridViewModel : GridViewModel
     }
 
 
@@ -28,9 +27,6 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { gridCons = initialGridModelCons
-      , gridViewModel =
-            Cons.head initialGridModelCons
-                |> initGridViewModel
       }
     , stepTiles
     )
@@ -63,7 +59,6 @@ update message model =
                 Just gridCons ->
                     ( { model
                         | gridCons = gridCons
-                        , gridViewModel = updateGridViewModel (Cons.head gridCons) model.gridViewModel
                       }
                     , stepTiles
                     )
@@ -91,7 +86,6 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , renderGridViewModel model.gridViewModel
             , renderGridModel (Cons.head model.gridCons)
             ]
         ]
@@ -114,69 +108,6 @@ type TileFoo
     | Merged
     | None
     | ReadyForRemoval
-
-
-type TileView
-    = TileVisible Tile
-    | TileToBeRemoved String
-
-
-idOfVisibleTileView : TileView -> Maybe String
-idOfVisibleTileView tileView =
-    case tileView of
-        TileVisible t ->
-            Just t.id
-
-        TileToBeRemoved _ ->
-            Nothing
-
-
-idOfTileView : TileView -> String
-idOfTileView tileView =
-    case tileView of
-        TileVisible t ->
-            t.id
-
-        TileToBeRemoved id ->
-            id
-
-
-type alias GridViewModel =
-    List TileView
-
-
-initGridViewModel : GridModel -> GridViewModel
-initGridViewModel =
-    List.map TileVisible
-
-
-updateGridViewModel : GridModel -> GridViewModel -> GridViewModel
-updateGridViewModel newTileList oldTileViewList =
-    let
-        newTileViewList =
-            List.map TileVisible newTileList
-
-        oldTileIdSet =
-            Set.fromList (List.filterMap idOfVisibleTileView oldTileViewList)
-
-        newTileIdSet =
-            Set.fromList (List.filterMap idOfVisibleTileView newTileViewList)
-
-        removedTileIdSet =
-            Set.diff oldTileIdSet newTileIdSet
-
-        toBeRemovedTileViewList : List TileView
-        toBeRemovedTileViewList =
-            removedTileIdSet
-                |> Set.toList
-                |> List.map TileToBeRemoved
-
-        finalTileViewList =
-            newTileViewList
-                ++ toBeRemovedTileViewList
-                |> List.sortBy idOfTileView
-    in
-    finalTileViewList
 
 
 
@@ -235,49 +166,36 @@ initialGridModelCons =
                 , []
                 ]
 
-        reducer: GridModel -> (GridModel, List GridModel) -> (GridModel, List GridModel)
-        reducer tiles (previousTiles, lists) =
+        reducer : GridModel -> ( GridModel, List GridModel ) -> ( GridModel, List GridModel )
+        reducer tiles ( previousTiles, lists ) =
             let
                 newIdSet =
-                    List.map (.id) tiles |> Set.fromList
-
+                    List.map .id tiles |> Set.fromList
 
                 tilesWithReadyForRemoval =
                     previousTiles
-                        |> List.filterMap (
-                            \t -> if t.foo /= ReadyForRemoval && not (Set.member t.id newIdSet) then
-                                        Just {t| foo = ReadyForRemoval}
-                                  else
+                        |> List.filterMap
+                            (\t ->
+                                if t.foo /= ReadyForRemoval && not (Set.member t.id newIdSet) then
+                                    Just { t | foo = ReadyForRemoval }
+
+                                else
                                     Nothing
-
-
-                        )
+                            )
 
                 finalTiles =
-                    tiles ++ tilesWithReadyForRemoval
+                    tiles
+                        ++ tilesWithReadyForRemoval
                         |> List.sortBy .id
-
             in
-                (finalTiles, finalTiles::lists)
+            ( finalTiles, finalTiles :: lists )
 
-
-        updatedRestTileList = List.foldl reducer (initialTileList, []) restTileList
-            |> (Tuple.second >> List.reverse)
+        updatedRestTileList =
+            List.foldl reducer ( initialTileList, [] ) restTileList
+                |> (Tuple.second >> List.reverse)
     in
     Cons.init initialTileList updatedRestTileList
 
-
-renderGridViewModel : GridViewModel -> HM
-renderGridViewModel tiles =
-    div
-        [ class "pa3 code f2 debug"
-        ]
-        [ Html.Keyed.node "div"
-            [ style "width" "400px"
-            , style "height" "400px"
-            ]
-            (List.map renderKeyedTileView tiles)
-        ]
 
 renderGridModel : GridModel -> HM
 renderGridModel tiles =
@@ -292,18 +210,15 @@ renderGridModel tiles =
         ]
 
 
-renderKeyedTileView : TileView -> ( String, HM )
-renderKeyedTileView tileView =
-    case tileView of
-        TileVisible tile ->
-            renderKeyedTile tile
-
-        TileToBeRemoved id ->
-            ( id, text "" )
-
-renderKeyedTile: Tile -> ( String, HM )
+renderKeyedTile : Tile -> ( String, HM )
 renderKeyedTile tile =
-    ( tile.id, if tile.foo == ReadyForRemoval then text "" else  viewTile tile )
+    ( tile.id
+    , if tile.foo == ReadyForRemoval then
+        text ""
+
+      else
+        viewTile tile
+    )
 
 
 viewTile : Tile -> HM
@@ -331,11 +246,9 @@ viewTile tile =
                 None ->
                     class ""
 
-
                 ReadyForRemoval ->
                     class ""
-
-                                ]
+            ]
             [ text (String.fromInt tile.num) ]
         ]
 
