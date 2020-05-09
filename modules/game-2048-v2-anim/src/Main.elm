@@ -126,40 +126,43 @@ gridFromTiles =
 initialGridModelCons : Cons GridModel
 initialGridModelCons =
     let
+        initTile =
+            Tile
+
         initialTileList : GridModel
         initialTileList =
             gridFromTiles
-                [ Tile "a" 2 ( 1, 1 ) Existing
-                , Tile "b" 4 ( 2, 2 ) Existing
+                [ initTile "a" 2 ( 1, 1 ) Existing
+                , initTile "b" 4 ( 2, 2 ) Existing
                 ]
 
         restTileList : List GridModel
         restTileList =
             List.map gridFromTiles
                 [ -- Right
-                  [ Tile "a" 2 ( 3, 1 ) Existing
-                  , Tile "b" 4 ( 3, 2 ) Existing
-                  , Tile "c" 2 ( 2, 1 ) Generated
+                  [ initTile "a" 2 ( 3, 1 ) Existing
+                  , initTile "b" 4 ( 3, 2 ) Existing
+                  , initTile "c" 2 ( 2, 1 ) Generated
                   ]
                 , -- Left
-                  [ Tile "a" 2 ( 0, 1 ) Existing
-                  , Tile "b" 4 ( 0, 2 ) Existing
-                  , Tile "c" 2 ( 0, 1 ) Existing
-                  , Tile "d" 4 ( 0, 1 ) Merged
-                  , Tile "e" 2 ( 1, 1 ) Generated
+                  [ initTile "a" 2 ( 0, 1 ) Existing
+                  , initTile "b" 4 ( 0, 2 ) Existing
+                  , initTile "c" 2 ( 0, 1 ) Existing
+                  , initTile "d" 4 ( 0, 1 ) Merged
+                  , initTile "e" 2 ( 1, 1 ) Generated
                   ]
                 , -- Up
-                  [ Tile "b" 4 ( 0, 0 ) Existing
-                  , Tile "d" 4 ( 0, 0 ) Existing
-                  , Tile "e" 2 ( 1, 0 ) Existing
-                  , Tile "f" 8 ( 0, 0 ) Merged
-                  , Tile "g" 4 ( 1, 1 ) Generated
+                  [ initTile "b" 4 ( 0, 0 ) Existing
+                  , initTile "d" 4 ( 0, 0 ) Existing
+                  , initTile "e" 2 ( 1, 0 ) Existing
+                  , initTile "f" 8 ( 0, 0 ) Merged
+                  , initTile "g" 4 ( 1, 1 ) Generated
                   ]
 
                 -- Right
-                , [ Tile "e" 2 ( 3, 0 ) Existing
-                  , Tile "f" 8 ( 2, 0 ) Existing
-                  , Tile "g" 4 ( 3, 1 ) Existing
+                , [ initTile "e" 2 ( 3, 0 ) Existing
+                  , initTile "f" 8 ( 2, 0 ) Existing
+                  , initTile "g" 4 ( 3, 1 ) Existing
                   ]
 
                 -- Clear
