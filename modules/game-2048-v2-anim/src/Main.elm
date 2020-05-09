@@ -7,6 +7,7 @@ import Html.Attributes exposing (class, style)
 import Html.Keyed
 import IntPos exposing (IntPos)
 import Process
+import Set
 import Task
 
 
@@ -118,18 +119,62 @@ type TileView
     | TileToBeRemoved String
 
 
+idOfVisibleTileView : TileView -> Maybe String
+idOfVisibleTileView tileView =
+    case tileView of
+        TileVisible t ->
+            Just t.id
+
+        TileToBeRemoved _ ->
+            Nothing
+
+
+idOfTileView : TileView -> String
+idOfTileView tileView =
+    case tileView of
+        TileVisible t ->
+            t.id
+
+        TileToBeRemoved id ->
+            id
+
+
 type alias GridViewModel =
     List TileView
 
 
 initGridViewModel : GridModel -> GridViewModel
-initGridViewModel tiles =
-    List.map TileVisible tiles
+initGridViewModel =
+    List.map TileVisible
 
 
 updateGridViewModel : GridModel -> GridViewModel -> GridViewModel
-updateGridViewModel tiles tileViews =
-    initGridViewModel tiles
+updateGridViewModel newTileList oldTileViewList =
+    let
+        newTileViewList =
+            List.map TileVisible newTileList
+
+        oldTileIdSet =
+            Set.fromList (List.filterMap idOfVisibleTileView oldTileViewList)
+
+        newTileIdSet =
+            Set.fromList (List.filterMap idOfVisibleTileView newTileViewList)
+
+        removedTileIdSet =
+            Set.diff oldTileIdSet newTileIdSet
+
+        toBeRemovedTileViewList : List TileView
+        toBeRemovedTileViewList =
+            removedTileIdSet
+                |> Set.toList
+                |> List.map TileToBeRemoved
+
+        finalTileViewList =
+            newTileViewList
+                ++ toBeRemovedTileViewList
+                |> List.sortBy idOfTileView
+    in
+    finalTileViewList
 
 
 
