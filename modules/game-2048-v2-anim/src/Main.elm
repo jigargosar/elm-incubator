@@ -33,7 +33,7 @@ init () =
 
 
 stepTiles =
-    Process.sleep 1500 |> Task.perform (always StepTiles)
+    Process.sleep 2000 |> Task.perform (always StepTiles)
 
 
 
