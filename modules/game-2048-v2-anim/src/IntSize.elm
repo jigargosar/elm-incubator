@@ -18,7 +18,8 @@ new =
 
 positions : IntSize -> Set IntPos
 positions s =
-    List.lift2 Tuple.pair (rangeLen s.width) (rangeLen s.height)
+    rangeLen s.width
+        |> List.concatMap (\x -> List.map (Tuple.pair x) (rangeLen s.height))
         |> Set.fromList
 
 
