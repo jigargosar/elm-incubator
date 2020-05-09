@@ -241,7 +241,8 @@ viewTile tile =
                     class "animate__animated  animate__zoomIn animate__delay-2s "
 
                 Merged ->
-                    class "animate__animated  animate__bounceIn "
+                    --class "animate__animated  animate__bounceIn "
+                    class "animate__animated  animate__zoomIn "
 
                 Existing ->
                     class ""
