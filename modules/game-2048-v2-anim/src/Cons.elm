@@ -1,4 +1,4 @@
-module Cons exposing (Cons, fromList, fromTail, init, tail)
+module Cons exposing (Cons, fromList, fromTail, head, init, tail)
 
 
 type alias Cons a =
@@ -8,6 +8,11 @@ type alias Cons a =
 init : a -> List a -> Cons a
 init =
     Tuple.pair
+
+
+head : Cons a -> a
+head =
+    Tuple.first
 
 
 tail : Cons a -> List a

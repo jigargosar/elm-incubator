@@ -14,7 +14,7 @@ import Task
 
 
 type alias Model =
-    { gridModelCons : Cons GridModel
+    { gridCons : Cons GridModel
     }
 
 
@@ -24,7 +24,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { gridModelCons = initGridModelCons
+    ( { gridCons = initGridModelCons
       }
     , stepTiles
     )
@@ -50,12 +50,12 @@ update message model =
             ( model, Cmd.none )
 
         StepTiles ->
-            case Cons.fromTail model.gridModelCons of
+            case Cons.fromTail model.gridCons of
                 Nothing ->
                     init ()
 
-                Just gridModelCons ->
-                    ( { model | gridModelCons = gridModelCons }, stepTiles )
+                Just gridCons ->
+                    ( { model | gridCons = gridCons }, stepTiles )
 
 
 subscriptions : Model -> Sub Msg
@@ -80,7 +80,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , viewTilesGrid (Tuple.first model.gridModelCons)
+            , viewTilesGrid (Cons.head model.gridCons)
             ]
         ]
 
