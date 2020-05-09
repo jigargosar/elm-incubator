@@ -16,7 +16,7 @@ import Task
 
 
 type alias Model =
-    { gridCons : Cons GridModel
+    { gridCons : Cons TileList
     }
 
 
@@ -112,16 +112,11 @@ type TileAnim
 -- Grid
 
 
-type alias GridModel =
+type alias TileList =
     List Tile
 
 
-gridFromTiles : List Tile -> GridModel
-gridFromTiles =
-    identity
-
-
-initialGridModelCons : Cons GridModel
+initialGridModelCons : Cons TileList
 initialGridModelCons =
     let
         initTile : String -> Int -> IntPos -> TileAnim -> Tile
@@ -133,47 +128,45 @@ initialGridModelCons =
             , removed = False
             }
 
-        initialTileList : GridModel
+        initialTileList : TileList
         initialTileList =
-            gridFromTiles
-                [ initTile "a" 2 ( 1, 1 ) Existing
-                , initTile "b" 4 ( 2, 2 ) Existing
-                ]
+            [ initTile "a" 2 ( 1, 1 ) Existing
+            , initTile "b" 4 ( 2, 2 ) Existing
+            ]
 
-        restTileList : List GridModel
+        restTileList : List TileList
         restTileList =
-            List.map gridFromTiles
-                [ -- Right
-                  [ initTile "a" 2 ( 3, 1 ) Existing
-                  , initTile "b" 4 ( 3, 2 ) Existing
-                  , initTile "c" 2 ( 2, 1 ) Generated
-                  ]
-                , -- Left
-                  [ initTile "a" 2 ( 0, 1 ) Existing
-                  , initTile "b" 4 ( 0, 2 ) Existing
-                  , initTile "c" 2 ( 0, 1 ) Existing
-                  , initTile "d" 4 ( 0, 1 ) Merged
-                  , initTile "e" 2 ( 1, 1 ) Generated
-                  ]
-                , -- Up
-                  [ initTile "b" 4 ( 0, 0 ) Existing
-                  , initTile "d" 4 ( 0, 0 ) Existing
-                  , initTile "e" 2 ( 1, 0 ) Existing
-                  , initTile "f" 8 ( 0, 0 ) Merged
-                  , initTile "g" 4 ( 1, 1 ) Generated
-                  ]
+            [ -- Right
+              [ initTile "a" 2 ( 3, 1 ) Existing
+              , initTile "b" 4 ( 3, 2 ) Existing
+              , initTile "c" 2 ( 2, 1 ) Generated
+              ]
+            , -- Left
+              [ initTile "a" 2 ( 0, 1 ) Existing
+              , initTile "b" 4 ( 0, 2 ) Existing
+              , initTile "c" 2 ( 0, 1 ) Existing
+              , initTile "d" 4 ( 0, 1 ) Merged
+              , initTile "e" 2 ( 1, 1 ) Generated
+              ]
+            , -- Up
+              [ initTile "b" 4 ( 0, 0 ) Existing
+              , initTile "d" 4 ( 0, 0 ) Existing
+              , initTile "e" 2 ( 1, 0 ) Existing
+              , initTile "f" 8 ( 0, 0 ) Merged
+              , initTile "g" 4 ( 1, 1 ) Generated
+              ]
 
-                -- Right
-                , [ initTile "e" 2 ( 3, 0 ) Existing
-                  , initTile "f" 8 ( 2, 0 ) Existing
-                  , initTile "g" 4 ( 3, 1 ) Existing
-                  ]
+            -- Right
+            , [ initTile "e" 2 ( 3, 0 ) Existing
+              , initTile "f" 8 ( 2, 0 ) Existing
+              , initTile "g" 4 ( 3, 1 ) Existing
+              ]
 
-                -- Clear
-                , []
-                ]
+            -- Clear
+            , []
+            ]
 
-        reducer : GridModel -> ( GridModel, List GridModel ) -> ( GridModel, List GridModel )
+        reducer : TileList -> ( TileList, List TileList ) -> ( TileList, List TileList )
         reducer tiles ( previousTiles, lists ) =
             let
                 newIdSet =
@@ -204,7 +197,7 @@ initialGridModelCons =
     Cons.init initialTileList updatedRestTileList
 
 
-renderGridModel : GridModel -> HM
+renderGridModel : TileList -> HM
 renderGridModel tiles =
     div
         [ class "pa3 code f2 debug"
