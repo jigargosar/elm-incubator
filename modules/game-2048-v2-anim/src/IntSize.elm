@@ -1,8 +1,6 @@
 module IntSize exposing (IntSize, new, positions)
 
 import IntPos exposing (IntPos)
-import List.Extra as List
-import Set exposing (Set)
 
 
 type alias IntSize =
@@ -16,11 +14,10 @@ new =
     IntSize
 
 
-positions : IntSize -> Set IntPos
+positions : IntSize -> List IntPos
 positions s =
     rangeLen s.width
         |> List.concatMap (\x -> List.map (Tuple.pair x) (rangeLen s.height))
-        |> Set.fromList
 
 
 rangeLen : Int -> List Int
