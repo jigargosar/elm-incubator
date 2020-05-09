@@ -57,9 +57,7 @@ update message model =
                     init ()
 
                 Just gridCons ->
-                    ( { model
-                        | gridCons = gridCons
-                      }
+                    ( { model | gridCons = gridCons }
                     , stepTiles
                     )
 
