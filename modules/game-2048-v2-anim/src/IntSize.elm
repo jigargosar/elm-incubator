@@ -1,4 +1,4 @@
-module IntSize exposing (IntSize, new)
+module IntSize exposing (IntSize, new, positions)
 
 import IntPos exposing (IntPos)
 import List.Extra as List
