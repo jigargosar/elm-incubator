@@ -107,44 +107,53 @@ type alias GridModel =
     List Tile
 
 
+gridFromTiles : List Tile -> GridModel
+gridFromTiles =
+    identity
+
+
 initGridModelCons : Cons GridModel
 initGridModelCons =
     let
+        initialTileList : GridModel
         initialTileList =
-            [ Tile "a" 2 ( 1, 1 ) None
-            , Tile "b" 4 ( 2, 2 ) None
-            ]
+            gridFromTiles
+                [ Tile "a" 2 ( 1, 1 ) None
+                , Tile "b" 4 ( 2, 2 ) None
+                ]
 
+        restTileList : List GridModel
         restTileList =
-            [ -- Right
-              [ Tile "a" 2 ( 3, 1 ) None
-              , Tile "b" 4 ( 3, 2 ) None
-              , Tile "c" 2 ( 2, 1 ) Generated
-              ]
-            , -- Left
-              [ Tile "a" 2 ( 0, 1 ) None
-              , Tile "b" 4 ( 0, 2 ) None
-              , Tile "c" 2 ( 0, 1 ) None
-              , Tile "d" 4 ( 0, 1 ) Merged
-              , Tile "e" 2 ( 1, 1 ) Generated
-              ]
-            , -- Up
-              [ Tile "b" 4 ( 0, 0 ) None
-              , Tile "d" 4 ( 0, 0 ) None
-              , Tile "e" 2 ( 1, 0 ) None
-              , Tile "f" 8 ( 0, 0 ) Merged
-              , Tile "g" 4 ( 1, 1 ) Generated
-              ]
+            List.map gridFromTiles
+                [ -- Right
+                  [ Tile "a" 2 ( 3, 1 ) None
+                  , Tile "b" 4 ( 3, 2 ) None
+                  , Tile "c" 2 ( 2, 1 ) Generated
+                  ]
+                , -- Left
+                  [ Tile "a" 2 ( 0, 1 ) None
+                  , Tile "b" 4 ( 0, 2 ) None
+                  , Tile "c" 2 ( 0, 1 ) None
+                  , Tile "d" 4 ( 0, 1 ) Merged
+                  , Tile "e" 2 ( 1, 1 ) Generated
+                  ]
+                , -- Up
+                  [ Tile "b" 4 ( 0, 0 ) None
+                  , Tile "d" 4 ( 0, 0 ) None
+                  , Tile "e" 2 ( 1, 0 ) None
+                  , Tile "f" 8 ( 0, 0 ) Merged
+                  , Tile "g" 4 ( 1, 1 ) Generated
+                  ]
 
-            -- Right
-            , [ Tile "e" 2 ( 3, 0 ) None
-              , Tile "f" 8 ( 2, 0 ) None
-              , Tile "g" 4 ( 3, 1 ) None
-              ]
+                -- Right
+                , [ Tile "e" 2 ( 3, 0 ) None
+                  , Tile "f" 8 ( 2, 0 ) None
+                  , Tile "g" 4 ( 3, 1 ) None
+                  ]
 
-            -- Clear
-            , []
-            ]
+                -- Clear
+                , []
+                ]
     in
     Cons.init initialTileList restTileList
 
