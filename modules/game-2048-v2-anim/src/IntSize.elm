@@ -27,8 +27,3 @@ positions s =
 rangeLen : Int -> List Int
 rangeLen len =
     List.range 0 (len - 1)
-
-
-mapLen : Int -> (Int -> a) -> List a
-mapLen len func =
-    rangeLen len |> List.map func
