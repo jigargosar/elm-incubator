@@ -1,4 +1,4 @@
-module Cons exposing (Cons, fromList, fromTail, head, init, tail)
+module Cons exposing (Cons, fromList, fromTail, head, init, tail, toList)
 
 
 type alias Cons a =
@@ -33,3 +33,8 @@ fromList list =
 fromTail : Cons a -> Maybe (Cons a)
 fromTail =
     tail >> fromList
+
+
+toList : Cons a -> List a
+toList ( h, t ) =
+    h :: t
