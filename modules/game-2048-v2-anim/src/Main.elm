@@ -85,7 +85,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , viewTilesListAsGrid (Cons.head model.gridCons)
+            , viewGridViewModel model.gridViewModel
             ]
         ]
 
@@ -181,8 +181,8 @@ initialGridModelCons =
     Cons.init initialTileList restTileList
 
 
-viewTilesListAsGrid : List Tile -> HM
-viewTilesListAsGrid tiles =
+viewGridViewModel : GridViewModel -> HM
+viewGridViewModel tiles =
     div
         [ class "pa3 code f2 debug"
         ]
@@ -194,9 +194,14 @@ viewTilesListAsGrid tiles =
         ]
 
 
-viewKeyedTile : Tile -> ( String, HM )
-viewKeyedTile tile =
-    ( tile.id, viewTile tile )
+viewKeyedTile : TileView -> ( String, HM )
+viewKeyedTile tileView =
+    case tileView of
+        TileVisible tile ->
+            ( tile.id, viewTile tile )
+
+        TileToBeRemoved id ->
+            ( id, text "" )
 
 
 viewTile : Tile -> HM
