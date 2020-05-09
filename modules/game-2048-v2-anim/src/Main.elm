@@ -99,11 +99,11 @@ type alias Tile =
     { id : String
     , num : Int
     , pos : IntPos
-    , foo : TileFoo
+    , anim : TileAnim
     }
 
 
-type TileFoo
+type TileAnim
     = Generated
     | Merged
     | Existing
@@ -176,8 +176,8 @@ initialGridModelCons =
                     previousTiles
                         |> List.filterMap
                             (\t ->
-                                if t.foo /= ReadyForRemoval && not (Set.member t.id newIdSet) then
-                                    Just { t | foo = ReadyForRemoval }
+                                if t.anim /= ReadyForRemoval && not (Set.member t.id newIdSet) then
+                                    Just { t | anim = ReadyForRemoval }
 
                                 else
                                     Nothing
@@ -213,7 +213,7 @@ renderGridModel tiles =
 renderKeyedTile : Tile -> ( String, HM )
 renderKeyedTile tile =
     ( tile.id
-    , if tile.foo == ReadyForRemoval then
+    , if tile.anim == ReadyForRemoval then
         text ""
 
       else
@@ -236,7 +236,7 @@ viewTile tile =
             , style "height" "100px"
             , style "background-color" "rgba(255,255,255,0.9)"
             , class "flex justify-center items-center"
-            , case tile.foo of
+            , case tile.anim of
                 Generated ->
                     class "animate__animated  animate__zoomIn animate__delay-2s "
 
