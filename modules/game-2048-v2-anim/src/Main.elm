@@ -126,8 +126,13 @@ gridFromTiles =
 initialGridModelCons : Cons GridModel
 initialGridModelCons =
     let
-        initTile =
-            Tile
+        initTile : String -> Int -> IntPos -> TileAnim -> Tile
+        initTile id num pos anim =
+            { id = id
+            , num = num
+            , pos = pos
+            , anim = anim
+            }
 
         initialTileList : GridModel
         initialTileList =
