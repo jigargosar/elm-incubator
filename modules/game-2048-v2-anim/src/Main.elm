@@ -194,6 +194,7 @@ viewTilesListAsGrid tiles =
         ]
 
 
+viewKeyedTile : Tile -> ( String, HM )
 viewKeyedTile tile =
     ( tile.id, viewTile tile )
 
