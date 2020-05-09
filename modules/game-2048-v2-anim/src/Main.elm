@@ -81,7 +81,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , viewGridModel (Cons.head model.gridCons)
+            , viewTilesList (Cons.head model.gridCons)
             ]
         ]
 
@@ -163,7 +163,8 @@ initGridModelCons =
     Cons.init initialTileList restTileList
 
 
-viewGridModel tiles =
+viewTilesList : List Tile -> HM
+viewTilesList tiles =
     div
         [ class "pa3 code f2 debug"
         ]
