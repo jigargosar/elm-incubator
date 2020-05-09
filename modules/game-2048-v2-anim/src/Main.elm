@@ -129,7 +129,7 @@ initGridViewModel tiles =
 
 updateGridViewModel : GridModel -> GridViewModel -> GridViewModel
 updateGridViewModel tiles tileViews =
-    Debug.todo "impl"
+    initGridViewModel tiles
 
 
 
