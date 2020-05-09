@@ -13,8 +13,7 @@ import Task
 
 
 type alias Model =
-    { tiles : List Tile
-    , tilesLists : List (List Tile)
+    { gridModelCons : Cons GridModel
     }
 
 
@@ -24,8 +23,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { tiles = initialTileList
-      , tilesLists = restTileList
+    ( { gridModelCons = initGridModelCons
       }
     , stepTiles
     )
@@ -51,12 +49,12 @@ update message model =
             ( model, Cmd.none )
 
         StepTiles ->
-            case model.tilesLists of
-                [] ->
+            case model.gridModelCons of
+                ( _, [] ) ->
                     init ()
 
-                h :: t ->
-                    ( { model | tiles = h, tilesLists = t }, stepTiles )
+                ( _, h :: t ) ->
+                    ( { model | gridModelCons = ( h, t ) }, stepTiles )
 
 
 subscriptions : Model -> Sub Msg
@@ -81,7 +79,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , viewTilesGrid model.tiles
+            , viewTilesGrid (Tuple.first model.gridModelCons)
             ]
         ]
 
@@ -104,46 +102,54 @@ type TileFoo
     | None
 
 
-type alias TileList =
+type alias GridModel =
     List Tile
 
 
-initialTileList =
-    [ Tile "a" 2 ( 1, 1 ) None
-    , Tile "b" 4 ( 2, 2 ) None
-    ]
+type alias Cons a =
+    ( a, List a )
 
 
-restTileList =
-    [ -- Right
-      [ Tile "a" 2 ( 3, 1 ) None
-      , Tile "b" 4 ( 3, 2 ) None
-      , Tile "c" 2 ( 2, 1 ) Generated
-      ]
-    , -- Left
-      [ Tile "a" 2 ( 0, 1 ) None
-      , Tile "b" 4 ( 0, 2 ) None
-      , Tile "c" 2 ( 0, 1 ) None
-      , Tile "d" 4 ( 0, 1 ) Merged
-      , Tile "e" 2 ( 1, 1 ) Generated
-      ]
-    , -- Up
-      [ Tile "b" 4 ( 0, 0 ) None
-      , Tile "d" 4 ( 0, 0 ) None
-      , Tile "e" 2 ( 1, 0 ) None
-      , Tile "f" 8 ( 0, 0 ) Merged
-      , Tile "g" 4 ( 1, 1 ) Generated
-      ]
+initGridModelCons : Cons GridModel
+initGridModelCons =
+    let
+        initialTileList =
+            [ Tile "a" 2 ( 1, 1 ) None
+            , Tile "b" 4 ( 2, 2 ) None
+            ]
 
-    -- Right
-    , [ Tile "e" 2 ( 3, 0 ) None
-      , Tile "f" 8 ( 2, 0 ) None
-      , Tile "g" 4 ( 3, 1 ) None
-      ]
+        restTileList =
+            [ -- Right
+              [ Tile "a" 2 ( 3, 1 ) None
+              , Tile "b" 4 ( 3, 2 ) None
+              , Tile "c" 2 ( 2, 1 ) Generated
+              ]
+            , -- Left
+              [ Tile "a" 2 ( 0, 1 ) None
+              , Tile "b" 4 ( 0, 2 ) None
+              , Tile "c" 2 ( 0, 1 ) None
+              , Tile "d" 4 ( 0, 1 ) Merged
+              , Tile "e" 2 ( 1, 1 ) Generated
+              ]
+            , -- Up
+              [ Tile "b" 4 ( 0, 0 ) None
+              , Tile "d" 4 ( 0, 0 ) None
+              , Tile "e" 2 ( 1, 0 ) None
+              , Tile "f" 8 ( 0, 0 ) Merged
+              , Tile "g" 4 ( 1, 1 ) Generated
+              ]
 
-    -- Clear
-    , []
-    ]
+            -- Right
+            , [ Tile "e" 2 ( 3, 0 ) None
+              , Tile "f" 8 ( 2, 0 ) None
+              , Tile "g" 4 ( 3, 1 ) None
+              ]
+
+            -- Clear
+            , []
+            ]
+    in
+    ( initialTileList, restTileList )
 
 
 viewTilesGrid tiles =
