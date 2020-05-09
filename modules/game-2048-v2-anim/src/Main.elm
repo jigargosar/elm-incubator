@@ -112,6 +112,7 @@ type TileFoo
     = Generated
     | Merged
     | None
+    | ReadyForRemoval
 
 
 type TileView
@@ -253,7 +254,7 @@ viewKeyedTile : TileView -> ( String, HM )
 viewKeyedTile tileView =
     case tileView of
         TileVisible tile ->
-            ( tile.id, viewTile tile )
+            ( tile.id, if tile.foo == ReadyForRemoval then text "" else  viewTile tile )
 
         TileToBeRemoved id ->
             ( id, text "" )
@@ -283,7 +284,12 @@ viewTile tile =
 
                 None ->
                     class ""
-            ]
+
+
+                ReadyForRemoval ->
+                    class ""
+
+                                ]
             [ text (String.fromInt tile.num) ]
         ]
 
