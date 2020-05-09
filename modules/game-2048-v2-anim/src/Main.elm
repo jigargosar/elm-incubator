@@ -106,7 +106,7 @@ type alias Tile =
 type TileFoo
     = Generated
     | Merged
-    | None
+    | Existing
     | ReadyForRemoval
 
 
@@ -129,37 +129,37 @@ initialGridModelCons =
         initialTileList : GridModel
         initialTileList =
             gridFromTiles
-                [ Tile "a" 2 ( 1, 1 ) None
-                , Tile "b" 4 ( 2, 2 ) None
+                [ Tile "a" 2 ( 1, 1 ) Existing
+                , Tile "b" 4 ( 2, 2 ) Existing
                 ]
 
         restTileList : List GridModel
         restTileList =
             List.map gridFromTiles
                 [ -- Right
-                  [ Tile "a" 2 ( 3, 1 ) None
-                  , Tile "b" 4 ( 3, 2 ) None
+                  [ Tile "a" 2 ( 3, 1 ) Existing
+                  , Tile "b" 4 ( 3, 2 ) Existing
                   , Tile "c" 2 ( 2, 1 ) Generated
                   ]
                 , -- Left
-                  [ Tile "a" 2 ( 0, 1 ) None
-                  , Tile "b" 4 ( 0, 2 ) None
-                  , Tile "c" 2 ( 0, 1 ) None
+                  [ Tile "a" 2 ( 0, 1 ) Existing
+                  , Tile "b" 4 ( 0, 2 ) Existing
+                  , Tile "c" 2 ( 0, 1 ) Existing
                   , Tile "d" 4 ( 0, 1 ) Merged
                   , Tile "e" 2 ( 1, 1 ) Generated
                   ]
                 , -- Up
-                  [ Tile "b" 4 ( 0, 0 ) None
-                  , Tile "d" 4 ( 0, 0 ) None
-                  , Tile "e" 2 ( 1, 0 ) None
+                  [ Tile "b" 4 ( 0, 0 ) Existing
+                  , Tile "d" 4 ( 0, 0 ) Existing
+                  , Tile "e" 2 ( 1, 0 ) Existing
                   , Tile "f" 8 ( 0, 0 ) Merged
                   , Tile "g" 4 ( 1, 1 ) Generated
                   ]
 
                 -- Right
-                , [ Tile "e" 2 ( 3, 0 ) None
-                  , Tile "f" 8 ( 2, 0 ) None
-                  , Tile "g" 4 ( 3, 1 ) None
+                , [ Tile "e" 2 ( 3, 0 ) Existing
+                  , Tile "f" 8 ( 2, 0 ) Existing
+                  , Tile "g" 4 ( 3, 1 ) Existing
                   ]
 
                 -- Clear
@@ -243,7 +243,7 @@ viewTile tile =
                 Merged ->
                     class "animate__animated  animate__bounceIn "
 
-                None ->
+                Existing ->
                     class ""
 
                 ReadyForRemoval ->
