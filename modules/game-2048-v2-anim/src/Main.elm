@@ -210,7 +210,8 @@ renderGridModel tiles =
             , style "height" "400px"
             ]
             (tiles
-                |> List.concatMap expandMergedTile
+                --|> List.concatMap expandMergedTile
+                |> List.sortBy .id
                 |> List.map renderKeyedTile
             )
         ]
