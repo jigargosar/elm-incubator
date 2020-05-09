@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
+import Cons exposing (Cons)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
@@ -106,10 +107,6 @@ type alias GridModel =
     List Tile
 
 
-type alias Cons a =
-    ( a, List a )
-
-
 initGridModelCons : Cons GridModel
 initGridModelCons =
     let
@@ -149,7 +146,7 @@ initGridModelCons =
             , []
             ]
     in
-    ( initialTileList, restTileList )
+    Cons.init initialTileList restTileList
 
 
 viewTilesGrid tiles =
