@@ -234,8 +234,20 @@ initialGridModelCons =
                 -- Clear
                 , []
                 ]
+
+        reducer: GridModel -> (GridModel, List GridModel) -> (GridModel, List GridModel)
+        reducer tiles (previousTiles, lists) =
+            let
+                _ =
+                    1
+            in
+                (tiles, tiles::lists)
+
+
+        updatedRestTileList = List.foldl reducer (initialTileList, []) restTileList
+            |> Tuple.second
     in
-    Cons.init initialTileList restTileList
+    Cons.init initialTileList updatedRestTileList
 
 
 renderGridViewModel : GridViewModel -> HM
