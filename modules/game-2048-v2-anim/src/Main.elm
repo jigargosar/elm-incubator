@@ -223,34 +223,6 @@ renderTileTransform tile =
 
 
 
----- Grid
---
---initialGrid =
---    [ [ 0, 0, 0, 0 ]
---    , [ 0, 2, 0, 0 ]
---    , [ 0, 0, 4, 0 ]
---    , [ 0, 0, 0, 0 ]
---    ]
---
---
---viewGrid =
---    List.map viewRow
---        >> div [ class "pa3 dib code f2 debug" ]
---
---
---viewRow =
---    List.map viewCell
---        >> div [ class "flex" ]
---
---
---viewCell num =
---    div
---        [ style "width" "100px"
---        , style "height" "100px"
---        , class "flex justify-center items-center"
---        ]
---        [ text (String.fromInt num) ]
---
 -- Main
 
 
