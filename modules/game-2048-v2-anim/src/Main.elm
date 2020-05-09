@@ -209,8 +209,24 @@ renderGridModel tiles =
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (List.map renderKeyedTile tiles)
+            (tiles
+                |> List.concatMap expandMergedTile
+                |> List.map renderKeyedTile
+            )
         ]
+
+
+expandMergedTile : Tile -> List Tile
+expandMergedTile tile =
+    case tile.anim of
+        Merged ( id1, id2 ) ->
+            [ Tile id1 (tile.num // 2) tile.pos Existing
+            , Tile id2 (tile.num // 2) tile.pos Existing
+            , tile
+            ]
+
+        _ ->
+            [ tile ]
 
 
 renderKeyedTile : Tile -> ( String, HM )
