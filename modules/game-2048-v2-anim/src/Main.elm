@@ -50,12 +50,12 @@ update message model =
             ( model, Cmd.none )
 
         StepTiles ->
-            case model.gridModelCons of
-                ( _, [] ) ->
+            case Cons.fromTail model.gridModelCons of
+                Nothing ->
                     init ()
 
-                ( _, h :: t ) ->
-                    ( { model | gridModelCons = ( h, t ) }, stepTiles )
+                Just gridModelCons ->
+                    ( { model | gridModelCons = gridModelCons }, stepTiles )
 
 
 subscriptions : Model -> Sub Msg
