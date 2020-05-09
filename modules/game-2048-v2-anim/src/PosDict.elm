@@ -1,4 +1,4 @@
-module PosDict exposing (PosDict, fromLists)
+module PosDict exposing (PosDict, clamp, fromLists)
 
 import Dict exposing (Dict)
 import IntPos exposing (IntPos)
