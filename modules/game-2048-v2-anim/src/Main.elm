@@ -25,7 +25,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { gridCons = initGridModelCons
+    ( { gridCons = initialGridModelCons
       }
     , stepTiles
     )
@@ -117,8 +117,8 @@ gridFromTiles =
     identity
 
 
-initGridModelCons : Cons GridModel
-initGridModelCons =
+initialGridModelCons : Cons GridModel
+initialGridModelCons =
     let
         initialTileList : GridModel
         initialTileList =
