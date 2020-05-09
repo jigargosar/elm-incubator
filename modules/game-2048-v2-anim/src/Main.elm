@@ -16,6 +16,7 @@ import Task
 
 type alias Model =
     { gridCons : Cons GridModel
+    , gridViewModel : GridViewModel
     }
 
 
@@ -26,6 +27,9 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { gridCons = initialGridModelCons
+      , gridViewModel =
+            Cons.head initialGridModelCons
+                |> initGridViewModel
       }
     , stepTiles
     )
@@ -107,6 +111,15 @@ type TileFoo
 type TileView
     = TileVisible Tile
     | TileToBeRemoved String
+
+
+type alias GridViewModel =
+    List TileView
+
+
+initGridViewModel : GridModel -> GridViewModel
+initGridViewModel tiles =
+    List.map TileVisible tiles
 
 
 
