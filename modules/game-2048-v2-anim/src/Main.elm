@@ -100,6 +100,7 @@ type alias Tile =
     , num : Int
     , pos : IntPos
     , anim : TileAnim
+    , removed : Bool
     }
 
 
@@ -132,6 +133,7 @@ initialGridModelCons =
             , num = num
             , pos = pos
             , anim = anim
+            , removed = False
             }
 
         initialTileList : GridModel
