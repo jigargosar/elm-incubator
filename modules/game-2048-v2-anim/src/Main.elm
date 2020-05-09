@@ -5,6 +5,7 @@ import Cons exposing (Cons)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
+import IntPos exposing (IntPos)
 import Process
 import Task
 
@@ -83,10 +84,6 @@ view model =
             , viewTilesGrid (Cons.head model.gridCons)
             ]
         ]
-
-
-type alias IntPos =
-    ( Int, Int )
 
 
 type alias Tile =
