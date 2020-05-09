@@ -85,14 +85,14 @@ view model =
         ]
 
 
-type alias Pos =
+type alias IntPos =
     ( Int, Int )
 
 
 type alias Tile =
     { id : String
     , num : Int
-    , pos : Pos
+    , pos : IntPos
     , foo : TileFoo
     }
 
