@@ -105,7 +105,7 @@ type alias Tile =
 
 type TileAnim
     = Generated
-    | Merged ( String, String )
+    | Merged
     | Existing
     | ReadyForRemoval
 
@@ -133,9 +133,6 @@ initialGridModelCons =
                 , Tile "b" 4 ( 2, 2 ) Existing
                 ]
 
-        rt =
-            Tile "c" 2 ( 0, 1 ) Existing
-
         restTileList : List GridModel
         restTileList =
             List.map gridFromTiles
@@ -148,14 +145,14 @@ initialGridModelCons =
                   [ Tile "a" 2 ( 0, 1 ) Existing
                   , Tile "b" 4 ( 0, 2 ) Existing
                   , Tile "c" 2 ( 0, 1 ) Existing
-                  , Tile "d" 4 ( 0, 1 ) (Merged ( "a", "b" ))
+                  , Tile "d" 4 ( 0, 1 ) Merged
                   , Tile "e" 2 ( 1, 1 ) Generated
                   ]
                 , -- Up
                   [ Tile "b" 4 ( 0, 0 ) Existing
                   , Tile "d" 4 ( 0, 0 ) Existing
                   , Tile "e" 2 ( 1, 0 ) Existing
-                  , Tile "f" 8 ( 0, 0 ) (Merged ( "b", "d" ))
+                  , Tile "f" 8 ( 0, 0 ) Merged
                   , Tile "g" 4 ( 1, 1 ) Generated
                   ]
 
@@ -209,25 +206,8 @@ renderGridModel tiles =
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (tiles
-                --|> List.concatMap expandMergedTile
-                |> List.sortBy .id
-                |> List.map renderKeyedTile
-            )
+            (List.map renderKeyedTile tiles)
         ]
-
-
-expandMergedTile : Tile -> List Tile
-expandMergedTile tile =
-    case tile.anim of
-        Merged ( id1, id2 ) ->
-            [ Tile id1 (tile.num // 2) tile.pos Existing
-            , Tile id2 (tile.num // 2) tile.pos Existing
-            , tile
-            ]
-
-        _ ->
-            [ tile ]
 
 
 renderKeyedTile : Tile -> ( String, HM )
@@ -260,7 +240,7 @@ viewTile tile =
                 Generated ->
                     class "animate__animated  animate__zoomIn animate__delay-2s "
 
-                Merged _ ->
+                Merged ->
                     --class "animate__animated  animate__bounceIn "
                     class "animate__animated  animate__zoomIn "
 
