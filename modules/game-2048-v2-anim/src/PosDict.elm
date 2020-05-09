@@ -2,6 +2,7 @@ module PosDict exposing (PosDict, fromLists)
 
 import Dict exposing (Dict)
 import IntPos exposing (IntPos)
+import IntSize exposing (IntSize)
 import Tuple exposing (pair)
 
 
@@ -14,3 +15,8 @@ fromLists =
     List.indexedMap (\y -> List.indexedMap (\x -> pair ( x, y )))
         >> List.concat
         >> Dict.fromList
+
+
+clamp : IntSize -> PosDict v -> PosDict v
+clamp s =
+    Dict.filter (\p _ -> IntSize.contains p s)

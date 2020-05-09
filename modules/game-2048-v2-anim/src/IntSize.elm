@@ -1,4 +1,4 @@
-module IntSize exposing (IntSize, new, positions)
+module IntSize exposing (IntSize, contains, new, positions)
 
 import IntPos exposing (IntPos)
 
@@ -23,3 +23,8 @@ positions s =
 rangeLen : Int -> List Int
 rangeLen len =
     List.range 0 (len - 1)
+
+
+contains : IntPos -> IntSize -> Bool
+contains ( x, y ) s =
+    not (x < 0 || y < 0 || x >= s.width || y >= s.height)
