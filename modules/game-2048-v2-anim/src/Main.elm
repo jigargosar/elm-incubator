@@ -24,8 +24,8 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { tiles = initialTiles
-      , tilesLists = tilesLists
+    ( { tiles = initialTileList
+      , tilesLists = restTileList
       }
     , stepTiles
     )
@@ -104,13 +104,17 @@ type TileFoo
     | None
 
 
-initialTiles =
+type alias TileList =
+    List Tile
+
+
+initialTileList =
     [ Tile "a" 2 ( 1, 1 ) None
     , Tile "b" 4 ( 2, 2 ) None
     ]
 
 
-tilesLists =
+restTileList =
     [ -- Right
       [ Tile "a" 2 ( 3, 1 ) None
       , Tile "b" 4 ( 3, 2 ) None
