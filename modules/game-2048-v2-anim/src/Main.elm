@@ -92,6 +92,7 @@ view model =
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , renderGridViewModel model.gridViewModel
+            , renderGridModel (Cons.head model.gridCons)
             ]
         ]
 
