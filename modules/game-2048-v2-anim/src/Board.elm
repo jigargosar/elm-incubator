@@ -29,8 +29,9 @@ type alias Cell =
 newCell : Int -> IncId.Generator -> ( Cell, IncId.Generator )
 newCell num generator =
     let
+        initCell : IncId -> Cell
         initCell id =
-            Cell id num
+            { id = id, num = num }
     in
     IncId.new generator
         |> mapFirst initCell
