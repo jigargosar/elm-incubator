@@ -156,6 +156,16 @@ type alias CompactAcc =
     }
 
 
+initCompactAcc : SlideAcc -> CompactAcc
+initCompactAcc slideAcc =
+    { slideAcc = slideAcc, unprocessed = Nothing, processed = [], padCount = 0 }
+
+
+compactAccToReturn : CompactAcc -> ( SlideAcc, List Slot )
+compactAccToReturn acc =
+    ( acc.slideAcc, [] )
+
+
 slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
 slotListCompactRight initialSlideAcc =
     let
@@ -166,12 +176,9 @@ slotListCompactRight initialSlideAcc =
 
                 _ ->
                     acc
-
-        handleUnprocessedAndPad acc =
-            ( acc.slideAcc, acc.processed )
     in
-    List.foldr reducer { slideAcc = initialSlideAcc, unprocessed = Nothing, processed = [], padCount = 0 }
-        >> handleUnprocessedAndPad
+    List.foldr reducer (initCompactAcc initialSlideAcc)
+        >> compactAccToReturn
 
 
 updateCellGrid : CellGrid -> CellGrid
