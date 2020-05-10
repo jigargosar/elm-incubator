@@ -128,7 +128,7 @@ mapAccumFlippedColumns reducer acc =
 toColumns : PosDict a -> List (List a)
 toColumns dict =
     Dict.toList dict
-        |> List.gatherEqualsBy (first >> second)
+        |> List.gatherEqualsBy (first >> first)
         |> List.map (Cons.toList >> List.map second)
 
 
