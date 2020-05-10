@@ -224,6 +224,9 @@ updateFromSlideResponse acc dict cellGrid =
         , idGenerator = acc.idGenerator
         , generatedIds = []
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
+        , removedIds =
+            cellGrid.mergedEntries
+                |> List.map (second >> .id)
     }
 
 
