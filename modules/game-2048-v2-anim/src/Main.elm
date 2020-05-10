@@ -82,17 +82,21 @@ viewCellGrid cellGrid =
 
 viewKeyedCells : PosDict Cell -> List ( String, HM )
 viewKeyedCells dict =
-    dict
-        |> Dict.toList
-        |> List.filterMap
-            (\( p, c ) ->
-                case c of
-                    Cell id num ->
-                        Just ( id, renderTile p num Existing )
+    let
+        l1 =
+            dict
+                |> Dict.toList
+                |> List.filterMap
+                    (\( p, c ) ->
+                        case c of
+                            Cell id num ->
+                                Just ( id, renderTile p num Existing )
 
-                    Empty ->
-                        Nothing
-            )
+                            Empty ->
+                                Nothing
+                    )
+    in
+    l1
         |> List.sortBy (Tuple.first >> IncId.toInt)
         |> List.map (Tuple.mapFirst IncId.toString)
 
