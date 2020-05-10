@@ -33,7 +33,7 @@ viewKeyedCells cellGrid =
         { generatedIds, merged } =
             cellGrid
 
-        { cellEntries } =
+        { entries } =
             Board.info cellGrid
 
         idToAnim : IncId -> TileAnim
@@ -46,7 +46,7 @@ viewKeyedCells cellGrid =
 
         cellViewList : List ( IncId, HM )
         cellViewList =
-            cellEntries
+            entries
                 |> List.map
                     (\( pos, cell ) ->
                         ( cell.id

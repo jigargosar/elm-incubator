@@ -79,15 +79,15 @@ initialCellGrid =
 
 
 type alias Info =
-    { cellEntries : PosDict.EntryList Cell
+    { entries : PosDict.EntryList Cell
     , generatedIds : List IncId
-    , mergedCellEntries : PosDict.EntryList Cell
+    , mergedEntries : PosDict.EntryList Cell
     }
 
 
 info : CellGrid -> Info
 info cellGrid =
-    { cellEntries =
+    { entries =
         cellGrid.dict
             |> Dict.filterMap
                 (\_ slot ->
@@ -100,7 +100,7 @@ info cellGrid =
                 )
             |> Dict.toList
     , generatedIds = cellGrid.generatedIds
-    , mergedCellEntries = cellGrid.merged
+    , mergedEntries = cellGrid.merged
     }
 
 
