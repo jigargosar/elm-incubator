@@ -149,14 +149,21 @@ slideRight cellGrid =
 
 
 slideRightHelp : SlideAcc -> PosDict Slot -> ( SlideAcc, PosDict Slot )
-slideRightHelp acc dict =
+slideRightHelp initialSlideAcc dict =
     let
-        _ =
+        func : SlideAcc -> PosDict.EntryList Slot -> ( SlideAcc, PosDict.EntryList Slot )
+        func a es =
+            ( a, es )
+
+        foo : ( SlideAcc, Dict IntPos Slot )
+        foo =
             Dict.toList dict
                 |> List.gatherEqualsBy (first >> first)
                 |> List.map Cons.toList
+                |> List.mapAccumr func initialSlideAcc
+                |> Tuple.mapSecond (List.concat >> Dict.fromList)
     in
-    ( acc, dict )
+    ( initialSlideAcc, dict )
 
 
 updateCellGrid : CellGrid -> CellGrid
