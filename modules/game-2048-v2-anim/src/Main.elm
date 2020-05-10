@@ -84,7 +84,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , renderTileList (Cons.head model.gridCons)
+            , renderTileListGrid (Cons.head model.gridCons)
             ]
         ]
 
@@ -197,8 +197,8 @@ initialGridModelCons =
     Cons.init initialTileList updatedRestTileList
 
 
-renderTileList : TileList -> HM
-renderTileList tiles =
+renderTileListGrid : TileList -> HM
+renderTileListGrid tiles =
     div
         [ class "pa3 code f2 debug" ]
         [ Html.Keyed.node "div"
