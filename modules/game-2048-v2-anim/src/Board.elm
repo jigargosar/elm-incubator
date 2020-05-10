@@ -167,7 +167,7 @@ compactAccToReturn acc =
 
 
 slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-slotListCompactRight initialSlideAcc =
+slotListCompactRight initialSlideAcc slots =
     let
         reducer slot acc =
             case ( slot, acc.unprocessed ) of
@@ -177,8 +177,9 @@ slotListCompactRight initialSlideAcc =
                 _ ->
                     acc
     in
-    List.foldr reducer (initCompactAcc initialSlideAcc)
-        >> compactAccToReturn
+    slots
+        |> List.foldr reducer (initCompactAcc initialSlideAcc)
+        |> compactAccToReturn
 
 
 updateCellGrid : CellGrid -> CellGrid
