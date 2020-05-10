@@ -87,10 +87,10 @@ viewKeyedCells dict =
             dict
                 |> Dict.toList
                 |> List.filterMap
-                    (\( p, c ) ->
-                        case c of
+                    (\( pos, cell ) ->
+                        case cell of
                             Cell id num ->
-                                Just ( id, renderTile p num Existing )
+                                Just ( id, renderTile pos num Existing )
 
                             Empty ->
                                 Nothing
