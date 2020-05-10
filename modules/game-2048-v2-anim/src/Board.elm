@@ -137,6 +137,21 @@ slideRight cellGrid =
         |> Maybe.withDefault cellGrid
 
 
+slideLeft : CellGrid -> CellGrid
+slideLeft cellGrid =
+    let
+        ( acc, dict ) =
+            PosDict.mapAccumRowsR
+                compactSlotsLeft
+                (initSlideAcc cellGrid.idGenerator)
+                cellGrid.dict
+    in
+    cellGrid
+        |> updateFromSlideResponse acc dict
+        |> fillRandomEmpty
+        |> Maybe.withDefault cellGrid
+
+
 type alias SlideAcc =
     { idGenerator : IncId.Generator
     , mergedIdPairs : List ( IncId, IncId )
@@ -214,6 +229,12 @@ fillRandomPosition ( h, t ) cellGrid =
 compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
 compactSlotsRight slideAcc =
     List.foldr compactSlotReducer (initCompactAcc slideAcc)
+        >> compactAccToReturn
+
+
+compactSlotsLeft : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+compactSlotsLeft slideAcc =
+    List.foldl compactSlotReducer (initCompactAcc slideAcc)
         >> compactAccToReturn
 
 
