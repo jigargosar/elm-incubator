@@ -48,7 +48,7 @@ newCell num generator =
 type alias CellGrid =
     { idGenerator : IncId.Generator
     , dict : PosDict Slot
-    , merged : List ( ( Cell, Cell ), IntPos )
+    , merged : List ( IntPos, Cell )
     , generatedIds : List IncId
     , step : Int
     }
@@ -115,7 +115,9 @@ updateCellGrid cellGrid =
                         (\s1 s2 ->
                             case ( s1, s2 ) of
                                 ( Filled c1, Filled c2 ) ->
-                                    [ ( ( c1, c2 ), ( 0, 1 ) ) ]
+                                    [ ( ( 0, 1 ), c1 )
+                                    , ( ( 0, 1 ), c2 )
+                                    ]
 
                                 _ ->
                                     []
@@ -201,14 +203,15 @@ viewKeyedCells { dict, generatedIds, merged } =
                                 Nothing
                     )
 
-        foo ( ( c1, c2 ), pos ) =
-            [ ( c1.id, renderTile pos c1.num Merged )
-            , ( c2.id, renderTile pos c2.num Merged )
-            ]
-
         mergedCellViewList : List ( IncId, HM )
         mergedCellViewList =
-            List.concatMap foo merged
+            List.map
+                (\( pos, cell ) ->
+                    ( cell.id
+                    , renderTile pos cell.num Merged
+                    )
+                )
+                merged
     in
     (cellViewList ++ mergedCellViewList)
         |> List.sortBy (Tuple.first >> IncId.toInt)
