@@ -216,12 +216,12 @@ viewKeyedTile tile =
         text ""
 
       else
-        viewTile tile.pos tile.num tile.anim
+        renderTile tile.pos tile.num tile.anim
     )
 
 
-viewTile : IntPos -> Int -> TileAnim -> HM
-viewTile pos num anim =
+renderTile : IntPos -> Int -> TileAnim -> HM
+renderTile pos num anim =
     div
         [ style "width" "100px"
         , style "height" "100px"
