@@ -1,4 +1,4 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, mapAccumRowsL, reverseRows, swap, toRows)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, mapAccumReverseRows, mapAccumRows, reverseRows, swap)
 
 import Basics.Extra exposing (uncurry)
 import Cons
@@ -61,11 +61,18 @@ constrain s =
     Dict.filter (\p _ -> IntSize.contains p s)
 
 
-mapAccumRowsL : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
-mapAccumRowsL reducer initialAcc dict =
-    toRows dict
-        |> List.mapAccuml reducer initialAcc
-        |> Tuple.mapSecond fromLists
+mapAccumRows : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
+mapAccumRows reducer acc =
+    toRows
+        >> List.mapAccuml reducer acc
+        >> Tuple.mapSecond fromLists
+
+
+mapAccumReverseRows : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
+mapAccumReverseRows reducer acc =
+    toReverseRows
+        >> List.mapAccuml reducer acc
+        >> Tuple.mapSecond (fromLists >> reverseRows)
 
 
 toRows : PosDict a -> List (List a)
@@ -75,6 +82,11 @@ toRows dict =
         |> List.map (Cons.toList >> List.map second)
 
 
+toReverseRows : PosDict a -> List (List a)
+toReverseRows =
+    toRows >> List.map List.reverse
+
+
 reverseRows : PosDict a -> PosDict a
 reverseRows =
-    toRows >> List.map List.reverse >> fromLists
+    toReverseRows >> fromLists
