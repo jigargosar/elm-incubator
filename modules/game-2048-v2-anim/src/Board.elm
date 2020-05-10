@@ -124,28 +124,13 @@ info cellGrid =
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid0 =
-    case
-        cellGrid0.step
-    of
-        0 ->
-            { cellGrid0 | step = cellGrid0.step + 1 }
-                |> slideRight
+    if modBy 2 cellGrid0.step == 0 then
+        { cellGrid0 | step = cellGrid0.step + 1 }
+            |> slideRight
 
-        1 ->
-            { cellGrid0 | step = cellGrid0.step + 1 }
-                |> slideLeft
-
-        2 ->
-            { cellGrid0
-                | idGenerator = IncId.newGenerator
-                , dict = Dict.empty
-                , generatedIds = []
-                , mergedEntries = []
-                , step = cellGrid0.step + 1
-            }
-
-        _ ->
-            initialCellGrid
+    else
+        { cellGrid0 | step = cellGrid0.step + 1 }
+            |> slideLeft
 
 
 
