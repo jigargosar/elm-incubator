@@ -119,6 +119,91 @@ info cellGrid =
 
 
 
+-- UPDATE
+
+
+updateCellGrid : CellGrid -> CellGrid
+updateCellGrid cellGrid0 =
+    case
+        cellGrid0.step
+    of
+        0 ->
+            let
+                cellGrid1 =
+                    slideRight cellGrid0
+            in
+            let
+                nextDict =
+                    cellGrid1.dict
+                        |> Dict.insert ( 2, 1 ) (Filled generatedCell)
+
+                ( generatedCell, nextIdGenerator ) =
+                    newCell 2 cellGrid1.idGenerator
+
+                nextGenerated =
+                    [ generatedCell.id ]
+            in
+            { cellGrid1
+                | dict = nextDict
+                , idGenerator = nextIdGenerator
+                , generatedIds = nextGenerated
+
+                --, mergedEntries = []
+                , step = cellGrid1.step + 1
+            }
+
+        1 ->
+            let
+                mergedEntries =
+                    Maybe.map2
+                        (\c1 c2 ->
+                            [ ( ( 0, 1 ), c1 )
+                            , ( ( 0, 1 ), c2 )
+                            ]
+                        )
+                        (cellAt ( 2, 1 ) cellGrid0.dict)
+                        (cellAt ( 3, 1 ) cellGrid0.dict)
+                        |> Maybe.withDefault []
+
+                nextDict =
+                    cellGrid0.dict
+                        |> Dict.remove ( 2, 1 )
+                        |> Dict.remove ( 3, 1 )
+                        |> PosDict.swap ( 3, 2 ) ( 0, 2 )
+                        |> Dict.insert ( 0, 1 ) (Filled mergedCell)
+                        |> Dict.insert ( 1, 1 ) (Filled generatedCell)
+
+                ( mergedCell, idGen0 ) =
+                    newCell 4 cellGrid0.idGenerator
+
+                ( generatedCell, idGen1 ) =
+                    newCell 2 idGen0
+
+                nextGenerated =
+                    [ generatedCell.id ]
+            in
+            { cellGrid0
+                | dict = nextDict
+                , generatedIds = nextGenerated
+                , idGenerator = idGen1
+                , mergedEntries = mergedEntries
+                , step = cellGrid0.step + 1
+            }
+
+        2 ->
+            { cellGrid0
+                | idGenerator = IncId.newGenerator
+                , dict = Dict.empty
+                , generatedIds = []
+                , mergedEntries = []
+                , step = cellGrid0.step + 1
+            }
+
+        _ ->
+            initialCellGrid
+
+
+
 -- Slide
 
 
@@ -316,84 +401,3 @@ compactSlotReducer slot acc =
                     | processed = prevCell :: acc.processed
                     , unprocessed = Just cell
                 }
-
-
-updateCellGrid : CellGrid -> CellGrid
-updateCellGrid cellGrid0 =
-    case
-        cellGrid0.step
-    of
-        0 ->
-            let
-                cellGrid1 =
-                    slideRight cellGrid0
-            in
-            let
-                nextDict =
-                    cellGrid1.dict
-                        |> Dict.insert ( 2, 1 ) (Filled generatedCell)
-
-                ( generatedCell, nextIdGenerator ) =
-                    newCell 2 cellGrid1.idGenerator
-
-                nextGenerated =
-                    [ generatedCell.id ]
-            in
-            { cellGrid1
-                | dict = nextDict
-                , idGenerator = nextIdGenerator
-                , generatedIds = nextGenerated
-
-                --, mergedEntries = []
-                , step = cellGrid1.step + 1
-            }
-
-        1 ->
-            let
-                mergedEntries =
-                    Maybe.map2
-                        (\c1 c2 ->
-                            [ ( ( 0, 1 ), c1 )
-                            , ( ( 0, 1 ), c2 )
-                            ]
-                        )
-                        (cellAt ( 2, 1 ) cellGrid0.dict)
-                        (cellAt ( 3, 1 ) cellGrid0.dict)
-                        |> Maybe.withDefault []
-
-                nextDict =
-                    cellGrid0.dict
-                        |> Dict.remove ( 2, 1 )
-                        |> Dict.remove ( 3, 1 )
-                        |> PosDict.swap ( 3, 2 ) ( 0, 2 )
-                        |> Dict.insert ( 0, 1 ) (Filled mergedCell)
-                        |> Dict.insert ( 1, 1 ) (Filled generatedCell)
-
-                ( mergedCell, idGen0 ) =
-                    newCell 4 cellGrid0.idGenerator
-
-                ( generatedCell, idGen1 ) =
-                    newCell 2 idGen0
-
-                nextGenerated =
-                    [ generatedCell.id ]
-            in
-            { cellGrid0
-                | dict = nextDict
-                , generatedIds = nextGenerated
-                , idGenerator = idGen1
-                , mergedEntries = mergedEntries
-                , step = cellGrid0.step + 1
-            }
-
-        2 ->
-            { cellGrid0
-                | idGenerator = IncId.newGenerator
-                , dict = Dict.empty
-                , generatedIds = []
-                , mergedEntries = []
-                , step = cellGrid0.step + 1
-            }
-
-        _ ->
-            initialCellGrid
