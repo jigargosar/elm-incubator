@@ -1,4 +1,10 @@
-module Board exposing (Cell, CellGrid, Slot(..), initialCellGrid, updateCellGrid)
+module Board exposing
+    ( Cell
+    , CellGrid
+    , Slot(..)
+    , initialCellGrid
+    , updateCellGrid
+    )
 
 import Dict exposing (Dict)
 import IncId exposing (IncId)
