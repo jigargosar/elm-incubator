@@ -162,20 +162,11 @@ slideRight cellGrid =
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
 fillRandomEmpty cellGrid =
-    let
-        maybeEmptyPositionsCons =
-            cellGrid.dict
-                |> Dict.filter (\_ slot -> slot == Empty)
-                |> Dict.keys
-                |> Cons.fromList
-    in
-    maybeEmptyPositionsCons
-        |> Maybe.map (fillRandomPositionIn cellGrid)
-
-
-fillRandomPositionIn : CellGrid -> Cons IntPos -> CellGrid
-fillRandomPositionIn =
-    flip fillRandomPosition
+    cellGrid.dict
+        |> Dict.filter (\_ slot -> slot == Empty)
+        |> Dict.keys
+        |> Cons.fromList
+        |> Maybe.map (flip fillRandomPosition cellGrid)
 
 
 fillRandomPosition : Cons IntPos -> CellGrid -> CellGrid
