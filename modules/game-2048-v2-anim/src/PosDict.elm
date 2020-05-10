@@ -1,10 +1,12 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, swap)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, mapAccumRowsR, swap)
 
 import Basics.Extra exposing (uncurry)
+import Cons
 import Dict exposing (Dict)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
-import Tuple exposing (pair)
+import List.Extra as List
+import Tuple exposing (first, mapSecond, pair, second)
 
 
 type alias PosDict a =
@@ -57,3 +59,23 @@ pairTo b a =
 constrain : IntSize -> PosDict v -> PosDict v
 constrain s =
     Dict.filter (\p _ -> IntSize.contains p s)
+
+
+mapAccumRowsR : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
+mapAccumRowsR reducer initialAcc dict =
+    let
+        entryListReducer a es =
+            let
+                ps =
+                    List.map first es
+
+                vs =
+                    List.map second es
+            in
+            reducer a vs |> mapSecond (List.zip ps)
+    in
+    Dict.toList dict
+        |> List.gatherEqualsBy (first >> first)
+        |> List.map Cons.toList
+        |> List.mapAccumr entryListReducer initialAcc
+        |> Tuple.mapSecond (List.concat >> Dict.fromList)
