@@ -13,6 +13,7 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
 import PosDict exposing (PosDict)
+import Random
 import Tuple exposing (mapFirst)
 
 
@@ -55,6 +56,7 @@ newCell num generator =
 
 type alias CellGrid =
     { idGenerator : IncId.Generator
+    , seed : Random.Seed
     , dict : PosDict Slot
     , mergedEntries : PosDict.EntryList Cell
     , generatedIds : List IncId
@@ -79,6 +81,7 @@ initialCellGrid =
             newCell 4 idGen1
     in
     { idGenerator = idGen2
+    , seed = Random.initialSeed 0
     , dict =
         PosDict.filled Empty size
             |> Dict.insert ( 1, 1 ) (Filled cell1)
