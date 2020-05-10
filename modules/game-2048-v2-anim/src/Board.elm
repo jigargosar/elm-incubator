@@ -148,6 +148,13 @@ slideRight cellGrid =
     }
 
 
+slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+slotListCompactRight slideAcc slots =
+    slots
+        |> List.foldr compactSlotReducer (initCompactAcc slideAcc)
+        |> compactAccToReturn
+
+
 type alias CompactAcc =
     { slideAcc : SlideAcc
     , unprocessed : Maybe Cell
@@ -164,13 +171,6 @@ initCompactAcc slideAcc =
 compactAccToReturn : CompactAcc -> ( SlideAcc, List Slot )
 compactAccToReturn acc =
     ( acc.slideAcc, [] )
-
-
-slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-slotListCompactRight slideAcc slots =
-    slots
-        |> List.foldr compactSlotReducer (initCompactAcc slideAcc)
-        |> compactAccToReturn
 
 
 compactSlotReducer : Slot -> CompactAcc -> CompactAcc
