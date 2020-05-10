@@ -13,7 +13,7 @@ import PosDict exposing (PosDict)
 import Process
 import Set
 import Task
-import Tuple exposing (first)
+import Tuple exposing (first, mapBoth, mapFirst, second)
 
 
 
@@ -38,7 +38,7 @@ newCell num generator =
             Cell id num
     in
     IncId.new generator
-        |> Tuple.mapFirst initCell
+        |> mapFirst initCell
 
 
 
@@ -214,8 +214,8 @@ viewKeyedCells { dict, generatedIds, merged } =
                 merged
     in
     (cellViewList ++ mergedCellViewList)
-        |> List.sortBy (Tuple.first >> IncId.toInt)
-        |> List.map (Tuple.mapFirst IncId.toString)
+        |> List.sortBy (first >> IncId.toInt)
+        |> List.map (mapFirst IncId.toString)
 
 
 
@@ -412,7 +412,7 @@ initialTileListCons =
 
         updatedRestTileList =
             List.foldl reducer ( initialTileList, [] ) restTileList
-                |> (Tuple.second >> List.reverse)
+                |> (second >> List.reverse)
     in
     Cons.init initialTileList updatedRestTileList
 
@@ -477,7 +477,7 @@ renderTileTransform pos =
 
         ( sx, sy ) =
             pos
-                |> Tuple.mapBoth postPartToPx postPartToPx
+                |> mapBoth postPartToPx postPartToPx
     in
     [ "translate(", sx, ",", sy, ")" ]
         |> String.join " "
