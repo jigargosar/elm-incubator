@@ -138,24 +138,28 @@ updateCellGrid cellGrid0 =
 
 
 slideRight : CellGrid -> CellGrid
-slideRight cellGrid =
-    let
-        ( acc, dict ) =
-            cellGrid.dict
-                |> PosDict.mapAccumRows compactSlotsRight (initSlideAcc cellGrid.idGenerator)
-    in
-    cellGrid
-        |> updateFromSlideResponse acc dict
-        |> fillRandomEmpty
-        |> Maybe.withDefault cellGrid
+slideRight =
+    slideWith PosDict.mapAccumRows
 
 
 slideLeft : CellGrid -> CellGrid
-slideLeft cellGrid =
+slideLeft =
+    slideWith PosDict.mapAccumFlippedRows
+
+
+slideWith :
+    ((SlideAcc -> List Slot -> ( SlideAcc, List Slot ))
+     -> SlideAcc
+     -> PosDict Slot
+     -> ( SlideAcc, PosDict Slot )
+    )
+    -> CellGrid
+    -> CellGrid
+slideWith func cellGrid =
     let
         ( acc, dict ) =
             cellGrid.dict
-                |> PosDict.mapAccumFlippedRows compactSlotsRight (initSlideAcc cellGrid.idGenerator)
+                |> func compactSlotsRight (initSlideAcc cellGrid.idGenerator)
     in
     cellGrid
         |> updateFromSlideResponse acc dict
