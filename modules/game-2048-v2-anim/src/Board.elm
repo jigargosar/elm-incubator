@@ -172,9 +172,25 @@ initCompactAcc slideAcc =
     { slideAcc = slideAcc, unprocessed = Nothing, processed = [], padCount = 0 }
 
 
+consMaybe : Maybe a -> List a -> List a
+consMaybe mx xs =
+    case mx of
+        Just x ->
+            x :: xs
+
+        Nothing ->
+            xs
+
+
 compactAccToReturn : CompactAcc -> ( SlideAcc, List Slot )
 compactAccToReturn acc =
-    ( acc.slideAcc, [] )
+    let
+        slots : List Slot
+        slots =
+            List.repeat acc.padCount Empty
+                ++ List.map Filled (consMaybe acc.unprocessed acc.processed)
+    in
+    ( acc.slideAcc, slots )
 
 
 compactSlotReducer : Slot -> CompactAcc -> CompactAcc
