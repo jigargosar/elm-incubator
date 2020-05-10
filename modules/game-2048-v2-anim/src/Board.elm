@@ -144,7 +144,7 @@ updateCellGrid cellGrid =
 
         1 ->
             let
-                foo =
+                mergedEntries =
                     Maybe.map2
                         (\c1 c2 ->
                             [ ( ( 0, 1 ), c1 )
@@ -176,7 +176,7 @@ updateCellGrid cellGrid =
                 | dict = nextDict
                 , generatedIds = nextGenerated
                 , idGenerator = idGen1
-                , merged = foo
+                , merged = mergedEntries
                 , step = cellGrid.step + 1
             }
 
