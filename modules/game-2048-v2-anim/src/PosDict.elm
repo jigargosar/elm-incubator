@@ -75,7 +75,7 @@ mapAccumRowsR reducer initialAcc dict =
             reducer a vs |> mapSecond (List.zip ps)
     in
     Dict.toList dict
-        |> List.gatherEqualsBy (first >> first)
+        |> List.gatherEqualsBy (first >> second)
         |> List.map Cons.toList
         |> List.mapAccumr entryListReducer initialAcc
         |> Tuple.mapSecond (List.concat >> Dict.fromList)
