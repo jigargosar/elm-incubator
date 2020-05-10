@@ -3,7 +3,6 @@ module Main exposing (main)
 import Board
 import Browser exposing (Document)
 import Cons exposing (Cons)
-import Dict exposing (Dict)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
