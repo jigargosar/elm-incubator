@@ -91,22 +91,26 @@ type alias CellView =
 viewKeyedCells : PosDict Cell -> List ( String, HM )
 viewKeyedCells dict =
     let
-        l1 =
+        cellViewList : List CellView
+        cellViewList =
             dict
                 |> Dict.toList
                 |> List.filterMap
                     (\( pos, cell ) ->
                         case cell of
                             Cell id num ->
-                                Just ( id, renderTile pos num Existing )
+                                Just { id = id, pos = pos, num = num, anim = Existing }
 
                             Empty ->
                                 Nothing
                     )
     in
-    l1
-        |> List.sortBy (Tuple.first >> IncId.toInt)
-        |> List.map (Tuple.mapFirst IncId.toString)
+    cellViewList
+        |> List.sortBy (.id >> IncId.toInt)
+        |> List.map
+            (\cv ->
+                ( IncId.toString cv.id, renderTile cv.pos cv.num cv.anim )
+            )
 
 
 
