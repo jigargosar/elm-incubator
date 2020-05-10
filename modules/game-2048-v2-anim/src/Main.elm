@@ -95,9 +95,10 @@ updateCellGrid cellGrid =
                                 Nothing
                     )
 
-        bar : PosDict.EntryList Cell -> PosDict Cell
+        bar : PosDict Cell
         bar =
-            List.foldl (uncurry Dict.insert) (PosDict.fill Empty size)
+            PosDict.fill Empty size
+                |> PosDict.insertEntryList foo
     in
     { cellGrid
         | dict =

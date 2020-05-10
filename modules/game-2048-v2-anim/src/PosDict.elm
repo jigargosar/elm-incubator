@@ -1,5 +1,6 @@
-module PosDict exposing (Entry, EntryList, PosDict, clamp, fill, fromLists)
+module PosDict exposing (Entry, EntryList, PosDict, clamp, fill, fromLists, insertEntry, insertEntryList)
 
+import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
@@ -30,6 +31,16 @@ fill a s =
     IntSize.positions s
         |> List.map (pairTo a)
         |> Dict.fromList
+
+
+insertEntry : Entry a -> PosDict a -> PosDict a
+insertEntry =
+    uncurry Dict.insert
+
+
+insertEntryList : EntryList a -> PosDict a -> PosDict a
+insertEntryList entryList posDict =
+    List.foldl insertEntry posDict entryList
 
 
 pairTo b a =
