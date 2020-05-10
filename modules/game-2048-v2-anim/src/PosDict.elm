@@ -1,4 +1,4 @@
-module PosDict exposing (PosDict, clamp, fill, fromLists)
+module PosDict exposing (Entry, EntryList, PosDict, clamp, fill, fromLists)
 
 import Dict exposing (Dict)
 import IntPos exposing (IntPos)
@@ -8,6 +8,14 @@ import Tuple exposing (pair)
 
 type alias PosDict a =
     Dict IntPos a
+
+
+type alias Entry a =
+    ( IntPos, a )
+
+
+type alias EntryList a =
+    List (Entry a)
 
 
 fromLists : List (List v) -> PosDict v

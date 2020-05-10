@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
@@ -72,20 +73,31 @@ initialCellGrid =
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
     let
-        idDict : Dict Int CellView
-        idDict =
+        foo : PosDict.EntryList Cell
+        foo =
             cellGrid.dict
-                |> Dict.toList
+                |> Dict.values
                 |> List.filterMap
-                    (\( pos, cell ) ->
+                    (\cell ->
                         case cell of
-                            Cell id num ->
-                                Just { id = id, pos = pos, num = num, anim = Existing }
+                            Cell id _ ->
+                                case IncId.toInt id of
+                                    1 ->
+                                        Just ( ( 3, 1 ), cell )
+
+                                    2 ->
+                                        Just ( ( 3, 2 ), cell )
+
+                                    _ ->
+                                        Nothing
 
                             Empty ->
                                 Nothing
                     )
-                |> Dict.fromListBy (.id >> IncId.toInt)
+
+        bar : PosDict.EntryList Cell -> PosDict Cell
+        bar =
+            List.foldl (uncurry Dict.insert) (PosDict.fill Empty size)
     in
     { cellGrid
         | dict =
