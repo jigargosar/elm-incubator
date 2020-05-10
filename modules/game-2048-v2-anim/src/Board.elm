@@ -7,8 +7,8 @@ module Board exposing
     , updateCellGrid
     )
 
-import Basics.Extra exposing (uncurry)
-import Cons
+import Basics.Extra exposing (flip, uncurry)
+import Cons exposing (Cons)
 import Dict exposing (Dict)
 import Dict.Extra as Dict
 import IncId exposing (IncId)
@@ -157,6 +157,46 @@ slideRight cellGrid =
         , idGenerator = acc.idGenerator
         , generatedIds = []
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
+    }
+
+
+fillRandomEmpty : CellGrid -> Maybe CellGrid
+fillRandomEmpty cellGrid =
+    let
+        maybeEmptyPositionsCons =
+            cellGrid.dict
+                |> Dict.filter (\_ slot -> slot == Empty)
+                |> Dict.keys
+                |> Cons.fromList
+    in
+    maybeEmptyPositionsCons
+        |> Maybe.map (fillRandomPositionIn cellGrid)
+
+
+fillRandomPositionIn : CellGrid -> Cons IntPos -> CellGrid
+fillRandomPositionIn =
+    flip fillRandomPosition
+
+
+fillRandomPosition : Cons IntPos -> CellGrid -> CellGrid
+fillRandomPosition ( h, t ) cellGrid =
+    let
+        ( ( pos, num ), seed ) =
+            Random.step
+                (Random.pair
+                    (Random.uniform h t)
+                    (Random.uniform 2 [ 4 ])
+                )
+                cellGrid.seed
+
+        ( cell, idGenerator ) =
+            newCell num cellGrid.idGenerator
+    in
+    { cellGrid
+        | dict = Dict.insert pos (Filled cell) cellGrid.dict
+        , seed = seed
+        , idGenerator = idGenerator
+        , generatedIds = [ cell.id ]
     }
 
 
