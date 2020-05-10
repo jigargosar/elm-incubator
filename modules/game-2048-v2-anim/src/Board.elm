@@ -188,10 +188,32 @@ compactSlotReducer slot acc =
 
         ( Filled cell, Just prevCell ) ->
             if cell.num == prevCell.num then
-                acc
+                let
+                    slideAcc =
+                        acc.slideAcc
+
+                    ( mergedCell, idGenerator ) =
+                        newCell (cell.num + prevCell.num) slideAcc.idGenerator
+                in
+                { acc
+                    | padCount = acc.padCount + 1
+                    , processed = mergedCell :: acc.processed
+                    , unprocessed = Nothing
+                    , slideAcc =
+                        { slideAcc
+                            | idGenerator = idGenerator
+                            , mergedIdPairs =
+                                ( cell.id, mergedCell.id )
+                                    :: ( prevCell.id, mergedCell.id )
+                                    :: slideAcc.mergedIdPairs
+                        }
+                }
 
             else
-                acc
+                { acc
+                    | processed = prevCell :: acc.processed
+                    , unprocessed = Just cell
+                }
 
 
 updateCellGrid : CellGrid -> CellGrid
