@@ -80,6 +80,14 @@ viewCellGrid cellGrid =
         ]
 
 
+type alias CellView =
+    { id : IncId
+    , pos : IntPos
+    , num : Int
+    , anim : TileAnim
+    }
+
+
 viewKeyedCells : PosDict Cell -> List ( String, HM )
 viewKeyedCells dict =
     let
