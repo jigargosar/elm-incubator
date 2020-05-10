@@ -72,6 +72,10 @@ constrain s =
     Dict.filter (\p _ -> IntSize.contains p s)
 
 
+
+-- ROWS
+
+
 mapAccumRows : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
 mapAccumRows reducer acc =
     toRows
@@ -101,6 +105,10 @@ toFlippedRows =
 flipRows : PosDict a -> PosDict a
 flipRows =
     toFlippedRows >> fromRows
+
+
+
+-- COLUMNS
 
 
 mapAccumColumns : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
