@@ -9,6 +9,7 @@ module Board exposing
     )
 
 import Dict exposing (Dict)
+import Dict.Extra as Dict
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
@@ -78,7 +79,7 @@ initialCellGrid =
 
 
 type alias Info =
-    { cellEntries : PosDict.EntryList Slot
+    { cellEntries : PosDict.EntryList Cell
     , generatedIds : List IncId
     , mergedCellEntries : PosDict.EntryList Cell
     }
@@ -86,7 +87,18 @@ type alias Info =
 
 info : CellGrid -> Info
 info cellGrid =
-    { cellEntries = cellGrid.dict |> Dict.toList
+    { cellEntries =
+        cellGrid.dict
+            |> Dict.filterMap
+                (\_ slot ->
+                    case slot of
+                        Filled cell ->
+                            Just cell
+
+                        Empty ->
+                            Nothing
+                )
+            |> Dict.toList
     , generatedIds = cellGrid.generatedIds
     , mergedCellEntries = cellGrid.merged
     }

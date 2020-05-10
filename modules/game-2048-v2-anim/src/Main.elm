@@ -47,17 +47,11 @@ viewKeyedCells cellGrid =
         cellViewList : List ( IncId, HM )
         cellViewList =
             cellEntries
-                |> List.filterMap
-                    (\( pos, slot ) ->
-                        case slot of
-                            Board.Filled cell ->
-                                Just
-                                    ( cell.id
-                                    , renderTile pos cell.num (idToAnim cell.id)
-                                    )
-
-                            Board.Empty ->
-                                Nothing
+                |> List.map
+                    (\( pos, cell ) ->
+                        ( cell.id
+                        , renderTile pos cell.num (idToAnim cell.id)
+                        )
                     )
 
         mergedCellViewList : List ( IncId, HM )
