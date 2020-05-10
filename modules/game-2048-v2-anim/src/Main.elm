@@ -15,6 +15,7 @@ import PosDict exposing (PosDict)
 import Process
 import Set
 import Task
+import Tuple exposing (first, second)
 
 
 
@@ -80,24 +81,35 @@ initialCellGrid =
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
-    let
-        nextDict =
-            cellGrid.dict
-                |> PosDict.swap ( 1, 1 ) ( 3, 1 )
-                |> PosDict.swap ( 2, 2 ) ( 3, 2 )
-                |> Dict.insert ( 2, 1 ) (Filled generatedCell)
+    case IncId.new cellGrid.idGenerator |> first |> IncId.toInt of
+        3 ->
+            let
+                nextDict =
+                    cellGrid.dict
+                        |> PosDict.swap ( 1, 1 ) ( 3, 1 )
+                        |> PosDict.swap ( 2, 2 ) ( 3, 2 )
+                        |> Dict.insert ( 2, 1 ) (Filled generatedCell)
 
-        ( generatedCell, idGenerator ) =
-            newCell 2 cellGrid.idGenerator
+                ( generatedCell, idGenerator ) =
+                    newCell 2 cellGrid.idGenerator
 
-        nextGenerated =
-            [ generatedCell.id ]
-    in
-    { cellGrid
-        | dict = nextDict
-        , generatedIds = nextGenerated
-        , idGenerator = idGenerator
-    }
+                nextGenerated =
+                    [ generatedCell.id ]
+            in
+            { cellGrid
+                | dict = nextDict
+                , generatedIds = nextGenerated
+                , idGenerator = idGenerator
+            }
+
+        4 ->
+            { cellGrid
+                | idGenerator = IncId.new cellGrid.idGenerator |> second
+                , dict = Dict.empty
+            }
+
+        _ ->
+            initialCellGrid
 
 
 viewCellGrid : CellGrid -> HM
