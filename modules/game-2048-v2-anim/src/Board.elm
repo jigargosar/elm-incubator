@@ -82,6 +82,14 @@ type alias Info =
     }
 
 
+info : CellGrid -> Info
+info cellGrid =
+    { cellEntries = cellGrid.dict |> Dict.toList
+    , generatedIds = cellGrid.generatedIds
+    , mergedCellEntries = cellGrid.merged
+    }
+
+
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
     case
