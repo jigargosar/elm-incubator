@@ -149,12 +149,16 @@ slideRight cellGrid =
 
 
 slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-slotListCompactRight =
+slotListCompactRight initialSlideAcc =
     let
-        reducer acc slot =
-            ( acc, slot )
+        reducer slot ( sa, maybeUnprocessed, processed ) =
+            ( sa, maybeUnprocessed, processed )
+
+        handleUnprocessedAndPad ( sa, maybeUnprocessed, processed ) =
+            ( sa, processed )
     in
-    List.mapAccumr reducer
+    List.foldr reducer ( initialSlideAcc, Nothing, [] )
+        >> handleUnprocessedAndPad
 
 
 updateCellGrid : CellGrid -> CellGrid
