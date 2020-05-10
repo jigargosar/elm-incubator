@@ -1,10 +1,8 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (uncurry)
 import Browser exposing (Document)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
-import Dict.Extra as Dict
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
@@ -15,7 +13,7 @@ import PosDict exposing (PosDict)
 import Process
 import Set
 import Task
-import Tuple exposing (first, second)
+import Tuple exposing (first)
 
 
 
@@ -130,47 +128,37 @@ viewCellGrid cellGrid =
         ]
 
 
-type alias CellView =
-    { id : IncId
-    , pos : IntPos
-    , num : Int
-    , anim : TileAnim
-    }
-
-
 viewKeyedCells : { a | dict : PosDict Slot, generatedIds : List IncId } -> List ( String, HM )
 viewKeyedCells { dict, generatedIds } =
     let
-        cellViewList : List CellView
+        idToAnim : IncId -> TileAnim
+        idToAnim id =
+            if List.member id generatedIds then
+                Generated
+
+            else
+                Existing
+
+        cellViewList : List ( IncId, HM )
         cellViewList =
             dict
                 |> Dict.toList
                 |> List.filterMap
-                    (\( pos, cell ) ->
-                        case cell of
-                            Filled { id, num } ->
+                    (\( pos, slot ) ->
+                        case slot of
+                            Filled cell ->
                                 Just
-                                    { id = id
-                                    , pos = pos
-                                    , num = num
-                                    , anim =
-                                        if List.member id generatedIds then
-                                            Generated
-
-                                        else
-                                            Existing
-                                    }
+                                    ( cell.id
+                                    , renderTile pos cell.num (idToAnim cell.id)
+                                    )
 
                             Empty ->
                                 Nothing
                     )
     in
     cellViewList
-        |> List.sortBy (.id >> IncId.toInt)
-        |> List.map
-            (\cv ->
-                ( IncId.toString cv.id, renderTile cv.pos cv.num cv.anim )
-            )
+        |> List.sortBy (Tuple.first >> IncId.toInt)
+        |> List.map (Tuple.mapFirst IncId.toString)
 
 
 
