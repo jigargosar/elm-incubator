@@ -141,10 +141,8 @@ slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
         ( acc, dict ) =
-            PosDict.mapAccumRows
-                compactSlotsRight
-                (initSlideAcc cellGrid.idGenerator)
-                cellGrid.dict
+            cellGrid.dict
+                |> PosDict.mapAccumRows compactSlotsRight (initSlideAcc cellGrid.idGenerator)
     in
     cellGrid
         |> updateFromSlideResponse acc dict
@@ -157,9 +155,7 @@ slideLeft cellGrid =
     let
         ( acc, dict ) =
             cellGrid.dict
-                |> PosDict.flipRows
-                |> PosDict.mapAccumRows compactSlotsRight (initSlideAcc cellGrid.idGenerator)
-                |> mapSecond PosDict.flipRows
+                |> PosDict.mapAccumFlippedRows compactSlotsRight (initSlideAcc cellGrid.idGenerator)
     in
     cellGrid
         |> updateFromSlideResponse acc dict
