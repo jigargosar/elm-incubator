@@ -1,7 +1,9 @@
 module Board exposing
     ( Cell
     , CellGrid
+    , Info
     , Slot(..)
+    , info
     , initialCellGrid
     , updateCellGrid
     )
