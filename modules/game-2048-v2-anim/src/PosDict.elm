@@ -26,6 +26,13 @@ fromLists =
         >> Dict.fromList
 
 
+swap : IntPos -> IntPos -> PosDict a -> PosDict a
+swap a b dict =
+    dict
+        |> Dict.update a (always (Dict.get b dict))
+        |> Dict.update b (always (Dict.get a dict))
+
+
 filled : a -> IntSize -> PosDict a
 filled a s =
     IntSize.positions s
