@@ -138,7 +138,7 @@ slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
         ( acc, dict ) =
-            PosDict.mapAccumRowsR slotsReducer (initSlideAcc cellGrid.idGenerator) cellGrid.dict
+            PosDict.mapAccumRowsR slotListCompactRight (initSlideAcc cellGrid.idGenerator) cellGrid.dict
     in
     { cellGrid
         | dict = dict
@@ -148,9 +148,13 @@ slideRight cellGrid =
     }
 
 
-slotsReducer : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-slotsReducer a slots =
-    ( a, slots )
+slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+slotListCompactRight =
+    let
+        reducer acc slot =
+            ( acc, slot )
+    in
+    List.mapAccumr reducer
 
 
 updateCellGrid : CellGrid -> CellGrid
