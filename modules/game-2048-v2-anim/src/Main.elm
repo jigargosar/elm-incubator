@@ -81,7 +81,12 @@ initialCellGrid =
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
-    case IncId.new cellGrid.idGenerator |> first |> IncId.toInt of
+    case
+        IncId.new cellGrid.idGenerator
+            |> first
+            |> IncId.toInt
+            |> Debug.log "update with nid"
+    of
         3 ->
             let
                 nextDict =
@@ -90,7 +95,7 @@ updateCellGrid cellGrid =
                         |> PosDict.swap ( 2, 2 ) ( 3, 2 )
                         |> Dict.insert ( 2, 1 ) (Filled generatedCell)
 
-                ( generatedCell, idGenerator ) =
+                ( generatedCell, nextIdGenerator ) =
                     newCell 2 cellGrid.idGenerator
 
                 nextGenerated =
@@ -99,13 +104,14 @@ updateCellGrid cellGrid =
             { cellGrid
                 | dict = nextDict
                 , generatedIds = nextGenerated
-                , idGenerator = idGenerator
+                , idGenerator = nextIdGenerator
             }
 
         4 ->
             { cellGrid
-                | idGenerator = IncId.new cellGrid.idGenerator |> second
+                | idGenerator = IncId.newGenerator
                 , dict = Dict.empty
+                , generatedIds = []
             }
 
         _ ->
