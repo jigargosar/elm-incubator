@@ -21,9 +21,15 @@ import Task
 -- Cell
 
 
-type Cell
-    = Cell IncId Int
+type Slot
+    = Filled Cell
     | Empty
+
+
+type alias Cell =
+    { id : IncId
+    , num : Int
+    }
 
 
 newCell : Int -> IncId.Generator -> ( Cell, IncId.Generator )
@@ -42,7 +48,8 @@ newCell num generator =
 
 type alias CellGrid =
     { idGenerator : IncId.Generator
-    , dict : PosDict Cell
+    , dict : PosDict Slot
+    , generatedIds : List IncId
     }
 
 
@@ -65,18 +72,31 @@ initialCellGrid =
     { idGenerator = idGen2
     , dict =
         PosDict.filled Empty size
-            |> Dict.insert ( 1, 1 ) cell1
-            |> Dict.insert ( 2, 2 ) cell2
+            |> Dict.insert ( 1, 1 ) (Filled cell1)
+            |> Dict.insert ( 2, 2 ) (Filled cell2)
+    , generatedIds = []
     }
 
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
-    { cellGrid
-        | dict =
+    let
+        nextDict =
             cellGrid.dict
                 |> PosDict.swap ( 1, 1 ) ( 3, 1 )
                 |> PosDict.swap ( 2, 2 ) ( 3, 2 )
+                |> Dict.insert ( 3, 1 ) (Filled generatedCell)
+
+        ( generatedCell, idGenerator ) =
+            newCell 2 cellGrid.idGenerator
+
+        nextGenerated =
+            [ generatedCell.id ]
+    in
+    { cellGrid
+        | dict = nextDict
+        , generatedIds = nextGenerated
+        , idGenerator = idGenerator
     }
 
 
@@ -100,7 +120,7 @@ type alias CellView =
     }
 
 
-viewKeyedCells : PosDict Cell -> List ( String, HM )
+viewKeyedCells : PosDict Slot -> List ( String, HM )
 viewKeyedCells dict =
     let
         cellViewList : List CellView
@@ -110,7 +130,7 @@ viewKeyedCells dict =
                 |> List.filterMap
                     (\( pos, cell ) ->
                         case cell of
-                            Cell id num ->
+                            Filled { id, num } ->
                                 Just { id = id, pos = pos, num = num, anim = Existing }
 
                             Empty ->
