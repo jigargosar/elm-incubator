@@ -62,8 +62,12 @@ viewKeyedCells cellGrid =
                     )
                 )
                 mergedEntries
+
+        removedCellViewList : List ( IncId, HM )
+        removedCellViewList =
+            List.map (\id -> ( id, text "" )) cellGrid.removedIds
     in
-    (cellViewList ++ mergedCellViewList)
+    (cellViewList ++ mergedCellViewList ++ removedCellViewList)
         |> List.sortBy (first >> IncId.toInt)
         |> List.map (mapFirst IncId.toString)
 
