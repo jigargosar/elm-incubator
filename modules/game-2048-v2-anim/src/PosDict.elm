@@ -1,4 +1,18 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromRows, insertAll, insertEntry, mapAccumColumns, mapAccumFlippedColumns, mapAccumFlippedRows, mapAccumRows, swap)
+module PosDict exposing
+    ( Entry
+    , EntryList
+    , PosDict
+    , constrain
+    , filled
+    , fromRows
+    , insertAll
+    , insertEntry
+    , mapAccumColumns
+    , mapAccumFlippedColumns
+    , mapAccumFlippedRows
+    , mapAccumRows
+    , swap
+    )
 
 import Basics.Extra as Basics exposing (uncurry)
 import Cons
