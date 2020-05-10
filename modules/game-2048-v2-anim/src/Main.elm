@@ -223,7 +223,9 @@ update message model =
         StepTiles ->
             case Cons.fromTail model.tileListCons of
                 Nothing ->
-                    init ()
+                    ( { model | tileListCons = initialTileListCons }
+                    , stepTiles
+                    )
 
                 Just gridCons ->
                     ( { model | tileListCons = gridCons }
