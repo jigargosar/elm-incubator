@@ -11,7 +11,6 @@ module Board exposing
 import Dict exposing (Dict)
 import Dict.Extra as Dict
 import IncId exposing (IncId)
-import IntPos exposing (IntPos)
 import IntSize
 import PosDict exposing (PosDict)
 import Tuple exposing (mapFirst)
