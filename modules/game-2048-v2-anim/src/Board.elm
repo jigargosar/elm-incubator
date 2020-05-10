@@ -183,8 +183,15 @@ compactSlotReducer slot acc =
         ( Empty, _ ) ->
             { acc | padCount = acc.padCount + 1 }
 
-        _ ->
-            acc
+        ( Filled cell, Nothing ) ->
+            { acc | unprocessed = Just cell }
+
+        ( Filled cell, Just prevCell ) ->
+            if cell.num == prevCell.num then
+                acc
+
+            else
+                acc
 
 
 updateCellGrid : CellGrid -> CellGrid
