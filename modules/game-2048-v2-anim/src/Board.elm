@@ -124,13 +124,22 @@ info cellGrid =
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid0 =
-    if modBy 2 cellGrid0.step == 0 then
-        { cellGrid0 | step = cellGrid0.step + 1 }
-            |> slideRight
+    case modBy 4 cellGrid0.step of
+        0 ->
+            { cellGrid0 | step = cellGrid0.step + 1 }
+                |> slideRight
 
-    else
-        { cellGrid0 | step = cellGrid0.step + 1 }
-            |> slideLeft
+        1 ->
+            { cellGrid0 | step = cellGrid0.step + 1 }
+                |> slideLeft
+
+        2 ->
+            { cellGrid0 | step = cellGrid0.step + 1 }
+                |> slideUp
+
+        _ ->
+            { cellGrid0 | step = cellGrid0.step + 1 }
+                |> slideDown
 
 
 
