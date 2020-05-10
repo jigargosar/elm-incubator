@@ -151,13 +151,18 @@ slideRight cellGrid =
 slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
 slotListCompactRight initialSlideAcc =
     let
-        reducer slot ( sa, maybeUnprocessed, processed ) =
-            ( sa, maybeUnprocessed, processed )
+        reducer slot acc =
+            case ( slot, acc.unprocessed ) of
+                ( Empty, _ ) ->
+                    { acc | padCount = acc.padCount + 1 }
 
-        handleUnprocessedAndPad ( sa, maybeUnprocessed, processed ) =
-            ( sa, processed )
+                _ ->
+                    acc
+
+        handleUnprocessedAndPad acc =
+            ( acc.slideAcc, acc.processed )
     in
-    List.foldr reducer ( initialSlideAcc, Nothing, [] )
+    List.foldr reducer { slideAcc = initialSlideAcc, unprocessed = Nothing, processed = [], padCount = 0 }
         >> handleUnprocessedAndPad
 
 
