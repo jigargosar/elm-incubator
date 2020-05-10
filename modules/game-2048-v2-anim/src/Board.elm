@@ -147,6 +147,16 @@ slideLeft =
     slideWith PosDict.mapAccumFlippedRows
 
 
+slideDown : CellGrid -> CellGrid
+slideDown =
+    slideWith PosDict.mapAccumColumns
+
+
+slideUp : CellGrid -> CellGrid
+slideUp =
+    slideWith PosDict.mapAccumFlippedColumns
+
+
 slideWith :
     ((SlideAcc -> List Slot -> ( SlideAcc, List Slot ))
      -> SlideAcc
