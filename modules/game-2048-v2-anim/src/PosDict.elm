@@ -63,22 +63,9 @@ constrain s =
 
 mapAccumRowsL : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
 mapAccumRowsL reducer initialAcc dict =
-    let
-        entryListReducer a es =
-            let
-                ps =
-                    List.map first es
-
-                vs =
-                    List.map second es
-            in
-            reducer a vs |> mapSecond (List.zip ps)
-    in
-    Dict.toList dict
-        |> List.gatherEqualsBy (first >> second)
-        |> List.map Cons.toList
-        |> List.mapAccuml entryListReducer initialAcc
-        |> Tuple.mapSecond (List.concat >> Dict.fromList)
+    toRows dict
+        |> List.mapAccuml reducer initialAcc
+        |> Tuple.mapSecond fromLists
 
 
 toRows : PosDict a -> List (List a)
