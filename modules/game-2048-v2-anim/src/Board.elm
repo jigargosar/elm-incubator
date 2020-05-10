@@ -134,9 +134,38 @@ initSlideAcc generator =
 slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
-        ( acc, dict ) =
-            PosDict.mapAccumRowsR slotListCompactRight (initSlideAcc cellGrid.idGenerator) cellGrid.dict
+        compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+        compactSlotsRight slideAcc =
+            List.foldr compactSlotReducer (initCompactAcc slideAcc)
+                >> compactAccToReturn
 
+        ( acc, dict ) =
+            PosDict.mapAccumRowsR compactSlotsRight (initSlideAcc cellGrid.idGenerator) cellGrid.dict
+
+        oldCellPosDict =
+            toCellPosDict cellGrid.dict
+
+        newCellPosDict =
+            toCellPosDict dict
+
+        mergedIdPairToCellEntry : ( IncId, IncId ) -> Maybe (PosDict.Entry Cell)
+        mergedIdPairToCellEntry ( fromId, toId ) =
+            Maybe.map2
+                (\( _, oldCell ) ( newPos, _ ) ->
+                    ( newPos, oldCell )
+                )
+                (Dict.find (\_ cell -> cell.id == fromId) oldCellPosDict)
+                (Dict.find (\_ cell -> cell.id == toId) newCellPosDict)
+    in
+    cellGrid
+        |> updateFromSlideResponse acc dict
+        |> fillRandomEmpty
+        |> Maybe.withDefault cellGrid
+
+
+updateFromSlideResponse : SlideAcc -> PosDict Slot -> CellGrid -> CellGrid
+updateFromSlideResponse acc dict cellGrid =
+    let
         oldCellPosDict =
             toCellPosDict cellGrid.dict
 
@@ -158,8 +187,6 @@ slideRight cellGrid =
         , generatedIds = []
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
     }
-        |> fillRandomEmpty
-        |> Maybe.withDefault cellGrid
 
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
@@ -195,13 +222,6 @@ fillRandomPosition ( h, t ) cellGrid =
 
 
 -- COMPACT ACC AND REDUCER
-
-
-slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-slotListCompactRight slideAcc slots =
-    slots
-        |> List.foldr compactSlotReducer (initCompactAcc slideAcc)
-        |> compactAccToReturn
 
 
 type alias CompactAcc =
