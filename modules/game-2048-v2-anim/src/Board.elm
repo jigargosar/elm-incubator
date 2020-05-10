@@ -15,10 +15,6 @@ import PosDict exposing (PosDict)
 import Tuple exposing (mapFirst)
 
 
-
--- Cell
-
-
 type Slot
     = Filled Cell
     | Empty
