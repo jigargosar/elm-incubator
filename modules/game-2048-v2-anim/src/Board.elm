@@ -42,7 +42,7 @@ newCell num generator =
 type alias CellGrid =
     { idGenerator : IncId.Generator
     , dict : PosDict Slot
-    , merged : List ( IntPos, Cell )
+    , merged : PosDict.EntryList Cell
     , generatedIds : List IncId
     , step : Int
     }
@@ -72,6 +72,13 @@ initialCellGrid =
     , merged = []
     , generatedIds = []
     , step = 0
+    }
+
+
+type alias Info =
+    { cellEntries : PosDict.EntryList Slot
+    , generatedIds : List IncId
+    , mergedCellEntries : PosDict.EntryList Cell
     }
 
 
