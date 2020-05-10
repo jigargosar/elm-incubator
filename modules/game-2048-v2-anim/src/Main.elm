@@ -206,12 +206,12 @@ renderGridModel tiles =
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (List.map renderKeyedTile tiles)
+            (List.map viewKeyedTile tiles)
         ]
 
 
-renderKeyedTile : Tile -> ( String, HM )
-renderKeyedTile tile =
+viewKeyedTile : Tile -> ( String, HM )
+viewKeyedTile tile =
     ( tile.id
     , if tile.removed then
         text ""
