@@ -85,7 +85,7 @@ updateCellGrid cellGrid =
             cellGrid.dict
                 |> PosDict.swap ( 1, 1 ) ( 3, 1 )
                 |> PosDict.swap ( 2, 2 ) ( 3, 2 )
-                |> Dict.insert ( 3, 1 ) (Filled generatedCell)
+                |> Dict.insert ( 2, 1 ) (Filled generatedCell)
 
         ( generatedCell, idGenerator ) =
             newCell 2 cellGrid.idGenerator
@@ -94,7 +94,7 @@ updateCellGrid cellGrid =
             [ generatedCell.id ]
     in
     { cellGrid
-        | dict = nextDict
+        | dict = nextDict |> Debug.log "debug"
         , generatedIds = nextGenerated
         , idGenerator = idGenerator
     }
@@ -108,7 +108,7 @@ viewCellGrid cellGrid =
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (viewKeyedCells cellGrid.dict)
+            (viewKeyedCells cellGrid)
         ]
 
 
@@ -120,8 +120,8 @@ type alias CellView =
     }
 
 
-viewKeyedCells : PosDict Slot -> List ( String, HM )
-viewKeyedCells dict =
+viewKeyedCells : { a | dict : PosDict Slot, generatedIds : List IncId } -> List ( String, HM )
+viewKeyedCells { dict, generatedIds } =
     let
         cellViewList : List CellView
         cellViewList =
@@ -131,7 +131,17 @@ viewKeyedCells dict =
                     (\( pos, cell ) ->
                         case cell of
                             Filled { id, num } ->
-                                Just { id = id, pos = pos, num = num, anim = Existing }
+                                Just
+                                    { id = id
+                                    , pos = pos
+                                    , num = num
+                                    , anim =
+                                        if List.member id generatedIds then
+                                            Generated
+
+                                        else
+                                            Existing
+                                    }
 
                             Empty ->
                                 Nothing
