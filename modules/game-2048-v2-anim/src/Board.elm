@@ -190,12 +190,12 @@ compactAccToReturn acc =
             List.repeat acc.padCount Empty
                 ++ List.map Filled (consMaybe acc.unprocessed acc.processed)
 
-        _ =
+        foo =
             if List.length slots /= 4 then
                 Debug.todo "impl"
 
             else
-                1
+                never
     in
     ( acc.slideAcc, slots )
 
