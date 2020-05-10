@@ -98,7 +98,7 @@ updateCellGrid cellGrid =
         bar : PosDict Cell
         bar =
             PosDict.fill Empty size
-                |> PosDict.insertEntryList foo
+                |> PosDict.insertAll foo
     in
     { cellGrid
         | dict =

@@ -1,4 +1,4 @@
-module PosDict exposing (Entry, EntryList, PosDict, clamp, fill, fromLists, insertEntry, insertEntryList)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, fill, fromLists, insertAll, insertEntry)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
@@ -38,8 +38,8 @@ insertEntry =
     uncurry Dict.insert
 
 
-insertEntryList : EntryList a -> PosDict a -> PosDict a
-insertEntryList entryList posDict =
+insertAll : EntryList a -> PosDict a -> PosDict a
+insertAll entryList posDict =
     List.foldl insertEntry posDict entryList
 
 
@@ -47,6 +47,6 @@ pairTo b a =
     ( a, b )
 
 
-clamp : IntSize -> PosDict v -> PosDict v
-clamp s =
+constrain : IntSize -> PosDict v -> PosDict v
+constrain s =
     Dict.filter (\p _ -> IntSize.contains p s)
