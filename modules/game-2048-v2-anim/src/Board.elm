@@ -138,7 +138,7 @@ slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
         ( acc, dict ) =
-            slideRightHelp (initSlideAcc cellGrid.idGenerator) cellGrid.dict
+            PosDict.mapAccumRowsR slotsReducer (initSlideAcc cellGrid.idGenerator) cellGrid.dict
     in
     { cellGrid
         | dict = dict
@@ -146,16 +146,6 @@ slideRight cellGrid =
         , generatedIds = []
         , mergedEntries = []
     }
-
-
-slideRightHelp : SlideAcc -> PosDict Slot -> ( SlideAcc, PosDict Slot )
-slideRightHelp initialSlideAcc dict =
-    let
-        foo : ( SlideAcc, PosDict Slot )
-        foo =
-            PosDict.mapAccumRowsR slotsReducer initialSlideAcc dict
-    in
-    ( initialSlideAcc, dict )
 
 
 slotsReducer : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
