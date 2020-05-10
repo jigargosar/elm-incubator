@@ -27,6 +27,7 @@ viewCellGrid cellGrid =
         ]
 
 
+viewKeyedCells : Board.CellGrid -> List ( String, HM )
 viewKeyedCells cellGrid =
     let
         { dict, generatedIds, merged } =
