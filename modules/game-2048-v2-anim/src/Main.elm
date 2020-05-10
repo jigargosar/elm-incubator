@@ -27,8 +27,11 @@ viewCellGrid cellGrid =
         ]
 
 
-viewKeyedCells { dict, generatedIds, merged } =
+viewKeyedCells cellGrid =
     let
+        { dict, generatedIds, merged } =
+            cellGrid
+
         idToAnim : IncId -> TileAnim
         idToAnim id =
             if List.member id generatedIds then
