@@ -148,6 +148,10 @@ slideRight cellGrid =
     }
 
 
+
+-- COMPACT ACC AND REDUCER
+
+
 slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
 slotListCompactRight slideAcc slots =
     slots
