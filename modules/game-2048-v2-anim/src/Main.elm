@@ -68,6 +68,35 @@ initialCellGrid =
     }
 
 
+viewCellGrid : CellGrid -> HM
+viewCellGrid cellGrid =
+    div
+        [ class "pa3 code f2 debug" ]
+        [ Html.Keyed.node "div"
+            [ style "width" "400px"
+            , style "height" "400px"
+            ]
+            (viewKeyedCells cellGrid.dict)
+        ]
+
+
+viewKeyedCells : PosDict Cell -> List ( String, HM )
+viewKeyedCells dict =
+    dict
+        |> Dict.toList
+        |> List.filterMap
+            (\( p, c ) ->
+                case c of
+                    Cell id num ->
+                        Just ( id, renderTile p num Existing )
+
+                    Empty ->
+                        Nothing
+            )
+        |> List.sortBy (Tuple.first >> IncId.toInt)
+        |> List.map (Tuple.mapFirst IncId.toString)
+
+
 
 -- Model
 

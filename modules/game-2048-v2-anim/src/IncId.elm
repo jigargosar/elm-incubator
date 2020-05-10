@@ -1,4 +1,4 @@
-module IncId exposing (Generator, IncId, new, newGenerator)
+module IncId exposing (Generator, IncId, new, newGenerator, toInt, toString)
 
 
 type IncId
@@ -17,3 +17,13 @@ newGenerator =
 new : Generator -> ( IncId, Generator )
 new (Generator nextId) =
     ( IncId nextId, Generator (nextId + 1) )
+
+
+toInt : IncId -> Int
+toInt (IncId i) =
+    i
+
+
+toString : IncId -> String
+toString =
+    toInt >> String.fromInt
