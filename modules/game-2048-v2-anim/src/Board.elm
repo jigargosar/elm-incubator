@@ -17,7 +17,7 @@ import IntSize
 import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
-import Tuple exposing (first, mapFirst, mapSecond, second)
+import Tuple exposing (first, mapFirst, mapSecond, pair, second)
 
 
 type Slot
@@ -38,6 +38,11 @@ toCell slot =
 
         Empty ->
             Nothing
+
+
+toCellPosDict : PosDict Slot -> PosDict Cell
+toCellPosDict =
+    Dict.filterMap (\_ -> toCell)
 
 
 type alias Cell =
@@ -106,15 +111,7 @@ info : CellGrid -> Info
 info cellGrid =
     { entries =
         cellGrid.dict
-            |> Dict.filterMap
-                (\_ slot ->
-                    case slot of
-                        Filled cell ->
-                            Just cell
-
-                        Empty ->
-                            Nothing
-                )
+            |> toCellPosDict
             |> Dict.toList
     , generatedIds = cellGrid.generatedIds
     , mergedEntries = cellGrid.mergedEntries
@@ -139,12 +136,27 @@ slideRight cellGrid =
     let
         ( acc, dict ) =
             PosDict.mapAccumRowsR slotListCompactRight (initSlideAcc cellGrid.idGenerator) cellGrid.dict
+
+        oldCellPosDict =
+            toCellPosDict cellGrid.dict
+
+        newCellPosDict =
+            toCellPosDict dict
+
+        mergedIdPairToCellEntry : ( IncId, IncId ) -> Maybe (PosDict.Entry Cell)
+        mergedIdPairToCellEntry ( fromId, toId ) =
+            Maybe.map2
+                (\( _, oldCell ) ( newPos, _ ) ->
+                    ( newPos, oldCell )
+                )
+                (Dict.find (\_ cell -> cell.id == fromId) oldCellPosDict)
+                (Dict.find (\_ cell -> cell.id == toId) newCellPosDict)
     in
     { cellGrid
         | dict = dict
         , idGenerator = acc.idGenerator
         , generatedIds = []
-        , mergedEntries = []
+        , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
     }
 
 
