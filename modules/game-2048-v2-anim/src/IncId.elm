@@ -1,4 +1,4 @@
-module IncId exposing (IncId, new, newGenerator)
+module IncId exposing (Generator, IncId, new, newGenerator)
 
 
 type IncId

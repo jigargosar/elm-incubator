@@ -13,12 +13,22 @@ import Task
 
 
 
--- Grid
+-- Cell
 
 
 type Cell
     = Cell IncId Int
     | Empty
+
+
+newCell : Int -> IncId.Generator -> ( Cell, IncId.Generator )
+newCell num generator =
+    let
+        initCell id =
+            Cell id num
+    in
+    IncId.new generator
+        |> Tuple.mapFirst initCell
 
 
 
