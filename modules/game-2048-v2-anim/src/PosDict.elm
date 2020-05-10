@@ -1,4 +1,4 @@
-module PosDict exposing (PosDict, clamp, fromLists)
+module PosDict exposing (PosDict, clamp, fill, fromLists)
 
 import Dict exposing (Dict)
 import IntPos exposing (IntPos)
@@ -15,6 +15,17 @@ fromLists =
     List.indexedMap (\y -> List.indexedMap (\x -> pair ( x, y )))
         >> List.concat
         >> Dict.fromList
+
+
+fill : a -> IntSize -> PosDict a
+fill a s =
+    IntSize.positions s
+        |> List.map (pairTo a)
+        |> Dict.fromList
+
+
+pairTo b a =
+    ( a, b )
 
 
 clamp : IntSize -> PosDict v -> PosDict v

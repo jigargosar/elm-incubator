@@ -2,11 +2,14 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Cons exposing (Cons)
+import Dict
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
+import IntSize
+import PosDict exposing (PosDict)
 import Process
 import Set
 import Task
@@ -29,6 +32,40 @@ newCell num generator =
     in
     IncId.new generator
         |> Tuple.mapFirst initCell
+
+
+
+-- Cell Grid
+
+
+type alias CellGrid =
+    { idGenerator : IncId.Generator
+    , dict : PosDict Cell
+    }
+
+
+size =
+    IntSize.new 4 4
+
+
+initialCellGrid : CellGrid
+initialCellGrid =
+    let
+        idGen0 =
+            IncId.newGenerator
+
+        ( cell1, idGen1 ) =
+            newCell 2 idGen0
+
+        ( cell2, idGen2 ) =
+            newCell 4 idGen1
+    in
+    { idGenerator = idGen2
+    , dict =
+        PosDict.fill Empty size
+            |> Dict.insert ( 1, 1 ) cell1
+            |> Dict.insert ( 2, 2 ) cell2
+    }
 
 
 
