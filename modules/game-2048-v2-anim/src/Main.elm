@@ -5,10 +5,20 @@ import Cons exposing (Cons)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
+import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import Process
 import Set
 import Task
+
+
+
+-- Grid
+
+
+type Cell
+    = Cell IncId Int
+    | Empty
 
 
 
