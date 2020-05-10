@@ -2,7 +2,8 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Cons exposing (Cons)
-import Dict
+import Dict exposing (Dict)
+import Dict.Extra as Dict
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
@@ -65,6 +66,30 @@ initialCellGrid =
         PosDict.fill Empty size
             |> Dict.insert ( 1, 1 ) cell1
             |> Dict.insert ( 2, 2 ) cell2
+    }
+
+
+updateCellGrid : CellGrid -> CellGrid
+updateCellGrid cellGrid =
+    let
+        idDict : Dict Int CellView
+        idDict =
+            cellGrid.dict
+                |> Dict.toList
+                |> List.filterMap
+                    (\( pos, cell ) ->
+                        case cell of
+                            Cell id num ->
+                                Just { id = id, pos = pos, num = num, anim = Existing }
+
+                            Empty ->
+                                Nothing
+                    )
+                |> Dict.fromListBy (.id >> IncId.toInt)
+    in
+    { cellGrid
+        | dict =
+            cellGrid.dict
     }
 
 
