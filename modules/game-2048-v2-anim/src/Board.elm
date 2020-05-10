@@ -10,6 +10,7 @@ module Board exposing
 import Dict exposing (Dict)
 import Dict.Extra as Dict
 import IncId exposing (IncId)
+import IntPos exposing (IntPos)
 import IntSize
 import PosDict exposing (PosDict)
 import Tuple exposing (mapFirst)
@@ -18,6 +19,21 @@ import Tuple exposing (mapFirst)
 type Slot
     = Filled Cell
     | Empty
+
+
+cellAt : IntPos -> PosDict Slot -> Maybe Cell
+cellAt pos =
+    Dict.get pos >> Maybe.andThen toCell
+
+
+toCell : Slot -> Maybe Cell
+toCell slot =
+    case slot of
+        Filled cell ->
+            Just cell
+
+        Empty ->
+            Nothing
 
 
 type alias Cell =
@@ -130,18 +146,13 @@ updateCellGrid cellGrid =
             let
                 foo =
                     Maybe.map2
-                        (\s1 s2 ->
-                            case ( s1, s2 ) of
-                                ( Filled c1, Filled c2 ) ->
-                                    [ ( ( 0, 1 ), c1 )
-                                    , ( ( 0, 1 ), c2 )
-                                    ]
-
-                                _ ->
-                                    []
+                        (\c1 c2 ->
+                            [ ( ( 0, 1 ), c1 )
+                            , ( ( 0, 1 ), c2 )
+                            ]
                         )
-                        (Dict.get ( 2, 1 ) cellGrid.dict)
-                        (Dict.get ( 3, 1 ) cellGrid.dict)
+                        (cellAt ( 2, 1 ) cellGrid.dict)
+                        (cellAt ( 3, 1 ) cellGrid.dict)
                         |> Maybe.withDefault []
 
                 nextDict =
