@@ -200,8 +200,7 @@ initialGridModelCons =
 renderTileList : TileList -> HM
 renderTileList tiles =
     div
-        [ class "pa3 code f2 debug"
-        ]
+        [ class "pa3 code f2 debug" ]
         [ Html.Keyed.node "div"
             [ style "width" "400px"
             , style "height" "400px"
