@@ -16,7 +16,7 @@ import Task
 
 
 type alias Model =
-    { gridCons : Cons TileList
+    { tileListCons : Cons TileList
     }
 
 
@@ -26,7 +26,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { gridCons = initialGridModelCons
+    ( { tileListCons = initialTileListCons
       }
     , stepTiles
     )
@@ -52,12 +52,12 @@ update message model =
             ( model, Cmd.none )
 
         StepTiles ->
-            case Cons.fromTail model.gridCons of
+            case Cons.fromTail model.tileListCons of
                 Nothing ->
                     init ()
 
                 Just gridCons ->
-                    ( { model | gridCons = gridCons }
+                    ( { model | tileListCons = gridCons }
                     , stepTiles
                     )
 
@@ -84,7 +84,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , renderTileListGrid (Cons.head model.gridCons)
+            , renderTileListGrid (Cons.head model.tileListCons)
             ]
         ]
 
@@ -116,8 +116,8 @@ type alias TileList =
     List Tile
 
 
-initialGridModelCons : Cons TileList
-initialGridModelCons =
+initialTileListCons : Cons TileList
+initialTileListCons =
     let
         initTile : String -> Int -> IntPos -> TileAnim -> Tile
         initTile id num pos anim =
