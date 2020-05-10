@@ -171,6 +171,7 @@ view model =
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , renderTileListGrid (Cons.head model.tileListCons)
+            , viewCellGrid initialCellGrid
             ]
         ]
 
