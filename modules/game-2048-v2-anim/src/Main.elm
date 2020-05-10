@@ -144,12 +144,16 @@ init () =
     ( { tileListCons = initialTileListCons
       , cellGrid = initialCellGrid
       }
-    , stepTiles
+    , Cmd.batch [ stepTiles, stepCellGrid ]
     )
 
 
 stepTiles =
     Process.sleep 2000 |> Task.perform (always StepTiles)
+
+
+stepCellGrid =
+    Process.sleep 2000 |> Task.perform (always StepCellGrid)
 
 
 
@@ -159,6 +163,7 @@ stepTiles =
 type Msg
     = NoOp
     | StepTiles
+    | StepCellGrid
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -176,6 +181,9 @@ update message model =
                     ( { model | tileListCons = gridCons }
                     , stepTiles
                     )
+
+        StepCellGrid ->
+            ( { model | cellGrid = updateCellGrid model.cellGrid }, stepCellGrid )
 
 
 subscriptions : Model -> Sub Msg
