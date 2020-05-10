@@ -72,37 +72,11 @@ initialCellGrid =
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
-    let
-        foo : PosDict.EntryList Cell
-        foo =
-            cellGrid.dict
-                |> Dict.values
-                |> List.filterMap
-                    (\cell ->
-                        case cell of
-                            Cell id _ ->
-                                case IncId.toInt id of
-                                    1 ->
-                                        Just ( ( 3, 1 ), cell )
-
-                                    2 ->
-                                        Just ( ( 3, 2 ), cell )
-
-                                    _ ->
-                                        Nothing
-
-                            Empty ->
-                                Nothing
-                    )
-
-        bar : PosDict Cell
-        bar =
-            PosDict.filled Empty size
-                |> PosDict.insertAll foo
-    in
     { cellGrid
         | dict =
             cellGrid.dict
+                |> PosDict.swap ( 1, 1 ) ( 3, 1 )
+                |> PosDict.swap ( 2, 2 ) ( 3, 2 )
     }
 
 

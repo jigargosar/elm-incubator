@@ -1,4 +1,4 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, swap)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
