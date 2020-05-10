@@ -158,6 +158,8 @@ slideRight cellGrid =
         , generatedIds = []
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
     }
+        |> fillRandomEmpty
+        |> Maybe.withDefault cellGrid
 
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
