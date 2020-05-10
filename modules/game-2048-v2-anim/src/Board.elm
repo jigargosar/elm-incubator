@@ -7,14 +7,17 @@ module Board exposing
     , updateCellGrid
     )
 
+import Basics.Extra exposing (uncurry)
+import Cons
 import Dict exposing (Dict)
 import Dict.Extra as Dict
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
+import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
-import Tuple exposing (mapFirst)
+import Tuple exposing (first, mapFirst)
 
 
 type Slot
@@ -116,6 +119,44 @@ info cellGrid =
     , generatedIds = cellGrid.generatedIds
     , mergedEntries = cellGrid.mergedEntries
     }
+
+
+type alias SlideAcc =
+    { idGenerator : IncId.Generator
+    , mergedIdPairs : List ( IncId, IncId )
+    }
+
+
+initSlideAcc : IncId.Generator -> SlideAcc
+initSlideAcc generator =
+    { idGenerator = generator
+    , mergedIdPairs = []
+    }
+
+
+slideRight : CellGrid -> CellGrid
+slideRight cellGrid =
+    let
+        ( acc, dict ) =
+            slideRightHelp (initSlideAcc cellGrid.idGenerator) cellGrid.dict
+    in
+    { cellGrid
+        | dict = dict
+        , idGenerator = acc.idGenerator
+        , generatedIds = []
+        , mergedEntries = []
+    }
+
+
+slideRightHelp : SlideAcc -> PosDict Slot -> ( SlideAcc, PosDict Slot )
+slideRightHelp acc dict =
+    let
+        _ =
+            Dict.toList dict
+                |> List.gatherEqualsBy (first >> first)
+                |> List.map Cons.toList
+    in
+    ( acc, dict )
 
 
 updateCellGrid : CellGrid -> CellGrid
