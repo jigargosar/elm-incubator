@@ -103,6 +103,7 @@ viewKeyedCells dict =
 
 type alias Model =
     { tileListCons : Cons TileList
+    , cellGrid : CellGrid
     }
 
 
@@ -113,6 +114,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { tileListCons = initialTileListCons
+      , cellGrid = initialCellGrid
       }
     , stepTiles
     )
@@ -171,7 +173,7 @@ view model =
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , renderTileListGrid (Cons.head model.tileListCons)
-            , viewCellGrid initialCellGrid
+            , viewCellGrid model.cellGrid
             ]
         ]
 
