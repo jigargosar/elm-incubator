@@ -56,7 +56,7 @@ newCell num generator =
 type alias CellGrid =
     { idGenerator : IncId.Generator
     , dict : PosDict Slot
-    , merged : PosDict.EntryList Cell
+    , mergedEntries : PosDict.EntryList Cell
     , generatedIds : List IncId
     , step : Int
     }
@@ -83,7 +83,7 @@ initialCellGrid =
         PosDict.filled Empty size
             |> Dict.insert ( 1, 1 ) (Filled cell1)
             |> Dict.insert ( 2, 2 ) (Filled cell2)
-    , merged = []
+    , mergedEntries = []
     , generatedIds = []
     , step = 0
     }
@@ -111,7 +111,7 @@ info cellGrid =
                 )
             |> Dict.toList
     , generatedIds = cellGrid.generatedIds
-    , mergedEntries = cellGrid.merged
+    , mergedEntries = cellGrid.mergedEntries
     }
 
 
@@ -138,7 +138,7 @@ updateCellGrid cellGrid =
                 | dict = nextDict
                 , idGenerator = nextIdGenerator
                 , generatedIds = nextGenerated
-                , merged = []
+                , mergedEntries = []
                 , step = cellGrid.step + 1
             }
 
@@ -176,7 +176,7 @@ updateCellGrid cellGrid =
                 | dict = nextDict
                 , generatedIds = nextGenerated
                 , idGenerator = idGen1
-                , merged = mergedEntries
+                , mergedEntries = mergedEntries
                 , step = cellGrid.step + 1
             }
 
@@ -185,7 +185,7 @@ updateCellGrid cellGrid =
                 | idGenerator = IncId.newGenerator
                 , dict = Dict.empty
                 , generatedIds = []
-                , merged = []
+                , mergedEntries = []
                 , step = cellGrid.step + 1
             }
 

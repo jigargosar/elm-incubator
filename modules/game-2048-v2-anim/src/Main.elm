@@ -29,7 +29,7 @@ viewCellGrid cellGrid =
 viewKeyedCells : Board.CellGrid -> List ( String, HM )
 viewKeyedCells cellGrid =
     let
-        { generatedIds, merged } =
+        { generatedIds, mergedEntries } =
             cellGrid
 
         { entries } =
@@ -61,7 +61,7 @@ viewKeyedCells cellGrid =
                     , renderTile pos cell.num Merged
                     )
                 )
-                merged
+                mergedEntries
     in
     (cellViewList ++ mergedCellViewList)
         |> List.sortBy (first >> IncId.toInt)
