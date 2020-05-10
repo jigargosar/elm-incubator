@@ -216,17 +216,17 @@ viewKeyedTile tile =
         text ""
 
       else
-        viewTile tile
+        viewTile tile.pos tile.num tile.anim
     )
 
 
-viewTile : Tile -> HM
-viewTile tile =
+viewTile : IntPos -> Int -> TileAnim -> HM
+viewTile pos num anim =
     div
         [ style "width" "100px"
         , style "height" "100px"
         , class "absolute flex justify-center items-center"
-        , style "transform" (renderTileTransform tile)
+        , style "transform" (renderTileTransform pos)
         , style "transition" "transform 500ms"
         , style "outline" "none"
         ]
@@ -235,7 +235,7 @@ viewTile tile =
             , style "height" "100px"
             , style "background-color" "rgba(255,255,255,0.9)"
             , class "flex justify-center items-center"
-            , case tile.anim of
+            , case anim of
                 Generated ->
                     class "animate__animated  animate__zoomIn animate__delay-2s "
 
@@ -246,17 +246,17 @@ viewTile tile =
                 Existing ->
                     class ""
             ]
-            [ text (String.fromInt tile.num) ]
+            [ text (String.fromInt num) ]
         ]
 
 
-renderTileTransform tile =
+renderTileTransform pos =
     let
         postPartToPx n =
             String.fromInt (n * 100) ++ "px"
 
         ( sx, sy ) =
-            tile.pos
+            pos
                 |> Tuple.mapBoth postPartToPx postPartToPx
     in
     [ "translate(", sx, ",", sy, ")" ]
