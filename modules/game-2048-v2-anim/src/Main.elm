@@ -154,6 +154,7 @@ updateCellGrid cellGrid =
                 | idGenerator = IncId.newGenerator
                 , dict = Dict.empty
                 , generatedIds = []
+                , merged = []
                 , step = cellGrid.step + 1
             }
 
@@ -173,8 +174,7 @@ viewCellGrid cellGrid =
         ]
 
 
-viewKeyedCells : { a | dict : PosDict Slot, generatedIds : List IncId } -> List ( String, HM )
-viewKeyedCells { dict, generatedIds } =
+viewKeyedCells { dict, generatedIds, merged } =
     let
         idToAnim : IncId -> TileAnim
         idToAnim id =
@@ -200,8 +200,17 @@ viewKeyedCells { dict, generatedIds } =
                             Empty ->
                                 Nothing
                     )
+
+        foo ( ( c1, c2 ), pos ) =
+            [ ( c1.id, renderTile pos c1.num Merged )
+            , ( c2.id, renderTile pos c2.num Merged )
+            ]
+
+        mergedCellViewList : List ( IncId, HM )
+        mergedCellViewList =
+            List.concatMap foo merged
     in
-    cellViewList
+    (cellViewList ++ mergedCellViewList)
         |> List.sortBy (Tuple.first >> IncId.toInt)
         |> List.map (Tuple.mapFirst IncId.toString)
 
