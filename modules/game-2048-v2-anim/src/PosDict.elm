@@ -1,8 +1,9 @@
 module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromRows, insertAll, insertEntry, mapAccumFlippedRows, mapAccumRows, swap)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra as Basics exposing (uncurry)
 import Cons
 import Dict exposing (Dict)
+import Dict.Extra as Dict
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import List.Extra as List
@@ -26,6 +27,16 @@ fromRows =
     List.indexedMap (\y -> List.indexedMap (\x -> pair ( x, y )))
         >> List.concat
         >> Dict.fromList
+
+
+fromColumns : List (List v) -> PosDict v
+fromColumns =
+    fromRows >> transpose
+
+
+transpose : PosDict a -> PosDict a
+transpose =
+    Dict.mapKeys Basics.swap
 
 
 swap : IntPos -> IntPos -> PosDict a -> PosDict a
@@ -90,3 +101,34 @@ toFlippedRows =
 flipRows : PosDict a -> PosDict a
 flipRows =
     toFlippedRows >> fromRows
+
+
+mapAccumColumns : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
+mapAccumColumns reducer acc =
+    toColumns
+        >> List.mapAccuml reducer acc
+        >> Tuple.mapSecond fromColumns
+
+
+mapAccumFlippedColumns : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
+mapAccumFlippedColumns reducer acc =
+    toFlippedColumns
+        >> List.mapAccuml reducer acc
+        >> Tuple.mapSecond (fromColumns >> flipColumns)
+
+
+toColumns : PosDict a -> List (List a)
+toColumns dict =
+    Dict.toList dict
+        |> List.gatherEqualsBy (first >> second)
+        |> List.map (Cons.toList >> List.map second)
+
+
+toFlippedColumns : PosDict a -> List (List a)
+toFlippedColumns =
+    toColumns >> List.map List.reverse
+
+
+flipColumns : PosDict a -> PosDict a
+flipColumns =
+    toFlippedColumns >> fromColumns
