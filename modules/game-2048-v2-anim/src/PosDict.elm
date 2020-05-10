@@ -1,4 +1,4 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, fill, fromLists, insertAll, insertEntry)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry)
 
 import Basics.Extra exposing (uncurry)
 import Dict exposing (Dict)
@@ -26,8 +26,8 @@ fromLists =
         >> Dict.fromList
 
 
-fill : a -> IntSize -> PosDict a
-fill a s =
+filled : a -> IntSize -> PosDict a
+filled a s =
     IntSize.positions s
         |> List.map (pairTo a)
         |> Dict.fromList

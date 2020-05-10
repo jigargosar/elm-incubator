@@ -64,7 +64,7 @@ initialCellGrid =
     in
     { idGenerator = idGen2
     , dict =
-        PosDict.fill Empty size
+        PosDict.filled Empty size
             |> Dict.insert ( 1, 1 ) cell1
             |> Dict.insert ( 2, 2 ) cell2
     }
@@ -97,7 +97,7 @@ updateCellGrid cellGrid =
 
         bar : PosDict Cell
         bar =
-            PosDict.fill Empty size
+            PosDict.filled Empty size
                 |> PosDict.insertAll foo
     in
     { cellGrid
