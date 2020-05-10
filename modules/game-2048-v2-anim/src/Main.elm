@@ -94,7 +94,7 @@ updateCellGrid cellGrid =
             [ generatedCell.id ]
     in
     { cellGrid
-        | dict = nextDict |> Debug.log "debug"
+        | dict = nextDict
         , generatedIds = nextGenerated
         , idGenerator = idGenerator
     }
