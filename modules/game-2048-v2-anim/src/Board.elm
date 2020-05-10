@@ -134,28 +134,11 @@ initSlideAcc generator =
 slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
-        compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-        compactSlotsRight slideAcc =
-            List.foldr compactSlotReducer (initCompactAcc slideAcc)
-                >> compactAccToReturn
-
         ( acc, dict ) =
-            PosDict.mapAccumRowsR compactSlotsRight (initSlideAcc cellGrid.idGenerator) cellGrid.dict
-
-        oldCellPosDict =
-            toCellPosDict cellGrid.dict
-
-        newCellPosDict =
-            toCellPosDict dict
-
-        mergedIdPairToCellEntry : ( IncId, IncId ) -> Maybe (PosDict.Entry Cell)
-        mergedIdPairToCellEntry ( fromId, toId ) =
-            Maybe.map2
-                (\( _, oldCell ) ( newPos, _ ) ->
-                    ( newPos, oldCell )
-                )
-                (Dict.find (\_ cell -> cell.id == fromId) oldCellPosDict)
-                (Dict.find (\_ cell -> cell.id == toId) newCellPosDict)
+            PosDict.mapAccumRowsR
+                compactSlotsRight
+                (initSlideAcc cellGrid.idGenerator)
+                cellGrid.dict
     in
     cellGrid
         |> updateFromSlideResponse acc dict
@@ -222,6 +205,12 @@ fillRandomPosition ( h, t ) cellGrid =
 
 
 -- COMPACT ACC AND REDUCER
+
+
+compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+compactSlotsRight slideAcc =
+    List.foldr compactSlotReducer (initCompactAcc slideAcc)
+        >> compactAccToReturn
 
 
 type alias CompactAcc =
