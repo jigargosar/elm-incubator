@@ -118,19 +118,6 @@ info cellGrid =
     }
 
 
-type alias SlideAcc =
-    { idGenerator : IncId.Generator
-    , mergedIdPairs : List ( IncId, IncId )
-    }
-
-
-initSlideAcc : IncId.Generator -> SlideAcc
-initSlideAcc generator =
-    { idGenerator = generator
-    , mergedIdPairs = []
-    }
-
-
 slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
@@ -144,6 +131,19 @@ slideRight cellGrid =
         |> updateFromSlideResponse acc dict
         |> fillRandomEmpty
         |> Maybe.withDefault cellGrid
+
+
+type alias SlideAcc =
+    { idGenerator : IncId.Generator
+    , mergedIdPairs : List ( IncId, IncId )
+    }
+
+
+initSlideAcc : IncId.Generator -> SlideAcc
+initSlideAcc generator =
+    { idGenerator = generator
+    , mergedIdPairs = []
+    }
 
 
 updateFromSlideResponse : SlideAcc -> PosDict Slot -> CellGrid -> CellGrid
