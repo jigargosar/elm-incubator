@@ -128,29 +128,8 @@ updateCellGrid cellGrid0 =
         cellGrid0.step
     of
         0 ->
-            let
-                cellGrid =
-                    slideRight cellGrid0
-            in
-            let
-                nextDict =
-                    cellGrid.dict
-                        |> Dict.insert ( 2, 1 ) (Filled generatedCell)
-
-                ( generatedCell, nextIdGenerator ) =
-                    newCell 2 cellGrid.idGenerator
-
-                nextGenerated =
-                    [ generatedCell.id ]
-            in
-            { cellGrid
-                | dict = nextDict
-                , idGenerator = nextIdGenerator
-                , generatedIds = nextGenerated
-
-                --, mergedEntries = []
-                , step = cellGrid.step + 1
-            }
+            { cellGrid0 | step = cellGrid0.step + 1 }
+                |> slideRight
 
         1 ->
             let
