@@ -132,42 +132,8 @@ updateCellGrid cellGrid0 =
                 |> slideRight
 
         1 ->
-            let
-                mergedEntries =
-                    Maybe.map2
-                        (\c1 c2 ->
-                            [ ( ( 0, 1 ), c1 )
-                            , ( ( 0, 1 ), c2 )
-                            ]
-                        )
-                        (cellAt ( 2, 1 ) cellGrid0.dict)
-                        (cellAt ( 3, 1 ) cellGrid0.dict)
-                        |> Maybe.withDefault []
-
-                nextDict =
-                    cellGrid0.dict
-                        |> Dict.remove ( 2, 1 )
-                        |> Dict.remove ( 3, 1 )
-                        |> PosDict.swap ( 3, 2 ) ( 0, 2 )
-                        |> Dict.insert ( 0, 1 ) (Filled mergedCell)
-                        |> Dict.insert ( 1, 1 ) (Filled generatedCell)
-
-                ( mergedCell, idGen0 ) =
-                    newCell 4 cellGrid0.idGenerator
-
-                ( generatedCell, idGen1 ) =
-                    newCell 2 idGen0
-
-                nextGenerated =
-                    [ generatedCell.id ]
-            in
-            { cellGrid0
-                | dict = nextDict
-                , generatedIds = nextGenerated
-                , idGenerator = idGen1
-                , mergedEntries = mergedEntries
-                , step = cellGrid0.step + 1
-            }
+            { cellGrid0 | step = cellGrid0.step + 1 }
+                |> slideLeft
 
         2 ->
             { cellGrid0
@@ -205,10 +171,12 @@ slideLeft : CellGrid -> CellGrid
 slideLeft cellGrid =
     let
         ( acc, dict ) =
-            PosDict.mapAccumRowsR
-                compactSlotsLeft
-                (initSlideAcc cellGrid.idGenerator)
-                cellGrid.dict
+            cellGrid.dict
+                |> PosDict.reverseRows
+                |> PosDict.mapAccumRowsR
+                    compactSlotsRight
+                    (initSlideAcc cellGrid.idGenerator)
+                |> mapSecond PosDict.reverseRows
     in
     cellGrid
         |> updateFromSlideResponse acc dict

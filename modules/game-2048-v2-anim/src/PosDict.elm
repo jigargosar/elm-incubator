@@ -1,4 +1,4 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, mapAccumRowsR, swap)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, mapAccumRowsR, reverseRows, swap, toRows)
 
 import Basics.Extra exposing (uncurry)
 import Cons
@@ -79,3 +79,15 @@ mapAccumRowsR reducer initialAcc dict =
         |> List.map Cons.toList
         |> List.mapAccumr entryListReducer initialAcc
         |> Tuple.mapSecond (List.concat >> Dict.fromList)
+
+
+toRows : PosDict a -> List (List a)
+toRows dict =
+    Dict.toList dict
+        |> List.gatherEqualsBy (first >> second)
+        |> List.map (Cons.toList >> List.map second)
+
+
+reverseRows : PosDict a -> PosDict a
+reverseRows =
+    toRows >> List.map List.reverse >> fromLists
