@@ -17,7 +17,7 @@ import IntSize
 import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
-import Tuple exposing (first, mapFirst)
+import Tuple exposing (first, mapFirst, mapSecond, second)
 
 
 type Slot
@@ -151,16 +151,28 @@ slideRight cellGrid =
 slideRightHelp : SlideAcc -> PosDict Slot -> ( SlideAcc, PosDict Slot )
 slideRightHelp initialSlideAcc dict =
     let
-        func : SlideAcc -> PosDict.EntryList Slot -> ( SlideAcc, PosDict.EntryList Slot )
-        func a es =
-            ( a, es )
+        slotListReducer : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+        slotListReducer a slots =
+            ( a, slots )
+
+        entryListReducer : SlideAcc -> PosDict.EntryList Slot -> ( SlideAcc, PosDict.EntryList Slot )
+        entryListReducer a es =
+            let
+                ps =
+                    List.map first es
+
+                vs : List Slot
+                vs =
+                    List.map second es
+            in
+            slotListReducer a vs |> mapSecond (List.zip ps)
 
         foo : ( SlideAcc, Dict IntPos Slot )
         foo =
             Dict.toList dict
                 |> List.gatherEqualsBy (first >> first)
                 |> List.map Cons.toList
-                |> List.mapAccumr func initialSlideAcc
+                |> List.mapAccumr entryListReducer initialSlideAcc
                 |> Tuple.mapSecond (List.concat >> Dict.fromList)
     in
     ( initialSlideAcc, dict )
