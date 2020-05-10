@@ -1,4 +1,4 @@
-module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromLists, insertAll, insertEntry, mapAccumFlippedRows, mapAccumRows, swap)
+module PosDict exposing (Entry, EntryList, PosDict, constrain, filled, fromRows, insertAll, insertEntry, mapAccumFlippedRows, mapAccumRows, swap)
 
 import Basics.Extra exposing (uncurry)
 import Cons
@@ -21,8 +21,8 @@ type alias EntryList a =
     List (Entry a)
 
 
-fromLists : List (List v) -> PosDict v
-fromLists =
+fromRows : List (List v) -> PosDict v
+fromRows =
     List.indexedMap (\y -> List.indexedMap (\x -> pair ( x, y )))
         >> List.concat
         >> Dict.fromList
@@ -65,14 +65,14 @@ mapAccumRows : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict 
 mapAccumRows reducer acc =
     toRows
         >> List.mapAccuml reducer acc
-        >> Tuple.mapSecond fromLists
+        >> Tuple.mapSecond fromRows
 
 
 mapAccumFlippedRows : (a -> List b -> ( a, List c )) -> a -> PosDict b -> ( a, PosDict c )
 mapAccumFlippedRows reducer acc =
     toFlippedRows
         >> List.mapAccuml reducer acc
-        >> Tuple.mapSecond (fromLists >> flipRows)
+        >> Tuple.mapSecond (fromRows >> flipRows)
 
 
 toRows : PosDict a -> List (List a)
@@ -89,4 +89,4 @@ toFlippedRows =
 
 flipRows : PosDict a -> PosDict a
 flipRows =
-    toFlippedRows >> fromLists
+    toFlippedRows >> fromRows
