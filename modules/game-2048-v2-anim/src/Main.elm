@@ -58,7 +58,7 @@ viewKeyedCells cellGrid =
             List.map
                 (\( pos, cell ) ->
                     ( cell.id
-                    , renderTile pos cell.num Merged
+                    , renderTile pos cell.num Existing
                     )
                 )
                 mergedEntries
