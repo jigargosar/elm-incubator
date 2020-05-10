@@ -48,6 +48,7 @@ newCell num generator =
 type alias CellGrid =
     { idGenerator : IncId.Generator
     , dict : PosDict Slot
+    , merged : List ( ( Cell, Cell ), IntPos )
     , generatedIds : List IncId
     , step : Int
     }
@@ -74,6 +75,7 @@ initialCellGrid =
         PosDict.filled Empty size
             |> Dict.insert ( 1, 1 ) (Filled cell1)
             |> Dict.insert ( 2, 2 ) (Filled cell2)
+    , merged = []
     , generatedIds = []
     , step = 0
     }
@@ -100,12 +102,54 @@ updateCellGrid cellGrid =
             in
             { cellGrid
                 | dict = nextDict
-                , generatedIds = nextGenerated
                 , idGenerator = nextIdGenerator
+                , generatedIds = nextGenerated
+                , merged = []
                 , step = cellGrid.step + 1
             }
 
         1 ->
+            let
+                foo =
+                    Maybe.map2
+                        (\s1 s2 ->
+                            case ( s1, s2 ) of
+                                ( Filled c1, Filled c2 ) ->
+                                    [ ( ( c1, c2 ), ( 0, 1 ) ) ]
+
+                                _ ->
+                                    []
+                        )
+                        (Dict.get ( 2, 1 ) cellGrid.dict)
+                        (Dict.get ( 3, 1 ) cellGrid.dict)
+                        |> Maybe.withDefault []
+
+                nextDict =
+                    cellGrid.dict
+                        |> Dict.remove ( 2, 1 )
+                        |> Dict.remove ( 3, 1 )
+                        |> PosDict.swap ( 3, 2 ) ( 0, 2 )
+                        |> Dict.insert ( 0, 1 ) (Filled mergedCell)
+                        |> Dict.insert ( 1, 1 ) (Filled generatedCell)
+
+                ( mergedCell, idGen0 ) =
+                    newCell 4 cellGrid.idGenerator
+
+                ( generatedCell, idGen1 ) =
+                    newCell 2 idGen0
+
+                nextGenerated =
+                    [ generatedCell.id ]
+            in
+            { cellGrid
+                | dict = nextDict
+                , generatedIds = nextGenerated
+                , idGenerator = idGen1
+                , merged = foo
+                , step = cellGrid.step + 1
+            }
+
+        2 ->
             { cellGrid
                 | idGenerator = IncId.newGenerator
                 , dict = Dict.empty
