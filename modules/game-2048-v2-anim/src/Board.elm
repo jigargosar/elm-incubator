@@ -148,6 +148,14 @@ slideRight cellGrid =
     }
 
 
+type alias CompactAcc =
+    { slideAcc : SlideAcc
+    , unprocessed : Maybe Cell
+    , processed : List Cell
+    , padCount : Int
+    }
+
+
 slotListCompactRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
 slotListCompactRight initialSlideAcc =
     let
