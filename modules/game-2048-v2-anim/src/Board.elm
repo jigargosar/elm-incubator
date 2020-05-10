@@ -67,6 +67,7 @@ type alias CellGrid =
     , seed : Random.Seed
     , dict : PosDict Slot
     , mergedEntries : PosDict.EntryList Cell
+    , removedIds : List IncId
     , generatedIds : List IncId
     , step : Int
     }
@@ -95,6 +96,7 @@ initialCellGrid =
             |> Dict.insert ( 1, 1 ) (Filled cell1)
             |> Dict.insert ( 2, 2 ) (Filled cell2)
     , mergedEntries = []
+    , removedIds = []
     , generatedIds = []
     , step = 0
     }
