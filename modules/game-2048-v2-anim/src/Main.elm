@@ -49,6 +49,7 @@ type alias CellGrid =
     { idGenerator : IncId.Generator
     , dict : PosDict Slot
     , generatedIds : List IncId
+    , step : Int
     }
 
 
@@ -74,18 +75,16 @@ initialCellGrid =
             |> Dict.insert ( 1, 1 ) (Filled cell1)
             |> Dict.insert ( 2, 2 ) (Filled cell2)
     , generatedIds = []
+    , step = 0
     }
 
 
 updateCellGrid : CellGrid -> CellGrid
 updateCellGrid cellGrid =
     case
-        IncId.new cellGrid.idGenerator
-            |> first
-            |> IncId.toInt
-            |> Debug.log "update with nid"
+        cellGrid.step
     of
-        3 ->
+        0 ->
             let
                 nextDict =
                     cellGrid.dict
@@ -103,13 +102,15 @@ updateCellGrid cellGrid =
                 | dict = nextDict
                 , generatedIds = nextGenerated
                 , idGenerator = nextIdGenerator
+                , step = cellGrid.step + 1
             }
 
-        4 ->
+        1 ->
             { cellGrid
                 | idGenerator = IncId.newGenerator
                 , dict = Dict.empty
                 , generatedIds = []
+                , step = cellGrid.step + 1
             }
 
         _ ->
