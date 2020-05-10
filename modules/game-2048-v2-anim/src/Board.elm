@@ -118,6 +118,10 @@ info cellGrid =
     }
 
 
+
+-- Slide
+
+
 slideRight : CellGrid -> CellGrid
 slideRight cellGrid =
     let
