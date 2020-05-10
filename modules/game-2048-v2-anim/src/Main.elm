@@ -30,8 +30,11 @@ viewCellGrid cellGrid =
 viewKeyedCells : Board.CellGrid -> List ( String, HM )
 viewKeyedCells cellGrid =
     let
-        { dict, generatedIds, merged } =
+        { generatedIds, merged } =
             cellGrid
+
+        { cellEntries } =
+            Board.info cellGrid
 
         idToAnim : IncId -> TileAnim
         idToAnim id =
@@ -43,8 +46,7 @@ viewKeyedCells cellGrid =
 
         cellViewList : List ( IncId, HM )
         cellViewList =
-            dict
-                |> Dict.toList
+            cellEntries
                 |> List.filterMap
                     (\( pos, slot ) ->
                         case slot of
