@@ -181,6 +181,13 @@ initialCellGrid =
     }
 
 
+newInitialCells : IncId.Generator -> ( ( Cell, Cell ), IncId.Generator )
+newInitialCells =
+    newCell 2
+        >> Tuple.mapSecond (newCell 4)
+        >> (\( c1, ( c2, gen ) ) -> ( ( c1, c2 ), gen ))
+
+
 
 -- Slide
 
