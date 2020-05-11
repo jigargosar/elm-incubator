@@ -161,9 +161,12 @@ initialCellGrid =
     let
         ( ( cell1, cell2 ), idGenerator ) =
             newInitialCells 2 4 IncId.newGenerator
+
+        seed =
+            Random.initialSeed 0
     in
     { idGenerator = idGenerator
-    , seed = Random.initialSeed 0
+    , seed = seed
     , dict =
         PosDict.filled Empty size
             |> Dict.insert ( 1, 1 ) (Filled cell1)
