@@ -8,7 +8,7 @@ module Board exposing
     , update
     )
 
-import Basics.Extra exposing (flip)
+import Basics.Extra exposing (flip, swap)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
 import Dict.Extra as Dict
@@ -114,6 +114,16 @@ newCell num generator =
         |> mapFirst initCell
 
 
+newCells : List Int -> IncId.Seed -> ( List Cell, IncId.Seed )
+newCells numList initialSeed =
+    let
+        reducer seed num =
+            newCell num seed |> swap
+    in
+    List.mapAccuml reducer initialSeed numList
+        |> swap
+
+
 
 -- SLOT
 
@@ -180,18 +190,13 @@ initSlotDict : ( PosDict Slot, IncId.Seed )
 initSlotDict =
     let
         ( ( cell1, cell2 ), idSeed ) =
-            newInitialCells 2 4 IncId.initialSeed
+            newInitialCellTuple 2 4 IncId.initialSeed
     in
     ( PosDict.filled Empty size
         |> Dict.insert ( 1, 1 ) (Filled cell1)
         |> Dict.insert ( 2, 2 ) (Filled cell2)
     , idSeed
     )
-
-
-
---initialCellsGenerator: IncId.Seed -> Random.Generator (List Cell, IncId.Seed)
---initialCellsGenerator initialIdSeed =
 
 
 initialPositionsGenerator : Random.Generator (List IntPos)
@@ -207,8 +212,29 @@ initialPositionsGenerator =
             )
 
 
-newInitialCells : Int -> Int -> IncId.Seed -> ( ( Cell, Cell ), IncId.Seed )
-newInitialCells num1 num2 =
+numGenerator : Random.Generator Int
+numGenerator =
+    Random.uniform 2 [ 4 ]
+
+
+initialCellEntriesGenerator : IncId.Seed -> Random.Generator ( PosDict.EntryList Cell, IncId.Seed )
+initialCellEntriesGenerator idSeed =
+    Random.map2
+        (\ps ns ->
+            newCells ns idSeed
+                |> Tuple.mapFirst (List.zip ps)
+        )
+        initialPositionsGenerator
+        initialNumGenerator
+
+
+initialNumGenerator : Random.Generator (List Int)
+initialNumGenerator =
+    Random.list 2 numGenerator
+
+
+newInitialCellTuple : Int -> Int -> IncId.Seed -> ( ( Cell, Cell ), IncId.Seed )
+newInitialCellTuple num1 num2 =
     newCell num1
         >> Tuple.mapSecond (newCell num2)
         >> (\( c1, ( c2, gen ) ) -> ( ( c1, c2 ), gen ))
