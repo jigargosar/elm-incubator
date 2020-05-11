@@ -159,23 +159,33 @@ size =
 initialCellGrid : CellGrid
 initialCellGrid =
     let
-        ( ( cell1, cell2 ), idGenerator ) =
-            newInitialCells 2 4 IncId.newGenerator
+        ( dict, idGenerator ) =
+            initSlotDict
 
         seed =
             Random.initialSeed 0
     in
     { idGenerator = idGenerator
     , seed = seed
-    , dict =
-        PosDict.filled Empty size
-            |> Dict.insert ( 1, 1 ) (Filled cell1)
-            |> Dict.insert ( 2, 2 ) (Filled cell2)
+    , dict = dict
     , mergedEntries = []
     , removedIds = []
     , newIds = []
     , newMergedIds = []
     }
+
+
+initSlotDict : ( PosDict Slot, IncId.Generator )
+initSlotDict =
+    let
+        ( ( cell1, cell2 ), idGenerator ) =
+            newInitialCells 2 4 IncId.newGenerator
+    in
+    ( PosDict.filled Empty size
+        |> Dict.insert ( 1, 1 ) (Filled cell1)
+        |> Dict.insert ( 2, 2 ) (Filled cell2)
+    , idGenerator
+    )
 
 
 newInitialCells : Int -> Int -> IncId.Generator -> ( ( Cell, Cell ), IncId.Generator )
