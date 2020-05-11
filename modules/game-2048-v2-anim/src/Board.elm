@@ -7,17 +7,16 @@ module Board exposing
     , updateCellGrid
     )
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (flip)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
 import Dict.Extra as Dict
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
-import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
-import Tuple exposing (first, mapFirst, mapSecond, pair, second)
+import Tuple exposing (mapFirst, second)
 
 
 type Slot
