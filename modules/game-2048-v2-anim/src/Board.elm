@@ -142,7 +142,7 @@ toCellPosDict =
 
 
 type alias CellGrid =
-    { idGenerator : IncId.Seed
+    { idSeed : IncId.Seed
     , seed : Random.Seed
     , dict : PosDict Slot
     , mergedEntries : PosDict.EntryList Cell
@@ -159,13 +159,13 @@ size =
 initialCellGrid : CellGrid
 initialCellGrid =
     let
-        ( dict, idGenerator ) =
+        ( dict, idSeed ) =
             initSlotDict
 
         seed =
             Random.initialSeed 0
     in
-    { idGenerator = idGenerator
+    { idSeed = idSeed
     , seed = seed
     , dict = dict
     , mergedEntries = []
@@ -178,13 +178,13 @@ initialCellGrid =
 initSlotDict : ( PosDict Slot, IncId.Seed )
 initSlotDict =
     let
-        ( ( cell1, cell2 ), idGenerator ) =
+        ( ( cell1, cell2 ), idSeed ) =
             newInitialCells 2 4 IncId.initialSeed
     in
     ( PosDict.filled Empty size
         |> Dict.insert ( 1, 1 ) (Filled cell1)
         |> Dict.insert ( 2, 2 ) (Filled cell2)
-    , idGenerator
+    , idSeed
     )
 
 
@@ -211,7 +211,7 @@ slideBy func cellGrid =
     let
         ( acc, dict ) =
             cellGrid.dict
-                |> func compactSlotsRight (initSlideAcc cellGrid.idGenerator)
+                |> func compactSlotsRight (initSlideAcc cellGrid.idSeed)
 
         compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
         compactSlotsRight slideAcc =
@@ -223,14 +223,14 @@ slideBy func cellGrid =
 
 
 type alias SlideAcc =
-    { idGenerator : IncId.Seed
+    { idSeed : IncId.Seed
     , mergedIdPairs : List ( IncId, IncId )
     }
 
 
 initSlideAcc : IncId.Seed -> SlideAcc
 initSlideAcc generator =
-    { idGenerator = generator
+    { idSeed = generator
     , mergedIdPairs = []
     }
 
@@ -255,7 +255,7 @@ updateFromSlideResponse acc dict cellGrid =
     in
     { cellGrid
         | dict = dict
-        , idGenerator = acc.idGenerator
+        , idSeed = acc.idSeed
         , newIds = []
         , newMergedIds = acc.mergedIdPairs |> List.map Tuple.second |> List.uniqueBy IncId.toInt
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
@@ -283,13 +283,13 @@ fillRandomPosition ( h, t ) cellGrid =
                 )
                 cellGrid.seed
 
-        ( cell, idGenerator ) =
-            newCell num cellGrid.idGenerator
+        ( cell, idSeed ) =
+            newCell num cellGrid.idSeed
     in
     { cellGrid
         | dict = Dict.insert pos (Filled cell) cellGrid.dict
         , seed = seed
-        , idGenerator = idGenerator
+        , idSeed = idSeed
         , newIds = [ cell.id ]
     }
 
@@ -347,8 +347,8 @@ compactSlotReducer slot acc =
                     slideAcc =
                         acc.slideAcc
 
-                    ( mergedCell, idGenerator ) =
-                        newCell (cell.num + prevCell.num) slideAcc.idGenerator
+                    ( mergedCell, idSeed ) =
+                        newCell (cell.num + prevCell.num) slideAcc.idSeed
                 in
                 { acc
                     | padCount = acc.padCount + 1
@@ -356,7 +356,7 @@ compactSlotReducer slot acc =
                     , unprocessed = Nothing
                     , slideAcc =
                         { slideAcc
-                            | idGenerator = idGenerator
+                            | idSeed = idSeed
                             , mergedIdPairs =
                                 ( cell.id, mergedCell.id )
                                     :: ( prevCell.id, mergedCell.id )
