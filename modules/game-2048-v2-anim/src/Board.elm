@@ -176,39 +176,6 @@ initialCellGrid =
 
 
 
--- UPDATE
-
-
-updateCellGrid : CellGrid -> CellGrid
-updateCellGrid cellGrid =
-    case modBy 4 cellGrid.step of
-        0 ->
-            cellGrid
-                |> incStep
-                |> slideRight
-
-        1 ->
-            cellGrid
-                |> incStep
-                |> slideLeft
-
-        2 ->
-            cellGrid
-                |> incStep
-                |> slideUp
-
-        _ ->
-            cellGrid
-                |> incStep
-                |> slideDown
-
-
-incStep : CellGrid -> CellGrid
-incStep cellGrid =
-    { cellGrid | step = cellGrid.step + 1 }
-
-
-
 -- Slide
 
 
@@ -331,12 +298,6 @@ fillRandomPosition ( h, t ) cellGrid =
 compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
 compactSlotsRight slideAcc =
     List.foldr compactSlotReducer (initCompactAcc slideAcc)
-        >> compactAccToReturn
-
-
-compactSlotsLeft : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-compactSlotsLeft slideAcc =
-    List.foldl compactSlotReducer (initCompactAcc slideAcc)
         >> compactAccToReturn
 
 
