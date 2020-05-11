@@ -72,16 +72,16 @@ updateHelp : Msg -> CellGrid -> CellGrid
 updateHelp msg =
     case msg of
         SlideLeft ->
-            slideLeft
+            slideWith PosDict.mapAccumFlippedRows
 
         SlideRight ->
-            slideRight
+            slideWith PosDict.mapAccumRows
 
         SlideUp ->
-            slideUp
+            slideWith PosDict.mapAccumFlippedColumns
 
         SlideDown ->
-            slideDown
+            slideWith PosDict.mapAccumColumns
 
 
 
@@ -177,26 +177,6 @@ initialCellGrid =
 
 
 -- Slide
-
-
-slideRight : CellGrid -> CellGrid
-slideRight =
-    slideWith PosDict.mapAccumRows
-
-
-slideLeft : CellGrid -> CellGrid
-slideLeft =
-    slideWith PosDict.mapAccumFlippedRows
-
-
-slideDown : CellGrid -> CellGrid
-slideDown =
-    slideWith PosDict.mapAccumColumns
-
-
-slideUp : CellGrid -> CellGrid
-slideUp =
-    slideWith PosDict.mapAccumFlippedColumns
 
 
 slideWith :
