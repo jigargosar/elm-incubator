@@ -176,9 +176,9 @@ type alias HM =
 view : Model -> DM
 view model =
     Document "2048 Animated"
-        [ div [ class "pa3 measure center" ]
-            [ div [ class "pa3 f3" ] [ text "Play 2048" ]
-            , renderTileListGrid (Cons.head model.tileListCons)
+        [ div [ class "pa2 measure center" ]
+            [ renderTileListGrid (Cons.head model.tileListCons)
+            , div [ class "pa2" ] [ text (Debug.toString model.nextBoardMsg) ]
             , viewBoard model.board
             ]
         ]
