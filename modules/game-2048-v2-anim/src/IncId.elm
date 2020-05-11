@@ -1,4 +1,17 @@
-module IncId exposing (IncId, Seed, initialSeed, next, toInt, toString)
+module IncId exposing
+    ( IdDict
+    , IncId
+    , Seed
+    , dictFromListBy
+    , emptyDict
+    , initialSeed
+    , next
+    , toInt
+    , toString
+    )
+
+import Dict
+import Dict.Extra as Dict
 
 
 type IncId
@@ -27,3 +40,18 @@ toInt (IncId i) =
 toString : IncId -> String
 toString =
     toInt >> String.fromInt
+
+
+type IdDict a
+    = IdDict (Dict.Dict Int a)
+
+
+emptyDict : IdDict a
+emptyDict =
+    IdDict Dict.empty
+
+
+dictFromListBy : (a -> IncId) -> List a -> IdDict a
+dictFromListBy idFunc =
+    Dict.fromListBy (idFunc >> toInt)
+        >> IdDict

@@ -162,6 +162,7 @@ type alias CellGrid =
     { idSeed : IncId.Seed
     , seed : Random.Seed
     , dict : PosDict Slot
+    , entryDict : IncId.IdDict (PosDict.Entry Cell)
     , mergedEntries : PosDict.EntryList Cell
     , removedIds : List IncId
     , newIds : List IncId
@@ -182,6 +183,7 @@ initialCellGrid =
     { idSeed = idSeed
     , seed = seed
     , dict = toSlotDict cellEntries
+    , entryDict = IncId.dictFromListBy (second >> .id) cellEntries
     , mergedEntries = []
     , removedIds = []
     , newIds = []
