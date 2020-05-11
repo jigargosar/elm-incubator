@@ -2,6 +2,7 @@ module Board exposing
     ( Board
     , Cell
     , Info
+    , Msg(..)
     , info
     , init
     , update
@@ -55,9 +56,32 @@ info (Board cellGrid) =
     }
 
 
-update : Board -> Board
-update (Board cellGrid) =
-    Board (updateCellGrid cellGrid)
+type Msg
+    = SlideLeft
+    | SlideRight
+    | SlideUp
+    | SlideDown
+
+
+update : Msg -> Board -> Board
+update msg (Board cellGrid) =
+    Board (updateHelp msg cellGrid)
+
+
+updateHelp : Msg -> CellGrid -> CellGrid
+updateHelp msg =
+    case msg of
+        SlideLeft ->
+            slideLeft
+
+        SlideRight ->
+            slideRight
+
+        SlideUp ->
+            slideUp
+
+        SlideDown ->
+            slideDown
 
 
 

@@ -9,6 +9,7 @@ import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import Process
+import Random
 import Set
 import Task
 import Tuple exposing (first, mapBoth, mapFirst, second)
@@ -79,6 +80,7 @@ viewKeyedCells cellGrid =
 type alias Model =
     { tileListCons : Cons TileList
     , board : Board.Board
+    , seed : Random.Seed
     }
 
 
@@ -90,6 +92,7 @@ init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { tileListCons = initialTileListCons
       , board = Board.init
+      , seed = Random.initialSeed 0
       }
     , Cmd.batch [ stepTiles, stepCellGrid ]
     )
@@ -132,7 +135,22 @@ update message model =
                     )
 
         StepCellGrid ->
-            ( { model | board = Board.update model.board }, stepCellGrid )
+            let
+                ( boardMsg, seed ) =
+                    Random.step boardMsgGenerator model.seed
+            in
+            ( { model
+                | board = Board.update boardMsg model.board
+                , seed = seed
+              }
+            , stepCellGrid
+            )
+
+
+boardMsgGenerator : Random.Generator Board.Msg
+boardMsgGenerator =
+    Random.uniform Board.SlideLeft
+        [ Board.SlideRight, Board.SlideUp, Board.SlideDown ]
 
 
 subscriptions : Model -> Sub Msg
