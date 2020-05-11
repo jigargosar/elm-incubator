@@ -46,7 +46,7 @@ info (Board cellGrid) =
         cellGrid.dict
             |> toCellPosDict
             |> Dict.toList
-    , generatedIds = cellGrid.generatedIds
+    , generatedIds = cellGrid.newIds
     , mergedEntries = cellGrid.mergedEntries
     , removedIds = cellGrid.removedIds
     }
@@ -112,7 +112,7 @@ type alias CellGrid =
     , dict : PosDict Slot
     , mergedEntries : PosDict.EntryList Cell
     , removedIds : List IncId
-    , generatedIds : List IncId
+    , newIds : List IncId
     , step : Int
     }
 
@@ -141,7 +141,7 @@ initialCellGrid =
             |> Dict.insert ( 2, 2 ) (Filled cell2)
     , mergedEntries = []
     , removedIds = []
-    , generatedIds = []
+    , newIds = []
     , step = 0
     }
 
@@ -257,7 +257,7 @@ updateFromSlideResponse acc dict cellGrid =
     { cellGrid
         | dict = dict
         , idGenerator = acc.idGenerator
-        , generatedIds = []
+        , newIds = []
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
         , removedIds = cellGrid.mergedEntries |> List.map (second >> .id) |> (++) cellGrid.removedIds
     }
@@ -290,7 +290,7 @@ fillRandomPosition ( h, t ) cellGrid =
         | dict = Dict.insert pos (Filled cell) cellGrid.dict
         , seed = seed
         , idGenerator = idGenerator
-        , generatedIds = [ cell.id ]
+        , newIds = [ cell.id ]
     }
 
 
