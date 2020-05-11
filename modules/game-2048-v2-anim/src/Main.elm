@@ -80,6 +80,7 @@ viewKeyedCells cellGrid =
 type alias Model =
     { tileListCons : Cons TileList
     , board : Board.Board
+    , nextBoardMsg : Board.Msg
     , seed : Random.Seed
     }
 
@@ -92,6 +93,7 @@ init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { tileListCons = initialTileListCons
       , board = Board.init
+      , nextBoardMsg = Board.SlideRight
       , seed = Random.initialSeed 0
       }
     , Cmd.batch [ stepTiles, stepCellGrid ]
@@ -136,11 +138,12 @@ update message model =
 
         StepCellGrid ->
             let
-                ( boardMsg, seed ) =
+                ( nextBoardMsg, seed ) =
                     Random.step boardMsgGenerator model.seed
             in
             ( { model
-                | board = Board.update boardMsg model.board
+                | board = Board.update model.nextBoardMsg model.board
+                , nextBoardMsg = nextBoardMsg
                 , seed = seed
               }
             , stepCellGrid
