@@ -14,7 +14,7 @@ import Task
 import Tuple exposing (first, mapBoth, mapFirst, second)
 
 
-viewCellGrid : Board.CellGrid -> HM
+viewCellGrid : Board.Board -> HM
 viewCellGrid cellGrid =
     div
         [ class "pa3 code f2 debug" ]
@@ -26,10 +26,10 @@ viewCellGrid cellGrid =
         ]
 
 
-viewKeyedCells : Board.CellGrid -> List ( String, HM )
+viewKeyedCells : Board.Board -> List ( String, HM )
 viewKeyedCells cellGrid =
     let
-        { entries, mergedEntries, generatedIds } =
+        { entries, mergedEntries, generatedIds, removedIds } =
             Board.info cellGrid
 
         idToAnim : IncId -> TileAnim
@@ -62,7 +62,7 @@ viewKeyedCells cellGrid =
 
         removedCellViewList : List ( IncId, HM )
         removedCellViewList =
-            List.map (\id -> ( id, text "" )) cellGrid.removedIds
+            List.map (\id -> ( id, text "" )) removedIds
     in
     (cellViewList ++ mergedCellViewList ++ removedCellViewList)
         |> List.sortBy (first >> IncId.toInt)
@@ -75,7 +75,7 @@ viewKeyedCells cellGrid =
 
 type alias Model =
     { tileListCons : Cons TileList
-    , cellGrid : Board.CellGrid
+    , board : Board.Board
     }
 
 
@@ -86,7 +86,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { tileListCons = initialTileListCons
-      , cellGrid = Board.initialCellGrid
+      , board = Board.init
       }
     , Cmd.batch [ stepTiles, stepCellGrid ]
     )
@@ -129,7 +129,7 @@ update message model =
                     )
 
         StepCellGrid ->
-            ( { model | cellGrid = Board.updateCellGrid model.cellGrid }, stepCellGrid )
+            ( { model | board = Board.update model.board }, stepCellGrid )
 
 
 subscriptions : Model -> Sub Msg
@@ -155,7 +155,7 @@ view model =
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , renderTileListGrid (Cons.head model.tileListCons)
-            , viewCellGrid model.cellGrid
+            , viewCellGrid model.board
             ]
         ]
 

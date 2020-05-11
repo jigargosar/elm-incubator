@@ -1,10 +1,10 @@
 module Board exposing
-    ( Cell
-    , CellGrid
+    ( Board
+    , Cell
     , Info
     , info
-    , initialCellGrid
-    , updateCellGrid
+    , init
+    , update
     )
 
 import Basics.Extra exposing (flip)
@@ -19,29 +19,46 @@ import Random
 import Tuple exposing (mapFirst, second)
 
 
-type Slot
-    = Filled Cell
-    | Empty
+
+-- BOARD
 
 
-cellAt : IntPos -> PosDict Slot -> Maybe Cell
-cellAt pos =
-    Dict.get pos >> Maybe.andThen toCell
+type Board
+    = Board CellGrid
 
 
-toCell : Slot -> Maybe Cell
-toCell slot =
-    case slot of
-        Filled cell ->
-            Just cell
-
-        Empty ->
-            Nothing
+init : Board
+init =
+    Board initialCellGrid
 
 
-toCellPosDict : PosDict Slot -> PosDict Cell
-toCellPosDict =
-    Dict.filterMap (\_ -> toCell)
+type alias Info =
+    { entries : PosDict.EntryList Cell
+    , generatedIds : List IncId
+    , mergedEntries : PosDict.EntryList Cell
+    , removedIds : List IncId
+    }
+
+
+info : Board -> Info
+info (Board cellGrid) =
+    { entries =
+        cellGrid.dict
+            |> toCellPosDict
+            |> Dict.toList
+    , generatedIds = cellGrid.generatedIds
+    , mergedEntries = cellGrid.mergedEntries
+    , removedIds = cellGrid.removedIds
+    }
+
+
+update : Board -> Board
+update (Board cellGrid) =
+    Board (updateCellGrid cellGrid)
+
+
+
+-- CELL
 
 
 type alias Cell =
@@ -59,6 +76,34 @@ newCell num generator =
     in
     IncId.new generator
         |> mapFirst initCell
+
+
+
+-- SLOT
+
+
+type Slot
+    = Filled Cell
+    | Empty
+
+
+toCell : Slot -> Maybe Cell
+toCell slot =
+    case slot of
+        Filled cell ->
+            Just cell
+
+        Empty ->
+            Nothing
+
+
+toCellPosDict : PosDict Slot -> PosDict Cell
+toCellPosDict =
+    Dict.filterMap (\_ -> toCell)
+
+
+
+-- CELL GRID
 
 
 type alias CellGrid =
@@ -98,24 +143,6 @@ initialCellGrid =
     , removedIds = []
     , generatedIds = []
     , step = 0
-    }
-
-
-type alias Info =
-    { entries : PosDict.EntryList Cell
-    , generatedIds : List IncId
-    , mergedEntries : PosDict.EntryList Cell
-    }
-
-
-info : CellGrid -> Info
-info cellGrid =
-    { entries =
-        cellGrid.dict
-            |> toCellPosDict
-            |> Dict.toList
-    , generatedIds = cellGrid.generatedIds
-    , mergedEntries = cellGrid.mergedEntries
     }
 
 
