@@ -3,6 +3,9 @@ module IncId exposing
     , IncId
     , Seed
     , dictFromListBy
+    , dictGet
+    , dictInsert
+    , dictValues
     , emptyDict
     , initialSeed
     , next
@@ -55,3 +58,19 @@ dictFromListBy : (a -> IncId) -> List a -> IdDict a
 dictFromListBy idFunc =
     Dict.fromListBy (idFunc >> toInt)
         >> IdDict
+
+
+dictValues : IdDict a -> List a
+dictValues (IdDict d) =
+    Dict.values d
+
+
+dictGet : IncId -> IdDict a -> Maybe a
+dictGet id (IdDict d) =
+    Dict.get (toInt id) d
+
+
+dictInsert : IncId -> a -> IdDict a -> IdDict a
+dictInsert id a (IdDict d) =
+    Dict.insert (toInt id) a d
+        |> IdDict

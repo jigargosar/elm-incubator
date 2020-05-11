@@ -46,10 +46,7 @@ type alias Info =
 
 info : Board -> Info
 info (Board cellGrid) =
-    { entries =
-        cellGrid.dict
-            |> toCellDict
-            |> Dict.toList
+    { entries = IncId.dictValues cellGrid.entriesById
     , newIds = cellGrid.newIds
     , newMergedIds = cellGrid.newMergedIds
     , mergedEntries = cellGrid.mergedEntries
@@ -154,6 +151,11 @@ toSlotDict =
         (PosDict.filled Empty size)
 
 
+entriesByIdToSlotDict : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
+entriesByIdToSlotDict =
+    IncId.dictValues >> toSlotDict
+
+
 
 -- CELL GRID
 
@@ -161,7 +163,6 @@ toSlotDict =
 type alias CellGrid =
     { idSeed : IncId.Seed
     , seed : Random.Seed
-    , dict : PosDict Slot
     , entriesById : IncId.IdDict (PosDict.Entry Cell)
     , mergedEntries : PosDict.EntryList Cell
     , removedIds : List IncId
@@ -182,7 +183,6 @@ initialCellGrid =
     in
     { idSeed = idSeed
     , seed = seed
-    , dict = toSlotDict cellEntries
     , entriesById = IncId.dictFromListBy (second >> .id) cellEntries
     , mergedEntries = []
     , removedIds = []
@@ -247,7 +247,9 @@ slideBy :
 slideBy func cellGrid =
     let
         ( acc, dict ) =
-            cellGrid.dict
+            cellGrid.entriesById
+                |> IncId.dictValues
+                |> toSlotDict
                 |> func compactSlotsRight (initSlideAcc cellGrid.idSeed)
 
         compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
@@ -275,23 +277,20 @@ initSlideAcc generator =
 updateFromSlideResponse : SlideAcc -> PosDict Slot -> CellGrid -> CellGrid
 updateFromSlideResponse acc dict cellGrid =
     let
-        oldCellPosDict =
-            toCellDict cellGrid.dict
-
-        newCellPosDict =
-            toCellDict dict
-
         mergedIdPairToCellEntry : ( IncId, IncId ) -> Maybe (PosDict.Entry Cell)
         mergedIdPairToCellEntry ( fromId, toId ) =
             Maybe.map2
                 (\( _, oldCell ) ( newPos, _ ) ->
                     ( newPos, oldCell )
                 )
-                (Dict.find (\_ cell -> cell.id == fromId) oldCellPosDict)
-                (Dict.find (\_ cell -> cell.id == toId) newCellPosDict)
+                (IncId.dictGet fromId cellGrid.entriesById)
+                (IncId.dictGet toId newEntriesById)
+
+        newEntriesById =
+            toCellDict dict |> Dict.toList |> IncId.dictFromListBy (second >> .id)
     in
     { cellGrid
-        | dict = dict
+        | entriesById = newEntriesById
         , idSeed = acc.idSeed
         , newIds = []
         , newMergedIds = acc.mergedIdPairs |> List.map Tuple.second |> List.uniqueBy IncId.toInt
@@ -302,7 +301,7 @@ updateFromSlideResponse acc dict cellGrid =
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
 fillRandomEmpty cellGrid =
-    cellGrid.dict
+    entriesByIdToSlotDict cellGrid.entriesById
         |> Dict.filter (\_ slot -> slot == Empty)
         |> Dict.keys
         |> Cons.fromList
@@ -324,7 +323,7 @@ fillRandomPosition ( h, t ) cellGrid =
             newCell num cellGrid.idSeed
     in
     { cellGrid
-        | dict = Dict.insert pos (Filled cell) cellGrid.dict
+        | entriesById = IncId.dictInsert cell.id ( pos, cell ) cellGrid.entriesById
         , seed = seed
         , idSeed = idSeed
         , newIds = [ cell.id ]
