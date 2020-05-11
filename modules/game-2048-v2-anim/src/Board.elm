@@ -212,6 +212,11 @@ slideWith func cellGrid =
         ( acc, dict ) =
             cellGrid.dict
                 |> func compactSlotsRight (initSlideAcc cellGrid.idGenerator)
+
+        compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
+        compactSlotsRight slideAcc =
+            List.foldr compactSlotReducer (initCompactAcc slideAcc)
+                >> compactAccToReturn
     in
     cellGrid
         |> updateFromSlideResponse acc dict
@@ -293,12 +298,6 @@ fillRandomPosition ( h, t ) cellGrid =
 
 
 -- COMPACT ACC AND REDUCER
-
-
-compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-compactSlotsRight slideAcc =
-    List.foldr compactSlotReducer (initCompactAcc slideAcc)
-        >> compactAccToReturn
 
 
 type alias CompactAcc =
