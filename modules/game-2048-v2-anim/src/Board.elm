@@ -34,7 +34,8 @@ init =
 
 type alias Info =
     { entries : PosDict.EntryList Cell
-    , generatedIds : List IncId
+    , newIds : List IncId
+    , newMergedIds : List IncId
     , mergedEntries : PosDict.EntryList Cell
     , removedIds : List IncId
     }
@@ -46,7 +47,8 @@ info (Board cellGrid) =
         cellGrid.dict
             |> toCellPosDict
             |> Dict.toList
-    , generatedIds = cellGrid.newIds
+    , newIds = cellGrid.newIds
+    , newMergedIds = cellGrid.newMergedIds
     , mergedEntries = cellGrid.mergedEntries
     , removedIds = cellGrid.removedIds
     }
@@ -113,6 +115,7 @@ type alias CellGrid =
     , mergedEntries : PosDict.EntryList Cell
     , removedIds : List IncId
     , newIds : List IncId
+    , newMergedIds : List IncId
     , step : Int
     }
 
@@ -142,6 +145,7 @@ initialCellGrid =
     , mergedEntries = []
     , removedIds = []
     , newIds = []
+    , newMergedIds = []
     , step = 0
     }
 

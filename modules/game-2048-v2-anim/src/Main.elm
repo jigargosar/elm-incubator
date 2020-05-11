@@ -29,12 +29,12 @@ viewCellGrid cellGrid =
 viewKeyedCells : Board.Board -> List ( String, HM )
 viewKeyedCells cellGrid =
     let
-        { entries, mergedEntries, generatedIds, removedIds } =
+        { entries, mergedEntries, newIds, removedIds } =
             Board.info cellGrid
 
         idToAnim : IncId -> TileAnim
         idToAnim id =
-            if List.member id generatedIds then
+            if List.member id newIds then
                 Generated
 
             else
