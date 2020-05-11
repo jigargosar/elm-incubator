@@ -15,23 +15,23 @@ import Task
 import Tuple exposing (first, mapBoth, mapFirst, second)
 
 
-viewCellGrid : Board.Board -> HM
-viewCellGrid cellGrid =
+viewBoard : Board.Board -> HM
+viewBoard board =
     div
         [ class "pa3 code f2 debug" ]
         [ Html.Keyed.node "div"
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (viewKeyedCells cellGrid)
+            (viewKeyedCells board)
         ]
 
 
 viewKeyedCells : Board.Board -> List ( String, HM )
-viewKeyedCells cellGrid =
+viewKeyedCells board =
     let
         { entries, mergedEntries, newIds, newMergedIds, removedIds } =
-            Board.info cellGrid
+            Board.info board
 
         idToAnim : IncId -> TileAnim
         idToAnim id =
@@ -179,7 +179,7 @@ view model =
         [ div [ class "pa3 measure center" ]
             [ div [ class "pa3 f3" ] [ text "Play 2048" ]
             , renderTileListGrid (Cons.head model.tileListCons)
-            , viewCellGrid model.board
+            , viewBoard model.board
             ]
         ]
 
