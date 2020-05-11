@@ -170,15 +170,12 @@ size =
 initialCellGrid : CellGrid
 initialCellGrid =
     let
-        ( dict, idSeed ) =
-            initSlotDict
-
-        seed =
-            Random.initialSeed 0
+        ( ( cellEntries, idSeed ), seed ) =
+            Random.step initialCellEntriesGenerator (Random.initialSeed 0)
     in
     { idSeed = idSeed
     , seed = seed
-    , dict = dict
+    , dict = toSlotDict cellEntries
     , mergedEntries = []
     , removedIds = []
     , newIds = []
@@ -186,17 +183,10 @@ initialCellGrid =
     }
 
 
-initSlotDict : ( PosDict Slot, IncId.Seed )
-initSlotDict =
-    let
-        ( ( cell1, cell2 ), idSeed ) =
-            newInitialCellTuple 2 4 IncId.initialSeed
-    in
-    ( PosDict.filled Empty size
-        |> Dict.insert ( 1, 1 ) (Filled cell1)
-        |> Dict.insert ( 2, 2 ) (Filled cell2)
-    , idSeed
-    )
+toSlotDict : PosDict.EntryList Cell -> PosDict Slot
+toSlotDict =
+    List.foldl (Tuple.mapSecond Filled >> PosDict.insertEntry)
+        (PosDict.filled Empty size)
 
 
 initialPositionsGenerator : Random.Generator (List IntPos)
@@ -217,11 +207,11 @@ numGenerator =
     Random.uniform 2 [ 4 ]
 
 
-initialCellEntriesGenerator : IncId.Seed -> Random.Generator ( PosDict.EntryList Cell, IncId.Seed )
-initialCellEntriesGenerator idSeed =
+initialCellEntriesGenerator : Random.Generator ( PosDict.EntryList Cell, IncId.Seed )
+initialCellEntriesGenerator =
     Random.map2
         (\ps ns ->
-            newCells ns idSeed
+            newCells ns IncId.initialSeed
                 |> Tuple.mapFirst (List.zip ps)
         )
         initialPositionsGenerator
