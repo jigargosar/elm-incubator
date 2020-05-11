@@ -18,6 +18,7 @@ import IntSize
 import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
+import Random.List
 import Tuple exposing (mapFirst, second)
 
 
@@ -109,7 +110,7 @@ newCell num generator =
         initCell id =
             { id = id, num = num }
     in
-    IncId.new generator
+    IncId.next generator
         |> mapFirst initCell
 
 
@@ -186,6 +187,24 @@ initSlotDict =
         |> Dict.insert ( 2, 2 ) (Filled cell2)
     , idSeed
     )
+
+
+
+--initialCellsGenerator: IncId.Seed -> Random.Generator (List Cell, IncId.Seed)
+--initialCellsGenerator initialIdSeed =
+
+
+initialPositionsGenerator : Random.Generator (List IntPos)
+initialPositionsGenerator =
+    Random.List.choose (IntSize.positions size)
+        |> Random.andThen
+            (\( p1, ps ) ->
+                Random.List.choose ps
+                    |> Random.map
+                        (\( p2, _ ) ->
+                            List.filterMap identity [ p1, p2 ]
+                        )
+            )
 
 
 newInitialCells : Int -> Int -> IncId.Seed -> ( ( Cell, Cell ), IncId.Seed )
