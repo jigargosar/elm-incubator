@@ -14,6 +14,7 @@ import Dict.Extra as Dict
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
+import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
 import Tuple exposing (mapFirst, second)
@@ -262,6 +263,7 @@ updateFromSlideResponse acc dict cellGrid =
         | dict = dict
         , idGenerator = acc.idGenerator
         , newIds = []
+        , newMergedIds = acc.mergedIdPairs |> List.map Tuple.second |> List.uniqueBy IncId.toInt
         , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
         , removedIds = cellGrid.mergedEntries |> List.map (second >> .id) |> (++) cellGrid.removedIds
     }
