@@ -29,10 +29,7 @@ viewCellGrid cellGrid =
 viewKeyedCells : Board.CellGrid -> List ( String, HM )
 viewKeyedCells cellGrid =
     let
-        { generatedIds, mergedEntries } =
-            cellGrid
-
-        { entries } =
+        { entries, mergedEntries, generatedIds } =
             Board.info cellGrid
 
         idToAnim : IncId -> TileAnim
