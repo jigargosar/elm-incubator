@@ -151,23 +151,32 @@ initialCellGrid =
 
 
 updateCellGrid : CellGrid -> CellGrid
-updateCellGrid cellGrid0 =
-    case modBy 4 cellGrid0.step of
+updateCellGrid cellGrid =
+    case modBy 4 cellGrid.step of
         0 ->
-            { cellGrid0 | step = cellGrid0.step + 1 }
+            cellGrid
+                |> incStep
                 |> slideRight
 
         1 ->
-            { cellGrid0 | step = cellGrid0.step + 1 }
+            cellGrid
+                |> incStep
                 |> slideLeft
 
         2 ->
-            { cellGrid0 | step = cellGrid0.step + 1 }
+            cellGrid
+                |> incStep
                 |> slideUp
 
         _ ->
-            { cellGrid0 | step = cellGrid0.step + 1 }
+            cellGrid
+                |> incStep
                 |> slideDown
+
+
+incStep : CellGrid -> CellGrid
+incStep cellGrid =
+    { cellGrid | step = cellGrid.step + 1 }
 
 
 
