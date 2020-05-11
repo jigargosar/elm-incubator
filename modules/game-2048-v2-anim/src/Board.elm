@@ -149,7 +149,6 @@ type alias CellGrid =
     , removedIds : List IncId
     , newIds : List IncId
     , newMergedIds : List IncId
-    , step : Int
     }
 
 
@@ -179,7 +178,6 @@ initialCellGrid =
     , removedIds = []
     , newIds = []
     , newMergedIds = []
-    , step = 0
     }
 
 
