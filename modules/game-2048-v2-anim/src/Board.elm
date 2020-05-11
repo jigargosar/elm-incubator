@@ -48,7 +48,7 @@ info : Board -> Info
 info (Board cellGrid) =
     { entries =
         cellGrid.dict
-            |> toCellPosDict
+            |> toCellDict
             |> Dict.toList
     , newIds = cellGrid.newIds
     , newMergedIds = cellGrid.newMergedIds
@@ -143,9 +143,15 @@ toCell slot =
             Nothing
 
 
-toCellPosDict : PosDict Slot -> PosDict Cell
-toCellPosDict =
+toCellDict : PosDict Slot -> PosDict Cell
+toCellDict =
     Dict.filterMap (\_ -> toCell)
+
+
+toSlotDict : PosDict.EntryList Cell -> PosDict Slot
+toSlotDict =
+    List.foldl (Tuple.mapSecond Filled >> PosDict.insertEntry)
+        (PosDict.filled Empty size)
 
 
 
@@ -181,12 +187,6 @@ initialCellGrid =
     , newIds = []
     , newMergedIds = []
     }
-
-
-toSlotDict : PosDict.EntryList Cell -> PosDict Slot
-toSlotDict =
-    List.foldl (Tuple.mapSecond Filled >> PosDict.insertEntry)
-        (PosDict.filled Empty size)
 
 
 initialPositionsGenerator : Random.Generator (List IntPos)
@@ -274,10 +274,10 @@ updateFromSlideResponse : SlideAcc -> PosDict Slot -> CellGrid -> CellGrid
 updateFromSlideResponse acc dict cellGrid =
     let
         oldCellPosDict =
-            toCellPosDict cellGrid.dict
+            toCellDict cellGrid.dict
 
         newCellPosDict =
-            toCellPosDict dict
+            toCellDict dict
 
         mergedIdPairToCellEntry : ( IncId, IncId ) -> Maybe (PosDict.Entry Cell)
         mergedIdPairToCellEntry ( fromId, toId ) =
