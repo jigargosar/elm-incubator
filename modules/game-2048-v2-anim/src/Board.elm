@@ -102,7 +102,7 @@ type alias Cell =
     }
 
 
-newCell : Int -> IncId.Generator -> ( Cell, IncId.Generator )
+newCell : Int -> IncId.Seed -> ( Cell, IncId.Seed )
 newCell num generator =
     let
         initCell : IncId -> Cell
@@ -142,7 +142,7 @@ toCellPosDict =
 
 
 type alias CellGrid =
-    { idGenerator : IncId.Generator
+    { idGenerator : IncId.Seed
     , seed : Random.Seed
     , dict : PosDict Slot
     , mergedEntries : PosDict.EntryList Cell
@@ -175,11 +175,11 @@ initialCellGrid =
     }
 
 
-initSlotDict : ( PosDict Slot, IncId.Generator )
+initSlotDict : ( PosDict Slot, IncId.Seed )
 initSlotDict =
     let
         ( ( cell1, cell2 ), idGenerator ) =
-            newInitialCells 2 4 IncId.newGenerator
+            newInitialCells 2 4 IncId.initialSeed
     in
     ( PosDict.filled Empty size
         |> Dict.insert ( 1, 1 ) (Filled cell1)
@@ -188,7 +188,7 @@ initSlotDict =
     )
 
 
-newInitialCells : Int -> Int -> IncId.Generator -> ( ( Cell, Cell ), IncId.Generator )
+newInitialCells : Int -> Int -> IncId.Seed -> ( ( Cell, Cell ), IncId.Seed )
 newInitialCells num1 num2 =
     newCell num1
         >> Tuple.mapSecond (newCell num2)
@@ -223,12 +223,12 @@ slideBy func cellGrid =
 
 
 type alias SlideAcc =
-    { idGenerator : IncId.Generator
+    { idGenerator : IncId.Seed
     , mergedIdPairs : List ( IncId, IncId )
     }
 
 
-initSlideAcc : IncId.Generator -> SlideAcc
+initSlideAcc : IncId.Seed -> SlideAcc
 initSlideAcc generator =
     { idGenerator = generator
     , mergedIdPairs = []

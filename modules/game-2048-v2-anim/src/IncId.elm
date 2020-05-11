@@ -1,22 +1,22 @@
-module IncId exposing (Generator, IncId, new, newGenerator, toInt, toString)
+module IncId exposing (IncId, Seed, initialSeed, new, toInt, toString)
 
 
 type IncId
     = IncId Int
 
 
-type Generator
-    = Generator Int
+type Seed
+    = Seed Int
 
 
-newGenerator : Generator
-newGenerator =
-    Generator 1
+initialSeed : Seed
+initialSeed =
+    Seed 1
 
 
-new : Generator -> ( IncId, Generator )
-new (Generator nextId) =
-    ( IncId nextId, Generator (nextId + 1) )
+new : Seed -> ( IncId, Seed )
+new (Seed nextId) =
+    ( IncId nextId, Seed (nextId + 1) )
 
 
 toInt : IncId -> Int
