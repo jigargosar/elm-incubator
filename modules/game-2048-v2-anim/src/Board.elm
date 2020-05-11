@@ -159,16 +159,10 @@ size =
 initialCellGrid : CellGrid
 initialCellGrid =
     let
-        idGen0 =
-            IncId.newGenerator
-
-        ( cell1, idGen1 ) =
-            newCell 2 idGen0
-
-        ( cell2, idGen2 ) =
-            newCell 4 idGen1
+        ( ( cell1, cell2 ), idGenerator ) =
+            newInitialCells 2 4 IncId.newGenerator
     in
-    { idGenerator = idGen2
+    { idGenerator = idGenerator
     , seed = Random.initialSeed 0
     , dict =
         PosDict.filled Empty size
@@ -181,10 +175,10 @@ initialCellGrid =
     }
 
 
-newInitialCells : IncId.Generator -> ( ( Cell, Cell ), IncId.Generator )
-newInitialCells =
-    newCell 2
-        >> Tuple.mapSecond (newCell 4)
+newInitialCells : Int -> Int -> IncId.Generator -> ( ( Cell, Cell ), IncId.Generator )
+newInitialCells num1 num2 =
+    newCell num1
+        >> Tuple.mapSecond (newCell num2)
         >> (\( c1, ( c2, gen ) ) -> ( ( c1, c2 ), gen ))
 
 
