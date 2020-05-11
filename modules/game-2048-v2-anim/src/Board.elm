@@ -80,16 +80,16 @@ slideCellGrid : Msg -> CellGrid -> CellGrid
 slideCellGrid msg =
     case msg of
         SlideLeft ->
-            slideWith PosDict.mapAccumFlippedRows
+            slideBy PosDict.mapAccumFlippedRows
 
         SlideRight ->
-            slideWith PosDict.mapAccumRows
+            slideBy PosDict.mapAccumRows
 
         SlideUp ->
-            slideWith PosDict.mapAccumFlippedColumns
+            slideBy PosDict.mapAccumFlippedColumns
 
         SlideDown ->
-            slideWith PosDict.mapAccumColumns
+            slideBy PosDict.mapAccumColumns
 
 
 
@@ -187,7 +187,7 @@ initialCellGrid =
 -- Slide
 
 
-slideWith :
+slideBy :
     ((SlideAcc -> List Slot -> ( SlideAcc, List Slot ))
      -> SlideAcc
      -> PosDict Slot
@@ -195,7 +195,7 @@ slideWith :
     )
     -> CellGrid
     -> CellGrid
-slideWith func cellGrid =
+slideBy func cellGrid =
     let
         ( acc, dict ) =
             cellGrid.dict
