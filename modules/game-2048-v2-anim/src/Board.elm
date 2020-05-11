@@ -64,12 +64,20 @@ type Msg
 
 
 update : Msg -> Board -> Board
-update msg (Board cellGrid) =
-    Board (updateHelp msg cellGrid)
+update msg ((Board cellGrid) as board) =
+    updateCellGrid msg cellGrid
+        |> Maybe.map Board
+        |> Maybe.withDefault board
 
 
-updateHelp : Msg -> CellGrid -> CellGrid
-updateHelp msg =
+updateCellGrid : Msg -> CellGrid -> Maybe CellGrid
+updateCellGrid msg cellGrid =
+    slideCellGrid msg cellGrid
+        |> fillRandomEmpty
+
+
+slideCellGrid : Msg -> CellGrid -> CellGrid
+slideCellGrid msg =
     case msg of
         SlideLeft ->
             slideWith PosDict.mapAccumFlippedRows
@@ -200,8 +208,6 @@ slideWith func cellGrid =
     in
     cellGrid
         |> updateFromSlideResponse acc dict
-        |> fillRandomEmpty
-        |> Maybe.withDefault cellGrid
 
 
 type alias SlideAcc =
