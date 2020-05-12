@@ -13,64 +13,6 @@ import Task
 import Tuple exposing (..)
 
 
-viewBoard : Board.Board -> HM
-viewBoard board =
-    div
-        [ class "pa3 code f2 debug" ]
-        [ Html.Keyed.node "div"
-            [ style "width" "400px"
-            , style "height" "400px"
-            ]
-            (viewKeyedCells board)
-        ]
-
-
-viewKeyedCells : Board.Board -> List ( String, HM )
-viewKeyedCells board =
-    let
-        { entries, mergedEntries, newIds, newMergedIds, removedIds } =
-            Board.info board
-
-        idToAnim : IncId -> TileAnim
-        idToAnim id =
-            if List.member id newIds then
-                Generated
-
-            else if List.member id newMergedIds then
-                Merged
-
-            else
-                Existing
-
-        cellViewList : List ( IncId, HM )
-        cellViewList =
-            entries
-                |> List.map
-                    (\( pos, cell ) ->
-                        ( cell.id
-                        , renderTile pos cell.num (idToAnim cell.id)
-                        )
-                    )
-
-        mergedCellViewList : List ( IncId, HM )
-        mergedCellViewList =
-            List.map
-                (\( pos, cell ) ->
-                    ( cell.id
-                    , renderTile pos cell.num Existing
-                    )
-                )
-                mergedEntries
-
-        removedCellViewList : List ( IncId, HM )
-        removedCellViewList =
-            List.map (\id -> ( id, text "" )) removedIds
-    in
-    (cellViewList ++ mergedCellViewList ++ removedCellViewList)
-        |> List.sortBy (first >> IncId.toInt)
-        |> List.map (mapFirst IncId.toString)
-
-
 
 -- Model
 
@@ -163,6 +105,64 @@ view model =
             , viewBoard model.board
             ]
         ]
+
+
+viewBoard : Board.Board -> HM
+viewBoard board =
+    div
+        [ class "pa3 code f2 debug" ]
+        [ Html.Keyed.node "div"
+            [ style "width" "400px"
+            , style "height" "400px"
+            ]
+            (viewKeyedCells board)
+        ]
+
+
+viewKeyedCells : Board.Board -> List ( String, HM )
+viewKeyedCells board =
+    let
+        { entries, mergedEntries, newIds, newMergedIds, removedIds } =
+            Board.info board
+
+        idToAnim : IncId -> TileAnim
+        idToAnim id =
+            if List.member id newIds then
+                Generated
+
+            else if List.member id newMergedIds then
+                Merged
+
+            else
+                Existing
+
+        cellViewList : List ( IncId, HM )
+        cellViewList =
+            entries
+                |> List.map
+                    (\( pos, cell ) ->
+                        ( cell.id
+                        , renderTile pos cell.num (idToAnim cell.id)
+                        )
+                    )
+
+        mergedCellViewList : List ( IncId, HM )
+        mergedCellViewList =
+            List.map
+                (\( pos, cell ) ->
+                    ( cell.id
+                    , renderTile pos cell.num Existing
+                    )
+                )
+                mergedEntries
+
+        removedCellViewList : List ( IncId, HM )
+        removedCellViewList =
+            List.map (\id -> ( id, text "" )) removedIds
+    in
+    (cellViewList ++ mergedCellViewList ++ removedCellViewList)
+        |> List.sortBy (first >> IncId.toInt)
+        |> List.map (mapFirst IncId.toString)
 
 
 
