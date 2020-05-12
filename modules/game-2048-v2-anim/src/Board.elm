@@ -216,7 +216,7 @@ fillRandomPosition ( h, t ) cellGrid =
 
 
 
--- ACCUMULATE SLOTS
+-- SLIDE
 
 
 type alias SlideResponse =
@@ -255,10 +255,6 @@ toSlideResponse =
                 , newMergedIds = []
                 , mergedEntries = []
                 }
-
-
-
--- SLIDE SLOTS
 
 
 type OutCell
