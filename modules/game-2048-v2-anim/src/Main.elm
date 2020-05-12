@@ -3,7 +3,7 @@ module Main exposing (main)
 import Board exposing (Msg(..))
 import Browser exposing (Document)
 import Browser.Events
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
 import IncId exposing (IncId)
@@ -109,8 +109,9 @@ view : Model -> DM
 view model =
     Document "2048 Animated"
         [ div [ class "measure center" ]
-            [ div [ class "pa2 flex " ]
+            [ div [ class "pa2 flex items-center" ]
                 [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info model.board |> .score)) ]
+                , div [ class "pa2" ] [ button [] [ text "New" ] ]
                 ]
             , viewBoard model.board
             ]
