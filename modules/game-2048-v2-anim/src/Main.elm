@@ -192,7 +192,7 @@ viewTile pos num anim =
         , style "height" "100px"
         , class "absolute flex justify-center items-center"
         , style "transform" (renderTileTransform pos)
-        , style "transition" "transform 250ms"
+        , style "transition" "transform 200ms"
         , style "outline" "none"
         ]
         [ div
