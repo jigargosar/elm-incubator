@@ -294,10 +294,10 @@ slideGrid msg entries =
 compactSlotsRight : List (Slot Cell) -> List (Slot OutCell)
 compactSlotsRight =
     let
-        reducer slot ( mx, xs ) =
-            case ( slot, mx ) of
+        reducer slot ( maybeCell, xs ) =
+            case ( slot, maybeCell ) of
                 ( Empty, _ ) ->
-                    ( mx, xs )
+                    ( maybeCell, xs )
 
                 ( Filled cell, Nothing ) ->
                     ( Just cell, xs )
