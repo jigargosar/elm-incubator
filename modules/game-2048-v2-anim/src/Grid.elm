@@ -1,4 +1,12 @@
-module Grid exposing (Grid, Slot(..), fromEntries, fromRows, toRows)
+module Grid exposing
+    ( Grid
+    , Slot(..)
+    , fromColumns
+    , fromEntries
+    , fromRows
+    , toColumns
+    , toRows
+    )
 
 import IntSize exposing (IntSize)
 import PosDict exposing (EntryList, PosDict)
@@ -29,5 +37,17 @@ toRows (Grid d) =
 fromRows : IntSize -> List (List (Slot a)) -> Grid a
 fromRows s rs =
     PosDict.fromRows rs
+        |> PosDict.resize s Empty
+        |> Grid
+
+
+toColumns : Grid a -> List (List (Slot a))
+toColumns (Grid d) =
+    PosDict.toColumns d
+
+
+fromColumns : IntSize -> List (List (Slot a)) -> Grid a
+fromColumns s rs =
+    PosDict.fromColumns rs
         |> PosDict.resize s Empty
         |> Grid
