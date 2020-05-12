@@ -19,7 +19,7 @@ import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
 import Random.List
-import Tuple exposing (mapFirst, second)
+import Tuple exposing (first, mapFirst, second)
 
 
 
@@ -408,6 +408,76 @@ type GridSlot
     = Existing Cell
     | EmptySlot
     | Merged Cell Cell
+
+
+type alias CellEntry =
+    ( IntPos, Cell )
+
+
+type alias GridSlotEntry =
+    ( IntPos, GridSlot )
+
+
+slideCellEntries : Msg -> List CellEntry -> List GridSlotEntry
+slideCellEntries msg entries =
+    case msg of
+        SlideLeft ->
+            toRowLists entries
+                |> List.map (List.reverse >> compactCellsRight >> List.reverse)
+                |> fromRowLists
+
+        SlideRight ->
+            toRowLists entries
+                |> List.map compactCellsRight
+                |> fromRowLists
+
+        SlideUp ->
+            toColumnLists entries
+                |> List.map (List.reverse >> compactCellsRight >> List.reverse)
+                |> fromColumnLists
+
+        SlideDown ->
+            toColumnLists entries
+                |> List.map compactCellsRight
+                |> fromColumnLists
+
+
+
+-- Entries Row Column Transforms
+
+
+toRowLists : PosDict.EntryList a -> List (List a)
+toRowLists =
+    List.gatherEqualsBy (first >> second)
+        >> List.map (Cons.toList >> List.map second)
+
+
+toColumnLists : PosDict.EntryList a -> List (List a)
+toColumnLists =
+    List.gatherEqualsBy (first >> first)
+        >> List.map (Cons.toList >> List.map second)
+
+
+fromRowLists : List (List a) -> PosDict.EntryList a
+fromRowLists =
+    List.indexedMap
+        (\y ->
+            List.indexedMap (\x a -> ( ( x, y ), a ))
+        )
+        >> List.concat
+
+
+fromColumnLists : List (List a) -> PosDict.EntryList a
+fromColumnLists =
+    List.indexedMap
+        (\x ->
+            List.indexedMap (\y a -> ( ( x, y ), a ))
+        )
+        >> List.concat
+
+
+
+-- CompactCellsToSlots
 
 
 compactCellsRight : List Cell -> List GridSlot
