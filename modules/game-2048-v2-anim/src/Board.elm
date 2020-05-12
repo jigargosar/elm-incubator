@@ -150,19 +150,6 @@ initialCellGrid =
     }
 
 
-initialPositionsGenerator : Random.Generator (List IntPos)
-initialPositionsGenerator =
-    Random.List.choose (IntSize.positions size)
-        |> Random.andThen
-            (\( p1, ps ) ->
-                Random.List.choose ps
-                    |> Random.map
-                        (\( p2, _ ) ->
-                            List.filterMap identity [ p1, p2 ]
-                        )
-            )
-
-
 numGenerator : Random.Generator Int
 numGenerator =
     Random.uniform 2 [ 4 ]
@@ -170,18 +157,26 @@ numGenerator =
 
 initialCellEntriesGenerator : Random.Generator ( Grid.EntryList Cell, IncId.Seed )
 initialCellEntriesGenerator =
+    let
+        initialPositionsGenerator : Random.Generator (List IntPos)
+        initialPositionsGenerator =
+            Random.List.choose (IntSize.positions size)
+                |> Random.andThen
+                    (\( p1, ps ) ->
+                        Random.List.choose ps
+                            |> Random.map
+                                (\( p2, _ ) ->
+                                    List.filterMap identity [ p1, p2 ]
+                                )
+                    )
+    in
     Random.map2
         (\ps ns ->
             newCells ns IncId.initialSeed
                 |> Tuple.mapFirst (List.zip ps)
         )
         initialPositionsGenerator
-        initialNumGenerator
-
-
-initialNumGenerator : Random.Generator (List Int)
-initialNumGenerator =
-    Random.list 2 numGenerator
+        (Random.list 2 numGenerator)
 
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
