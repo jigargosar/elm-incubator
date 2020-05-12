@@ -77,7 +77,7 @@ slideCellGrid : Msg -> CellGrid -> CellGrid
 slideCellGrid msg cellGrid =
     let
         slotsEntries =
-            slideCellEntries msg (toSlotEntries cellGrid.entriesById |> Dict.toList)
+            slideSlotEntries msg (toSlotEntries cellGrid.entriesById |> Dict.toList)
 
         acc =
             accumulateSlotResponse cellGrid.idSeed slotsEntries
@@ -298,8 +298,8 @@ type SlotResponse
     | Merged Cell Cell
 
 
-slideCellEntries : Msg -> List ( IntPos, Slot ) -> List ( IntPos, SlotResponse )
-slideCellEntries msg entries =
+slideSlotEntries : Msg -> List ( IntPos, Slot ) -> List ( IntPos, SlotResponse )
+slideSlotEntries msg entries =
     case msg of
         SlideLeft ->
             entries
