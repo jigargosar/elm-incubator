@@ -70,7 +70,7 @@ update msg ((Board cellGrid) as board) =
 
 updateCellGrid : Msg -> CellGrid -> Maybe CellGrid
 updateCellGrid msg cellGrid =
-    slideCellGrid msg cellGrid
+    slideCellGrid2 msg cellGrid
         |> fillRandomEmpty
 
 
@@ -96,10 +96,56 @@ slideCellGrid2 msg cellGrid =
         slotsEntries =
             slideCellEntries msg (IncId.dictValues cellGrid.entriesById)
 
-        entriesById =
-            cellGrid.entriesById
+        acc =
+            accumulateSlotEntries cellGrid.idSeed slotsEntries
     in
-    { cellGrid | entriesById = entriesById }
+    { cellGrid
+        | idSeed = acc.idSeed
+        , entriesById = IncId.dictFromListBy (second >> .id) acc.entries
+        , newMergedIds = acc.newMergedIds
+        , mergedEntries = acc.mergedEntries
+        , removedIds = (cellGrid.mergedEntries |> List.map (second >> .id)) ++ cellGrid.removedIds
+    }
+
+
+type alias Acc =
+    { idSeed : IncId.Seed
+    , entries : List ( IntPos, Cell )
+    , newMergedIds : List IncId
+    , mergedEntries : List ( IntPos, Cell )
+    }
+
+
+accumulateSlotEntries : IncId.Seed -> List ( IntPos, GridSlot ) -> Acc
+accumulateSlotEntries =
+    let
+        reducer ( pos, slot ) acc =
+            case slot of
+                Existing cell ->
+                    { acc | entries = ( pos, cell ) :: acc.entries }
+
+                EmptySlot ->
+                    acc
+
+                Merged c1 c2 ->
+                    let
+                        ( mergedCell, idSeed ) =
+                            newCell (c1.num + c2.num) acc.idSeed
+                    in
+                    { acc
+                        | idSeed = idSeed
+                        , entries = ( pos, mergedCell ) :: acc.entries
+                        , newMergedIds = mergedCell.id :: acc.newMergedIds
+                        , mergedEntries = ( pos, c1 ) :: ( pos, c2 ) :: acc.mergedEntries
+                    }
+    in
+    \idSeed ->
+        List.foldl reducer
+            { idSeed = idSeed
+            , entries = []
+            , newMergedIds = []
+            , mergedEntries = []
+            }
 
 
 
