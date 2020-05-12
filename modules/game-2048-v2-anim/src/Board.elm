@@ -312,7 +312,7 @@ compactSlotsRight =
     List.foldr reducer ( Nothing, [] )
         >> mapFirst (Maybe.map Existing)
         >> uncurry consMaybe
-        >> slotsPadLeft
+        >> slotsPadLeft size.width
 
 
 consMaybe : Maybe a -> List a -> List a
@@ -325,10 +325,10 @@ consMaybe mx xs =
             xs
 
 
-slotsPadLeft : List a -> List (Slot a)
-slotsPadLeft list =
+slotsPadLeft : Int -> List a -> List (Slot a)
+slotsPadLeft n list =
     let
         len =
             List.length list
     in
-    List.repeat (size.width - len) Empty ++ List.map Filled list
+    List.repeat (n - len) Empty ++ List.map Filled list
