@@ -21,11 +21,11 @@ import Tuple exposing (mapSecond)
 
 
 type alias Entry a =
-    PosDict.Entry a
+    ( IntPos, a )
 
 
 type alias EntryList a =
-    PosDict.EntryList a
+    List (Entry a)
 
 
 type alias PosDict a =
