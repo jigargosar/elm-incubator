@@ -11,7 +11,6 @@ module Board exposing
 import Basics.Extra exposing (flip, swap, uncurry)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
-import Dict.Extra as Dict
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
@@ -70,31 +69,15 @@ update msg ((Board cellGrid) as board) =
 
 updateCellGrid : Msg -> CellGrid -> Maybe CellGrid
 updateCellGrid msg cellGrid =
-    slideCellGrid msg cellGrid
+    slideCellGrid2 msg cellGrid
         |> fillRandomEmpty
-
-
-slideCellGrid : Msg -> CellGrid -> CellGrid
-slideCellGrid msg =
-    case msg of
-        SlideLeft ->
-            slideBy PosDict.mapAccumFlippedRows
-
-        SlideRight ->
-            slideBy PosDict.mapAccumRows
-
-        SlideUp ->
-            slideBy PosDict.mapAccumFlippedColumns
-
-        SlideDown ->
-            slideBy PosDict.mapAccumColumns
 
 
 slideCellGrid2 : Msg -> CellGrid -> CellGrid
 slideCellGrid2 msg cellGrid =
     let
         slotsEntries =
-            slideCellEntries msg (IncId.dictValues cellGrid.entriesById)
+            slideCellEntries msg (toSlotEntries cellGrid.entriesById |> Dict.toList)
 
         acc =
             accumulateSlotEntries cellGrid.idSeed slotsEntries
@@ -188,29 +171,14 @@ type Slot
     | Empty
 
 
-toCell : Slot -> Maybe Cell
-toCell slot =
-    case slot of
-        Filled cell ->
-            Just cell
-
-        Empty ->
-            Nothing
-
-
-toCellDict : PosDict Slot -> PosDict Cell
-toCellDict =
-    Dict.filterMap (\_ -> toCell)
-
-
 toSlotDict : PosDict.EntryList Cell -> PosDict Slot
 toSlotDict =
     List.foldl (Tuple.mapSecond Filled >> PosDict.insertEntry)
         (PosDict.filled Empty size)
 
 
-entriesByIdToSlotDict : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
-entriesByIdToSlotDict =
+toSlotEntries : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
+toSlotEntries =
     IncId.dictValues >> toSlotDict
 
 
@@ -283,76 +251,9 @@ initialNumGenerator =
     Random.list 2 numGenerator
 
 
-
--- Slide
-
-
-slideBy :
-    ((SlideAcc -> List Slot -> ( SlideAcc, List Slot ))
-     -> SlideAcc
-     -> PosDict Slot
-     -> ( SlideAcc, PosDict Slot )
-    )
-    -> CellGrid
-    -> CellGrid
-slideBy func cellGrid =
-    let
-        ( acc, dict ) =
-            cellGrid.entriesById
-                |> IncId.dictValues
-                |> toSlotDict
-                |> func compactSlotsRight (initSlideAcc cellGrid.idSeed)
-
-        compactSlotsRight : SlideAcc -> List Slot -> ( SlideAcc, List Slot )
-        compactSlotsRight slideAcc =
-            List.foldr compactSlotReducer (initCompactAcc slideAcc)
-                >> compactAccToReturn
-    in
-    cellGrid
-        |> updateFromSlideResponse acc dict
-
-
-type alias SlideAcc =
-    { idSeed : IncId.Seed
-    , mergedIdPairs : List ( IncId, IncId )
-    }
-
-
-initSlideAcc : IncId.Seed -> SlideAcc
-initSlideAcc generator =
-    { idSeed = generator
-    , mergedIdPairs = []
-    }
-
-
-updateFromSlideResponse : SlideAcc -> PosDict Slot -> CellGrid -> CellGrid
-updateFromSlideResponse acc dict cellGrid =
-    let
-        mergedIdPairToCellEntry : ( IncId, IncId ) -> Maybe (PosDict.Entry Cell)
-        mergedIdPairToCellEntry ( fromId, toId ) =
-            Maybe.map2
-                (\( _, oldCell ) ( newPos, _ ) ->
-                    ( newPos, oldCell )
-                )
-                (IncId.dictGet fromId cellGrid.entriesById)
-                (IncId.dictGet toId newEntriesById)
-
-        newEntriesById =
-            toCellDict dict |> Dict.toList |> IncId.dictFromListBy (second >> .id)
-    in
-    { cellGrid
-        | entriesById = newEntriesById
-        , idSeed = acc.idSeed
-        , newIds = []
-        , newMergedIds = acc.mergedIdPairs |> List.map Tuple.second |> List.uniqueBy IncId.toInt
-        , mergedEntries = acc.mergedIdPairs |> List.filterMap mergedIdPairToCellEntry
-        , removedIds = cellGrid.mergedEntries |> List.map (second >> .id) |> (++) cellGrid.removedIds
-    }
-
-
 fillRandomEmpty : CellGrid -> Maybe CellGrid
 fillRandomEmpty cellGrid =
-    entriesByIdToSlotDict cellGrid.entriesById
+    toSlotEntries cellGrid.entriesById
         |> Dict.filter (\_ slot -> slot == Empty)
         |> Dict.keys
         |> Cons.fromList
@@ -381,23 +282,6 @@ fillRandomPosition ( h, t ) cellGrid =
     }
 
 
-
--- COMPACT ACC AND REDUCER
-
-
-type alias CompactAcc =
-    { slideAcc : SlideAcc
-    , unprocessed : Maybe Cell
-    , processed : List Cell
-    , padCount : Int
-    }
-
-
-initCompactAcc : SlideAcc -> CompactAcc
-initCompactAcc slideAcc =
-    { slideAcc = slideAcc, unprocessed = Nothing, processed = [], padCount = 0 }
-
-
 consMaybe : Maybe a -> List a -> List a
 consMaybe mx xs =
     case mx of
@@ -408,67 +292,13 @@ consMaybe mx xs =
             xs
 
 
-compactAccToReturn : CompactAcc -> ( SlideAcc, List Slot )
-compactAccToReturn acc =
-    let
-        slots : List Slot
-        slots =
-            List.repeat acc.padCount Empty
-                ++ List.map Filled (consMaybe acc.unprocessed acc.processed)
-    in
-    ( acc.slideAcc, slots )
-
-
-compactSlotReducer : Slot -> CompactAcc -> CompactAcc
-compactSlotReducer slot acc =
-    case ( slot, acc.unprocessed ) of
-        ( Empty, _ ) ->
-            { acc | padCount = acc.padCount + 1 }
-
-        ( Filled cell, Nothing ) ->
-            { acc | unprocessed = Just cell }
-
-        ( Filled cell, Just prevCell ) ->
-            if cell.num == prevCell.num then
-                let
-                    slideAcc =
-                        acc.slideAcc
-
-                    ( mergedCell, idSeed ) =
-                        newCell (cell.num + prevCell.num) slideAcc.idSeed
-                in
-                { acc
-                    | padCount = acc.padCount + 1
-                    , processed = mergedCell :: acc.processed
-                    , unprocessed = Nothing
-                    , slideAcc =
-                        { slideAcc
-                            | idSeed = idSeed
-                            , mergedIdPairs =
-                                ( cell.id, mergedCell.id )
-                                    :: ( prevCell.id, mergedCell.id )
-                                    :: slideAcc.mergedIdPairs
-                        }
-                }
-
-            else
-                { acc
-                    | processed = prevCell :: acc.processed
-                    , unprocessed = Just cell
-                }
-
-
-
--- Compact Logic v2
-
-
 type SlotResponse
     = Existing Cell
     | EmptySlot
     | Merged Cell Cell
 
 
-slideCellEntries : Msg -> List ( IntPos, Cell ) -> List ( IntPos, SlotResponse )
+slideCellEntries : Msg -> List ( IntPos, Slot ) -> List ( IntPos, SlotResponse )
 slideCellEntries msg entries =
     case msg of
         SlideLeft ->
@@ -532,15 +362,18 @@ fromColumnLists =
 -- CompactCellsToSlots
 
 
-compactCellsRight : List Cell -> List SlotResponse
+compactCellsRight : List Slot -> List SlotResponse
 compactCellsRight =
     let
-        reducer cell ( mx, xs ) =
-            case mx of
-                Nothing ->
+        reducer slot ( mx, xs ) =
+            case ( slot, mx ) of
+                ( Empty, _ ) ->
+                    ( mx, xs )
+
+                ( Filled cell, Nothing ) ->
                     ( Just cell, xs )
 
-                Just unprocessed ->
+                ( Filled cell, Just unprocessed ) ->
                     if cell.num == unprocessed.num then
                         ( Nothing, Merged unprocessed cell :: xs )
 
