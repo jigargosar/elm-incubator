@@ -62,15 +62,10 @@ type Msg
 
 update : Msg -> Board -> Board
 update msg ((Board cellGrid) as board) =
-    updateCellGrid msg cellGrid
-        |> Maybe.map Board
-        |> Maybe.withDefault board
-
-
-updateCellGrid : Msg -> CellGrid -> Maybe CellGrid
-updateCellGrid msg cellGrid =
     slideCellGrid msg cellGrid
         |> fillRandomEmpty
+        |> Maybe.map Board
+        |> Maybe.withDefault board
 
 
 slideCellGrid : Msg -> CellGrid -> CellGrid
