@@ -80,7 +80,7 @@ slideCellGrid msg cellGrid =
             slideCellEntries msg (toSlotEntries cellGrid.entriesById |> Dict.toList)
 
         acc =
-            accumulateSlotEntries cellGrid.idSeed slotsEntries
+            accumulateSlotResponse cellGrid.idSeed slotsEntries
     in
     { cellGrid
         | idSeed = acc.idSeed
@@ -99,8 +99,8 @@ type alias Acc =
     }
 
 
-accumulateSlotEntries : IncId.Seed -> List ( IntPos, SlotResponse ) -> Acc
-accumulateSlotEntries =
+accumulateSlotResponse : IncId.Seed -> List ( IntPos, SlotResponse ) -> Acc
+accumulateSlotResponse =
     let
         reducer ( pos, slot ) acc =
             case slot of
