@@ -169,15 +169,6 @@ viewKeyedCells board =
 -- Tile
 
 
-type alias Tile =
-    { id : String
-    , num : Int
-    , pos : IntPos
-    , anim : TileAnim
-    , removed : Bool
-    }
-
-
 type TileAnim
     = Generated
     | Merged
