@@ -18,7 +18,7 @@ import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
 import Random.List
-import Tuple exposing (first, mapFirst, second)
+import Tuple exposing (first, mapFirst, mapSecond, second)
 
 
 
@@ -171,15 +171,11 @@ type Slot
     | Empty
 
 
-toSlotDict : PosDict.EntryList Cell -> PosDict Slot
-toSlotDict =
-    List.foldl (Tuple.mapSecond Filled >> PosDict.insertEntry)
-        (PosDict.filled Empty size)
-
-
 toSlotEntries : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
 toSlotEntries =
-    IncId.dictValues >> toSlotDict
+    IncId.dictValues
+        >> List.map (mapSecond Filled)
+        >> flip PosDict.insertAll (PosDict.filled Empty size)
 
 
 
