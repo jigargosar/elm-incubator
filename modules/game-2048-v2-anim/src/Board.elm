@@ -69,12 +69,12 @@ update msg ((Board cellGrid) as board) =
 
 updateCellGrid : Msg -> CellGrid -> Maybe CellGrid
 updateCellGrid msg cellGrid =
-    slideCellGrid2 msg cellGrid
+    slideCellGrid msg cellGrid
         |> fillRandomEmpty
 
 
-slideCellGrid2 : Msg -> CellGrid -> CellGrid
-slideCellGrid2 msg cellGrid =
+slideCellGrid : Msg -> CellGrid -> CellGrid
+slideCellGrid msg cellGrid =
     let
         slotsEntries =
             slideCellEntries msg (toSlotEntries cellGrid.entriesById |> Dict.toList)
