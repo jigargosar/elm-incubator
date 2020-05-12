@@ -73,7 +73,7 @@ update message model =
                     ( model, Cmd.none )
 
         NewClicked ->
-            ( model, Cmd.none )
+            ( { model | board = Board.reInit model.board }, Cmd.none )
 
 
 slide : Board.Msg -> Model -> ( Model, Cmd Msg )
