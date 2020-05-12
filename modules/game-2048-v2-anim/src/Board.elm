@@ -91,46 +91,6 @@ slideCellGrid msg cellGrid =
     }
 
 
-type alias Acc =
-    { idSeed : IncId.Seed
-    , entries : List ( IntPos, Cell )
-    , newMergedIds : List IncId
-    , mergedEntries : List ( IntPos, Cell )
-    }
-
-
-accumulateSlotResponse : IncId.Seed -> List ( IntPos, SlotResponse ) -> Acc
-accumulateSlotResponse =
-    let
-        reducer ( pos, slot ) acc =
-            case slot of
-                Existing cell ->
-                    { acc | entries = ( pos, cell ) :: acc.entries }
-
-                EmptySlot ->
-                    acc
-
-                Merged c1 c2 ->
-                    let
-                        ( mergedCell, idSeed ) =
-                            newCell (c1.num + c2.num) acc.idSeed
-                    in
-                    { acc
-                        | idSeed = idSeed
-                        , entries = ( pos, mergedCell ) :: acc.entries
-                        , newMergedIds = mergedCell.id :: acc.newMergedIds
-                        , mergedEntries = ( pos, c1 ) :: ( pos, c2 ) :: acc.mergedEntries
-                    }
-    in
-    \idSeed ->
-        List.foldl reducer
-            { idSeed = idSeed
-            , entries = []
-            , newMergedIds = []
-            , mergedEntries = []
-            }
-
-
 
 -- CELL
 
@@ -160,22 +120,6 @@ newCells numList initialSeed =
     in
     List.mapAccuml reducer initialSeed numList
         |> swap
-
-
-
--- SLOT
-
-
-type Slot
-    = Filled Cell
-    | Empty
-
-
-toSlotEntries : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
-toSlotEntries =
-    IncId.dictValues
-        >> List.map (mapSecond Filled)
-        >> flip PosDict.insertAll (PosDict.filled Empty size)
 
 
 
@@ -276,6 +220,66 @@ fillRandomPosition ( h, t ) cellGrid =
         , idSeed = idSeed
         , newIds = [ cell.id ]
     }
+
+
+
+-- ACCUMULATE SLOTS
+
+
+type alias Acc =
+    { idSeed : IncId.Seed
+    , entries : List ( IntPos, Cell )
+    , newMergedIds : List IncId
+    , mergedEntries : List ( IntPos, Cell )
+    }
+
+
+accumulateSlotResponse : IncId.Seed -> List ( IntPos, SlotResponse ) -> Acc
+accumulateSlotResponse =
+    let
+        reducer ( pos, slot ) acc =
+            case slot of
+                Existing cell ->
+                    { acc | entries = ( pos, cell ) :: acc.entries }
+
+                EmptySlot ->
+                    acc
+
+                Merged c1 c2 ->
+                    let
+                        ( mergedCell, idSeed ) =
+                            newCell (c1.num + c2.num) acc.idSeed
+                    in
+                    { acc
+                        | idSeed = idSeed
+                        , entries = ( pos, mergedCell ) :: acc.entries
+                        , newMergedIds = mergedCell.id :: acc.newMergedIds
+                        , mergedEntries = ( pos, c1 ) :: ( pos, c2 ) :: acc.mergedEntries
+                    }
+    in
+    \idSeed ->
+        List.foldl reducer
+            { idSeed = idSeed
+            , entries = []
+            , newMergedIds = []
+            , mergedEntries = []
+            }
+
+
+
+-- SLIDE SLOTS
+
+
+type Slot
+    = Filled Cell
+    | Empty
+
+
+toSlotEntries : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
+toSlotEntries =
+    IncId.dictValues
+        >> List.map (mapSecond Filled)
+        >> flip PosDict.insertAll (PosDict.filled Empty size)
 
 
 consMaybe : Maybe a -> List a -> List a
