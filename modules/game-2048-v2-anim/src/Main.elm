@@ -2,7 +2,6 @@ module Main exposing (main)
 
 import Board
 import Browser exposing (Document)
-import Cons exposing (Cons)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
@@ -10,9 +9,8 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import Process
 import Random
-import Set
 import Task
-import Tuple exposing (first, mapBoth, mapFirst, second)
+import Tuple exposing (..)
 
 
 viewBoard : Board.Board -> HM
@@ -78,8 +76,7 @@ viewKeyedCells board =
 
 
 type alias Model =
-    { tileListCons : Cons TileList
-    , board : Board.Board
+    { board : Board.Board
     , nextBoardMsg : Board.Msg
     , seed : Random.Seed
     }
@@ -91,17 +88,12 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { tileListCons = initialTileListCons
-      , board = Board.init
+    ( { board = Board.init
       , nextBoardMsg = Board.SlideRight
       , seed = Random.initialSeed 0
       }
-    , Cmd.batch [ stepTiles, stepCellGrid ]
+    , Cmd.batch [ stepCellGrid ]
     )
-
-
-stepTiles =
-    Process.sleep 2000 |> Task.perform (always StepTiles)
 
 
 stepCellGrid =
@@ -114,7 +106,6 @@ stepCellGrid =
 
 type Msg
     = NoOp
-    | StepTiles
     | StepCellGrid
 
 
@@ -123,18 +114,6 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
-
-        StepTiles ->
-            case Cons.fromTail model.tileListCons of
-                Nothing ->
-                    ( { model | tileListCons = initialTileListCons }
-                    , stepTiles
-                    )
-
-                Just gridCons ->
-                    ( { model | tileListCons = gridCons }
-                    , stepTiles
-                    )
 
         StepCellGrid ->
             let
@@ -177,8 +156,7 @@ view : Model -> DM
 view model =
     Document "2048 Animated"
         [ div [ class "pa2 measure center" ]
-            [ renderTileListGrid (Cons.head model.tileListCons)
-            , div [ class "pa2" ]
+            [ div [ class "pa2" ]
                 [ div [] [ text (Debug.toString model.nextBoardMsg) ]
                 , div [] [ text ("Score:" ++ String.fromInt (Board.info model.board |> .score)) ]
                 ]
@@ -204,118 +182,6 @@ type TileAnim
     = Generated
     | Merged
     | Existing
-
-
-
--- TILE LIST
-
-
-type alias TileList =
-    List Tile
-
-
-initialTileListCons : Cons TileList
-initialTileListCons =
-    let
-        initTile : String -> Int -> IntPos -> TileAnim -> Tile
-        initTile id num pos anim =
-            { id = id
-            , num = num
-            , pos = pos
-            , anim = anim
-            , removed = False
-            }
-
-        initialTileList : TileList
-        initialTileList =
-            [ initTile "a" 2 ( 1, 1 ) Existing
-            , initTile "b" 4 ( 2, 2 ) Existing
-            ]
-
-        restTileList : List TileList
-        restTileList =
-            [ -- Right
-              [ initTile "a" 2 ( 3, 1 ) Existing
-              , initTile "b" 4 ( 3, 2 ) Existing
-              , initTile "c" 2 ( 2, 1 ) Generated
-              ]
-            , -- Left
-              [ initTile "a" 2 ( 0, 1 ) Existing
-              , initTile "b" 4 ( 0, 2 ) Existing
-              , initTile "c" 2 ( 0, 1 ) Existing
-              , initTile "d" 4 ( 0, 1 ) Merged
-              , initTile "e" 2 ( 1, 1 ) Generated
-              ]
-            , -- Up
-              [ initTile "b" 4 ( 0, 0 ) Existing
-              , initTile "d" 4 ( 0, 0 ) Existing
-              , initTile "e" 2 ( 1, 0 ) Existing
-              , initTile "f" 8 ( 0, 0 ) Merged
-              , initTile "g" 4 ( 1, 1 ) Generated
-              ]
-
-            -- Right
-            , [ initTile "e" 2 ( 3, 0 ) Existing
-              , initTile "f" 8 ( 2, 0 ) Existing
-              , initTile "g" 4 ( 3, 1 ) Existing
-              ]
-
-            -- Clear
-            , []
-            ]
-
-        reducer : TileList -> ( TileList, List TileList ) -> ( TileList, List TileList )
-        reducer tiles ( previousTiles, lists ) =
-            let
-                newIdSet =
-                    List.map .id tiles |> Set.fromList
-
-                tilesWithReadyForRemoval =
-                    previousTiles
-                        |> List.filterMap
-                            (\t ->
-                                if t.removed || Set.member t.id newIdSet then
-                                    Nothing
-
-                                else
-                                    Just { t | removed = True }
-                            )
-
-                finalTiles =
-                    tiles
-                        ++ tilesWithReadyForRemoval
-                        |> List.sortBy .id
-            in
-            ( finalTiles, finalTiles :: lists )
-
-        updatedRestTileList =
-            List.foldl reducer ( initialTileList, [] ) restTileList
-                |> (second >> List.reverse)
-    in
-    Cons.init initialTileList updatedRestTileList
-
-
-renderTileListGrid : TileList -> HM
-renderTileListGrid tiles =
-    div
-        [ class "pa3 code f2 debug" ]
-        [ Html.Keyed.node "div"
-            [ style "width" "400px"
-            , style "height" "400px"
-            ]
-            (List.map viewKeyedTile tiles)
-        ]
-
-
-viewKeyedTile : Tile -> ( String, HM )
-viewKeyedTile tile =
-    ( tile.id
-    , if tile.removed then
-        text ""
-
-      else
-        renderTile tile.pos tile.num tile.anim
-    )
 
 
 renderTile : IntPos -> Int -> TileAnim -> HM
