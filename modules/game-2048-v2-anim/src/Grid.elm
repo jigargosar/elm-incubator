@@ -6,10 +6,12 @@ module Grid exposing
     , fromEntries
     , fromRows
     , toColumns
+    , toEntries
     , toRows
     )
 
 import Dict
+import Dict.Extra as Dict
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import PosDict exposing (EntryList, PosDict)
@@ -30,6 +32,21 @@ fromEntries s xs =
     PosDict.filled Empty s
         |> PosDict.insertAll (List.map (mapSecond Filled) xs)
         |> Grid
+
+
+toEntries : Grid a -> EntryList a
+toEntries (Grid d) =
+    d
+        |> Dict.filterMap
+            (\_ slot ->
+                case slot of
+                    Empty ->
+                        Nothing
+
+                    Filled a ->
+                        Just a
+            )
+        |> Dict.toList
 
 
 toRows : Grid a -> List (List (Slot a))

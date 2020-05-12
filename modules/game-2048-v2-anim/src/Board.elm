@@ -11,6 +11,7 @@ module Board exposing
 import Basics.Extra exposing (flip, swap, uncurry)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
+import Grid exposing (Grid, Slot(..))
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
@@ -72,8 +73,8 @@ slideCellGrid : Msg -> CellGrid -> CellGrid
 slideCellGrid msg cellGrid =
     let
         acc =
-            toSlotDict cellGrid.entriesById
-                |> slideSlotGrid msg
+            toGrid cellGrid.entriesById
+                |> slideGrid msg
                 |> accumulateSlideResponse cellGrid.idSeed
     in
     { cellGrid
@@ -187,9 +188,9 @@ initialNumGenerator =
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
 fillRandomEmpty cellGrid =
-    toSlotDict cellGrid.entriesById
-        |> Dict.filter (\_ slot -> slot == Empty)
-        |> Dict.keys
+    cellGrid.entriesById
+        |> toGrid
+        |> Grid.emptyPositions
         |> Cons.fromList
         |> Maybe.map (flip fillRandomPosition cellGrid)
 
@@ -228,16 +229,13 @@ type alias SlideResponse =
     }
 
 
-accumulateSlideResponse : IncId.Seed -> PosDict SlotResponse -> SlideResponse
+accumulateSlideResponse : IncId.Seed -> Grid OutCell -> SlideResponse
 accumulateSlideResponse =
     let
         reducer ( pos, slot ) acc =
             case slot of
                 Existing cell ->
                     { acc | entries = ( pos, cell ) :: acc.entries }
-
-                EmptySlot ->
-                    acc
 
                 Merged c1 c2 ->
                     let
@@ -252,7 +250,7 @@ accumulateSlideResponse =
                     }
     in
     \idSeed ->
-        Dict.toList
+        Grid.toEntries
             >> List.foldl reducer
                 { idSeed = idSeed
                 , entries = []
@@ -265,53 +263,46 @@ accumulateSlideResponse =
 -- SLIDE SLOTS
 
 
-type Slot
-    = Filled Cell
-    | Empty
-
-
-type SlotResponse
+type OutCell
     = Existing Cell
-    | EmptySlot
     | Merged Cell Cell
 
 
-toSlotDict : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
-toSlotDict =
+toGrid : IncId.IdDict (PosDict.Entry Cell) -> Grid Cell
+toGrid =
     IncId.dictValues
-        >> List.map (mapSecond Filled)
-        >> flip PosDict.insertAll (PosDict.filled Empty size)
+        >> Grid.fromEntries size
 
 
-slideSlotGrid : Msg -> PosDict Slot -> PosDict SlotResponse
-slideSlotGrid msg entries =
+slideGrid : Msg -> Grid Cell -> Grid OutCell
+slideGrid msg entries =
     case msg of
         SlideLeft ->
             entries
-                |> PosDict.toRows
+                |> Grid.toRows
                 |> List.map (List.reverse >> compactSlotsRight >> List.reverse)
-                |> PosDict.fromRows
+                |> Grid.fromRows size
 
         SlideRight ->
             entries
-                |> PosDict.toRows
+                |> Grid.toRows
                 |> List.map compactSlotsRight
-                |> PosDict.fromRows
+                |> Grid.fromRows size
 
         SlideUp ->
             entries
-                |> PosDict.toColumns
+                |> Grid.toColumns
                 |> List.map (List.reverse >> compactSlotsRight >> List.reverse)
-                |> PosDict.fromColumns
+                |> Grid.fromColumns size
 
         SlideDown ->
             entries
-                |> PosDict.toColumns
+                |> Grid.toColumns
                 |> List.map compactSlotsRight
-                |> PosDict.fromColumns
+                |> Grid.fromColumns size
 
 
-compactSlotsRight : List Slot -> List SlotResponse
+compactSlotsRight : List (Slot Cell) -> List (Slot OutCell)
 compactSlotsRight =
     let
         reducer slot ( mx, xs ) =
@@ -345,10 +336,10 @@ consMaybe mx xs =
             xs
 
 
-slotsResponsePadLeft : List SlotResponse -> List SlotResponse
+slotsResponsePadLeft : List a -> List (Slot a)
 slotsResponsePadLeft list =
     let
         len =
             List.length list
     in
-    List.repeat (size.width - len) EmptySlot ++ list
+    List.repeat (size.width - len) Empty ++ List.map Filled list
