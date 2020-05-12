@@ -321,7 +321,7 @@ slideCellEntries msg entries =
 
 
 
--- Entries Row Column Transforms
+-- Entries  Transforms
 
 
 toRowLists : PosDict.EntryList a -> List (List a)
