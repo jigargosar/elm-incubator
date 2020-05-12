@@ -190,11 +190,11 @@ fillRandomEmpty cellGrid =
         |> toGrid
         |> Grid.emptyPositions
         |> Cons.fromList
-        |> Maybe.map (flip fillRandomPosition cellGrid)
+        |> Maybe.map (flip fillRandomEmptyHelp cellGrid)
 
 
-fillRandomPosition : Cons IntPos -> CellGrid -> CellGrid
-fillRandomPosition ( h, t ) cellGrid =
+fillRandomEmptyHelp : Cons IntPos -> CellGrid -> CellGrid
+fillRandomEmptyHelp ( h, t ) cellGrid =
     let
         ( ( pos, num ), seed ) =
             Random.step
