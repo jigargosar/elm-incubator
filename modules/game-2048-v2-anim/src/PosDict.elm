@@ -12,6 +12,7 @@ module PosDict exposing
     , mapAccumFlippedColumns
     , mapAccumFlippedRows
     , mapAccumRows
+    , resize
     , swap
     , toColumns
     , toRows
@@ -44,6 +45,11 @@ fromRows =
     List.indexedMap (\y -> List.indexedMap (\x -> pair ( x, y )))
         >> List.concat
         >> Dict.fromList
+
+
+resize : IntSize -> a -> PosDict a -> PosDict a
+resize s a d =
+    Dict.union (constrain s d) (filled a s)
 
 
 fromColumns : List (List v) -> PosDict v
