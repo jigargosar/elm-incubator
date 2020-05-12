@@ -8,7 +8,7 @@ module Board exposing
     , update
     )
 
-import Basics.Extra exposing (flip, swap)
+import Basics.Extra exposing (flip, swap, uncurry)
 import Cons exposing (Cons)
 import Dict exposing (Dict)
 import Dict.Extra as Dict
@@ -398,3 +398,33 @@ compactSlotReducer slot acc =
                     | processed = prevCell :: acc.processed
                     , unprocessed = Just cell
                 }
+
+
+
+-- Compact Logic v2
+
+
+type GridSlot
+    = Existing Cell
+    | EmptySlot
+    | Merged Cell Cell
+
+
+compactCellsRight : List Cell -> List GridSlot
+compactCellsRight =
+    let
+        reducer cell ( mx, xs ) =
+            case mx of
+                Nothing ->
+                    ( Just cell, xs )
+
+                Just unprocessed ->
+                    if cell.num == unprocessed.num then
+                        ( Nothing, Merged unprocessed cell :: xs )
+
+                    else
+                        ( Just cell, Existing unprocessed :: xs )
+    in
+    List.foldr reducer ( Nothing, [] )
+        >> mapFirst (Maybe.map Existing)
+        >> uncurry consMaybe
