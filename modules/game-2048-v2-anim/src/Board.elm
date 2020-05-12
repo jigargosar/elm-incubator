@@ -64,27 +64,35 @@ type Msg
 update : Msg -> Board -> Board
 update msg ((Board cellGrid) as board) =
     slide msg cellGrid
-        |> fillRandomEmpty
+        |> Maybe.andThen fillRandomEmpty
         |> Maybe.map Board
         |> Maybe.withDefault board
 
 
-slide : Msg -> CellGrid -> CellGrid
+slide : Msg -> CellGrid -> Maybe CellGrid
 slide msg cellGrid =
     let
         acc =
             toGrid cellGrid.entriesById
                 |> slideGrid msg
                 |> toSlideResponse cellGrid.idSeed
+
+        entriesById =
+            IncId.dictFromListBy (second >> .id) acc.entries
     in
-    { cellGrid
-        | idSeed = acc.idSeed
-        , entriesById = IncId.dictFromListBy (second >> .id) acc.entries
-        , newMergedIds = acc.newMergedIds
-        , mergedEntries = acc.mergedEntries
-        , removedIds = (cellGrid.mergedEntries |> List.map (second >> .id)) ++ cellGrid.removedIds
-        , score = cellGrid.score + acc.score
-    }
+    if entriesById == cellGrid.entriesById then
+        Nothing
+
+    else
+        Just
+            { cellGrid
+                | idSeed = acc.idSeed
+                , entriesById = entriesById
+                , newMergedIds = acc.newMergedIds
+                , mergedEntries = acc.mergedEntries
+                , removedIds = (cellGrid.mergedEntries |> List.map (second >> .id)) ++ cellGrid.removedIds
+                , score = cellGrid.score + acc.score
+            }
 
 
 
