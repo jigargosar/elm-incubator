@@ -116,7 +116,7 @@ type alias Acc =
     }
 
 
-accumulateSlotEntries : IncId.Seed -> List ( IntPos, GridSlot ) -> Acc
+accumulateSlotEntries : IncId.Seed -> List ( IntPos, SlotResponse ) -> Acc
 accumulateSlotEntries =
     let
         reducer ( pos, slot ) acc =
@@ -462,13 +462,13 @@ compactSlotReducer slot acc =
 -- Compact Logic v2
 
 
-type GridSlot
+type SlotResponse
     = Existing Cell
     | EmptySlot
     | Merged Cell Cell
 
 
-slideCellEntries : Msg -> List ( IntPos, Cell ) -> List ( IntPos, GridSlot )
+slideCellEntries : Msg -> List ( IntPos, Cell ) -> List ( IntPos, SlotResponse )
 slideCellEntries msg entries =
     case msg of
         SlideLeft ->
@@ -532,7 +532,7 @@ fromColumnLists =
 -- CompactCellsToSlots
 
 
-compactCellsRight : List Cell -> List GridSlot
+compactCellsRight : List Cell -> List SlotResponse
 compactCellsRight =
     let
         reducer cell ( mx, xs ) =
@@ -553,7 +553,7 @@ compactCellsRight =
         >> gridSlotsPadLeft
 
 
-gridSlotsPadLeft : List GridSlot -> List GridSlot
+gridSlotsPadLeft : List SlotResponse -> List SlotResponse
 gridSlotsPadLeft list =
     let
         len =
