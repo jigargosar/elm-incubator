@@ -410,8 +410,8 @@ type GridSlot
     | Merged Cell Cell
 
 
-slideCellEntriesHelp : Msg -> List ( IntPos, Cell ) -> List ( IntPos, GridSlot )
-slideCellEntriesHelp msg entries =
+slideCellEntries : Msg -> List ( IntPos, Cell ) -> List ( IntPos, GridSlot )
+slideCellEntries msg entries =
     case msg of
         SlideLeft ->
             entries
