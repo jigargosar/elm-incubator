@@ -5,13 +5,12 @@ import Browser exposing (Document)
 import Browser.Events
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
+import Html.Events exposing (onClick)
 import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import Json.Decode as JD exposing (Decoder)
-import Process
 import Random
-import Task
 import Tuple exposing (..)
 
 
@@ -45,6 +44,7 @@ init () =
 type Msg
     = NoOp
     | OnKeyDown String
+    | NewClicked
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -69,6 +69,9 @@ update message model =
 
                 _ ->
                     ( model, Cmd.none )
+
+        NewClicked ->
+            ( model, Cmd.none )
 
 
 slide : Board.Msg -> Model -> ( Model, Cmd Msg )
@@ -111,7 +114,7 @@ view model =
         [ div [ class "measure center" ]
             [ div [ class "pa2 flex items-center" ]
                 [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info model.board |> .score)) ]
-                , div [ class "pa2" ] [ button [] [ text "New" ] ]
+                , div [ class "pa2" ] [ button [ onClick NewClicked ] [ text "New" ] ]
                 ]
             , viewBoard model.board
             ]
