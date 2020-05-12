@@ -226,7 +226,7 @@ fillRandomPosition ( h, t ) cellGrid =
 -- ACCUMULATE SLOTS
 
 
-type alias Acc =
+type alias SlideResponse =
     { idSeed : IncId.Seed
     , entries : List ( IntPos, Cell )
     , newMergedIds : List IncId
@@ -234,7 +234,7 @@ type alias Acc =
     }
 
 
-accumulateSlideResponse : IncId.Seed -> List ( IntPos, SlotResponse ) -> Acc
+accumulateSlideResponse : IncId.Seed -> List ( IntPos, SlotResponse ) -> SlideResponse
 accumulateSlideResponse =
     let
         reducer ( pos, slot ) acc =
