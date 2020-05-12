@@ -270,27 +270,17 @@ type Slot
     | Empty
 
 
+type SlotResponse
+    = Existing Cell
+    | EmptySlot
+    | Merged Cell Cell
+
+
 toSlotDict : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
 toSlotDict =
     IncId.dictValues
         >> List.map (mapSecond Filled)
         >> flip PosDict.insertAll (PosDict.filled Empty size)
-
-
-consMaybe : Maybe a -> List a -> List a
-consMaybe mx xs =
-    case mx of
-        Just x ->
-            x :: xs
-
-        Nothing ->
-            xs
-
-
-type SlotResponse
-    = Existing Cell
-    | EmptySlot
-    | Merged Cell Cell
 
 
 slideSlotEntries : Msg -> PosDict Slot -> PosDict SlotResponse
@@ -343,6 +333,16 @@ compactSlotsRight =
         >> mapFirst (Maybe.map Existing)
         >> uncurry consMaybe
         >> slotsResponsePadLeft
+
+
+consMaybe : Maybe a -> List a -> List a
+consMaybe mx xs =
+    case mx of
+        Just x ->
+            x :: xs
+
+        Nothing ->
+            xs
 
 
 slotsResponsePadLeft : List SlotResponse -> List SlotResponse
