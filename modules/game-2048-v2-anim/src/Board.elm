@@ -70,7 +70,7 @@ update msg ((Board cellGrid) as board) =
 
 updateCellGrid : Msg -> CellGrid -> Maybe CellGrid
 updateCellGrid msg cellGrid =
-    slideCellGrid2 msg cellGrid
+    slideCellGrid msg cellGrid
         |> fillRandomEmpty
 
 
