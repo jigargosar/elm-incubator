@@ -20,7 +20,6 @@ import Tuple exposing (..)
 
 type alias Model =
     { board : Board.Board
-    , seed : Random.Seed
     }
 
 
@@ -31,7 +30,6 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { board = Board.init
-      , seed = Random.initialSeed 0
       }
     , Cmd.none
     )
@@ -77,12 +75,6 @@ update message model =
 slide : Board.Msg -> Model -> ( Model, Cmd Msg )
 slide msg model =
     ( { model | board = Board.update msg model.board }, Cmd.none )
-
-
-boardMsgGenerator : Random.Generator Board.Msg
-boardMsgGenerator =
-    Random.uniform Board.SlideLeft
-        [ Board.SlideRight, Board.SlideUp, Board.SlideDown ]
 
 
 subscriptions : Model -> Sub Msg
