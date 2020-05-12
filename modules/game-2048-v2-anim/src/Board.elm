@@ -356,4 +356,4 @@ slotsResponsePadLeft list =
         len =
             List.length list
     in
-    List.repeat (4 - len) EmptySlot ++ list
+    List.repeat (size.width - len) EmptySlot ++ list
