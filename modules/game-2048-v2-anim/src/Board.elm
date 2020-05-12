@@ -61,14 +61,14 @@ type Msg
 
 update : Msg -> Board -> Board
 update msg ((Board cellGrid) as board) =
-    slideCellGrid msg cellGrid
+    slide msg cellGrid
         |> fillRandomEmpty
         |> Maybe.map Board
         |> Maybe.withDefault board
 
 
-slideCellGrid : Msg -> CellGrid -> CellGrid
-slideCellGrid msg cellGrid =
+slide : Msg -> CellGrid -> CellGrid
+slide msg cellGrid =
     let
         acc =
             toGrid cellGrid.entriesById
