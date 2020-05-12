@@ -10,7 +10,6 @@ import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import Json.Decode as JD exposing (Decoder)
-import Random
 import Tuple exposing (..)
 
 
