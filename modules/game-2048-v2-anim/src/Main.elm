@@ -110,7 +110,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "measure center" ]
             [ div [ class "pa2 flex " ]
-                [ div [ class "pa2" ] [ text ("Score:" ++ String.fromInt (Board.info model.board |> .score)) ]
+                [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info model.board |> .score)) ]
                 ]
             , viewBoard model.board
             ]
