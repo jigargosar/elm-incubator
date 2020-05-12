@@ -18,7 +18,7 @@ import List.Extra as List
 import PosDict exposing (PosDict)
 import Random
 import Random.List
-import Tuple exposing (first, mapFirst, mapSecond, second)
+import Tuple exposing (mapFirst, mapSecond, second)
 
 
 
