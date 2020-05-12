@@ -152,7 +152,7 @@ viewKeyedCells board =
                 |> List.map
                     (\( pos, cell ) ->
                         ( cell.id
-                        , renderTile pos cell.num (idToAnim cell.id)
+                        , viewTile pos cell.num (idToAnim cell.id)
                         )
                     )
 
@@ -161,7 +161,7 @@ viewKeyedCells board =
             List.map
                 (\( pos, cell ) ->
                     ( cell.id
-                    , renderTile pos cell.num Existing
+                    , viewTile pos cell.num Existing
                     )
                 )
                 mergedEntries
@@ -185,8 +185,8 @@ type TileAnim
     | Existing
 
 
-renderTile : IntPos -> Int -> TileAnim -> HM
-renderTile pos num anim =
+viewTile : IntPos -> Int -> TileAnim -> HM
+viewTile pos num anim =
     div
         [ style "width" "100px"
         , style "height" "100px"
