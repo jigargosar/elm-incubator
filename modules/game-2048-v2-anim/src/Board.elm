@@ -225,13 +225,6 @@ initialNumGenerator =
     Random.list 2 numGenerator
 
 
-newInitialCellTuple : Int -> Int -> IncId.Seed -> ( ( Cell, Cell ), IncId.Seed )
-newInitialCellTuple num1 num2 =
-    newCell num1
-        >> Tuple.mapSecond (newCell num2)
-        >> (\( c1, ( c2, gen ) ) -> ( ( c1, c2 ), gen ))
-
-
 
 -- Slide
 
