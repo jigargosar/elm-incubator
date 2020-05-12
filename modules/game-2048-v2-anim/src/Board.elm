@@ -304,56 +304,30 @@ slideSlotEntries msg entries =
         SlideLeft ->
             entries
                 |> PosDict.toRows
-                |> List.map (List.reverse >> compactCellsRight >> List.reverse)
+                |> List.map (List.reverse >> compactSlotsRight >> List.reverse)
                 |> PosDict.fromRows
 
         SlideRight ->
             entries
                 |> PosDict.toRows
-                |> List.map compactCellsRight
+                |> List.map compactSlotsRight
                 |> PosDict.fromRows
 
         SlideUp ->
             entries
                 |> PosDict.toColumns
-                |> List.map (List.reverse >> compactCellsRight >> List.reverse)
+                |> List.map (List.reverse >> compactSlotsRight >> List.reverse)
                 |> PosDict.fromColumns
 
         SlideDown ->
             entries
                 |> PosDict.toColumns
-                |> List.map compactCellsRight
+                |> List.map compactSlotsRight
                 |> PosDict.fromColumns
 
 
-
--- Entries  Transforms
-
-
-fromRowLists : List (List a) -> PosDict.EntryList a
-fromRowLists =
-    List.indexedMap
-        (\y ->
-            List.indexedMap (\x a -> ( ( x, y ), a ))
-        )
-        >> List.concat
-
-
-fromColumnLists : List (List a) -> PosDict.EntryList a
-fromColumnLists =
-    List.indexedMap
-        (\x ->
-            List.indexedMap (\y a -> ( ( x, y ), a ))
-        )
-        >> List.concat
-
-
-
--- CompactCellsToSlots
-
-
-compactCellsRight : List Slot -> List SlotResponse
-compactCellsRight =
+compactSlotsRight : List Slot -> List SlotResponse
+compactSlotsRight =
     let
         reducer slot ( mx, xs ) =
             case ( slot, mx ) of
