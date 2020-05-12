@@ -492,3 +492,13 @@ compactCellsRight =
     List.foldr reducer ( Nothing, [] )
         >> mapFirst (Maybe.map Existing)
         >> uncurry consMaybe
+        >> gridSlotsPadLeft
+
+
+gridSlotsPadLeft : List GridSlot -> List GridSlot
+gridSlotsPadLeft list =
+    let
+        len =
+            List.length list
+    in
+    List.repeat (4 - len) EmptySlot ++ list
