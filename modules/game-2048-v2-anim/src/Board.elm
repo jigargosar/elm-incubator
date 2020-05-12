@@ -410,24 +410,18 @@ type GridSlot
     | Merged Cell Cell
 
 
-type alias CellEntry =
-    ( IntPos, Cell )
-
-
-type alias GridSlotEntry =
-    ( IntPos, GridSlot )
-
-
-slideCellEntries : Msg -> List CellEntry -> List GridSlotEntry
-slideCellEntries msg entries =
+slideCellEntriesHelp : Msg -> List ( IntPos, Cell ) -> List ( IntPos, GridSlot )
+slideCellEntriesHelp msg entries =
     case msg of
         SlideLeft ->
-            toRowLists entries
+            entries
+                |> toRowLists
                 |> List.map (List.reverse >> compactCellsRight >> List.reverse)
                 |> fromRowLists
 
         SlideRight ->
-            toRowLists entries
+            entries
+                |> toRowLists
                 |> List.map compactCellsRight
                 |> fromRowLists
 
@@ -449,13 +443,13 @@ slideCellEntries msg entries =
 toRowLists : PosDict.EntryList a -> List (List a)
 toRowLists =
     List.gatherEqualsBy (first >> second)
-        >> List.map (Cons.toList >> List.map second)
+        >> List.map (Cons.toList >> List.sortBy first >> List.map second)
 
 
 toColumnLists : PosDict.EntryList a -> List (List a)
 toColumnLists =
     List.gatherEqualsBy (first >> first)
-        >> List.map (Cons.toList >> List.map second)
+        >> List.map (Cons.toList >> List.sortBy first >> List.map second)
 
 
 fromRowLists : List (List a) -> PosDict.EntryList a
