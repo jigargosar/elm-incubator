@@ -21,7 +21,6 @@ import Tuple exposing (..)
 
 type alias Model =
     { board : Board.Board
-    , nextBoardMsg : Board.Msg
     , seed : Random.Seed
     }
 
@@ -33,15 +32,10 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { board = Board.init
-      , nextBoardMsg = Board.SlideRight
       , seed = Random.initialSeed 0
       }
-    , Cmd.batch [ stepCellGrid ]
+    , Cmd.none
     )
-
-
-stepCellGrid =
-    Process.sleep 2000 |> Task.perform (always StepCellGrid)
 
 
 
@@ -50,7 +44,6 @@ stepCellGrid =
 
 type Msg
     = NoOp
-    | StepCellGrid
     | OnKeyDown String
 
 
@@ -59,20 +52,6 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
-
-        StepCellGrid ->
-            let
-                ( nextBoardMsg, seed ) =
-                    Random.step boardMsgGenerator model.seed
-            in
-            ( { model
-                | board = Board.update model.nextBoardMsg model.board
-                , nextBoardMsg = nextBoardMsg
-                , seed = seed
-              }
-            , stepCellGrid
-            )
-                |> always ( model, Cmd.none )
 
         OnKeyDown key ->
             case key of
@@ -129,10 +108,9 @@ type alias HM =
 view : Model -> DM
 view model =
     Document "2048 Animated"
-        [ div [ class "pa2 measure center" ]
-            [ div [ class "pa2" ]
-                [ div [] [ text (Debug.toString model.nextBoardMsg) ]
-                , div [] [ text ("Score:" ++ String.fromInt (Board.info model.board |> .score)) ]
+        [ div [ class "measure center" ]
+            [ div [ class "pa2 flex " ]
+                [ div [ class "pa2" ] [ text ("Score:" ++ String.fromInt (Board.info model.board |> .score)) ]
                 ]
             , viewBoard model.board
             ]
