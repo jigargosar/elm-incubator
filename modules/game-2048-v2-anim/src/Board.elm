@@ -73,7 +73,7 @@ slideCellGrid msg cellGrid =
     let
         acc =
             toSlotDict cellGrid.entriesById
-                |> slideSlotEntries msg
+                |> slideSlotGrid msg
                 |> accumulateSlideResponse cellGrid.idSeed
     in
     { cellGrid
@@ -283,8 +283,8 @@ toSlotDict =
         >> flip PosDict.insertAll (PosDict.filled Empty size)
 
 
-slideSlotEntries : Msg -> PosDict Slot -> PosDict SlotResponse
-slideSlotEntries msg entries =
+slideSlotGrid : Msg -> PosDict Slot -> PosDict SlotResponse
+slideSlotGrid msg entries =
     case msg of
         SlideLeft ->
             entries
