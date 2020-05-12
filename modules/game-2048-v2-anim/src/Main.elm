@@ -115,12 +115,12 @@ viewBoard board =
             [ style "width" "400px"
             , style "height" "400px"
             ]
-            (viewKeyedCells board)
+            (viewBoardCells board)
         ]
 
 
-viewKeyedCells : Board.Board -> List ( String, HM )
-viewKeyedCells board =
+viewBoardCells : Board.Board -> List ( String, HM )
+viewBoardCells board =
     let
         { entries, mergedEntries, newIds, newMergedIds, removedIds } =
             Board.info board
