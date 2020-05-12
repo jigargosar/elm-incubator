@@ -10,6 +10,7 @@ import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import Json.Decode as JD exposing (Decoder)
+import Random
 import Tuple exposing (..)
 
 
@@ -28,7 +29,11 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { board = Board.init
+    let
+        seed =
+            Random.initialSeed 0
+    in
+    ( { board = Board.init seed
       }
     , Cmd.none
     )

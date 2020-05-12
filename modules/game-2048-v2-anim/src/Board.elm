@@ -28,9 +28,9 @@ type Board
     = Board CellGrid
 
 
-init : Board
-init =
-    Board initCellGrid
+init : Random.Seed -> Board
+init seed =
+    Board (initCellGrid seed)
 
 
 type alias Info =
@@ -146,11 +146,11 @@ size =
     IntSize.new 4 4
 
 
-initCellGrid : CellGrid
-initCellGrid =
+initCellGrid : Random.Seed -> CellGrid
+initCellGrid initialSeed =
     let
         ( ( cellEntries, idSeed ), seed ) =
-            Random.step initialCellEntriesGenerator (Random.initialSeed 0)
+            Random.step initialCellEntriesGenerator initialSeed
     in
     { idSeed = idSeed
     , seed = seed
