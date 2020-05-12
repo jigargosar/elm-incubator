@@ -1,6 +1,7 @@
 module Grid exposing
     ( Grid
     , Slot(..)
+    , emptyPositions
     , fromColumns
     , fromEntries
     , fromRows
@@ -8,6 +9,8 @@ module Grid exposing
     , toRows
     )
 
+import Dict
+import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import PosDict exposing (EntryList, PosDict)
 import Tuple exposing (mapSecond)
@@ -51,3 +54,10 @@ fromColumns s rs =
     PosDict.fromColumns rs
         |> PosDict.resize s Empty
         |> Grid
+
+
+emptyPositions : Grid a -> List IntPos
+emptyPositions (Grid d) =
+    d
+        |> Dict.filter (\_ v -> v == Empty)
+        |> Dict.keys
