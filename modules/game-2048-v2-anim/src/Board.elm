@@ -30,7 +30,7 @@ type Board
 
 init : Board
 init =
-    Board initialCellGrid
+    Board initCellGrid
 
 
 type alias Info =
@@ -146,8 +146,8 @@ size =
     IntSize.new 4 4
 
 
-initialCellGrid : CellGrid
-initialCellGrid =
+initCellGrid : CellGrid
+initCellGrid =
     let
         ( ( cellEntries, idSeed ), seed ) =
             Random.step initialCellEntriesGenerator (Random.initialSeed 0)
