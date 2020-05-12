@@ -1,12 +1,14 @@
 module Main exposing (main)
 
-import Board
+import Board exposing (Msg(..))
 import Browser exposing (Document)
+import Browser.Events
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
+import Json.Decode as JD exposing (Decoder)
 import Process
 import Random
 import Task
@@ -49,6 +51,7 @@ stepCellGrid =
 type Msg
     = NoOp
     | StepCellGrid
+    | OnKeyDown String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -71,6 +74,28 @@ update message model =
             )
                 |> always ( model, Cmd.none )
 
+        OnKeyDown key ->
+            case key of
+                "ArrowLeft" ->
+                    slide SlideLeft model
+
+                "ArrowRight" ->
+                    slide SlideRight model
+
+                "ArrowUp" ->
+                    slide SlideUp model
+
+                "ArrowDown" ->
+                    slide SlideDown model
+
+                _ ->
+                    ( model, Cmd.none )
+
+
+slide : Board.Msg -> Model -> ( Model, Cmd Msg )
+slide msg model =
+    ( { model | board = Board.update msg model.board }, Cmd.none )
+
 
 boardMsgGenerator : Random.Generator Board.Msg
 boardMsgGenerator =
@@ -80,7 +105,13 @@ boardMsgGenerator =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch [ Browser.Events.onKeyDown onKeyDown ]
+
+
+onKeyDown : Decoder Msg
+onKeyDown =
+    JD.field "key" JD.string
+        |> JD.map OnKeyDown
 
 
 
