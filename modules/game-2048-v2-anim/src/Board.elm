@@ -10,7 +10,6 @@ module Board exposing
 
 import Basics.Extra exposing (flip, swap, uncurry)
 import Cons exposing (Cons)
-import Dict exposing (Dict)
 import Grid exposing (Grid, Slot(..))
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
