@@ -78,7 +78,6 @@ slideCellGrid msg cellGrid =
     let
         acc =
             toSlotDict cellGrid.entriesById
-                |> Dict.toList
                 |> slideSlotEntries msg
                 |> accumulateSlideResponse cellGrid.idSeed
     in
@@ -298,46 +297,36 @@ type SlotResponse
     | Merged Cell Cell
 
 
-slideSlotEntries : Msg -> List ( IntPos, Slot ) -> List ( IntPos, SlotResponse )
+slideSlotEntries : Msg -> PosDict Slot -> List ( IntPos, SlotResponse )
 slideSlotEntries msg entries =
     case msg of
         SlideLeft ->
             entries
-                |> toRowLists
+                |> PosDict.toRows
                 |> List.map (List.reverse >> compactCellsRight >> List.reverse)
                 |> fromRowLists
 
         SlideRight ->
             entries
-                |> toRowLists
+                |> PosDict.toRows
                 |> List.map compactCellsRight
                 |> fromRowLists
 
         SlideUp ->
-            toColumnLists entries
+            entries
+                |> PosDict.toColumns
                 |> List.map (List.reverse >> compactCellsRight >> List.reverse)
                 |> fromColumnLists
 
         SlideDown ->
-            toColumnLists entries
+            entries
+                |> PosDict.toColumns
                 |> List.map compactCellsRight
                 |> fromColumnLists
 
 
 
 -- Entries  Transforms
-
-
-toRowLists : PosDict.EntryList a -> List (List a)
-toRowLists =
-    List.gatherEqualsBy (first >> second)
-        >> List.map (Cons.toList >> List.sortBy first >> List.map second)
-
-
-toColumnLists : PosDict.EntryList a -> List (List a)
-toColumnLists =
-    List.gatherEqualsBy (first >> first)
-        >> List.map (Cons.toList >> List.sortBy first >> List.map second)
 
 
 fromRowLists : List (List a) -> PosDict.EntryList a

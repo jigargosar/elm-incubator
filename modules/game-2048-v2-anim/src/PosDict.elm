@@ -12,6 +12,8 @@ module PosDict exposing
     , mapAccumFlippedRows
     , mapAccumRows
     , swap
+    , toColumns
+    , toRows
     )
 
 import Basics.Extra as Basics exposing (uncurry)
