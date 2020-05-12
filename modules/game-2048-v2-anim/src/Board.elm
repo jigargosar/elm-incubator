@@ -347,11 +347,11 @@ compactSlotsRight =
     List.foldr reducer ( Nothing, [] )
         >> mapFirst (Maybe.map Existing)
         >> uncurry consMaybe
-        >> gridSlotsPadLeft
+        >> slotsResponsePadLeft
 
 
-gridSlotsPadLeft : List SlotResponse -> List SlotResponse
-gridSlotsPadLeft list =
+slotsResponsePadLeft : List SlotResponse -> List SlotResponse
+slotsResponsePadLeft list =
     let
         len =
             List.length list
