@@ -5,6 +5,7 @@ module Board exposing
     , Msg(..)
     , info
     , init
+    , reInit
     , update
     )
 
@@ -31,6 +32,11 @@ type Board
 init : Random.Seed -> Board
 init seed =
     Board (initCellGrid seed)
+
+
+reInit : Board -> Board
+reInit (Board cellGrid) =
+    init cellGrid.seed
 
 
 type alias Info =
