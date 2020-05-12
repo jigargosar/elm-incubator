@@ -76,11 +76,10 @@ updateCellGrid msg cellGrid =
 slideCellGrid : Msg -> CellGrid -> CellGrid
 slideCellGrid msg cellGrid =
     let
-        slotsEntries =
-            slideSlotEntries msg (toSlotEntries cellGrid.entriesById |> Dict.toList)
-
         acc =
-            slotsEntries
+            toSlotDict cellGrid.entriesById
+                |> Dict.toList
+                |> slideSlotEntries msg
                 |> accumulateSlideResponse cellGrid.idSeed
     in
     { cellGrid
@@ -194,7 +193,7 @@ initialNumGenerator =
 
 fillRandomEmpty : CellGrid -> Maybe CellGrid
 fillRandomEmpty cellGrid =
-    toSlotEntries cellGrid.entriesById
+    toSlotDict cellGrid.entriesById
         |> Dict.filter (\_ slot -> slot == Empty)
         |> Dict.keys
         |> Cons.fromList
@@ -276,8 +275,8 @@ type Slot
     | Empty
 
 
-toSlotEntries : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
-toSlotEntries =
+toSlotDict : IncId.IdDict (PosDict.Entry Cell) -> PosDict Slot
+toSlotDict =
     IncId.dictValues
         >> List.map (mapSecond Filled)
         >> flip PosDict.insertAll (PosDict.filled Empty size)
