@@ -90,6 +90,18 @@ slideCellGrid msg =
             slideBy PosDict.mapAccumColumns
 
 
+slideCellGrid2 : Msg -> CellGrid -> CellGrid
+slideCellGrid2 msg cellGrid =
+    let
+        slotsEntries =
+            slideCellEntries msg (IncId.dictValues cellGrid.entriesById)
+
+        entriesById =
+            cellGrid.entriesById
+    in
+    { cellGrid | entriesById = entriesById }
+
+
 
 -- CELL
 
