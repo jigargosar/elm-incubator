@@ -39,6 +39,7 @@ type alias Info =
     , newMergedIds : List IncId
     , mergedEntries : Grid.EntryList Cell
     , removedIds : List IncId
+    , score : Int
     }
 
 
@@ -49,6 +50,7 @@ info (Board cellGrid) =
     , newMergedIds = cellGrid.newMergedIds
     , mergedEntries = cellGrid.mergedEntries
     , removedIds = cellGrid.removedIds
+    , score = cellGrid.score
     }
 
 
@@ -127,6 +129,7 @@ type alias CellGrid =
     , removedIds : List IncId
     , newIds : List IncId
     , newMergedIds : List IncId
+    , score : Int
     }
 
 
@@ -147,6 +150,7 @@ initialCellGrid =
     , removedIds = []
     , newIds = []
     , newMergedIds = []
+    , score = 0
     }
 
 
@@ -219,6 +223,7 @@ type alias SlideResponse =
     , entries : List ( IntPos, Cell )
     , newMergedIds : List IncId
     , mergedEntries : List ( IntPos, Cell )
+    , score : Int
     }
 
 
@@ -240,6 +245,7 @@ toSlideResponse =
                         , entries = ( pos, mergedCell ) :: acc.entries
                         , newMergedIds = mergedCell.id :: acc.newMergedIds
                         , mergedEntries = ( pos, c1 ) :: ( pos, c2 ) :: acc.mergedEntries
+                        , score = mergedCell.num + acc.score
                     }
     in
     \idSeed ->
@@ -249,6 +255,7 @@ toSlideResponse =
                 , entries = []
                 , newMergedIds = []
                 , mergedEntries = []
+                , score = 0
                 }
 
 
