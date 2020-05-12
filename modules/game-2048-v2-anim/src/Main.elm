@@ -69,6 +69,7 @@ update message model =
               }
             , stepCellGrid
             )
+                |> always ( model, Cmd.none )
 
 
 boardMsgGenerator : Random.Generator Board.Msg
