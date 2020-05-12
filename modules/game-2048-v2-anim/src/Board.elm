@@ -233,7 +233,7 @@ type alias SlideResponse =
     }
 
 
-accumulateSlideResponse : IncId.Seed -> List ( IntPos, SlotResponse ) -> SlideResponse
+accumulateSlideResponse : IncId.Seed -> PosDict SlotResponse -> SlideResponse
 accumulateSlideResponse =
     let
         reducer ( pos, slot ) acc =
@@ -257,12 +257,13 @@ accumulateSlideResponse =
                     }
     in
     \idSeed ->
-        List.foldl reducer
-            { idSeed = idSeed
-            , entries = []
-            , newMergedIds = []
-            , mergedEntries = []
-            }
+        Dict.toList
+            >> List.foldl reducer
+                { idSeed = idSeed
+                , entries = []
+                , newMergedIds = []
+                , mergedEntries = []
+                }
 
 
 
@@ -297,32 +298,32 @@ type SlotResponse
     | Merged Cell Cell
 
 
-slideSlotEntries : Msg -> PosDict Slot -> List ( IntPos, SlotResponse )
+slideSlotEntries : Msg -> PosDict Slot -> PosDict SlotResponse
 slideSlotEntries msg entries =
     case msg of
         SlideLeft ->
             entries
                 |> PosDict.toRows
                 |> List.map (List.reverse >> compactCellsRight >> List.reverse)
-                |> fromRowLists
+                |> PosDict.fromRows
 
         SlideRight ->
             entries
                 |> PosDict.toRows
                 |> List.map compactCellsRight
-                |> fromRowLists
+                |> PosDict.fromRows
 
         SlideUp ->
             entries
                 |> PosDict.toColumns
                 |> List.map (List.reverse >> compactCellsRight >> List.reverse)
-                |> fromColumnLists
+                |> PosDict.fromColumns
 
         SlideDown ->
             entries
                 |> PosDict.toColumns
                 |> List.map compactCellsRight
-                |> fromColumnLists
+                |> PosDict.fromColumns
 
 
 

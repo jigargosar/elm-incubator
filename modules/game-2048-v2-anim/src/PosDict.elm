@@ -4,6 +4,7 @@ module PosDict exposing
     , PosDict
     , constrain
     , filled
+    , fromColumns
     , fromRows
     , insertAll
     , insertEntry
