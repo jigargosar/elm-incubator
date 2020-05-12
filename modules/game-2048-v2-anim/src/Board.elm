@@ -15,7 +15,6 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
 import List.Extra as List
-import PosDict exposing (Entry, EntryList)
 import Random
 import Random.List
 import Tuple exposing (..)
@@ -35,10 +34,10 @@ init =
 
 
 type alias Info =
-    { entries : EntryList Cell
+    { entries : Grid.EntryList Cell
     , newIds : List IncId
     , newMergedIds : List IncId
-    , mergedEntries : EntryList Cell
+    , mergedEntries : Grid.EntryList Cell
     , removedIds : List IncId
     }
 
@@ -123,8 +122,8 @@ newCells numList initialSeed =
 type alias CellGrid =
     { idSeed : IncId.Seed
     , seed : Random.Seed
-    , entriesById : IncId.IdDict (Entry Cell)
-    , mergedEntries : EntryList Cell
+    , entriesById : IncId.IdDict (Grid.Entry Cell)
+    , mergedEntries : Grid.EntryList Cell
     , removedIds : List IncId
     , newIds : List IncId
     , newMergedIds : List IncId
@@ -169,7 +168,7 @@ numGenerator =
     Random.uniform 2 [ 4 ]
 
 
-initialCellEntriesGenerator : Random.Generator ( EntryList Cell, IncId.Seed )
+initialCellEntriesGenerator : Random.Generator ( Grid.EntryList Cell, IncId.Seed )
 initialCellEntriesGenerator =
     Random.map2
         (\ps ns ->
@@ -267,7 +266,7 @@ type OutCell
     | Merged Cell Cell
 
 
-toGrid : IncId.IdDict (Entry Cell) -> Grid Cell
+toGrid : IncId.IdDict (Grid.Entry Cell) -> Grid Cell
 toGrid =
     IncId.dictValues
         >> Grid.fromEntries size

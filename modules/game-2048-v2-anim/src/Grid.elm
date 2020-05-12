@@ -1,5 +1,7 @@
 module Grid exposing
-    ( Grid
+    ( Entry
+    , EntryList
+    , Grid
     , Slot(..)
     , emptyPositions
     , fromColumns
@@ -14,8 +16,20 @@ import Dict
 import Dict.Extra as Dict
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
-import PosDict exposing (EntryList, PosDict)
+import PosDict
 import Tuple exposing (mapSecond)
+
+
+type alias Entry a =
+    PosDict.Entry a
+
+
+type alias EntryList a =
+    PosDict.EntryList a
+
+
+type alias PosDict a =
+    PosDict.PosDict a
 
 
 type Slot a
