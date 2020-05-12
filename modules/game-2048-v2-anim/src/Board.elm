@@ -83,6 +83,7 @@ slide msg cellGrid =
         , newMergedIds = acc.newMergedIds
         , mergedEntries = acc.mergedEntries
         , removedIds = (cellGrid.mergedEntries |> List.map (second >> .id)) ++ cellGrid.removedIds
+        , score = acc.score
     }
 
 

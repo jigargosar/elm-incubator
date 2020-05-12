@@ -178,7 +178,10 @@ view model =
     Document "2048 Animated"
         [ div [ class "pa2 measure center" ]
             [ renderTileListGrid (Cons.head model.tileListCons)
-            , div [ class "pa2" ] [ text (Debug.toString model.nextBoardMsg) ]
+            , div [ class "pa2" ]
+                [ div [] [ text (Debug.toString model.nextBoardMsg) ]
+                , div [] [ text ("Score:" ++ String.fromInt (Board.info model.board |> .score)) ]
+                ]
             , viewBoard model.board
             ]
         ]
