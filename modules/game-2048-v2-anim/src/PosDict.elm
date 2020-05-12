@@ -1,7 +1,5 @@
 module PosDict exposing
-    ( Entry
-    , EntryList
-    , PosDict
+    ( PosDict
     , constrain
     , filled
     , fromColumns
@@ -25,7 +23,7 @@ import Dict.Extra as Dict
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import List.Extra as List
-import Tuple exposing (first, mapSecond, pair, second)
+import Tuple exposing (..)
 
 
 type alias PosDict a =
