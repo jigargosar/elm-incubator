@@ -73,7 +73,7 @@ slideCellGrid msg cellGrid =
         acc =
             toGrid cellGrid.entriesById
                 |> slideGrid msg
-                |> accumulateSlideResponse cellGrid.idSeed
+                |> toSlideResponse cellGrid.idSeed
     in
     { cellGrid
         | idSeed = acc.idSeed
@@ -227,8 +227,8 @@ type alias SlideResponse =
     }
 
 
-accumulateSlideResponse : IncId.Seed -> Grid OutCell -> SlideResponse
-accumulateSlideResponse =
+toSlideResponse : IncId.Seed -> Grid OutCell -> SlideResponse
+toSlideResponse =
     let
         reducer ( pos, slot ) acc =
             case slot of
