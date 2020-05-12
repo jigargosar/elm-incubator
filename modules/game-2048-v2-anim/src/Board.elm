@@ -173,7 +173,7 @@ initialCellEntriesGenerator =
     Random.map2
         (\ps ns ->
             newCells ns IncId.initialSeed
-                |> Tuple.mapFirst (List.zip ps)
+                |> mapFirst (List.zip ps)
         )
         initialPositionsGenerator
         (Random.list 2 numGenerator)
