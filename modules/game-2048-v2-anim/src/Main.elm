@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Board exposing (Msg(..))
+import Board exposing (Board, Msg(..))
 import Browser exposing (Document)
 import Browser.Events
 import Html exposing (Html, button, div, text)
@@ -59,23 +59,12 @@ update message model =
         OnKeyDown key ->
             case model of
                 Turn board ->
-                    case updateBoardFromKey key board of
-                        Just newBoard ->
-                            let
-                                alreadyWon =
-                                    Board.hasWon board
-
-                                justWon =
-                                    Board.hasWon newBoard
-                            in
-                            if alreadyWon then
-                                ( Turn newBoard, Cmd.none )
-
-                            else if justWon then
-                                ( Won newBoard, Cmd.none )
-
-                            else
-                                ( Turn newBoard, Cmd.none )
+                    case
+                        updateBoardFromKey key board
+                            |> Maybe.map (boardToModel (Board.hasWon board))
+                    of
+                        Just newModel ->
+                            ( newModel, Cmd.none )
 
                         Nothing ->
                             if Board.noMovesLeft board then
@@ -141,6 +130,18 @@ updateBoardFromKey key board =
 
         _ ->
             Nothing
+
+
+boardToModel : Bool -> Board -> Model
+boardToModel alreadyWon board =
+    if alreadyWon then
+        Turn board
+
+    else if Board.hasWon board then
+        Won board
+
+    else
+        Turn board
 
 
 
