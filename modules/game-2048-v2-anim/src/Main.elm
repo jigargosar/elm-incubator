@@ -47,6 +47,7 @@ type Msg
     = NoOp
     | OnKeyDown String
     | NewClicked
+    | ContinueClicked
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -79,6 +80,17 @@ update message model =
 
                 Won _ ->
                     ( model, Cmd.none )
+
+        ContinueClicked ->
+            case model of
+                Turn _ ->
+                    ( model, Cmd.none )
+
+                NoMoves _ ->
+                    ( model, Cmd.none )
+
+                Won board ->
+                    ( Turn board, Cmd.none )
 
         NewClicked ->
             case model of
@@ -138,7 +150,10 @@ view model =
 
                 Won board ->
                     [ viewHeader board
-                    , div [ class "pa2" ] [ text "You Won!" ]
+                    , div []
+                        [ div [ class "pa2" ] [ text "You Won!" ]
+                        , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
+                        ]
                     , viewBoard board
                     ]
             )
