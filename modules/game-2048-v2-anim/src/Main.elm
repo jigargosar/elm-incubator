@@ -163,22 +163,17 @@ view model =
             (case model of
                 Turn board ->
                     [ viewHeader board
-                    , viewBoard board
+                    , viewBoard model
                     ]
 
                 NoMoves board ->
                     [ viewHeader board
-                    , div [ class "pa2" ] [ text "Game Over : No Moves Left" ]
-                    , viewBoard board
+                    , viewBoard model
                     ]
 
                 Won board ->
                     [ viewHeader board
-                    , div [ class "flex" ]
-                        [ div [ class "pa2" ] [ text "You Won!" ]
-                        , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
-                        ]
-                    , viewBoard board
+                    , viewBoard model
                     ]
             )
         ]
@@ -192,16 +187,36 @@ viewHeader board =
         ]
 
 
-viewBoard : Board.Board -> HM
-viewBoard board =
+viewBoard : Model -> HM
+viewBoard model =
     div
         [ class "pa3 code f2 debug" ]
-        [ Html.Keyed.node "div"
-            [ style "width" "400px"
-            , style "height" "400px"
-            ]
-            (viewKeyedCells board)
+        (case model of
+            Turn board ->
+                [ viewGridCells board ]
+
+            NoMoves board ->
+                [ viewGridCells board
+                , div [ class "pa2" ] [ text "Game Over : No Moves Left" ]
+                ]
+
+            Won board ->
+                [ viewGridCells board
+                , div [ class "flex" ]
+                    [ div [ class "pa2" ] [ text "You Won!" ]
+                    , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
+                    ]
+                ]
+        )
+
+
+viewGridCells : Board.Board -> HM
+viewGridCells board =
+    Html.Keyed.node "div"
+        [ style "width" "400px"
+        , style "height" "400px"
         ]
+        (viewKeyedCells board)
 
 
 viewKeyedCells : Board.Board -> List ( String, HM )
