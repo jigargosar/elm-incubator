@@ -74,7 +74,7 @@ hasWon : Board -> Bool
 hasWon (Board cellGrid) =
     cellGrid.entriesById
         |> IncId.dictValues
-        |> List.any (second >> .num >> (\num -> num >= 8))
+        |> List.any (second >> .num >> (\num -> num >= 2048))
 
 
 noMovesLeft : Board -> Bool
