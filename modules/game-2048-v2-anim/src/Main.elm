@@ -61,16 +61,16 @@ update message model =
                 Turn board ->
                     case key of
                         "ArrowLeft" ->
-                            slide SlideLeft board
+                            ( Turn (Board.update SlideLeft board), Cmd.none )
 
                         "ArrowRight" ->
-                            slide SlideRight board
+                            ( Turn (Board.update SlideRight board), Cmd.none )
 
                         "ArrowUp" ->
-                            slide SlideUp board
+                            ( Turn (Board.update SlideUp board), Cmd.none )
 
                         "ArrowDown" ->
-                            slide SlideDown board
+                            ( Turn (Board.update SlideDown board), Cmd.none )
 
                         _ ->
                             ( model, Cmd.none )
@@ -102,11 +102,6 @@ update message model =
 
                 Won board ->
                     ( Turn (Board.reInit board), Cmd.none )
-
-
-slide : Board.Msg -> Board.Board -> ( Model, Cmd Msg )
-slide msg board =
-    ( Turn (Board.update msg board), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
