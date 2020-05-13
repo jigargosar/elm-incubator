@@ -132,11 +132,13 @@ view model =
 
                 NoMoves board ->
                     [ viewHeader board
+                    , div [ class "pa2" ] [ text "No Moves Left" ]
                     , viewBoard board
                     ]
 
                 Won board ->
                     [ viewHeader board
+                    , div [ class "pa2" ] [ text "You Won!" ]
                     , viewBoard board
                     ]
             )
