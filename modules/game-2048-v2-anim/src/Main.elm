@@ -19,7 +19,7 @@ import Tuple exposing (..)
 
 
 type Model
-    = Turn Board.Board
+    = Playing Board.Board
     | NoMoves Board.Board
     | Won Board.Board
 
@@ -34,7 +34,7 @@ init () =
         seed =
             Random.initialSeed 0
     in
-    ( Turn (Board.init seed)
+    ( Playing (Board.init seed)
     , Cmd.none
     )
 
@@ -58,19 +58,19 @@ update message model =
 
         OnKeyDown key ->
             case model of
-                Turn board ->
+                Playing board ->
                     case key of
                         "ArrowLeft" ->
-                            ( Turn (Board.update SlideLeft board), Cmd.none )
+                            ( Playing (Board.update SlideLeft board), Cmd.none )
 
                         "ArrowRight" ->
-                            ( Turn (Board.update SlideRight board), Cmd.none )
+                            ( Playing (Board.update SlideRight board), Cmd.none )
 
                         "ArrowUp" ->
-                            ( Turn (Board.update SlideUp board), Cmd.none )
+                            ( Playing (Board.update SlideUp board), Cmd.none )
 
                         "ArrowDown" ->
-                            ( Turn (Board.update SlideDown board), Cmd.none )
+                            ( Playing (Board.update SlideDown board), Cmd.none )
 
                         _ ->
                             ( model, Cmd.none )
@@ -83,25 +83,25 @@ update message model =
 
         ContinueClicked ->
             case model of
-                Turn _ ->
+                Playing _ ->
                     ( model, Cmd.none )
 
                 NoMoves _ ->
                     ( model, Cmd.none )
 
                 Won board ->
-                    ( Turn board, Cmd.none )
+                    ( Playing board, Cmd.none )
 
         NewClicked ->
             case model of
-                Turn board ->
-                    ( Turn (Board.reInit board), Cmd.none )
+                Playing board ->
+                    ( Playing (Board.reInit board), Cmd.none )
 
                 NoMoves board ->
-                    ( Turn (Board.reInit board), Cmd.none )
+                    ( Playing (Board.reInit board), Cmd.none )
 
                 Won board ->
-                    ( Turn (Board.reInit board), Cmd.none )
+                    ( Playing (Board.reInit board), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -132,7 +132,7 @@ view model =
     Document "2048 Animated"
         [ div [ class "measure center" ]
             (case model of
-                Turn board ->
+                Playing board ->
                     [ viewHeader board
                     , viewBoard board
                     ]
