@@ -167,7 +167,7 @@ view model =
 
                 NoMoves board ->
                     [ viewHeader board
-                    , div [ class "pa2" ] [ text "No Moves Left" ]
+                    , div [ class "pa2" ] [ text "Game Over : No Moves Left" ]
                     , viewBoard board
                     ]
 
