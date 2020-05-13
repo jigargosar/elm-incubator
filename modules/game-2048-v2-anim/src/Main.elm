@@ -176,8 +176,8 @@ viewBoard : Model -> HM
 viewBoard model =
     div
         [ class "code f2 relative center mv4"
-        , style "width" "400px"
-        , style "height" "400px"
+        , style "width" "460px"
+        , style "height" "460px"
         ]
         (case model.status of
             Turn ->
@@ -292,7 +292,7 @@ viewTile pos num anim =
 renderTileTransform pos =
     let
         postPartToPx n =
-            String.fromInt (n * 100 + 15) ++ "px"
+            String.fromInt ((n * 100) + ((n + 1) * 15)) ++ "px"
 
         ( sx, sy ) =
             pos
