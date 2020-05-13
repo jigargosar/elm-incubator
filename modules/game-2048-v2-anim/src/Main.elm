@@ -185,12 +185,12 @@ viewBoard model =
 
             NoMoves ->
                 [ viewGridCells model.board
-                , div [ class "pa2" ] [ text "Game Over : No Moves Left" ]
+                , div [ class "absolute top-0 w-100 h-100" ] [ text "Game Over : No Moves Left" ]
                 ]
 
             Won ->
                 [ viewGridCells model.board
-                , div [ class "flex" ]
+                , div [ class "absolute top-0 w-100 h-100 flex" ]
                     [ div [ class "pa2" ] [ text "You Won!" ]
                     , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
                     ]
