@@ -20,7 +20,6 @@ import Tuple exposing (..)
 
 type Model
     = Turn Board.Board
-    | TurnAfterWon Board.Board
     | NoMoves Board.Board
     | Won Board.Board
 
@@ -81,23 +80,6 @@ update message model =
                         Nothing ->
                             ( model, Cmd.none )
 
-                TurnAfterWon board ->
-                    case key of
-                        "ArrowLeft" ->
-                            ( TurnAfterWon (Board.update SlideLeft board), Cmd.none )
-
-                        "ArrowRight" ->
-                            ( TurnAfterWon (Board.update SlideRight board), Cmd.none )
-
-                        "ArrowUp" ->
-                            ( TurnAfterWon (Board.update SlideUp board), Cmd.none )
-
-                        "ArrowDown" ->
-                            ( TurnAfterWon (Board.update SlideDown board), Cmd.none )
-
-                        _ ->
-                            ( model, Cmd.none )
-
                 NoMoves _ ->
                     ( model, Cmd.none )
 
@@ -115,9 +97,6 @@ update message model =
                 Won board ->
                     ( Turn board, Cmd.none )
 
-                TurnAfterWon _ ->
-                    ( model, Cmd.none )
-
         NewClicked ->
             case model of
                 Turn board ->
@@ -127,9 +106,6 @@ update message model =
                     ( Turn (Board.reInit board), Cmd.none )
 
                 Won board ->
-                    ( Turn (Board.reInit board), Cmd.none )
-
-                TurnAfterWon board ->
                     ( Turn (Board.reInit board), Cmd.none )
 
 
@@ -181,11 +157,6 @@ view model =
         [ div [ class "measure center" ]
             (case model of
                 Turn board ->
-                    [ viewHeader board
-                    , viewBoard board
-                    ]
-
-                TurnAfterWon board ->
                     [ viewHeader board
                     , viewBoard board
                     ]
