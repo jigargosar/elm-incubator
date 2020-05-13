@@ -72,10 +72,10 @@ update message model =
                                 ( Turn newBoard, Cmd.none )
 
                             else if justWon then
-                                ( Won board, Cmd.none )
+                                ( Won newBoard, Cmd.none )
 
                             else
-                                ( Turn board, Cmd.none )
+                                ( Turn newBoard, Cmd.none )
 
                         Nothing ->
                             if Board.noMovesLeft board then
@@ -173,7 +173,7 @@ view model =
 
                 Won board ->
                     [ viewHeader board
-                    , div []
+                    , div [ class "flex" ]
                         [ div [ class "pa2" ] [ text "You Won!" ]
                         , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
                         ]
