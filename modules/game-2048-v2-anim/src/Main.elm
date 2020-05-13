@@ -18,10 +18,16 @@ import Tuple exposing (..)
 -- Model
 
 
-type Model
-    = Turn Board.Board
-    | NoMoves Board.Board
-    | Won Board.Board
+type alias Model =
+    { status : Status
+    , board : Board
+    }
+
+
+type Status
+    = Turn
+    | NoMoves
+    | Won
 
 
 type alias Flags =
@@ -34,7 +40,7 @@ init () =
         seed =
             Random.initialSeed 0
     in
-    ( Turn (Board.init seed)
+    ( Model Turn (Board.init seed)
     , Cmd.none
     )
 
@@ -57,49 +63,41 @@ update message model =
             ( model, Cmd.none )
 
         OnKeyDown key ->
-            case model of
-                Turn board ->
+            case model.status of
+                Turn ->
                     case
-                        updateBoardFromKey key board
-                            |> Maybe.map (boardToModel (Board.hasWon board))
+                        updateBoardFromKey key model.board
+                            |> Maybe.map (boardToModel (Board.hasWon model.board))
                     of
                         Just newModel ->
                             ( newModel, Cmd.none )
 
                         Nothing ->
-                            if Board.noMovesLeft board then
-                                ( NoMoves board, Cmd.none )
+                            if Board.noMovesLeft model.board then
+                                ( Model NoMoves model.board, Cmd.none )
 
                             else
                                 ( model, Cmd.none )
 
-                NoMoves _ ->
+                NoMoves ->
                     ( model, Cmd.none )
 
-                Won _ ->
+                Won ->
                     ( model, Cmd.none )
 
         ContinueClicked ->
-            case model of
-                Turn _ ->
+            case model.status of
+                Turn ->
                     ( model, Cmd.none )
 
-                NoMoves _ ->
+                NoMoves ->
                     ( model, Cmd.none )
 
-                Won board ->
-                    ( Turn board, Cmd.none )
+                Won ->
+                    ( Model Turn model.board, Cmd.none )
 
         NewClicked ->
-            case model of
-                Turn board ->
-                    ( Turn (Board.reInit board), Cmd.none )
-
-                NoMoves board ->
-                    ( Turn (Board.reInit board), Cmd.none )
-
-                Won board ->
-                    ( Turn (Board.reInit board), Cmd.none )
+            ( Model Turn (Board.reInit model.board), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -135,13 +133,13 @@ updateBoardFromKey key board =
 boardToModel : Bool -> Board -> Model
 boardToModel alreadyWon board =
     if alreadyWon then
-        Turn board
+        Model Turn board
 
     else if Board.hasWon board then
-        Won board
+        Model Won board
 
     else
-        Turn board
+        Model Turn board
 
 
 
@@ -160,22 +158,9 @@ view : Model -> DM
 view model =
     Document "2048 Animated"
         [ div [ class "measure center" ]
-            (case model of
-                Turn board ->
-                    [ viewHeader board
-                    , viewBoard model
-                    ]
-
-                NoMoves board ->
-                    [ viewHeader board
-                    , viewBoard model
-                    ]
-
-                Won board ->
-                    [ viewHeader board
-                    , viewBoard model
-                    ]
-            )
+            [ viewHeader model.board
+            , viewBoard model
+            ]
         ]
 
 
@@ -191,17 +176,17 @@ viewBoard : Model -> HM
 viewBoard model =
     div
         [ class "pa3 code f2 debug" ]
-        (case model of
-            Turn board ->
-                [ viewGridCells board ]
+        (case model.status of
+            Turn ->
+                [ viewGridCells model.board ]
 
-            NoMoves board ->
-                [ viewGridCells board
+            NoMoves ->
+                [ viewGridCells model.board
                 , div [ class "pa2" ] [ text "Game Over : No Moves Left" ]
                 ]
 
-            Won board ->
-                [ viewGridCells board
+            Won ->
+                [ viewGridCells model.board
                 , div [ class "flex" ]
                     [ div [ class "pa2" ] [ text "You Won!" ]
                     , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
