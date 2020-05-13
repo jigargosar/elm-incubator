@@ -157,7 +157,7 @@ type alias HM =
 view : Model -> DM
 view model =
     Document "2048 Animated"
-        [ div [ class "measure center" ]
+        [ div [ class "measure center debug" ]
             [ viewHeader model.board
             , viewBoard model
             ]
@@ -175,7 +175,10 @@ viewHeader board =
 viewBoard : Model -> HM
 viewBoard model =
     div
-        [ class "pa3 code f2 debug" ]
+        [ class "code f2 relative center mv4"
+        , style "width" "400px"
+        , style "height" "400px"
+        ]
         (case model.status of
             Turn ->
                 [ viewGridCells model.board ]
@@ -198,8 +201,7 @@ viewBoard model =
 viewGridCells : Board -> HM
 viewGridCells board =
     Html.Keyed.node "div"
-        [ style "width" "400px"
-        , style "height" "400px"
+        [ class "w-100 h-100"
         ]
         (viewKeyedCells board)
 
