@@ -111,7 +111,7 @@ onKeyDown =
         |> JD.map OnKeyDown
 
 
-updateBoardFromKey : String -> Board.Board -> Maybe Board.Board
+updateBoardFromKey : String -> Board -> Maybe Board
 updateBoardFromKey key board =
     case key of
         "ArrowLeft" ->
@@ -164,7 +164,7 @@ view model =
         ]
 
 
-viewHeader : Board.Board -> HM
+viewHeader : Board -> HM
 viewHeader board =
     div [ class "pa2 flex items-center" ]
         [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info board |> .score)) ]
@@ -195,7 +195,7 @@ viewBoard model =
         )
 
 
-viewGridCells : Board.Board -> HM
+viewGridCells : Board -> HM
 viewGridCells board =
     Html.Keyed.node "div"
         [ style "width" "400px"
@@ -204,7 +204,7 @@ viewGridCells board =
         (viewKeyedCells board)
 
 
-viewKeyedCells : Board.Board -> List ( String, HM )
+viewKeyedCells : Board -> List ( String, HM )
 viewKeyedCells board =
     let
         { entries, mergedEntries, newIds, newMergedIds, removedIds } =
