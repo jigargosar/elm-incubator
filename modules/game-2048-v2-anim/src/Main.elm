@@ -185,7 +185,10 @@ viewBoard model =
 
             NoMoves ->
                 [ viewGridCells model.board
-                , div [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex" ]
+                , div
+                    [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
+                    , class "animate__animated  animate__fadeIn animate__delay-4s"
+                    ]
                     [ text "Game Over : No Moves Left" ]
                 ]
 
