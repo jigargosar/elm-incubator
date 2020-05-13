@@ -6,6 +6,7 @@ module Board exposing
     , hasWon
     , info
     , init
+    , noMovesLeft
     , reInit
     , update
     )
@@ -17,6 +18,7 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
 import List.Extra as List
+import Maybe.Extra as Maybe
 import Random
 import Random.List
 import Tuple exposing (..)
@@ -75,12 +77,19 @@ hasWon (Board cellGrid) =
         |> List.any (second >> .num >> (\num -> num >= 8))
 
 
-update : Msg -> Board -> Board
-update msg ((Board cellGrid) as board) =
+noMovesLeft : Board -> Bool
+noMovesLeft board =
+    [ SlideLeft, SlideRight, SlideUp, SlideDown ]
+        |> List.filterMap (flip update board)
+        |> List.length
+        |> (==) 0
+
+
+update : Msg -> Board -> Maybe Board
+update msg (Board cellGrid) =
     slide msg cellGrid
         |> Maybe.andThen fillRandomEmpty
         |> Maybe.map Board
-        |> Maybe.withDefault board
 
 
 slide : Msg -> CellGrid -> Maybe CellGrid

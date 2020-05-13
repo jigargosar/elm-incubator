@@ -78,7 +78,11 @@ update message model =
                                 ( Turn board, Cmd.none )
 
                         Nothing ->
-                            ( model, Cmd.none )
+                            if Board.noMovesLeft board then
+                                ( NoMoves board, Cmd.none )
+
+                            else
+                                ( model, Cmd.none )
 
                 NoMoves _ ->
                     ( model, Cmd.none )
@@ -124,16 +128,16 @@ updateBoardFromKey : String -> Board.Board -> Maybe Board.Board
 updateBoardFromKey key board =
     case key of
         "ArrowLeft" ->
-            Just (Board.update SlideLeft board)
+            Board.update SlideLeft board
 
         "ArrowRight" ->
-            Just (Board.update SlideRight board)
+            Board.update SlideRight board
 
         "ArrowUp" ->
-            Just (Board.update SlideUp board)
+            Board.update SlideUp board
 
         "ArrowDown" ->
-            Just (Board.update SlideDown board)
+            Board.update SlideDown board
 
         _ ->
             Nothing
