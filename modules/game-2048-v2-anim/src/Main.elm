@@ -60,20 +60,25 @@ update message model =
         OnKeyDown key ->
             case model of
                 Turn board ->
-                    case key of
-                        "ArrowLeft" ->
-                            ( Turn (Board.update SlideLeft board), Cmd.none )
+                    case updateBoardFromKey key board of
+                        Just newBoard ->
+                            let
+                                alreadyWon =
+                                    Board.hasWon board
 
-                        "ArrowRight" ->
-                            ( Turn (Board.update SlideRight board), Cmd.none )
+                                justWon =
+                                    Board.hasWon newBoard
+                            in
+                            if alreadyWon then
+                                ( Turn newBoard, Cmd.none )
 
-                        "ArrowUp" ->
-                            ( Turn (Board.update SlideUp board), Cmd.none )
+                            else if justWon then
+                                ( Won board, Cmd.none )
 
-                        "ArrowDown" ->
-                            ( Turn (Board.update SlideDown board), Cmd.none )
+                            else
+                                ( Turn board, Cmd.none )
 
-                        _ ->
+                        Nothing ->
                             ( model, Cmd.none )
 
                 TurnAfterWon board ->
@@ -137,6 +142,25 @@ onKeyDown : Decoder Msg
 onKeyDown =
     JD.field "key" JD.string
         |> JD.map OnKeyDown
+
+
+updateBoardFromKey : String -> Board.Board -> Maybe Board.Board
+updateBoardFromKey key board =
+    case key of
+        "ArrowLeft" ->
+            Just (Board.update SlideLeft board)
+
+        "ArrowRight" ->
+            Just (Board.update SlideRight board)
+
+        "ArrowUp" ->
+            Just (Board.update SlideUp board)
+
+        "ArrowDown" ->
+            Just (Board.update SlideDown board)
+
+        _ ->
+            Nothing
 
 
 

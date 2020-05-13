@@ -3,6 +3,7 @@ module Board exposing
     , Cell
     , Info
     , Msg(..)
+    , hasWon
     , info
     , init
     , reInit
@@ -65,6 +66,13 @@ type Msg
     | SlideRight
     | SlideUp
     | SlideDown
+
+
+hasWon : Board -> Bool
+hasWon (Board cellGrid) =
+    cellGrid.entriesById
+        |> IncId.dictValues
+        |> List.any (second >> .num >> (\num -> num >= 8))
 
 
 update : Msg -> Board -> Board
