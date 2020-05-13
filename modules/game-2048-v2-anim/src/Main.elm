@@ -292,7 +292,7 @@ viewTile pos num anim =
 renderTileTransform pos =
     let
         postPartToPx n =
-            String.fromInt (n * 100) ++ "px"
+            String.fromInt (n * 100 + 15) ++ "px"
 
         ( sx, sy ) =
             pos
