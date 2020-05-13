@@ -176,8 +176,8 @@ viewBoard : Model -> HM
 viewBoard model =
     div
         [ class "code f2 relative center mv4"
-        , style "width" "460px"
-        , style "height" "460px"
+        , style "width" (String.fromInt gridWidth ++ "px")
+        , style "height" (String.fromInt gridWidth ++ "px")
         ]
         (case model.status of
             Turn ->
@@ -262,8 +262,8 @@ type TileAnim
 viewTile : IntPos -> Int -> TileAnim -> HM
 viewTile pos num anim =
     div
-        [ style "width" "100px"
-        , style "height" "100px"
+        [ style "width" (String.fromInt cellWidth ++ "px")
+        , style "height" (String.fromInt cellWidth ++ "px")
         , class "absolute flex justify-center items-center"
         , style "transform" (renderTileTransform pos)
         , style "transition" "transform 150ms"
@@ -289,10 +289,22 @@ viewTile pos num anim =
         ]
 
 
+cellWidth =
+    100
+
+
+cellSpacing =
+    15
+
+
+gridWidth =
+    4 * cellWidth + 5 * cellSpacing
+
+
 renderTileTransform pos =
     let
         postPartToPx n =
-            String.fromInt ((n * 100) + ((n + 1) * 15)) ++ "px"
+            String.fromInt ((n * cellWidth) + ((n + 1) * cellSpacing)) ++ "px"
 
         ( sx, sy ) =
             pos
