@@ -175,7 +175,7 @@ viewHeader board =
 viewBoard : Model -> HM
 viewBoard model =
     div
-        [ class "code f2 relative center mv4"
+        [ class "code f2 relative center mv4 overflow-hidden"
         , style "width" (String.fromInt gridWidth ++ "px")
         , style "height" (String.fromInt gridWidth ++ "px")
         ]
@@ -185,13 +185,13 @@ viewBoard model =
 
             NoMoves ->
                 [ viewGridCells model.board
-                , div [ class "absolute top-0 bg-white o-90 w-100 h-100 flex" ]
+                , div [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex" ]
                     [ text "Game Over : No Moves Left" ]
                 ]
 
             Won ->
                 [ viewGridCells model.board
-                , div [ class "absolute top-0 bg-white o-90 w-100 h-100 flex" ]
+                , div [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex" ]
                     [ div [ class "pa2" ] [ text "You Won!" ]
                     , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
                     ]
