@@ -200,10 +200,7 @@ viewBoard model =
 
 viewGridCells : Board -> HM
 viewGridCells board =
-    Html.Keyed.node "div"
-        [ class "w-100 h-100"
-        ]
-        (viewKeyedCells board)
+    Html.Keyed.node "div" [ class "w-100 h-100" ] (viewKeyedCells board)
 
 
 viewKeyedCells : Board -> List ( String, HM )
