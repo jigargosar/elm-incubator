@@ -18,9 +18,10 @@ import Tuple exposing (..)
 -- Model
 
 
-type alias Model =
-    { board : Board.Board
-    }
+type Model
+    = Turn Board.Board
+    | NoMoves Board.Board
+    | Won Board.Board
 
 
 type alias Flags =
@@ -33,8 +34,7 @@ init () =
         seed =
             Random.initialSeed 0
     in
-    ( { board = Board.init seed
-      }
+    ( Turn (Board.init seed)
     , Cmd.none
     )
 
@@ -56,29 +56,45 @@ update message model =
             ( model, Cmd.none )
 
         OnKeyDown key ->
-            case key of
-                "ArrowLeft" ->
-                    slide SlideLeft model
+            case model of
+                Turn board ->
+                    case key of
+                        "ArrowLeft" ->
+                            slide SlideLeft board
 
-                "ArrowRight" ->
-                    slide SlideRight model
+                        "ArrowRight" ->
+                            slide SlideRight board
 
-                "ArrowUp" ->
-                    slide SlideUp model
+                        "ArrowUp" ->
+                            slide SlideUp board
 
-                "ArrowDown" ->
-                    slide SlideDown model
+                        "ArrowDown" ->
+                            slide SlideDown board
 
-                _ ->
+                        _ ->
+                            ( model, Cmd.none )
+
+                NoMoves _ ->
+                    ( model, Cmd.none )
+
+                Won _ ->
                     ( model, Cmd.none )
 
         NewClicked ->
-            ( { model | board = Board.reInit model.board }, Cmd.none )
+            case model of
+                Turn board ->
+                    ( Turn (Board.reInit board), Cmd.none )
+
+                NoMoves board ->
+                    ( Turn (Board.reInit board), Cmd.none )
+
+                Won board ->
+                    ( Turn (Board.reInit board), Cmd.none )
 
 
-slide : Board.Msg -> Model -> ( Model, Cmd Msg )
-slide msg model =
-    ( { model | board = Board.update msg model.board }, Cmd.none )
+slide : Board.Msg -> Board.Board -> ( Model, Cmd Msg )
+slide msg board =
+    ( Turn (Board.update msg board), Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -108,12 +124,30 @@ view : Model -> DM
 view model =
     Document "2048 Animated"
         [ div [ class "measure center" ]
-            [ div [ class "pa2 flex items-center" ]
-                [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info model.board |> .score)) ]
-                , div [ class "pa2" ] [ button [ onClick NewClicked ] [ text "New" ] ]
-                ]
-            , viewBoard model.board
-            ]
+            (case model of
+                Turn board ->
+                    [ viewHeader board
+                    , viewBoard board
+                    ]
+
+                NoMoves board ->
+                    [ viewHeader board
+                    , viewBoard board
+                    ]
+
+                Won board ->
+                    [ viewHeader board
+                    , viewBoard board
+                    ]
+            )
+        ]
+
+
+viewHeader : Board.Board -> HM
+viewHeader board =
+    div [ class "pa2 flex items-center" ]
+        [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info board |> .score)) ]
+        , div [ class "pa2" ] [ button [ onClick NewClicked ] [ text "New" ] ]
         ]
 
 
