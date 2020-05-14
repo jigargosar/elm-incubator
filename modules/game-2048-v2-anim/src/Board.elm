@@ -36,6 +36,19 @@ type Board
     = Board CellGrid
 
 
+
+--encoder: Board -> Value
+--encoder (Board cellGrid) =
+
+
+decoder : Random.Seed -> Decoder Board
+decoder seed =
+    JD.when (JD.field "tag" JD.string)
+        (\tag -> tag == "Board")
+        (cellGridDecoder seed)
+        |> JD.map Board
+
+
 init : Random.Seed -> Board
 init seed =
     Board (initCellGrid seed)
