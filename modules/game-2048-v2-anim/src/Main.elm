@@ -276,13 +276,10 @@ viewTile pos num anim =
         , class "absolute flex justify-center items-center"
         , style "transform" (renderTileTransform pos)
         , style "transition" "transform 150ms"
-        , style "outline" "none"
         ]
         [ div
-            [ style "width" "100px"
-            , style "height" "100px"
-            , style "background-color" "rgba(255,255,255,0.9)"
-            , class "flex justify-center items-center"
+            [ style "background-color" "rgba(255,255,255,0.9)"
+            , class "w-100 h-100 flex justify-center items-center"
             , case anim of
                 Generated ->
                     class "animate__animated  animate__zoomIn animate__delay-2s "
