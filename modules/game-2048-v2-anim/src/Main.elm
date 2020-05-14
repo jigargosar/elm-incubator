@@ -9,6 +9,7 @@ import Html.Events exposing (onClick)
 import Html.Keyed
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
+import IntSize
 import Json.Decode as JD exposing (Decoder)
 import Random
 import Tuple exposing (..)
@@ -205,6 +206,22 @@ viewBoard model =
                     ]
                 ]
         )
+
+
+viewGridBackgroundCells : HM
+viewGridBackgroundCells =
+    div [] (List.map viewCellBackgroundTile (IntSize.positions Board.size))
+
+
+viewCellBackgroundTile : IntPos -> HM
+viewCellBackgroundTile pos =
+    div
+        [ style "width" (String.fromInt cellWidth ++ "px")
+        , style "height" (String.fromInt cellWidth ++ "px")
+        , style "background-color" "rgba(255,255,255,0.9)"
+        , style "border-radius" "3px"
+        ]
+        []
 
 
 viewGridCells : Board -> HM
