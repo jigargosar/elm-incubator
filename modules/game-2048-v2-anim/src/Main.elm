@@ -84,7 +84,7 @@ statusDecoder =
 
 
 type alias Flags =
-    { cache : Value, now : Int }
+    { cache : String, now : Int }
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -93,7 +93,7 @@ init flags =
         initialSeed =
             Random.initialSeed flags.now
     in
-    case JD.decodeValue (decoder initialSeed) flags.cache of
+    case JD.decodeString (decoder initialSeed) flags.cache of
         Ok model ->
             ( model, Cmd.none )
 
