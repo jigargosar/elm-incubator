@@ -4,10 +4,8 @@ module IncId exposing
     , Seed
     , decoder
     , dictFromListBy
-    , dictGet
     , dictInsert
     , dictValues
-    , emptyDict
     , encoder
     , initialSeed
     , next
@@ -82,11 +80,6 @@ type IdDict a
     = IdDict (Dict.Dict Int a)
 
 
-emptyDict : IdDict a
-emptyDict =
-    IdDict Dict.empty
-
-
 dictFromListBy : (a -> IncId) -> List a -> IdDict a
 dictFromListBy idFunc =
     Dict.fromListBy (idFunc >> toInt)
@@ -96,11 +89,6 @@ dictFromListBy idFunc =
 dictValues : IdDict a -> List a
 dictValues (IdDict d) =
     Dict.values d
-
-
-dictGet : IncId -> IdDict a -> Maybe a
-dictGet id (IdDict d) =
-    Dict.get (toInt id) d
 
 
 dictInsert : IncId -> a -> IdDict a -> IdDict a
