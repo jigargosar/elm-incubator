@@ -18,6 +18,7 @@ module IncId exposing
 import Dict
 import Dict.Extra as Dict
 import Json.Decode as JD exposing (Decoder)
+import Json.Decode.Extra as JD
 import Json.Encode as JE exposing (Value)
 
 
@@ -44,7 +45,7 @@ seedEncoder (Seed nextId) =
 
 seedDecoder : Decoder Seed
 seedDecoder =
-    JD.map Seed JD.int
+    JD.when (JD.field "tag" JD.string) (\tag -> tag == "IncId.Seed") (JD.map Seed JD.int)
 
 
 next : Seed -> ( IncId, Seed )
