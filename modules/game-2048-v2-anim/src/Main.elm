@@ -55,7 +55,7 @@ type Msg
     = NoOp
     | OnKeyDown String
     | NewClicked
-    | ContinueClicked
+    | KeepPlayingClicked
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -87,7 +87,7 @@ update message model =
                 Won ->
                     ( model, Cmd.none )
 
-        ContinueClicked ->
+        KeepPlayingClicked ->
             case model.status of
                 Turn ->
                     ( model, Cmd.none )
@@ -222,7 +222,7 @@ viewBoard model =
                             , class "animate__animated  animate__fadeIn animate__delay-4s"
                             ]
                             [ div [ class "pa2" ] [ text "You Won!" ]
-                            , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
+                            , div [ class "pa2" ] [ button [ onClick KeepPlayingClicked ] [ text "Continue?" ] ]
                             ]
                         ]
                )
