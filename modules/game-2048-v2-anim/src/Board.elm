@@ -8,6 +8,7 @@ module Board exposing
     , init
     , noMovesLeft
     , reInit
+    , size
     , update
     )
 
@@ -16,7 +17,7 @@ import Cons exposing (Cons)
 import Grid exposing (Grid, Slot(..))
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
-import IntSize
+import IntSize exposing (IntSize)
 import List.Extra as List
 import Maybe.Extra as Maybe
 import Random
@@ -165,6 +166,7 @@ type alias CellGrid =
     }
 
 
+size : IntSize
 size =
     IntSize.new 4 4
 
