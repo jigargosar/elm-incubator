@@ -36,9 +36,12 @@ type Board
     = Board CellGrid
 
 
-
---encoder: Board -> Value
---encoder (Board cellGrid) =
+encoder : Board -> Value
+encoder (Board cellGrid) =
+    JE.object
+        [ ( "tag", JE.string "Board" )
+        , ( "value", cellGridEncoder cellGrid )
+        ]
 
 
 decoder : Random.Seed -> Decoder Board
