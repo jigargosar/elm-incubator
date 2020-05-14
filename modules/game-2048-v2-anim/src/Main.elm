@@ -221,8 +221,8 @@ viewCellBackgroundTile pos =
         , style "width" (String.fromInt cellWidth ++ "px")
         , style "height" (String.fromInt cellWidth ++ "px")
         , style "transform" (renderTileTransform pos)
-        , style "background-color" "hsla(30, 37%, 89%, 0.35)"
         , style "border-radius" "3px"
+        , style "background-color" "hsla(30, 37%, 89%, 0.35)"
         ]
         []
 
