@@ -11,7 +11,8 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
 import Json.Decode as JD exposing (Decoder)
-import Random exposing (Generator)
+import Json.Encode exposing (Value)
+import Random exposing (Generator, Seed(..))
 import Tuple exposing (..)
 
 
@@ -24,6 +25,27 @@ type alias Model =
     , board : Board
     , seed : Random.Seed
     }
+
+
+encoder : Model -> Value
+encoder model =
+    Json.Encode.object <|
+        [ ( "status", statusEncoder model.status )
+        , ( "board", Board.encoder model.board )
+        ]
+
+
+statusEncoder : Status -> Value
+statusEncoder status =
+    case status of
+        Turn ->
+            Json.Encode.string "Turn"
+
+        NoMoves ->
+            Json.Encode.string "NoMoves"
+
+        Won ->
+            Json.Encode.string "Won"
 
 
 type Status
