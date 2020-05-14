@@ -11,7 +11,7 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
 import Json.Decode as JD exposing (Decoder)
-import Random
+import Random exposing (Generator)
 import Tuple exposing (..)
 
 
@@ -22,6 +22,7 @@ import Tuple exposing (..)
 type alias Model =
     { status : Status
     , board : Board
+    , seed : Random.Seed
     }
 
 
@@ -38,10 +39,10 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     let
-        seed =
-            Random.initialSeed 0
+        ( board, seed ) =
+            Random.step Board.generator (Random.initialSeed 0)
     in
-    ( Model Turn (Board.init seed)
+    ( Model Turn board seed
     , Cmd.none
     )
 
@@ -68,14 +69,14 @@ update message model =
                 Turn ->
                     case
                         updateBoardFromKey key model.board
-                            |> Maybe.map (boardToModel (Board.hasWon model.board))
+                            |> Maybe.map (updateModelFromBoardGenerator model)
                     of
                         Just newModel ->
                             ( newModel, Cmd.none )
 
                         Nothing ->
                             if Board.noMovesLeft model.board then
-                                ( Model NoMoves model.board, Cmd.none )
+                                ( { model | status = NoMoves }, Cmd.none )
 
                             else
                                 ( model, Cmd.none )
@@ -95,10 +96,14 @@ update message model =
                     ( model, Cmd.none )
 
                 Won ->
-                    ( Model Turn model.board, Cmd.none )
+                    ( { model | status = Turn }, Cmd.none )
 
         NewClicked ->
-            ( Model Turn (Board.reInit model.board), Cmd.none )
+            let
+                ( board, seed ) =
+                    Random.step Board.generator model.seed
+            in
+            ( Model Turn board seed, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -112,7 +117,7 @@ onKeyDown =
         |> JD.map OnKeyDown
 
 
-updateBoardFromKey : String -> Board -> Maybe Board
+updateBoardFromKey : String -> Board -> Maybe (Generator Board)
 updateBoardFromKey key board =
     case key of
         "ArrowLeft" ->
@@ -131,16 +136,31 @@ updateBoardFromKey key board =
             Nothing
 
 
-boardToModel : Bool -> Board -> Model
-boardToModel alreadyWon board =
-    if alreadyWon then
-        Model Turn board
+updateModelFromBoardGenerator : Model -> Generator Board -> Model
+updateModelFromBoardGenerator model generator =
+    let
+        ( board, seed ) =
+            Random.step generator model.seed
 
-    else if Board.hasWon board then
-        Model Won board
+        alreadyWon =
+            Board.hasWon model.board
 
-    else
-        Model Turn board
+        justWon =
+            Board.hasWon board
+    in
+    { model
+        | board = board
+        , status =
+            if alreadyWon then
+                Turn
+
+            else if justWon then
+                Won
+
+            else
+                Turn
+        , seed = seed
+    }
 
 
 

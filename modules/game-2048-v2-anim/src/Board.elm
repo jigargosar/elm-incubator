@@ -3,11 +3,12 @@ module Board exposing
     , Cell
     , Info
     , Msg(..)
+    , decoder
+    , encoder
+    , generator
     , hasWon
     , info
-    , init
     , noMovesLeft
-    , reInit
     , size
     , update
     )
@@ -20,10 +21,10 @@ import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Extra as JD
-import Json.Decode.Pipeline exposing (hardcoded, required)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
-import Random exposing (Seed(..), constant)
+import Random exposing (Generator, Seed(..))
 import Random.List
 import Tuple exposing (..)
 
@@ -44,22 +45,18 @@ encoder (Board cellGrid) =
         ]
 
 
-decoder : Random.Seed -> Decoder Board
-decoder seed =
+decoder : Decoder Board
+decoder =
     JD.when (JD.field "tag" JD.string)
         (\tag -> tag == "Board")
-        (cellGridDecoder seed)
+        cellGridDecoder
         |> JD.map Board
 
 
-init : Random.Seed -> Board
-init seed =
-    Board (initCellGrid seed)
-
-
-reInit : Board -> Board
-reInit (Board cellGrid) =
-    init cellGrid.seed
+generator : Generator Board
+generator =
+    cellGridGenerator
+        |> Random.map Board
 
 
 type alias Info =
@@ -105,11 +102,11 @@ noMovesLeft board =
         |> (==) 0
 
 
-update : Msg -> Board -> Maybe Board
+update : Msg -> Board -> Maybe (Generator Board)
 update msg (Board cellGrid) =
     slide msg cellGrid
         |> Maybe.andThen fillRandomEmpty
-        |> Maybe.map Board
+        |> Maybe.map (Random.map Board)
 
 
 slide : Msg -> CellGrid -> Maybe CellGrid
@@ -164,13 +161,13 @@ cellDecoder =
 
 
 newCell : Int -> IncId.Seed -> ( Cell, IncId.Seed )
-newCell num generator =
+newCell num idSeed =
     let
         initCell : IncId -> Cell
         initCell id =
             { id = id, num = num }
     in
-    IncId.next generator
+    IncId.next idSeed
         |> mapFirst initCell
 
 
@@ -190,7 +187,6 @@ newCells numList initialSeed =
 
 type alias CellGrid =
     { idSeed : IncId.Seed
-    , seed : Random.Seed
     , entriesById : IncId.IdDict (Grid.Entry Cell)
     , mergedEntries : Grid.EntryList Cell
     , removedIds : List IncId
@@ -232,11 +228,10 @@ cellGridEncoder cellGrid =
         ]
 
 
-cellGridDecoder : Random.Seed -> Decoder CellGrid
-cellGridDecoder seed =
+cellGridDecoder : Decoder CellGrid
+cellGridDecoder =
     JD.succeed CellGrid
         |> required "idSeed" IncId.seedDecoder
-        |> hardcoded seed
         |> required "entriesById" (IncId.dictDecoder cellEntryDecoder)
         |> required "mergedEntries" (JD.list cellEntryDecoder)
         |> required "removedIds" (JD.list IncId.decoder)
@@ -250,21 +245,20 @@ size =
     IntSize.new 4 4
 
 
-initCellGrid : Random.Seed -> CellGrid
-initCellGrid initialSeed =
-    let
-        ( ( cellEntries, idSeed ), seed ) =
-            Random.step initialCellEntriesGenerator initialSeed
-    in
-    { idSeed = idSeed
-    , seed = seed
-    , entriesById = IncId.dictFromListBy (second >> .id) cellEntries
-    , mergedEntries = []
-    , removedIds = []
-    , newIds = []
-    , newMergedIds = []
-    , score = 0
-    }
+cellGridGenerator : Generator CellGrid
+cellGridGenerator =
+    initialCellEntriesGenerator
+        |> Random.map
+            (\( cellEntries, idSeed ) ->
+                { idSeed = idSeed
+                , entriesById = IncId.dictFromListBy (second >> .id) cellEntries
+                , mergedEntries = []
+                , removedIds = []
+                , newIds = []
+                , newMergedIds = []
+                , score = 0
+                }
+            )
 
 
 numGenerator : Random.Generator Int
@@ -296,7 +290,7 @@ initialCellEntriesGenerator =
         (Random.list 2 numGenerator)
 
 
-fillRandomEmpty : CellGrid -> Maybe CellGrid
+fillRandomEmpty : CellGrid -> Maybe (Generator CellGrid)
 fillRandomEmpty cellGrid =
     cellGrid.entriesById
         |> toGrid
@@ -305,26 +299,23 @@ fillRandomEmpty cellGrid =
         |> Maybe.map (flip fillRandomEmptyHelp cellGrid)
 
 
-fillRandomEmptyHelp : Cons IntPos -> CellGrid -> CellGrid
+fillRandomEmptyHelp : Cons IntPos -> CellGrid -> Generator CellGrid
 fillRandomEmptyHelp ( h, t ) cellGrid =
-    let
-        ( ( pos, num ), seed ) =
-            Random.step
-                (Random.pair
-                    (Random.uniform h t)
-                    (Random.uniform 2 [ 4 ])
-                )
-                cellGrid.seed
-
-        ( cell, idSeed ) =
-            newCell num cellGrid.idSeed
-    in
-    { cellGrid
-        | entriesById = IncId.dictInsert cell.id ( pos, cell ) cellGrid.entriesById
-        , seed = seed
-        , idSeed = idSeed
-        , newIds = [ cell.id ]
-    }
+    Random.pair
+        (Random.uniform h t)
+        (Random.uniform 2 [ 4 ])
+        |> Random.map
+            (\( pos, num ) ->
+                let
+                    ( cell, idSeed ) =
+                        newCell num cellGrid.idSeed
+                in
+                { cellGrid
+                    | entriesById = IncId.dictInsert cell.id ( pos, cell ) cellGrid.entriesById
+                    , idSeed = idSeed
+                    , newIds = [ cell.id ]
+                }
+            )
 
 
 
