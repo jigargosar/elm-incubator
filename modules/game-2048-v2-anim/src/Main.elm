@@ -303,7 +303,7 @@ viewTile pos num anim =
             , style "border-radius" "3px"
             , class "w-100 h-100 flex justify-center items-center"
             , style "font-size" (String.fromInt (cellWidth // 2) ++ "px")
-            , class "code"
+            , class "code b"
             , style "color" (numToColor num |> first)
             , style "background-color" (numToColor num |> second)
             , case anim of
