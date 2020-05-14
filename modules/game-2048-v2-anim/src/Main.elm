@@ -158,7 +158,7 @@ type alias HM =
 view : Model -> DM
 view model =
     Document "2048 Animated"
-        [ div [ class "measure center debug" ]
+        [ div [ class "measure center" ]
             [ viewHeader model.board
             , viewBoard model
             ]
