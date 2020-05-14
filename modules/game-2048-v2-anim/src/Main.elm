@@ -84,18 +84,27 @@ statusDecoder =
 
 
 type alias Flags =
-    ()
+    { cache : Value, now : Int }
 
 
 init : Flags -> ( Model, Cmd Msg )
-init () =
+init flags =
     let
-        ( board, seed ) =
-            Random.step Board.generator (Random.initialSeed 0)
+        initialSeed =
+            Random.initialSeed flags.now
     in
-    ( Model Turn board seed
-    , Cmd.none
-    )
+    case JD.decodeValue (decoder initialSeed) flags.cache of
+        Ok model ->
+            ( model, Cmd.none )
+
+        Err _ ->
+            let
+                ( board, seed ) =
+                    Random.step Board.generator initialSeed
+            in
+            ( Model Turn board seed
+            , Cmd.none
+            )
 
 
 
