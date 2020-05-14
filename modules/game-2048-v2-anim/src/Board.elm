@@ -15,14 +15,15 @@ module Board exposing
 import Basics.Extra exposing (flip, swap, uncurry)
 import Cons exposing (Cons)
 import Grid exposing (Grid, Slot(..))
-import IncId exposing (IncId)
+import IncId exposing (IdDict(..), IncId)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import Json.Decode as JD exposing (Decoder)
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode.Extra as JD
+import Json.Decode.Pipeline exposing (hardcoded, required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
-import Random
+import Random exposing (Seed(..), constant)
 import Random.List
 import Tuple exposing (..)
 
@@ -183,8 +184,49 @@ type alias CellGrid =
     }
 
 
+cellEntryEncoder : Grid.Entry Cell -> Value
+cellEntryEncoder ( pos, cell ) =
+    JE.object
+        [ ( "tag", JE.string "CellEntry" )
+        , ( "pos", IntPos.encoder pos )
+        , ( "cell", cellEncoder cell )
+        ]
 
---cellGridEncoder : CellGrid -> Value
+
+cellEntryDecoder : Decoder (Grid.Entry Cell)
+cellEntryDecoder =
+    JD.when (JD.field "tag" JD.string)
+        (\tag -> tag == "CellEntry")
+        (JD.succeed pair
+            |> required "pos" IntPos.decoder
+            |> required "cell" cellDecoder
+        )
+
+
+cellGridEncoder : CellGrid -> Value
+cellGridEncoder cellGrid =
+    JE.object <|
+        [ ( "idSeed", IncId.seedEncoder cellGrid.idSeed )
+        , ( "entriesById", IncId.dictEncoder cellEntryEncoder cellGrid.entriesById )
+        , ( "mergedEntries", JE.list cellEntryEncoder cellGrid.mergedEntries )
+        , ( "removedIds", JE.list IncId.encoder cellGrid.removedIds )
+        , ( "newIds", JE.list IncId.encoder cellGrid.newIds )
+        , ( "newMergedIds", JE.list IncId.encoder cellGrid.newMergedIds )
+        , ( "score", JE.int cellGrid.score )
+        ]
+
+
+cellGridDecoder : Random.Seed -> Decoder CellGrid
+cellGridDecoder seed =
+    JD.succeed CellGrid
+        |> required "idSeed" IncId.seedDecoder
+        |> hardcoded seed
+        |> required "entriesById" (IncId.dictDecoder cellEntryDecoder)
+        |> required "mergedEntries" (JD.list cellEntryDecoder)
+        |> required "removedIds" (JD.list IncId.decoder)
+        |> required "newIds" (JD.list IncId.decoder)
+        |> required "newMergedIds" (JD.list IncId.decoder)
+        |> required "score" JD.int
 
 
 size : IntSize
