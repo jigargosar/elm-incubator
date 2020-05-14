@@ -100,8 +100,11 @@ init flags =
         Ok model ->
             ( model, Cmd.none )
 
-        Err _ ->
+        Err error ->
             let
+                _ =
+                    Debug.log "error" error
+
                 ( board, seed ) =
                     Random.step Board.generator initialSeed
             in

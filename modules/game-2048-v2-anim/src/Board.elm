@@ -196,6 +196,31 @@ type alias CellGrid =
     }
 
 
+cellGridDecoder : Decoder CellGrid
+cellGridDecoder =
+    JD.succeed CellGrid
+        |> required "idSeed" IncId.seedDecoder
+        |> required "entriesById" (IncId.dictDecoder cellEntryDecoder)
+        |> required "mergedEntries" (JD.list cellEntryDecoder)
+        |> required "removedIds" (JD.list IncId.decoder)
+        |> required "newIds" (JD.list IncId.decoder)
+        |> required "newMergedIds" (JD.list IncId.decoder)
+        |> required "score" JD.int
+
+
+cellGridEncoder : CellGrid -> Value
+cellGridEncoder cellGrid =
+    JE.object <|
+        [ ( "idSeed", IncId.seedEncoder cellGrid.idSeed )
+        , ( "entriesById", IncId.dictEncoder cellEntryEncoder cellGrid.entriesById )
+        , ( "mergedEntries", JE.list cellEntryEncoder cellGrid.mergedEntries )
+        , ( "removedIds", JE.list IncId.encoder cellGrid.removedIds )
+        , ( "newIds", JE.list IncId.encoder cellGrid.newIds )
+        , ( "newMergedIds", JE.list IncId.encoder cellGrid.newMergedIds )
+        , ( "score", JE.int cellGrid.score )
+        ]
+
+
 cellEntryEncoder : Grid.Entry Cell -> Value
 cellEntryEncoder ( pos, cell ) =
     JE.object
@@ -213,31 +238,6 @@ cellEntryDecoder =
             |> required "pos" IntPos.decoder
             |> required "cell" cellDecoder
         )
-
-
-cellGridEncoder : CellGrid -> Value
-cellGridEncoder cellGrid =
-    JE.object <|
-        [ ( "idSeed", IncId.seedEncoder cellGrid.idSeed )
-        , ( "entriesById", IncId.dictEncoder cellEntryEncoder cellGrid.entriesById )
-        , ( "mergedEntries", JE.list cellEntryEncoder cellGrid.mergedEntries )
-        , ( "removedIds", JE.list IncId.encoder cellGrid.removedIds )
-        , ( "newIds", JE.list IncId.encoder cellGrid.newIds )
-        , ( "newMergedIds", JE.list IncId.encoder cellGrid.newMergedIds )
-        , ( "score", JE.int cellGrid.score )
-        ]
-
-
-cellGridDecoder : Decoder CellGrid
-cellGridDecoder =
-    JD.succeed CellGrid
-        |> required "idSeed" IncId.seedDecoder
-        |> required "entriesById" (IncId.dictDecoder cellEntryDecoder)
-        |> required "mergedEntries" (JD.list cellEntryDecoder)
-        |> required "removedIds" (JD.list IncId.decoder)
-        |> required "newIds" (JD.list IncId.decoder)
-        |> required "newMergedIds" (JD.list IncId.decoder)
-        |> required "score" JD.int
 
 
 size : IntSize
