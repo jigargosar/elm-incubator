@@ -279,6 +279,7 @@ viewTile pos num anim =
         ]
         [ div
             [ style "background-color" "rgba(255,255,255,0.9)"
+            , style "border-radius" "3px"
             , class "w-100 h-100 flex justify-center items-center"
             , case anim of
                 Generated ->
