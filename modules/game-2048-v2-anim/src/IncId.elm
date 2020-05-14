@@ -9,12 +9,16 @@ module IncId exposing
     , emptyDict
     , initialSeed
     , next
+    , seedDecoder
+    , seedEncoder
     , toInt
     , toString
     )
 
 import Dict
 import Dict.Extra as Dict
+import Json.Decode as JD exposing (Decoder)
+import Json.Encode as JE exposing (Value)
 
 
 type IncId
@@ -28,6 +32,19 @@ type Seed
 initialSeed : Seed
 initialSeed =
     Seed 1
+
+
+seedEncoder : Seed -> Value
+seedEncoder (Seed nextId) =
+    JE.object
+        [ ( "tag", JE.string "IncId.Seed" )
+        , ( "nextId", JE.int nextId )
+        ]
+
+
+seedDecoder : Decoder Seed
+seedDecoder =
+    JD.map Seed JD.int
 
 
 next : Seed -> ( IncId, Seed )

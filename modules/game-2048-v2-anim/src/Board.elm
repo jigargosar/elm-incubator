@@ -18,8 +18,9 @@ import Grid exposing (Grid, Slot(..))
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
+import Json.Decode as JD
+import Json.Encode as JE exposing (Value)
 import List.Extra as List
-import Maybe.Extra as Maybe
 import Random
 import Random.List
 import Tuple exposing (..)
@@ -164,6 +165,10 @@ type alias CellGrid =
     , newMergedIds : List IncId
     , score : Int
     }
+
+
+
+--cellGridEncoder : CellGrid -> Value
 
 
 size : IntSize
