@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Board exposing (Board, Msg(..))
 import Browser exposing (Document)
@@ -12,9 +12,12 @@ import IntPos exposing (IntPos)
 import IntSize
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Pipeline exposing (hardcoded, required)
-import Json.Encode exposing (Value)
+import Json.Encode as JE exposing (Value)
 import Random exposing (Generator, Seed(..))
 import Tuple exposing (..)
+
+
+port cache : String -> Cmd msg
 
 
 
@@ -30,7 +33,7 @@ type alias Model =
 
 encoder : Model -> Value
 encoder model =
-    Json.Encode.object <|
+    JE.object <|
         [ ( "status", statusEncoder model.status )
         , ( "board", Board.encoder model.board )
         ]
@@ -54,13 +57,13 @@ statusEncoder : Status -> Value
 statusEncoder status =
     case status of
         Turn ->
-            Json.Encode.string "Turn"
+            JE.string "Turn"
 
         NoMoves ->
-            Json.Encode.string "NoMoves"
+            JE.string "NoMoves"
 
         Won ->
-            Json.Encode.string "Won"
+            JE.string "Won"
 
 
 statusDecoder : Decoder Status
@@ -116,6 +119,21 @@ type Msg
     | OnKeyDown String
     | NewClicked
     | KeepPlayingClicked
+
+
+updateWrapper : Msg -> Model -> ( Model, Cmd Msg )
+updateWrapper message model0 =
+    let
+        ( newModel, cmd ) =
+            update message model0
+    in
+    ( newModel
+    , if newModel /= model0 then
+        Cmd.batch [ cmd, cache (encoder newModel |> JE.encode 0) ]
+
+      else
+        cmd
+    )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -470,6 +488,6 @@ main =
     Browser.document
         { init = init
         , view = view
-        , update = update
+        , update = updateWrapper
         , subscriptions = subscriptions
         }
