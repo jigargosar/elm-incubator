@@ -182,29 +182,30 @@ viewBoard model =
         , style "background-color" "hsl(29, 17%, 68%)"
         , style "border-radius" "6px"
         ]
-        (case model.status of
-            Turn ->
-                [ viewGridCells model.board ]
+        (viewGridBackgroundCells
+            :: viewGridCells model.board
+            :: (case model.status of
+                    Turn ->
+                        []
 
-            NoMoves ->
-                [ viewGridCells model.board
-                , div
-                    [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
-                    , class "animate__animated  animate__fadeIn animate__delay-4s"
-                    ]
-                    [ text "Game Over : No Moves Left" ]
-                ]
+                    NoMoves ->
+                        [ div
+                            [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
+                            , class "animate__animated  animate__fadeIn animate__delay-4s"
+                            ]
+                            [ text "Game Over : No Moves Left" ]
+                        ]
 
-            Won ->
-                [ viewGridCells model.board
-                , div
-                    [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
-                    , class "animate__animated  animate__fadeIn animate__delay-4s"
-                    ]
-                    [ div [ class "pa2" ] [ text "You Won!" ]
-                    , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
-                    ]
-                ]
+                    Won ->
+                        [ div
+                            [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
+                            , class "animate__animated  animate__fadeIn animate__delay-4s"
+                            ]
+                            [ div [ class "pa2" ] [ text "You Won!" ]
+                            , div [ class "pa2" ] [ button [ onClick ContinueClicked ] [ text "Continue?" ] ]
+                            ]
+                        ]
+               )
         )
 
 
