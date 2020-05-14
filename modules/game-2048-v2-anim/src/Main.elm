@@ -178,6 +178,8 @@ viewBoard model =
         [ class "code f2 relative center mv4 overflow-hidden"
         , style "width" (String.fromInt gridWidth ++ "px")
         , style "height" (String.fromInt gridWidth ++ "px")
+        , style "background-color" "hsl(29, 17%, 68%)"
+        , style "border-radius" "6px"
         ]
         (case model.status of
             Turn ->
