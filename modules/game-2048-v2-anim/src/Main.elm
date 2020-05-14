@@ -11,6 +11,7 @@ import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize
 import Json.Decode as JD exposing (Decoder)
+import Json.Decode.Pipeline exposing (hardcoded, required)
 import Json.Encode exposing (Value)
 import Random exposing (Generator, Seed(..))
 import Tuple exposing (..)
@@ -35,6 +36,20 @@ encoder model =
         ]
 
 
+decoder : Random.Seed -> Decoder Model
+decoder seed =
+    JD.succeed Model
+        |> required "status" statusDecoder
+        |> required "board" Board.decoder
+        |> hardcoded seed
+
+
+type Status
+    = Turn
+    | NoMoves
+    | Won
+
+
 statusEncoder : Status -> Value
 statusEncoder status =
     case status of
@@ -48,10 +63,24 @@ statusEncoder status =
             Json.Encode.string "Won"
 
 
-type Status
-    = Turn
-    | NoMoves
-    | Won
+statusDecoder : Decoder Status
+statusDecoder =
+    let
+        get id =
+            case id of
+                "Turn" ->
+                    JD.succeed Turn
+
+                "NoMoves" ->
+                    JD.succeed NoMoves
+
+                "Won" ->
+                    JD.succeed Won
+
+                _ ->
+                    JD.fail ("unknown value for Status: " ++ id)
+    in
+    JD.string |> JD.andThen get
 
 
 type alias Flags =
