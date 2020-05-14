@@ -318,8 +318,8 @@ viewTile pos num anim =
         ]
 
 
-toBackgroundColor : Int -> ( String, String )
-toBackgroundColor n =
+numToColor : Int -> ( String, String )
+numToColor n =
     case n of
         2 ->
             ( "hsl(30, 8%, 43%)", "hsl(30, 37%, 89%)" )
