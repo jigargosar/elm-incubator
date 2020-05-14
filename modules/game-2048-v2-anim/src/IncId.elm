@@ -3,6 +3,8 @@ module IncId exposing
     , IncId
     , Seed
     , decoder
+    , dictDecoder
+    , dictEncoder
     , dictFromListBy
     , dictInsert
     , dictValues
@@ -78,6 +80,17 @@ toString =
 
 type IdDict a
     = IdDict (Dict.Dict Int a)
+
+
+dictEncoder : (a -> Value) -> IdDict a -> Value
+dictEncoder f (IdDict d) =
+    JE.dict String.fromInt f d
+
+
+dictDecoder : Decoder a -> Decoder (IdDict a)
+dictDecoder =
+    JD.dict2 JD.int
+        >> JD.map IdDict
 
 
 dictFromListBy : (a -> IncId) -> List a -> IdDict a
