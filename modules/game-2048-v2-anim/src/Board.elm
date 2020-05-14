@@ -18,7 +18,8 @@ import Grid exposing (Grid, Slot(..))
 import IncId exposing (IncId)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
-import Json.Decode as JD
+import Json.Decode as JD exposing (Decoder)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import Random
@@ -128,6 +129,21 @@ type alias Cell =
     { id : IncId
     , num : Int
     }
+
+
+cellEncoder : Cell -> Value
+cellEncoder cell =
+    JE.object <|
+        [ ( "id", IncId.encoder cell.id )
+        , ( "num", JE.int cell.num )
+        ]
+
+
+cellDecoder : Decoder Cell
+cellDecoder =
+    JD.succeed Cell
+        |> required "id" IncId.decoder
+        |> required "num" JD.int
 
 
 newCell : Int -> IncId.Seed -> ( Cell, IncId.Seed )
