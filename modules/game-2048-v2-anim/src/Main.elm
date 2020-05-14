@@ -211,13 +211,14 @@ viewBoard model =
 
 viewGridBackgroundCells : HM
 viewGridBackgroundCells =
-    div [ class "w-100 h-100" ] (List.map viewCellBackgroundTile (IntSize.positions Board.size))
+    div [ class "absolute w-100 h-100" ] (List.map viewCellBackgroundTile (IntSize.positions Board.size))
 
 
 viewCellBackgroundTile : IntPos -> HM
 viewCellBackgroundTile pos =
     div
-        [ style "width" (String.fromInt cellWidth ++ "px")
+        [ class "absolute"
+        , style "width" (String.fromInt cellWidth ++ "px")
         , style "height" (String.fromInt cellWidth ++ "px")
         , style "transform" (renderTileTransform pos)
         , style "background-color" "hsla(30, 37%, 89%, 0.35)"
@@ -228,7 +229,7 @@ viewCellBackgroundTile pos =
 
 viewGridCells : Board -> HM
 viewGridCells board =
-    Html.Keyed.node "div" [ class "w-100 h-100" ] (viewKeyedCells board)
+    Html.Keyed.node "div" [ class "absolute w-100 h-100" ] (viewKeyedCells board)
 
 
 viewKeyedCells : Board -> List ( String, HM )
@@ -290,9 +291,10 @@ type TileAnim
 viewTile : IntPos -> Int -> TileAnim -> HM
 viewTile pos num anim =
     div
-        [ style "width" (String.fromInt cellWidth ++ "px")
+        [ class "absolute"
+        , style "width" (String.fromInt cellWidth ++ "px")
         , style "height" (String.fromInt cellWidth ++ "px")
-        , class "absolute flex justify-center items-center"
+        , class "flex justify-center items-center"
         , style "transform" (renderTileTransform pos)
         , style "transition" "transform 150ms"
         ]
