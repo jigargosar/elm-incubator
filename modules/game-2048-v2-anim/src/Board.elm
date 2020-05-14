@@ -49,7 +49,7 @@ decoder : Decoder Board
 decoder =
     JDX.when (JD.field "tag" JD.string)
         (\tag -> tag == "Board")
-        cellGridDecoder
+        (JD.field "value" cellGridDecoder)
         |> JD.map Board
 
 

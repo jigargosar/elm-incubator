@@ -20,7 +20,7 @@ module IncId exposing
 import Dict
 import Dict.Extra as Dict
 import Json.Decode as JD exposing (Decoder)
-import Json.Decode.Extra as JD
+import Json.Decode.Extra as JDX
 import Json.Encode as JE exposing (Value)
 
 
@@ -32,13 +32,15 @@ encoder : IncId -> Value
 encoder (IncId id) =
     JE.object
         [ ( "tag", JE.string "IncId" )
-        , ( "nextId", JE.int id )
+        , ( "value", JE.int id )
         ]
 
 
 decoder : Decoder IncId
 decoder =
-    JD.when (JD.field "tag" JD.string) (\tag -> tag == "IncId") (JD.map IncId JD.int)
+    JDX.when (JD.field "tag" JD.string)
+        (\tag -> tag == "IncId")
+        (JD.field "value" (JD.map IncId JD.int))
 
 
 type Seed
@@ -54,13 +56,15 @@ seedEncoder : Seed -> Value
 seedEncoder (Seed nextId) =
     JE.object
         [ ( "tag", JE.string "IncId.Seed" )
-        , ( "nextId", JE.int nextId )
+        , ( "value", JE.int nextId )
         ]
 
 
 seedDecoder : Decoder Seed
 seedDecoder =
-    JD.when (JD.field "tag" JD.string) (\tag -> tag == "IncId.Seed") (JD.map Seed JD.int)
+    JDX.when (JD.field "tag" JD.string)
+        (\tag -> tag == "IncId.Seed")
+        (JD.field "value" (JD.map Seed JD.int))
 
 
 next : Seed -> ( IncId, Seed )
@@ -89,7 +93,7 @@ dictEncoder f (IdDict d) =
 
 dictDecoder : Decoder a -> Decoder (IdDict a)
 dictDecoder =
-    JD.dict2 JD.int
+    JDX.dict2 JD.int
         >> JD.map IdDict
 
 
