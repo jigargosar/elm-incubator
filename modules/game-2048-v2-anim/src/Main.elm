@@ -302,6 +302,7 @@ viewTile pos num anim =
             [ style "background-color" "rgba(255,255,255,0.9)"
             , style "border-radius" "3px"
             , class "w-100 h-100 flex justify-center items-center"
+            , style "font-size" (String.fromInt (cellWidth // 2) ++ "px")
             , case anim of
                 Generated ->
                     class "animate__animated  animate__zoomIn animate__delay-2s "
