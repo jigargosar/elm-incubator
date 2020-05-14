@@ -146,15 +146,12 @@ updateModelFromBoardGenerator model generator =
             Board.hasWon model.board
 
         justWon =
-            Board.hasWon board
+            not alreadyWon && Board.hasWon board
     in
     { model
         | board = board
         , status =
-            if alreadyWon then
-                Turn
-
-            else if justWon then
+            if justWon then
                 Won
 
             else
