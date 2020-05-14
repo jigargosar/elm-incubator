@@ -210,7 +210,7 @@ viewBoard model =
 
 viewGridBackgroundCells : HM
 viewGridBackgroundCells =
-    div [] (List.map viewCellBackgroundTile (IntSize.positions Board.size))
+    div [ class "w-100 h-100" ] (List.map viewCellBackgroundTile (IntSize.positions Board.size))
 
 
 viewCellBackgroundTile : IntPos -> HM
@@ -218,7 +218,8 @@ viewCellBackgroundTile pos =
     div
         [ style "width" (String.fromInt cellWidth ++ "px")
         , style "height" (String.fromInt cellWidth ++ "px")
-        , style "background-color" "rgba(255,255,255,0.9)"
+        , style "transform" (renderTileTransform pos)
+        , style "background-color" "hsla(30, 37%, 89%, 0.35)"
         , style "border-radius" "3px"
         ]
         []
