@@ -20,7 +20,7 @@ import IncId exposing (IdDict(..), IncId)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import Json.Decode as JD exposing (Decoder)
-import Json.Decode.Extra as JD
+import Json.Decode.Extra as JDX
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
@@ -47,7 +47,7 @@ encoder (Board cellGrid) =
 
 decoder : Decoder Board
 decoder =
-    JD.when (JD.field "tag" JD.string)
+    JDX.when (JD.field "tag" JD.string)
         (\tag -> tag == "Board")
         cellGridDecoder
         |> JD.map Board
@@ -207,7 +207,7 @@ cellEntryEncoder ( pos, cell ) =
 
 cellEntryDecoder : Decoder (Grid.Entry Cell)
 cellEntryDecoder =
-    JD.when (JD.field "tag" JD.string)
+    JDX.when (JD.field "tag" JD.string)
         (\tag -> tag == "CellEntry")
         (JD.succeed pair
             |> required "pos" IntPos.decoder
