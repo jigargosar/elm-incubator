@@ -2,11 +2,13 @@ module IncId exposing
     ( IdDict
     , IncId
     , Seed
+    , decoder
     , dictFromListBy
     , dictGet
     , dictInsert
     , dictValues
     , emptyDict
+    , encoder
     , initialSeed
     , next
     , seedDecoder
@@ -24,6 +26,19 @@ import Json.Encode as JE exposing (Value)
 
 type IncId
     = IncId Int
+
+
+encoder : IncId -> Value
+encoder (IncId id) =
+    JE.object
+        [ ( "tag", JE.string "IncId" )
+        , ( "nextId", JE.int id )
+        ]
+
+
+decoder : Decoder IncId
+decoder =
+    JD.when (JD.field "tag" JD.string) (\tag -> tag == "IncId") (JD.map IncId JD.int)
 
 
 type Seed
