@@ -266,9 +266,31 @@ view model =
 viewHeader : Board -> HM
 viewHeader board =
     div [ class "pa2 flex items-center" ]
-        [ div [ class "pa2" ] [ text ("Score: " ++ String.fromInt (Board.info board |> .score)) ]
-        , div [ class "pa2" ] [ button [ onClick NewClicked ] [ text "New" ] ]
+        [ viewScore (Board.info board |> .score)
+        , div [ class "pa2" ] [ newBtn ]
         ]
+
+
+viewScore score =
+    div
+        [ class "br2 pa2"
+        , class "tc"
+        , style "color" "hsl(34, 37%, 96%)"
+        , style "background-color" "hsl(29, 17%, 68%)"
+        ]
+        [ div [ class "ttu" ] [ text "Score" ]
+        , div [ class "f3 code b" ] [ text (String.fromInt score) ]
+        ]
+
+
+newBtn =
+    button
+        [ class "bn br2 ma0 pv2 ph3"
+        , style "color" "hsl(34, 37%, 96%)"
+        , style "background-color" "hsl(29, 17%, 48%)"
+        , onClick NewClicked
+        ]
+        [ text "New Game" ]
 
 
 viewBoard : Model -> HM
