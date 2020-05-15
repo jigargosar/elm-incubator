@@ -321,6 +321,7 @@ viewBoard model =
                         [ div
                             [ class "absolute top-0"
                             , class "w-100 h-100"
+                            , style "background-color" "hsla(30, 37%, 89%, 0.73)"
                             , class "pa5"
                             , class "tc"
                             , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
