@@ -319,15 +319,14 @@ viewBoard model =
 
                     NoMoves ->
                         [ div
-                            [ class "absolute top-0 o-80 w-100 h-100"
+                            [ class "absolute top-0"
+                            , class "w-100 h-100"
+                            , class "pa5"
+                            , class "tc"
+                            , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
                             ]
-                            [ div
-                                [ class "bg-white w-100 h-100 pa4"
-                                , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
-                                ]
-                                [ div [ class "f1 b" ] [ text "Game Over!" ]
-                                , div [] [ tryAgainBtn ]
-                                ]
+                            [ div [ class "f1 b pv3" ] [ text "Game Over!" ]
+                            , div [] [ tryAgainBtn ]
                             ]
                         ]
 
