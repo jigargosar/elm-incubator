@@ -284,13 +284,21 @@ viewScore score =
 
 
 newBtn =
+    btn NewClicked "New Game"
+
+
+tryAgainBtn =
+    btn NewClicked "Try Again!"
+
+
+btn msg lbl =
     button
-        [ class "bn br2 ma0 pv2 ph3"
+        [ class "bn br2 ma0 pv2 ph3 f4"
         , style "color" "hsl(34, 37%, 96%)"
         , style "background-color" "hsl(29, 17%, 48%)"
-        , onClick NewClicked
+        , onClick msg
         ]
-        [ text "New Game" ]
+        [ text lbl ]
 
 
 viewBoard : Model -> HM
@@ -300,6 +308,7 @@ viewBoard model =
         , style "width" (String.fromInt gridWidth ++ "px")
         , style "height" (String.fromInt gridWidth ++ "px")
         , style "background-color" "hsl(29, 17%, 68%)"
+        , style "color" "hsl(30, 8%, 43%)"
         , style "border-radius" "6px"
         ]
         (viewGridBackgroundCells
@@ -310,10 +319,16 @@ viewBoard model =
 
                     NoMoves ->
                         [ div
-                            [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
-                            , class "animate__animated  animate__fadeIn animate__delay-4s"
+                            [ class "absolute top-0 o-80 w-100 h-100"
                             ]
-                            [ text "Game Over : No Moves Left" ]
+                            [ div
+                                [ class "bg-white w-100 h-100 pa4"
+                                , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
+                                ]
+                                [ div [ class "f1 b" ] [ text "Game Over!" ]
+                                , div [] [ tryAgainBtn ]
+                                ]
+                            ]
                         ]
 
                     Won ->
