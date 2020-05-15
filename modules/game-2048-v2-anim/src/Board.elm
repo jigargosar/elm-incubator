@@ -263,7 +263,7 @@ cellGridGenerator =
 
 numGenerator : Random.Generator Int
 numGenerator =
-    -- Random.uniform 1024 [ 1024 ]
+    -- Random.constant 1024
     Random.uniform 2 [ 4 ]
 
 
