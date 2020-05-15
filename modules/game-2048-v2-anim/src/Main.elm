@@ -270,19 +270,22 @@ viewHeader : Board -> HM
 viewHeader board =
     div [ class "pv3" ]
         [ div [ class "pb2 flex items-center" ]
-            [ div [ class "flex-auto pr2" ]
-                [ Html.strong [ class "b", style "font-size" "4rem" ] [ text "2048" ] ]
-            , div [ class "" ]
-                [ viewScore (Board.info board |> .score) ]
+            [ div [ class "flex-auto pr2" ] [ viewLogo ]
+            , div [ class "" ] [ viewScore (Board.info board |> .score) ]
             ]
         , div [ class "flex items-center" ]
-            [ div [ class "flex-auto pr2" ]
-                [ span [] [ text "Join the numbers and get to the ", Html.strong [] [ text "2048 tile!" ] ]
-                ]
-            , div [ class "" ]
-                [ newBtn ]
+            [ div [ class "flex-auto pr2" ] [ viewSubHeading ]
+            , div [ class "" ] [ newBtn ]
             ]
         ]
+
+
+viewLogo =
+    Html.strong [ class "b", style "font-size" "4rem" ] [ text "2048" ]
+
+
+viewSubHeading =
+    span [] [ text "Join the numbers and get to the ", Html.strong [] [ text "2048 tile!" ] ]
 
 
 viewScore score =
