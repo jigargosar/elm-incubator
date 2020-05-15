@@ -3,7 +3,7 @@ port module Main exposing (main)
 import Board exposing (Board, Msg(..))
 import Browser exposing (Document)
 import Browser.Events
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, span, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Html.Keyed
@@ -256,7 +256,10 @@ type alias HM =
 view : Model -> DM
 view model =
     Document "2048 Animated"
-        [ div [ class "measure center" ]
+        [ div
+            [ class "measure center"
+            , style "color" "hsl(30, 8%, 43%)"
+            ]
             [ viewHeader model.board
             , viewBoard model
             ]
@@ -265,9 +268,17 @@ view model =
 
 viewHeader : Board -> HM
 viewHeader board =
-    div [ class "pa2 flex items-center" ]
-        [ viewScore (Board.info board |> .score)
-        , div [ class "pa2" ] [ newBtn ]
+    div [ class "" ]
+        [ div [ class "pv2 flex items-center_" ]
+            [ div [ class "flex-auto mr2" ] [ div [ class "b", style "font-size" "4rem" ] [ text "2048" ] ]
+            , div [ class "" ] [ viewScore (Board.info board |> .score) ]
+            ]
+        , div [ class "flex items-center" ]
+            [ div [ class "flex-auto mr2" ]
+                [ div [ class "flex lh-copy" ] [ text "Join the numbers and get to the ", div [ class "b" ] [ text "2048 tile!" ] ]
+                ]
+            , div [ class "" ] [ newBtn ]
+            ]
         ]
 
 
