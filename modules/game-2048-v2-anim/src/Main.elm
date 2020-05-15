@@ -268,14 +268,14 @@ view model =
 
 viewHeader : Board -> HM
 viewHeader board =
-    div [ class "" ]
-        [ div [ class "pv2 flex items-center_" ]
-            [ div [ class "flex-auto mr2" ] [ div [ class "b", style "font-size" "4rem" ] [ text "2048" ] ]
+    div [ class "pv3" ]
+        [ div [ class "pb2 flex items-center" ]
+            [ div [ class "flex-auto pr2" ] [ div [ class "b", style "font-size" "4rem" ] [ text "2048" ] ]
             , div [ class "" ] [ viewScore (Board.info board |> .score) ]
             ]
         , div [ class "flex items-center" ]
-            [ div [ class "flex-auto mr2" ]
-                [ div [ class "flex lh-copy" ] [ text "Join the numbers and get to the ", div [ class "b" ] [ text "2048 tile!" ] ]
+            [ div [ class "flex-auto pr2" ]
+                [ div [ class "flex lh-copy" ] [ span [] [ text "Join the numbers and get to the ", Html.strong [] [ text "2048 tile!" ] ] ]
                 ]
             , div [ class "" ] [ newBtn ]
             ]
@@ -319,7 +319,7 @@ btn msg lbl =
 viewBoard : Model -> HM
 viewBoard model =
     div
-        [ class "code f2 relative center mv4 overflow-hidden"
+        [ class "code f2 relative center overflow-hidden"
         , style "width" (String.fromInt gridWidth ++ "px")
         , style "height" (String.fromInt gridWidth ++ "px")
         , style "background-color" "hsl(29, 17%, 68%)"
