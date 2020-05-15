@@ -288,11 +288,11 @@ newBtn =
 
 
 tryAgainBtn =
-    btn NewClicked "Try Again!"
+    btn NewClicked "Try again"
 
 
 keepGoingBtn =
-    btn KeepPlayingClicked "KeepGoing!"
+    btn KeepPlayingClicked "Keep going"
 
 
 btn msg lbl =
@@ -322,14 +322,14 @@ viewBoard model =
                         []
 
                     NoMoves ->
-                        [ overlayContainer
+                        [ overlayContainer "hsla(30, 37%, 89%, 0.73)"
                             [ div [ class "f1 b pv3" ] [ text "Game Over!" ]
                             , div [] [ tryAgainBtn ]
                             ]
                         ]
 
                     Won ->
-                        [ overlayContainer
+                        [ overlayContainer "hsla(46, 84%, 55%, 0.5)"
                             [ div [ class "f1 b pv3" ] [ text "You Win!" ]
                             , div [ class "" ]
                                 [ div [ class "pa2" ] [ keepGoingBtn ]
@@ -341,11 +341,11 @@ viewBoard model =
         )
 
 
-overlayContainer =
+overlayContainer bgc =
     div
         [ class "absolute top-0"
         , class "w-100 h-100"
-        , style "background-color" "hsla(30, 37%, 89%, 0.73)"
+        , style "background-color" bgc
         , class "pa5"
         , class "tc"
         , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
