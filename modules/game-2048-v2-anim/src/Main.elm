@@ -330,10 +330,10 @@ viewBoard model =
 
                     Won ->
                         [ overlayContainer
-                            [ div [ class "pa2" ] [ text "You Win!" ]
+                            [ div [ class "f1 b pv3" ] [ text "You Win!" ]
                             , div [ class "" ]
-                                [ keepGoingBtn
-                                , tryAgainBtn
+                                [ div [ class "pa2" ] [ keepGoingBtn ]
+                                , div [ class "pa2" ] [ tryAgainBtn ]
                                 ]
                             ]
                         ]
