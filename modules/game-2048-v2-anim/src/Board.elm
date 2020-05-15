@@ -264,7 +264,7 @@ cellGridGenerator =
 numGenerator : Random.Generator Int
 numGenerator =
     -- Random.constant 1024
-    Random.weighted ( 75, 2 ) [ ( 25, 4 ) ]
+    Random.weighted ( 90, 2 ) [ ( 10, 4 ) ]
 
 
 initialCellEntriesGenerator : Random.Generator ( Grid.EntryList Cell, IncId.Seed )
