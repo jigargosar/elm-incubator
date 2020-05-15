@@ -291,6 +291,10 @@ tryAgainBtn =
     btn NewClicked "Try Again!"
 
 
+keepGoingBtn =
+    btn KeepPlayingClicked "KeepGoing!"
+
+
 btn msg lbl =
     button
         [ class "bn br2 ma0 pv2 ph3 f4"
@@ -318,30 +322,34 @@ viewBoard model =
                         []
 
                     NoMoves ->
-                        [ div
-                            [ class "absolute top-0"
-                            , class "w-100 h-100"
-                            , style "background-color" "hsla(30, 37%, 89%, 0.73)"
-                            , class "pa5"
-                            , class "tc"
-                            , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
-                            ]
+                        [ overlayContainer
                             [ div [ class "f1 b pv3" ] [ text "Game Over!" ]
                             , div [] [ tryAgainBtn ]
                             ]
                         ]
 
                     Won ->
-                        [ div
-                            [ class "absolute top-0 bg-white o-90 pa4 w-100 h-100 flex"
-                            , class "animate__animated  animate__fadeIn animate__delay-4s"
-                            ]
-                            [ div [ class "pa2" ] [ text "You Won!" ]
-                            , div [ class "pa2" ] [ button [ onClick KeepPlayingClicked ] [ text "Continue?" ] ]
+                        [ overlayContainer
+                            [ div [ class "pa2" ] [ text "You Win!" ]
+                            , div [ class "" ]
+                                [ keepGoingBtn
+                                , tryAgainBtn
+                                ]
                             ]
                         ]
                )
         )
+
+
+overlayContainer =
+    div
+        [ class "absolute top-0"
+        , class "w-100 h-100"
+        , style "background-color" "hsla(30, 37%, 89%, 0.73)"
+        , class "pa5"
+        , class "tc"
+        , class "animate__animated animate__fadeIn animate__slower animate__delay-4s"
+        ]
 
 
 viewGridBackgroundCells : HM
