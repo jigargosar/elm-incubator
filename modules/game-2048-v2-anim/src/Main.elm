@@ -4,7 +4,7 @@ import Board exposing (Board, Msg(..))
 import Browser exposing (Document)
 import Browser.Events
 import Html exposing (Html, button, div, span, text)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
 import Html.Keyed
 import IncId exposing (IncId)
@@ -262,6 +262,13 @@ view model =
             ]
             [ viewHeader model.board
             , viewBoard model
+            , div [ class "pv3" ]
+                [ span []
+                    [ text "Inspired by "
+                    , Html.a [ class "color-inherit", href "https://play2048.co/" ]
+                        [ text "https://play2048.co/" ]
+                    ]
+                ]
             ]
         ]
 
