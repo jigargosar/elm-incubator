@@ -264,7 +264,7 @@ view model =
             , viewBoard model
             , div [ class "pv3" ]
                 [ span []
-                    [ text "Inspired by "
+                    [ text "Based on "
                     , Html.a [ class "color-inherit", href "https://play2048.co/" ]
                         [ text "https://play2048.co/" ]
                     ]
