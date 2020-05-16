@@ -304,7 +304,7 @@ fillRandomEmptyHelp : Cons IntPos -> CellGrid -> Generator CellGrid
 fillRandomEmptyHelp ( h, t ) cellGrid =
     Random.pair
         (Random.uniform h t)
-        (Random.uniform 2 [ 4 ])
+        numGenerator
         |> Random.map
             (\( pos, num ) ->
                 let
