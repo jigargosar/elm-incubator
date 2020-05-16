@@ -263,10 +263,17 @@ view model =
             [ viewHeader model.board
             , viewBoard model
             , div [ class "pv3" ]
-                [ span []
-                    [ text "Based on "
-                    , Html.a [ class "color-inherit", href "https://play2048.co/" ]
-                        [ text "https://play2048.co/" ]
+                [ span [ class "lh-copy" ]
+                    [ text "Authored by "
+                    , Html.a [ class "color-inherit", href "https://github.com/jigargosar" ] [ text "Jigar Gosar" ]
+                    , text ", written in "
+                    , Html.a [ class "color-inherit", href "https://elm-lang.org/" ] [ text "elm" ]
+                    , text ". "
+                    , text "Based on "
+                    , Html.a [ class "color-inherit", href "https://play2048.co/" ] [ text "2048" ]
+                    , text ", by "
+                    , Html.a [ class "color-inherit", href "https://gabrielecirulli.com/" ] [ text "Gabriele Cirulli" ]
+                    , text ". "
                     ]
                 ]
             ]
