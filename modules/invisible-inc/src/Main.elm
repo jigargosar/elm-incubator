@@ -38,7 +38,13 @@ add =
 
 type alias Model =
     { guard : Guard
+    , status : Status
     }
+
+
+type Status
+    = PlayerTurn
+    | EnemyTurn
 
 
 type alias Flags =
@@ -47,7 +53,9 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( { guard = initGuard }
+    ( { guard = initGuard
+      , status = PlayerTurn
+      }
     , triggerStep
     )
 
