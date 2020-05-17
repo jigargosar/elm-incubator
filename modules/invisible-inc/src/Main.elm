@@ -106,7 +106,7 @@ viewPlayer =
         , style "padding" "3px"
         , class "absolute"
         ]
-        [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
+        [ div [ class "w-100 h-100 br3 bg-light-blue" ] [] ]
 
 
 viewBackgroundTile pos =
@@ -117,7 +117,7 @@ viewBackgroundTile pos =
         , style "padding" "3px"
         , class "absolute"
         ]
-        [ div [ class "w-100 h-100 br3 bg-light-blue" ] [] ]
+        [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
 
 
 renderCellTransform ( x, y ) =
