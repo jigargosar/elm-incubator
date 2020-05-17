@@ -43,7 +43,7 @@ initGuard =
                     mapFirst (add -1) f :: xs
 
         path =
-            List.range 0 7
+            List.range 0 5
                 |> List.foldl reducer [ startPos ]
                 |> List.reverse
                 |> LZ.fromList
@@ -60,7 +60,7 @@ stepGuard guard =
             ( False, { guard | path = path } )
 
         Nothing ->
-            ( True, { guard | path = LZ.reverse guard.path } )
+            ( True, { guard | path = LZ.swap guard.path } )
 
 
 add =

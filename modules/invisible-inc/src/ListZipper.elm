@@ -1,4 +1,4 @@
-module ListZipper exposing (ListZipper, current, fromList, reverse, right, singleton)
+module ListZipper exposing (ListZipper, current, first, fromList, reverse, right, singleton, swap)
 
 
 type alias ListZipper a =
@@ -35,6 +35,25 @@ reverse ( l, c, r ) =
     ( List.reverse r, c, List.reverse l )
 
 
+swap : ListZipper a -> ListZipper a
+swap ( l, c, r ) =
+    ( r, c, l )
+
+
 current : ListZipper a -> a
 current ( _, c, _ ) =
     c
+
+
+first : ListZipper a -> ListZipper a
+first =
+    whileJust right
+
+
+whileJust f x =
+    case f x of
+        Just nx ->
+            whileJust f nx
+
+        Nothing ->
+            x
