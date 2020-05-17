@@ -10,6 +10,19 @@ const app = require('./Main.elm')['Elm']['Main']['init']({
   },
 })
 
+app.ports.getBeacons.subscribe(function() {
+  const xs = Array.from(document.querySelectorAll('[data-beacon]'))
+  const beacons = xs.map(toBeacon)
+  console.log(beacons)
+
+  function toBeacon(x) {
+    return {
+      pos: JSON.parse(x.dataset.beacon),
+      rect: x.getBoundingClientRect(),
+    }
+  }
+})
+
 if (app.ports) {
   if (app.ports.cache) {
     app.ports.cache.subscribe(function(string) {
