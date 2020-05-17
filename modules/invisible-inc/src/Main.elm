@@ -140,7 +140,7 @@ type Msg
     | StepEnemyTurn
     | EndTurnClicked
     | GotBeacons Value
-    | OnClick
+    | OnClick XY
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -179,23 +179,44 @@ update message model =
                     ( model, Cmd.none )
 
         GotBeacons encoded ->
-            case JD.decodeValue (JD.list beaconDecoder) encoded of
-                Err error ->
-                    let
-                        _ =
-                            Debug.log "error" error
-                    in
+            case model.mouse of
+                Just xy ->
+                    case JD.decodeValue (JD.list beaconDecoder) encoded of
+                        Err error ->
+                            let
+                                _ =
+                                    Debug.log "error" error
+                            in
+                            ( model, Cmd.none )
+
+                        Ok beacons ->
+                            let
+                                maybeClickedGridPos : Maybe IntPos
+                                maybeClickedGridPos =
+                                    beacons
+                                        |> List.find (.rect >> rectContains xy)
+                                        |> Maybe.map .pos
+                            in
+                            case maybeClickedGridPos of
+                                Just pos ->
+                                    ( { model | wallPositions = setToggle pos model.wallPositions }, Cmd.none )
+
+                                Nothing ->
+                                    ( model, Cmd.none )
+
+                Nothing ->
                     ( model, Cmd.none )
 
-                Ok beacons ->
-                    let
-                        _ =
-                            Debug.log "beacons" beacons
-                    in
-                    ( model, Cmd.none )
+        OnClick xy ->
+            ( { model | mouse = Just xy }, getBeacons () )
 
-        OnClick ->
-            ( model, getBeacons () )
+
+setToggle x xs =
+    if Set.member x xs then
+        Set.remove x xs
+
+    else
+        Set.insert x xs
 
 
 type alias Beacon =
@@ -206,6 +227,12 @@ type alias Beacon =
 
 type alias DomRect =
     { x : Float, y : Float, width : Float, height : Float }
+
+
+rectContains : XY -> DomRect -> Bool
+rectContains xy r =
+    (clamp r.x (r.x + r.width) xy.x == xy.x)
+        && (clamp r.y (r.y + r.height) xy.y == xy.y)
 
 
 beaconDecoder : Decoder Beacon
@@ -228,7 +255,7 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ gotBeacons GotBeacons
-        , Browser.Events.onClick (JD.succeed OnClick)
+        , Browser.Events.onClick (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
         ]
 
 
