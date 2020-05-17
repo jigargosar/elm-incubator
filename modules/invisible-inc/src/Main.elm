@@ -4,7 +4,7 @@ import Browser exposing (Document)
 import Browser.Events
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
-import Html.Events exposing (onClick)
+import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
@@ -255,7 +255,8 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ gotBeacons GotBeacons
-        , Browser.Events.onClick (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
+
+        --, Browser.Events.onClick (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
         ]
 
 
@@ -321,6 +322,7 @@ viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
+        , HE.on "click" (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
         ]
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
