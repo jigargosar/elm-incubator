@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
+import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import Process
 import String exposing (fromInt)
@@ -34,17 +35,9 @@ initGuard =
         startPos =
             ( 8, 12 )
 
-        reducer _ xs =
-            case xs of
-                [] ->
-                    []
-
-                f :: _ ->
-                    mapFirst (add -1) f :: xs
-
         path =
             List.range 0 5
-                |> List.foldl reducer [ startPos ]
+                |> List.scanl (\_ -> mapFirst (add -1)) startPos
                 |> LZ.fromList
                 |> Maybe.withDefault (LZ.singleton startPos)
     in
