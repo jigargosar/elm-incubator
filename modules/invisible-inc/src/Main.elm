@@ -58,7 +58,10 @@ view : Model -> DM
 view _ =
     Document "Invisible Inc."
         [ text "Hello Invisible Inc."
-        , div [ class "flex justify-center" ] [ viewGridBackground ]
+        , div [ class "flex justify-center" ]
+            [ viewGridBackground
+            , viewGrid
+            ]
         ]
 
 
@@ -80,13 +83,37 @@ gridHeightPx =
     cellWidthPx * gridSize.height
 
 
+viewGrid =
+    div
+        [ style "width" (fromInt gridWidthPx ++ "px")
+        , style "height" (fromInt gridHeightPx ++ "px")
+        ]
+        [ viewPlayer ]
+
+
+viewPlayer =
+    let
+        pos =
+            ( 5, 5 )
+    in
+    div
+        [ style "width" (fromInt cellWidthPx ++ "px")
+        , style "height" (fromInt cellWidthPx ++ "px")
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
+        [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
+
+
 viewGridBackground =
-    positionsOf gridSize
-        |> List.map viewBackgroundTile
-        |> div
-            [ style "width" (fromInt gridWidthPx ++ "px")
-            , style "height" (fromInt gridHeightPx ++ "px")
-            ]
+    div
+        [ style "width" (fromInt gridWidthPx ++ "px")
+        , style "height" (fromInt gridHeightPx ++ "px")
+        ]
+        (positionsOf gridSize
+            |> List.map viewBackgroundTile
+        )
 
 
 viewBackgroundTile pos =
