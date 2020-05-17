@@ -7,6 +7,7 @@ import Html.Events exposing (onClick)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import Process
+import Set exposing (Set)
 import String exposing (fromInt)
 import Task
 import Tuple exposing (..)
@@ -69,6 +70,7 @@ add =
 type alias Model =
     { guard : Guard
     , status : Status
+    , wallPositions : Set IntPos
     }
 
 
@@ -81,10 +83,29 @@ type alias Flags =
     ()
 
 
+initialWallPositions =
+    [ hWall 5 ( 2, 8 )
+    , vWall 6 ( 7, 6 )
+    , vWall 8 ( 1, 4 )
+    ]
+        |> List.concat
+
+
+hWall n start =
+    List.range 0 (n - 1)
+        |> List.scanl (always (mapFirst (add 1))) start
+
+
+vWall n start =
+    List.range 0 (n - 1)
+        |> List.scanl (always (mapSecond (add 1))) start
+
+
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { guard = initGuard
       , status = PlayerTurn
+      , wallPositions = Set.fromList initialWallPositions
       }
     , Cmd.none
     )
@@ -211,27 +232,9 @@ viewGrid model =
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
          )
-            ++ (wallPositions |> List.map viewWall)
+            ++ (model.wallPositions |> Set.toList |> List.map viewWall)
             ++ [ viewPlayer, viewGuard model.guard ]
         )
-
-
-wallPositions =
-    [ hWall 5 ( 2, 8 )
-    , vWall 6 ( 7, 6 )
-    , vWall 8 ( 1, 4 )
-    ]
-        |> List.concat
-
-
-hWall n start =
-    List.range 0 (n - 1)
-        |> List.scanl (always (mapFirst (add 1))) start
-
-
-vWall n start =
-    List.range 0 (n - 1)
-        |> List.scanl (always (mapSecond (add 1))) start
 
 
 viewPlayer =
