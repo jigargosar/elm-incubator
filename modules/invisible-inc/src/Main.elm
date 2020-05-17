@@ -1,7 +1,9 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, text)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (style)
+import Tuple exposing (pair)
 
 
 
@@ -54,7 +56,54 @@ type alias DM =
 view : Model -> DM
 view _ =
     Document "Invisible Inc."
-        [ text "Hello Invisible Inc." ]
+        [ text "Hello Invisible Inc."
+        , viewGrid
+        ]
+
+
+viewGrid =
+    let
+        gridSize =
+            { width = 10
+            , height = 20
+            }
+    in
+    positionsOf gridSize
+        |> List.map viewPosition
+        |> div []
+
+
+cellWidth =
+    50
+
+
+viewPosition pos =
+    div
+        [ style "width" (String.fromInt cellWidth)
+        , style "height" (String.fromInt cellWidth)
+        , style "transform" (renderCellTransform pos)
+        ]
+        []
+
+
+renderCellTransform ( x, y ) =
+    "translate(" ++ String.fromInt (x * cellWidth) ++ "px, " ++ String.fromInt (y * cellWidth) ++ "px)"
+
+
+type alias IntPos =
+    ( Int, Int )
+
+
+type alias IntSize =
+    { width : Int
+    , height : Int
+    }
+
+
+positionsOf : IntSize -> List IntPos
+positionsOf s =
+    List.range 0 (s.width - 1)
+        |> List.concatMap (\x -> List.range 0 (s.height - 1) |> List.map (pair x))
 
 
 
