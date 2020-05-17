@@ -90,7 +90,7 @@ viewGrid =
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
          )
-            ++ [ viewPlayer ]
+            ++ [ viewPlayer, viewGuard ]
         )
 
 
@@ -107,6 +107,21 @@ viewPlayer =
         , class "absolute"
         ]
         [ div [ class "w-100 h-100 br3 bg-light-blue" ] [] ]
+
+
+viewGuard =
+    let
+        pos =
+            ( 8, 12 )
+    in
+    div
+        [ style "width" (fromInt cellWidthPx ++ "px")
+        , style "height" (fromInt cellWidthPx ++ "px")
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
+        [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
 
 
 viewBackgroundTile pos =
