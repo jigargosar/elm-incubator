@@ -59,8 +59,7 @@ view _ =
     Document "Invisible Inc."
         [ text "Hello Invisible Inc."
         , div [ class "flex justify-center" ]
-            [ viewGridBackground
-            , viewGrid
+            [ viewGrid
             ]
         ]
 
@@ -88,7 +87,11 @@ viewGrid =
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
         ]
-        [ viewPlayer ]
+        ((positionsOf gridSize
+            |> List.map viewBackgroundTile
+         )
+            ++ [ viewPlayer ]
+        )
 
 
 viewPlayer =
@@ -106,16 +109,6 @@ viewPlayer =
         [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
 
 
-viewGridBackground =
-    div
-        [ style "width" (fromInt gridWidthPx ++ "px")
-        , style "height" (fromInt gridHeightPx ++ "px")
-        ]
-        (positionsOf gridSize
-            |> List.map viewBackgroundTile
-        )
-
-
 viewBackgroundTile pos =
     div
         [ style "width" (fromInt cellWidthPx ++ "px")
@@ -124,7 +117,7 @@ viewBackgroundTile pos =
         , style "padding" "3px"
         , class "absolute"
         ]
-        [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
+        [ div [ class "w-100 h-100 br3 bg-light-blue" ] [] ]
 
 
 renderCellTransform ( x, y ) =
