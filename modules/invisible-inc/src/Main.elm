@@ -214,15 +214,20 @@ viewGrid model =
 
 
 wallPositions =
-    let
-        start =
-            ( 0, 0 )
+    [ hWall 5 ( 1, 8 )
+    , vWall 5 ( 0, 8 )
+    ]
+        |> List.concat
 
-        wpl =
-            List.range 0 5
-                |> List.scanl (always (mapFirst (add 1))) start
-    in
-    wpl
+
+hWall n start =
+    List.range 0 (n - 1)
+        |> List.scanl (always (mapFirst (add 1))) start
+
+
+vWall n start =
+    List.range 0 (n - 1)
+        |> List.scanl (always (mapSecond (add 1))) start
 
 
 viewPlayer =
@@ -266,7 +271,7 @@ viewWall pos =
         , class "absolute"
         ]
         [ div
-            [ class "w-100 h-100 br3"
+            [ class "w-100 h-100 br3 o-70"
             , style "background-color" "hsl(0, 25%, 65%)"
             ]
             []
