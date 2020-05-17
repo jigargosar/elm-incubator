@@ -58,7 +58,7 @@ view : Model -> DM
 view _ =
     Document "Invisible Inc."
         [ text "Hello Invisible Inc."
-        , div [ class "flex justify-center" ] [ viewGrid ]
+        , div [ class "flex justify-center" ] [ viewBackgroundGrid ]
         ]
 
 
@@ -80,7 +80,7 @@ gridHeightPx =
     cellWidthPx * gridSize.height
 
 
-viewGrid =
+viewBackgroundGrid =
     positionsOf gridSize
         |> List.map viewBackgroundTile
         |> div
