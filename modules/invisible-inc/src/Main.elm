@@ -265,7 +265,7 @@ viewWall pos =
         , style "padding" "3px"
         , class "absolute"
         ]
-        [ div [ class "w-100 h-100 br3 bg-brown" ] [] ]
+        [ div [ class "w-100 h-100 br3 bg-navy" ] [] ]
 
 
 viewBackgroundTile pos =
