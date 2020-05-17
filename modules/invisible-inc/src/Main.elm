@@ -208,8 +208,21 @@ viewGrid model =
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
          )
+            ++ (wallPositions |> List.map viewWall)
             ++ [ viewPlayer, viewGuard model.guard ]
         )
+
+
+wallPositions =
+    let
+        start =
+            ( 0, 0 )
+
+        wpl =
+            List.range 0 5
+                |> List.scanl (always (mapFirst (add 1))) start
+    in
+    wpl
 
 
 viewPlayer =
@@ -241,6 +254,18 @@ viewGuard guard =
         , class "absolute"
         ]
         [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
+
+
+viewWall : IntPos -> HM
+viewWall pos =
+    div
+        [ style "width" (fromInt cellWidthPx ++ "px")
+        , style "height" (fromInt cellWidthPx ++ "px")
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
+        [ div [ class "w-100 h-100 br3 bg-brown" ] [] ]
 
 
 viewBackgroundTile pos =
