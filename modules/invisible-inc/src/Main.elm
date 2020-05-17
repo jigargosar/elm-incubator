@@ -4,7 +4,7 @@ import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import String exposing (fromInt)
-import Tuple exposing (pair)
+import Tuple exposing (..)
 
 
 
@@ -19,6 +19,15 @@ type alias Guard =
 initGuard : Guard
 initGuard =
     { pos = ( 8, 12 ) }
+
+
+moveGuard : Guard -> Guard
+moveGuard guard =
+    { guard | pos = mapFirst (add -1) guard.pos }
+
+
+add =
+    (+)
 
 
 
@@ -47,6 +56,7 @@ init () =
 
 type Msg
     = NoOp
+    | Step
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -54,6 +64,9 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        Step ->
+            ( { model | guard = moveGuard model.guard }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
