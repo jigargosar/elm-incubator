@@ -3,7 +3,7 @@ port module Main exposing (main)
 import Browser exposing (Document)
 import Browser.Events
 import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class, style)
+import Html.Attributes as HA exposing (class, style)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Pipeline exposing (required)
@@ -323,6 +323,7 @@ viewGrid model =
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
         , HE.on "click" (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
+        , HA.id "grid-container"
         ]
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
@@ -387,7 +388,7 @@ viewBackgroundTile pos =
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
-        , Html.Attributes.attribute "data-beacon" (intPosEncoder pos |> JE.encode 0)
+        , HA.attribute "data-beacon" (intPosEncoder pos |> JE.encode 0)
         ]
         [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
 
