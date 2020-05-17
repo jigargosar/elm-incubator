@@ -69,7 +69,7 @@ init () =
 
 
 triggerStepEnemyTurn =
-    Process.sleep 1000 |> Task.perform (always StepEnemyTurn)
+    Process.sleep 100 |> Task.perform (always StepEnemyTurn)
 
 
 
