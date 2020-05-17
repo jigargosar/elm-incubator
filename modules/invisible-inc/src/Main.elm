@@ -45,7 +45,6 @@ initGuard =
         path =
             List.range 0 5
                 |> List.foldl reducer [ startPos ]
-                |> List.reverse
                 |> LZ.fromList
                 |> Maybe.withDefault (LZ.singleton startPos)
     in
