@@ -214,8 +214,9 @@ viewGrid model =
 
 
 wallPositions =
-    [ hWall 5 ( 1, 8 )
-    , vWall 5 ( 0, 8 )
+    [ hWall 5 ( 2, 8 )
+    , vWall 6 ( 7, 6 )
+    , vWall 8 ( 1, 4 )
     ]
         |> List.concat
 
