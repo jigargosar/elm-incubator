@@ -194,11 +194,11 @@ update message model =
 
 type alias Beacon =
     { pos : IntPos
-    , rect : Rect
+    , rect : DomRect
     }
 
 
-type alias Rect =
+type alias DomRect =
     { x : Float, y : Float, width : Float, height : Float }
 
 
@@ -209,9 +209,9 @@ beaconDecoder =
         |> required "rect" rectDecoder
 
 
-rectDecoder : Decoder Rect
+rectDecoder : Decoder DomRect
 rectDecoder =
-    JD.succeed Rect
+    JD.succeed DomRect
         |> required "x" JD.float
         |> required "y" JD.float
         |> required "width" JD.float
