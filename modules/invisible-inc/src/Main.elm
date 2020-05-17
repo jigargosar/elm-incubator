@@ -3,7 +3,9 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
+import Process
 import String exposing (fromInt)
+import Task
 import Tuple exposing (..)
 
 
@@ -46,8 +48,12 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init () =
     ( { guard = initGuard }
-    , Cmd.none
+    , triggerStep
     )
+
+
+triggerStep =
+    Process.sleep 1000 |> Task.perform (always Step)
 
 
 
@@ -83,11 +89,11 @@ type alias DM =
 
 
 view : Model -> DM
-view _ =
+view model =
     Document "Invisible Inc."
         [ text "Hello Invisible Inc."
         , div [ class "flex justify-center" ]
-            [ viewGrid
+            [ viewGrid model
             ]
         ]
 
@@ -110,7 +116,7 @@ gridHeightPx =
     cellWidthPx * gridSize.height
 
 
-viewGrid =
+viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
@@ -118,7 +124,7 @@ viewGrid =
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
          )
-            ++ [ viewPlayer, viewGuard ]
+            ++ [ viewPlayer, viewGuard model.guard ]
         )
 
 
@@ -137,10 +143,10 @@ viewPlayer =
         [ div [ class "w-100 h-100 br3 bg-light-blue" ] [] ]
 
 
-viewGuard =
+viewGuard guard =
     let
         pos =
-            ( 8, 12 )
+            guard.pos
     in
     div
         [ style "width" (fromInt cellWidthPx ++ "px")
