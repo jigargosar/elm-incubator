@@ -24,8 +24,8 @@ initGuard =
     { pos = ( 8, 12 ) }
 
 
-moveGuard : Guard -> Guard
-moveGuard guard =
+stepGuard : Guard -> Guard
+stepGuard guard =
     { guard | pos = mapFirst (add -1) guard.pos }
 
 
@@ -82,7 +82,7 @@ update message model =
             ( model, Cmd.none )
 
         StepEnemyTurn ->
-            ( { model | guard = moveGuard model.guard }, Cmd.none )
+            ( { model | guard = stepGuard model.guard }, Cmd.none )
 
         EndTurnClicked ->
             case model.status of
