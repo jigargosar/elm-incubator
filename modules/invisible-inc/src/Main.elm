@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (class, style)
 import Tuple exposing (pair)
 
 
@@ -65,12 +65,12 @@ viewGrid =
     let
         gridSize =
             { width = 10
-            , height = 20
+            , height = 15
             }
     in
     positionsOf gridSize
         |> List.map viewPosition
-        |> div []
+        |> div [ class "dib relative" ]
 
 
 cellWidth =
@@ -79,11 +79,12 @@ cellWidth =
 
 viewPosition pos =
     div
-        [ style "width" (String.fromInt cellWidth)
-        , style "height" (String.fromInt cellWidth)
+        [ style "width" (String.fromInt cellWidth ++ "px")
+        , style "height" (String.fromInt cellWidth ++ "px")
         , style "transform" (renderCellTransform pos)
+        , class "absolute pa1"
         ]
-        []
+        [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
 
 
 renderCellTransform ( x, y ) =
