@@ -22,6 +22,9 @@ port cache : String -> Cmd msg
 port gotBeacons : (Value -> msg) -> Sub msg
 
 
+port getBeacons : () -> Cmd msg
+
+
 
 -- Path
 
