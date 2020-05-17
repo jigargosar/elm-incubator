@@ -265,7 +265,12 @@ viewWall pos =
         , style "padding" "3px"
         , class "absolute"
         ]
-        [ div [ class "w-100 h-100 br3 bg-navy" ] [] ]
+        [ div
+            [ class "w-100 h-100 br3"
+            , style "background-color" "hsl(0, 25%, 65%)"
+            ]
+            []
+        ]
 
 
 viewBackgroundTile pos =
