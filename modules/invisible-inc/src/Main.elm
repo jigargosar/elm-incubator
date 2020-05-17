@@ -8,11 +8,26 @@ import Tuple exposing (pair)
 
 
 
+-- Guard
+
+
+type alias Guard =
+    { pos : IntPos
+    }
+
+
+initGuard : Guard
+initGuard =
+    { pos = ( 8, 12 ) }
+
+
+
 -- Model
 
 
 type alias Model =
-    {}
+    { guard : Guard
+    }
 
 
 type alias Flags =
@@ -21,7 +36,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init () =
-    ( {}
+    ( { guard = initGuard }
     , Cmd.none
     )
 
