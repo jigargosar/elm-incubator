@@ -1,6 +1,7 @@
 port module Main exposing (main)
 
 import Browser exposing (Document)
+import Browser.Dom as Dom exposing (Element)
 import Browser.Events
 import Html exposing (Html, button, div, text)
 import Html.Attributes as HA exposing (class, style)
@@ -141,6 +142,7 @@ type Msg
     | EndTurnClicked
     | GotBeacons Value
     | OnClick XY
+    | OnGridElementClick XY (Result Dom.Error Element)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -208,7 +210,23 @@ update message model =
                     ( model, Cmd.none )
 
         OnClick xy ->
-            ( { model | mouse = Just xy }, getBeacons () )
+            ( { model | mouse = Just xy }
+            , Cmd.batch
+                [ getBeacons ()
+                , Dom.getElement "grid-container"
+                    |> Task.attempt (OnGridElementClick xy)
+                ]
+            )
+
+        OnGridElementClick _ (Err error) ->
+            let
+                _ =
+                    Debug.log "error" error
+            in
+            ( model, Cmd.none )
+
+        OnGridElementClick xy (Ok { element }) ->
+            ( model, Cmd.none )
 
 
 toggleSetMember x xs =
