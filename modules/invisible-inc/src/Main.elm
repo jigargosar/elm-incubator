@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
+import String exposing (fromInt)
 import Tuple exposing (pair)
 
 
@@ -71,8 +72,8 @@ viewGrid =
     positionsOf gridSize
         |> List.map viewPosition
         |> div
-            [ widthPx (cellWidth * gridSize.width)
-            , heightPx (cellWidth * gridSize.height)
+            [ widthPx (fromInt <| cellWidth * gridSize.width)
+            , heightPx (fromInt <| cellWidth * gridSize.height)
             ]
 
 
@@ -80,18 +81,18 @@ cellWidth =
     50
 
 
-widthPx n =
-    style "width" (String.fromInt n ++ "px")
+widthPx s =
+    style "width" (s ++ "px")
 
 
-heightPx n =
-    style "height" (String.fromInt n ++ "px")
+heightPx s =
+    style "height" (s ++ "px")
 
 
 viewPosition pos =
     div
-        [ widthPx cellWidth
-        , heightPx cellWidth
+        [ widthPx (fromInt cellWidth)
+        , heightPx (fromInt cellWidth)
         , style "transform" (renderCellTransform pos)
         , class "absolute pa1"
         ]
