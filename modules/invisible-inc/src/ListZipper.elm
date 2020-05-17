@@ -1,4 +1,4 @@
-module ListZipper exposing (ListZipper, current, first, fromList, right, singleton, swap)
+module ListZipper exposing (ListZipper, current, fromList, right, singleton, swap)
 
 
 type alias ListZipper a =
@@ -38,11 +38,6 @@ swap ( l, c, r ) =
 current : ListZipper a -> a
 current ( _, c, _ ) =
     c
-
-
-first : ListZipper a -> ListZipper a
-first =
-    whileJust right
 
 
 whileJust f x =
