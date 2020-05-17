@@ -62,15 +62,6 @@ view _ =
         ]
 
 
-viewGrid =
-    positionsOf gridSize
-        |> List.map viewPosition
-        |> div
-            [ style "width" (fromInt gridWidthPx ++ "px")
-            , style "height" (fromInt gridHeightPx ++ "px")
-            ]
-
-
 gridSize =
     { width = 10
     , height = 15
@@ -87,6 +78,15 @@ gridWidthPx =
 
 gridHeightPx =
     cellWidthPx * gridSize.height
+
+
+viewGrid =
+    positionsOf gridSize
+        |> List.map viewPosition
+        |> div
+            [ style "width" (fromInt gridWidthPx ++ "px")
+            , style "height" (fromInt gridHeightPx ++ "px")
+            ]
 
 
 viewPosition pos =
