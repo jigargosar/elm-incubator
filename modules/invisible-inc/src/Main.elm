@@ -199,7 +199,7 @@ update message model =
                             in
                             case maybeClickedGridPos of
                                 Just pos ->
-                                    ( { model | wallPositions = setToggle pos model.wallPositions }, Cmd.none )
+                                    ( { model | wallPositions = toggleSetMember pos model.wallPositions }, Cmd.none )
 
                                 Nothing ->
                                     ( model, Cmd.none )
@@ -211,7 +211,7 @@ update message model =
             ( { model | mouse = Just xy }, getBeacons () )
 
 
-setToggle x xs =
+toggleSetMember x xs =
     if Set.member x xs then
         Set.remove x xs
 
