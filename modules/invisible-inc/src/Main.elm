@@ -72,8 +72,8 @@ viewGrid =
     positionsOf gridSize
         |> List.map viewPosition
         |> div
-            [ widthPx (fromInt <| cellWidth * gridSize.width)
-            , heightPx (fromInt <| cellWidth * gridSize.height)
+            [ style "width" (fromInt (cellWidth * gridSize.width) ++ "px")
+            , style "height" (fromInt (cellWidth * gridSize.height) ++ "px")
             ]
 
 
@@ -91,8 +91,8 @@ heightPx s =
 
 viewPosition pos =
     div
-        [ widthPx (fromInt cellWidth)
-        , heightPx (fromInt cellWidth)
+        [ style "width" (fromInt cellWidth ++ "px")
+        , style "height" (fromInt cellWidth ++ "px")
         , style "transform" (renderCellTransform pos)
         , class "absolute pa1"
         ]
