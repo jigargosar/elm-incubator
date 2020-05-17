@@ -4,6 +4,8 @@ import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
+import Json.Decode as JD exposing (Decoder)
+import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import Process
@@ -292,6 +294,7 @@ viewBackgroundTile pos =
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
+        , Html.Attributes.attribute "data-beacon" (intPosEncoder pos |> JE.encode 0)
         ]
         [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
 
@@ -302,6 +305,16 @@ renderCellTransform ( x, y ) =
 
 type alias IntPos =
     ( Int, Int )
+
+
+intPosEncoder : IntPos -> Value
+intPosEncoder intPos =
+    (\( a, b ) -> JE.list identity [ JE.int a, JE.int b ]) intPos
+
+
+intPosDecoder : Decoder IntPos
+intPosDecoder =
+    JD.map2 pair (JD.index 0 JD.int) (JD.index 1 JD.int)
 
 
 type alias IntSize =
