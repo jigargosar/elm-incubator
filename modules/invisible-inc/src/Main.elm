@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
+import Html.Events exposing (onClick)
 import Process
 import String exposing (fromInt)
 import Task
@@ -71,6 +72,7 @@ triggerStep =
 type Msg
     = NoOp
     | Step
+    | EndTurnClicked
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -81,6 +83,14 @@ update message model =
 
         Step ->
             ( { model | guard = moveGuard model.guard }, Cmd.none )
+
+        EndTurnClicked ->
+            case model.status of
+                PlayerTurn ->
+                    ( { model | status = EnemyTurn }, triggerStep )
+
+                EnemyTurn ->
+                    ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -120,6 +130,7 @@ endTurnButton =
         , class "pv2 ph3 br3 f4"
         , style "background-color" "hsl(209, 100%, 79%)"
         , style "color" "hsl(209, 100%, 20%)"
+        , onClick EndTurnClicked
         ]
         [ text "End Turn" ]
 
