@@ -5,6 +5,7 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
@@ -16,6 +17,9 @@ import Tuple exposing (..)
 
 
 port cache : String -> Cmd msg
+
+
+port gotBeacons : (Value -> msg) -> Sub msg
 
 
 
@@ -125,6 +129,7 @@ type Msg
     = NoOp
     | StepEnemyTurn
     | EndTurnClicked
+    | GotBeacons Value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -162,10 +167,52 @@ update message model =
                 EnemyTurn ->
                     ( model, Cmd.none )
 
+        GotBeacons encoded ->
+            case JD.decodeValue (JD.list beaconDecoder) encoded of
+                Err error ->
+                    let
+                        _ =
+                            Debug.log "error" error
+                    in
+                    ( model, Cmd.none )
+
+                Ok beacons ->
+                    let
+                        _ =
+                            Debug.log "beacons" beacons
+                    in
+                    ( model, Cmd.none )
+
+
+type alias Beacon =
+    { pos : IntPos
+    , rect : Rect
+    }
+
+
+type alias Rect =
+    { x : Float, y : Float, width : Float, height : Float }
+
+
+beaconDecoder : Decoder Beacon
+beaconDecoder =
+    JD.succeed Beacon
+        |> required "pos" (JD.map2 pair (JD.index 0 JD.int) (JD.index 1 JD.int))
+        |> required "rect" rectDecoder
+
+
+rectDecoder : Decoder Rect
+rectDecoder =
+    JD.succeed Rect
+        |> required "x" JD.float
+        |> required "y" JD.float
+        |> required "width" JD.float
+        |> required "height" JD.float
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch [ gotBeacons GotBeacons ]
 
 
 
