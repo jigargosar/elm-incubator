@@ -27,9 +27,13 @@ initGuard =
     }
 
 
-stepGuard : Guard -> Guard
+stepGuard : Guard -> ( Bool, Guard )
 stepGuard guard =
-    { guard | pos = mapFirst (add -1) guard.pos }
+    let
+        nextPos =
+            mapFirst (add -1) guard.pos
+    in
+    ( nextPos == guard.dest, { guard | pos = mapFirst (add -1) guard.pos } )
 
 
 add =
@@ -85,7 +89,25 @@ update message model =
             ( model, Cmd.none )
 
         StepEnemyTurn ->
-            ( { model | guard = stepGuard model.guard }, Cmd.none )
+            let
+                ( isDone, guard ) =
+                    stepGuard model.guard
+            in
+            ( { model
+                | guard = guard
+                , status =
+                    if isDone then
+                        PlayerTurn
+
+                    else
+                        model.status
+              }
+            , if isDone then
+                Cmd.none
+
+              else
+                triggerStepEnemyTurn
+            )
 
         EndTurnClicked ->
             case model.status of
