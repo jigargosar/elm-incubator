@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, disabled, style)
 import Html.Events exposing (onClick)
 import Process
 import String exposing (fromInt)
@@ -114,23 +114,22 @@ view model =
             , style "width" (fromInt gridWidthPx ++ "px")
             ]
             [ div [ class "pv2 flex items-center " ]
-                [ div [ class "mr3 f3" ] [ text (Debug.toString model.status) ]
-                , div [ class "mr3" ]
-                    [ endTurnButton
-                    ]
+                [ div [ class "mr3 flex-auto f3" ] [ text (Debug.toString model.status) ]
+                , div [ class "" ] [ endTurnButton (model.status /= PlayerTurn) ]
                 ]
             , viewGrid model
             ]
         ]
 
 
-endTurnButton =
+endTurnButton isDisabled =
     button
         [ class "ma0 bn"
         , class "pv2 ph3 br3 f4"
         , style "background-color" "hsl(209, 100%, 79%)"
         , style "color" "hsl(209, 100%, 20%)"
         , onClick EndTurnClicked
+        , disabled isDisabled
         ]
         [ text "End Turn" ]
 
