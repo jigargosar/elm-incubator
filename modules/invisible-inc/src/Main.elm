@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
@@ -10,6 +10,9 @@ import Process
 import String exposing (fromInt)
 import Task
 import Tuple exposing (..)
+
+
+port cache : String -> Cmd msg
 
 
 
