@@ -81,14 +81,6 @@ cellWidth =
     50
 
 
-widthPx s =
-    style "width" (s ++ "px")
-
-
-heightPx s =
-    style "height" (s ++ "px")
-
-
 viewPosition pos =
     div
         [ style "width" (fromInt cellWidth ++ "px")
