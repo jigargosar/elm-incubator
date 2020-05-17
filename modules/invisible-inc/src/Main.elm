@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
 import Process
 import String exposing (fromInt)
@@ -103,7 +103,18 @@ view model =
             [ class "center"
             , style "width" (fromInt gridWidthPx ++ "px")
             ]
-            [ div [ class "pv2 f3" ] [ text (Debug.toString model.status) ]
+            [ div [ class "pv2 flex items-center " ]
+                [ div [ class "mr3 f3" ] [ text (Debug.toString model.status) ]
+                , div [ class "mr3" ]
+                    [ button
+                        [ class "ma0 bn"
+                        , class "pv2 ph3 br3 f4"
+                        , style "background-color" "hsl(209, 100%, 79%)"
+                        , style "color" "hsl(209, 100%, 20%)"
+                        ]
+                        [ text "End Turn" ]
+                    ]
+                ]
             , viewGrid model
             ]
         ]
