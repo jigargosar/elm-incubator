@@ -16,12 +16,15 @@ import Tuple exposing (..)
 
 type alias Guard =
     { pos : IntPos
+    , dest : IntPos
     }
 
 
 initGuard : Guard
 initGuard =
-    { pos = ( 8, 12 ) }
+    { pos = ( 8, 12 )
+    , dest = ( 0, 12 )
+    }
 
 
 stepGuard : Guard -> Guard
