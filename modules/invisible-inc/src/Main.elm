@@ -61,8 +61,8 @@ init () =
     )
 
 
-triggerStep =
-    Process.sleep 1000 |> Task.perform (always Step)
+triggerStepEnemyTurn =
+    Process.sleep 1000 |> Task.perform (always StepEnemyTurn)
 
 
 
@@ -71,7 +71,7 @@ triggerStep =
 
 type Msg
     = NoOp
-    | Step
+    | StepEnemyTurn
     | EndTurnClicked
 
 
@@ -81,13 +81,13 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        Step ->
+        StepEnemyTurn ->
             ( { model | guard = moveGuard model.guard }, Cmd.none )
 
         EndTurnClicked ->
             case model.status of
                 PlayerTurn ->
-                    ( { model | status = EnemyTurn }, triggerStep )
+                    ( { model | status = EnemyTurn }, triggerStepEnemyTurn )
 
                 EnemyTurn ->
                     ( model, Cmd.none )
