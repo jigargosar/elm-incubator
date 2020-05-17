@@ -1,6 +1,7 @@
 port module Main exposing (main)
 
 import Browser exposing (Document)
+import Browser.Events
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
@@ -133,6 +134,7 @@ type Msg
     | StepEnemyTurn
     | EndTurnClicked
     | GotBeacons Value
+    | OnClick
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -186,6 +188,9 @@ update message model =
                     in
                     ( model, Cmd.none )
 
+        OnClick ->
+            ( model, getBeacons () )
+
 
 type alias Beacon =
     { pos : IntPos
@@ -215,7 +220,10 @@ rectDecoder =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch [ gotBeacons GotBeacons ]
+    Sub.batch
+        [ gotBeacons GotBeacons
+        , Browser.Events.onClick (JD.succeed OnClick)
+        ]
 
 
 
