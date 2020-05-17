@@ -63,28 +63,36 @@ view _ =
 
 
 viewGrid =
-    let
-        gridSize =
-            { width = 10
-            , height = 15
-            }
-    in
     positionsOf gridSize
         |> List.map viewPosition
         |> div
-            [ style "width" (fromInt (cellWidth * gridSize.width) ++ "px")
-            , style "height" (fromInt (cellWidth * gridSize.height) ++ "px")
+            [ style "width" (fromInt gridWidthPx ++ "px")
+            , style "height" (fromInt gridHeightPx ++ "px")
             ]
 
 
-cellWidth =
+gridSize =
+    { width = 10
+    , height = 15
+    }
+
+
+cellWidthPx =
     50
+
+
+gridWidthPx =
+    cellWidthPx * gridSize.width
+
+
+gridHeightPx =
+    cellWidthPx * gridSize.height
 
 
 viewPosition pos =
     div
-        [ style "width" (fromInt cellWidth ++ "px")
-        , style "height" (fromInt cellWidth ++ "px")
+        [ style "width" (fromInt cellWidthPx ++ "px")
+        , style "height" (fromInt cellWidthPx ++ "px")
         , style "transform" (renderCellTransform pos)
         , class "absolute pa1"
         ]
@@ -92,7 +100,7 @@ viewPosition pos =
 
 
 renderCellTransform ( x, y ) =
-    "translate(" ++ String.fromInt (x * cellWidth) ++ "px, " ++ String.fromInt (y * cellWidth) ++ "px)"
+    "translate(" ++ String.fromInt (x * cellWidthPx) ++ "px, " ++ String.fromInt (y * cellWidthPx) ++ "px)"
 
 
 type alias IntPos =
