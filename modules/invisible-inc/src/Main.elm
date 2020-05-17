@@ -82,14 +82,14 @@ gridHeightPx =
 
 viewGrid =
     positionsOf gridSize
-        |> List.map viewTile
+        |> List.map viewBackgroundTile
         |> div
             [ style "width" (fromInt gridWidthPx ++ "px")
             , style "height" (fromInt gridHeightPx ++ "px")
             ]
 
 
-viewTile pos =
+viewBackgroundTile pos =
     div
         [ style "width" (fromInt cellWidthPx ++ "px")
         , style "height" (fromInt cellWidthPx ++ "px")
