@@ -81,7 +81,12 @@ type alias Model =
     { guard : Guard
     , status : Status
     , wallPositions : Set IntPos
+    , mouse : Maybe XY
     }
+
+
+type alias XY =
+    { x : Float, y : Float }
 
 
 type Status
@@ -116,6 +121,7 @@ init () =
     ( { guard = initGuard
       , status = PlayerTurn
       , wallPositions = Set.fromList initialWallPositions
+      , mouse = Nothing
       }
     , Cmd.none
     )
