@@ -359,11 +359,6 @@ intPosEncoder intPos =
     (\( a, b ) -> JE.list identity [ JE.int a, JE.int b ]) intPos
 
 
-intPosDecoder : Decoder IntPos
-intPosDecoder =
-    JD.map2 pair (JD.index 0 JD.int) (JD.index 1 JD.int)
-
-
 type alias IntSize =
     { width : Int
     , height : Int
