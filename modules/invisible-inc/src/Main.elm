@@ -4,6 +4,8 @@ import Browser exposing (Document)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class, disabled, style)
 import Html.Events exposing (onClick)
+import List.Extra as List
+import ListZipper as LZ exposing (ListZipper)
 import Process
 import String exposing (fromInt)
 import Task
@@ -11,29 +13,55 @@ import Tuple exposing (..)
 
 
 
+-- Path
+
+
+type alias Path =
+    List IntPos
+
+
+
 -- Guard
 
 
 type alias Guard =
-    { pos : IntPos
-    , dest : IntPos
+    { path : ListZipper IntPos
     }
 
 
 initGuard : Guard
 initGuard =
-    { pos = ( 8, 12 )
-    , dest = ( 1, 12 )
+    let
+        startPos =
+            ( 8, 12 )
+
+        reducer _ xs =
+            case xs of
+                [] ->
+                    []
+
+                f :: _ ->
+                    mapFirst (add -1) f :: xs
+
+        path =
+            List.range 0 7
+                |> List.foldl reducer [ startPos ]
+                |> List.reverse
+                |> LZ.fromList
+                |> Maybe.withDefault (LZ.singleton startPos)
+    in
+    { path = path
     }
 
 
 stepGuard : Guard -> ( Bool, Guard )
 stepGuard guard =
-    let
-        nextPos =
-            mapFirst (add -1) guard.pos
-    in
-    ( nextPos == guard.dest, { guard | pos = mapFirst (add -1) guard.pos } )
+    case LZ.right guard.path of
+        Just path ->
+            ( False, { guard | path = path } )
+
+        Nothing ->
+            ( True, { guard | path = LZ.reverse guard.path } )
 
 
 add =
@@ -131,6 +159,10 @@ type alias DM =
     Document Msg
 
 
+type alias HM =
+    Html Msg
+
+
 view : Model -> DM
 view model =
     Document "Invisible Inc."
@@ -177,6 +209,7 @@ gridHeightPx =
     cellWidthPx * gridSize.height
 
 
+viewGrid : Model -> HM
 viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
@@ -204,10 +237,11 @@ viewPlayer =
         [ div [ class "w-100 h-100 br3 bg-light-blue" ] [] ]
 
 
+viewGuard : Guard -> HM
 viewGuard guard =
     let
         pos =
-            guard.pos
+            LZ.current guard.path
     in
     div
         [ style "width" (fromInt cellWidthPx ++ "px")
