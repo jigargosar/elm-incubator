@@ -57,7 +57,7 @@ init () =
     ( { guard = initGuard
       , status = PlayerTurn
       }
-    , triggerStep
+    , Cmd.none
     )
 
 
