@@ -23,7 +23,7 @@ type alias Guard =
 initGuard : Guard
 initGuard =
     { pos = ( 8, 12 )
-    , dest = ( 0, 12 )
+    , dest = ( 1, 12 )
     }
 
 
