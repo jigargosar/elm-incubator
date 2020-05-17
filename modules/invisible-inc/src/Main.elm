@@ -57,7 +57,7 @@ view : Model -> DM
 view _ =
     Document "Invisible Inc."
         [ text "Hello Invisible Inc."
-        , div [ class "" ] [ viewGrid ]
+        , div [ class "flex justify-center" ] [ viewGrid ]
         ]
 
 
@@ -70,7 +70,10 @@ viewGrid =
     in
     positionsOf gridSize
         |> List.map viewPosition
-        |> div [ class "center relative" ]
+        |> div
+            [ widthPx (cellWidth * gridSize.width)
+            , heightPx (cellWidth * gridSize.height)
+            ]
 
 
 cellWidth =
