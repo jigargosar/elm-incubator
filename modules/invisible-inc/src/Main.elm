@@ -99,9 +99,12 @@ type alias DM =
 view : Model -> DM
 view model =
     Document "Invisible Inc."
-        [ text "Hello Invisible Inc."
-        , div [ class "flex justify-center" ]
-            [ viewGrid model
+        [ div
+            [ class "center"
+            , style "width" (fromInt gridWidthPx ++ "px")
+            ]
+            [ div [ class "pv2 f3" ] [ text (Debug.toString model.status) ]
+            , viewGrid model
             ]
         ]
 
