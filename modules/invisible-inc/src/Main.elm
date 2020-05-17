@@ -106,18 +106,22 @@ view model =
             [ div [ class "pv2 flex items-center " ]
                 [ div [ class "mr3 f3" ] [ text (Debug.toString model.status) ]
                 , div [ class "mr3" ]
-                    [ button
-                        [ class "ma0 bn"
-                        , class "pv2 ph3 br3 f4"
-                        , style "background-color" "hsl(209, 100%, 79%)"
-                        , style "color" "hsl(209, 100%, 20%)"
-                        ]
-                        [ text "End Turn" ]
+                    [ endTurnButton
                     ]
                 ]
             , viewGrid model
             ]
         ]
+
+
+endTurnButton =
+    button
+        [ class "ma0 bn"
+        , class "pv2 ph3 br3 f4"
+        , style "background-color" "hsl(209, 100%, 79%)"
+        , style "color" "hsl(209, 100%, 20%)"
+        ]
+        [ text "End Turn" ]
 
 
 gridSize =
