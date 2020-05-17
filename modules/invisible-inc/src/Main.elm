@@ -57,7 +57,7 @@ view : Model -> DM
 view _ =
     Document "Invisible Inc."
         [ text "Hello Invisible Inc."
-        , viewGrid
+        , div [ class "" ] [ viewGrid ]
         ]
 
 
@@ -70,17 +70,25 @@ viewGrid =
     in
     positionsOf gridSize
         |> List.map viewPosition
-        |> div [ class "dib relative" ]
+        |> div [ class "center relative" ]
 
 
 cellWidth =
     50
 
 
+widthPx n =
+    style "width" (String.fromInt n ++ "px")
+
+
+heightPx n =
+    style "height" (String.fromInt n ++ "px")
+
+
 viewPosition pos =
     div
-        [ style "width" (String.fromInt cellWidth ++ "px")
-        , style "height" (String.fromInt cellWidth ++ "px")
+        [ widthPx cellWidth
+        , heightPx cellWidth
         , style "transform" (renderCellTransform pos)
         , class "absolute pa1"
         ]
