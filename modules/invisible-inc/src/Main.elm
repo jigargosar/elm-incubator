@@ -314,7 +314,14 @@ update message model =
                         ( model, Cmd.none )
 
                 EditGuardDest ->
-                    ( model, Cmd.none )
+                    if sizeContains pos gridSize then
+                        model
+                            |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
+                            |> setEdit EditGuard
+                            |> addEffect cacheCmd
+
+                    else
+                        ( model, Cmd.none )
 
 
 addEffect : (b -> a) -> b -> ( b, a )
