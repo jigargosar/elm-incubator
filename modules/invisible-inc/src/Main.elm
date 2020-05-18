@@ -77,6 +77,12 @@ add =
 -- Model
 
 
+gridSize =
+    { width = 10
+    , height = 15
+    }
+
+
 type alias Model =
     { guard : Guard
     , status : Status
@@ -308,12 +314,6 @@ endTurnButton =
         , onClick EndTurnClicked
         ]
         [ text "End Turn" ]
-
-
-gridSize =
-    { width = 10
-    , height = 15
-    }
 
 
 cellWidthPx =
