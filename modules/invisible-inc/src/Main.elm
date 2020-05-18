@@ -22,11 +22,38 @@ port cache : String -> Cmd msg
 
 
 
--- Path
+-- IntPos
 
 
-type alias Path =
-    List IntPos
+type alias IntPos =
+    ( Int, Int )
+
+
+isPosMemberOf : IntSize -> IntPos -> Bool
+isPosMemberOf s p =
+    sizeContains p s
+
+
+
+-- IntSize
+
+
+type alias IntSize =
+    { width : Int
+    , height : Int
+    }
+
+
+sizeContains : IntPos -> IntSize -> Bool
+sizeContains ( x, y ) s =
+    (clamp 0 (s.width - 1) x == x)
+        && (clamp 0 (s.height - 1) y == y)
+
+
+positionsOf : IntSize -> List IntPos
+positionsOf s =
+    List.range 0 (s.width - 1)
+        |> List.concatMap (\x -> List.range 0 (s.height - 1) |> List.map (pair x))
 
 
 
@@ -395,33 +422,6 @@ viewBackgroundTile pos =
 
 renderCellTransform ( x, y ) =
     "translate(" ++ String.fromInt (x * cellWidthPx) ++ "px, " ++ String.fromInt (y * cellWidthPx) ++ "px)"
-
-
-type alias IntPos =
-    ( Int, Int )
-
-
-isPosMemberOf : IntSize -> IntPos -> Bool
-isPosMemberOf s p =
-    sizeContains p s
-
-
-type alias IntSize =
-    { width : Int
-    , height : Int
-    }
-
-
-sizeContains : IntPos -> IntSize -> Bool
-sizeContains ( x, y ) s =
-    (clamp 0 (s.width - 1) x == x)
-        && (clamp 0 (s.height - 1) y == y)
-
-
-positionsOf : IntSize -> List IntPos
-positionsOf s =
-    List.range 0 (s.width - 1)
-        |> List.concatMap (\x -> List.range 0 (s.height - 1) |> List.map (pair x))
 
 
 
