@@ -90,19 +90,20 @@ initGuard walls =
         endPos =
             ( 0, 0 )
 
-        mv pos =
-            adjacentOf pos
-                |> Set.fromList
-                |> Set.filter (isMemberOfSize gridSize)
-                |> setRemoveAll walls
-
         p2 =
-            AStar.findPath AStar.pythagoreanCost mv startPos endPos
+            AStar.findPath AStar.pythagoreanCost (mvf walls) startPos endPos
                 |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
                 |> Maybe.withDefault (LZ.singleton startPos)
     in
     { path = p2
     }
+
+
+mvf walls pos =
+    adjacentOf pos
+        |> Set.fromList
+        |> Set.filter (isMemberOfSize gridSize)
+        |> setRemoveAll walls
 
 
 editGuard : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Guard -> Guard
