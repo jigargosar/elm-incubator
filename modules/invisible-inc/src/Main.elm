@@ -129,6 +129,7 @@ type alias Model =
     { guard : Guard
     , status : Status
     , walls : Set IntPos
+    , edit : Edit
     }
 
 
@@ -139,6 +140,11 @@ type alias XY =
 type Status
     = PlayerTurn
     | EnemyTurn
+
+
+type Edit
+    = EditWall
+    | EditGuard
 
 
 type alias Flags =
@@ -177,6 +183,7 @@ initModel walls =
     { guard = initGuard walls
     , status = PlayerTurn
     , walls = walls
+    , edit = EditWall
     }
 
 
