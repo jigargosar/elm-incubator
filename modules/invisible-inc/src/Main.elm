@@ -142,6 +142,16 @@ neq =
     (/=)
 
 
+anyPass : List (a -> Bool) -> a -> Bool
+anyPass fs x =
+    List.any ((|>) x) fs
+
+
+allPass : List (a -> Bool) -> a -> Bool
+allPass fs x =
+    List.all ((|>) x) fs
+
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     case JD.decodeString modelDecoder flags.cache of
