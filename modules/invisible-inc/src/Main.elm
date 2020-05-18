@@ -220,7 +220,6 @@ update message model =
                     ( floor ((-element.x + xy.x) / cellWidthPx)
                     , floor ((-element.y + xy.y) / cellWidthPx)
                     )
-                        |> Debug.log "debug"
             in
             if
                 sizeContains pos gridSize
