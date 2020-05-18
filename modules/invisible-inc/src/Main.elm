@@ -145,6 +145,7 @@ type Status
 type Edit
     = EditWall
     | EditGuard
+    | EditGuardDest
 
 
 type alias Flags =
