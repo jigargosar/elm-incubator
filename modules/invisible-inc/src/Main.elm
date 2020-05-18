@@ -301,10 +301,7 @@ updateOnPosClicked : IntPos -> Model -> ( Model, Cmd Msg )
 updateOnPosClicked pos model =
     case model.edit of
         EditWall ->
-            if
-                sizeContains pos gridSize
-                    && (pos /= positionOfGuard model.guard)
-            then
+            if pos /= positionOfGuard model.guard then
                 model
                     |> mapWalls (toggleSetMember pos)
                     |> addEffect cacheCmd
@@ -313,24 +310,16 @@ updateOnPosClicked pos model =
                 ( model, Cmd.none )
 
         EditGuard ->
-            if sizeContains pos gridSize then
-                model
-                    |> mapGuard (editGuard (mvf model.walls) pos pos)
-                    |> setEdit EditGuardDest
-                    |> addEffect cacheCmd
-
-            else
-                ( model, Cmd.none )
+            model
+                |> mapGuard (editGuard (mvf model.walls) pos pos)
+                |> setEdit EditGuardDest
+                |> addEffect cacheCmd
 
         EditGuardDest ->
-            if sizeContains pos gridSize then
-                model
-                    |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
-                    |> setEdit EditGuard
-                    |> addEffect cacheCmd
-
-            else
-                ( model, Cmd.none )
+            model
+                |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
+                |> setEdit EditGuard
+                |> addEffect cacheCmd
 
 
 addEffect : (b -> a) -> b -> ( b, a )
