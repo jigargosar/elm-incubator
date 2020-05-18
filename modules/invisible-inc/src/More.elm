@@ -6,10 +6,12 @@ neq =
     (/=)
 
 
+eq : a -> a -> Bool
 eq =
     (==)
 
 
+add : number -> number -> number
 add =
     (+)
 
