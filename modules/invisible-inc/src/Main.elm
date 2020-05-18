@@ -16,7 +16,6 @@ import Process
 import Set exposing (Set)
 import String exposing (fromInt)
 import Task
-import Tuple exposing (..)
 
 
 port cache : String -> Cmd msg
