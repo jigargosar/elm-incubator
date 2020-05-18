@@ -142,7 +142,10 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     case JD.decodeString modelDecoder flags.cache of
         Ok model ->
-            ( model, Cmd.none )
+            ( model
+                |> mapWalls (Set.filter (isPosMemberOf gridSize))
+            , Cmd.none
+            )
 
         Err _ ->
             ( initialModel
@@ -400,6 +403,11 @@ renderCellTransform ( x, y ) =
 
 type alias IntPos =
     ( Int, Int )
+
+
+isPosMemberOf : IntSize -> IntPos -> Bool
+isPosMemberOf s p =
+    sizeContains p s
 
 
 type alias IntSize =
