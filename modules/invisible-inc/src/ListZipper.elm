@@ -2,11 +2,14 @@ module ListZipper exposing
     ( ListZipper
     , current
     , fromList
+    , last
     , right
     , singleton
     , swap
     , toList
     )
+
+import More exposing (..)
 
 
 type alias ListZipper a =
@@ -53,10 +56,6 @@ current ( _, c, _ ) =
     c
 
 
-whileJust f x =
-    case f x of
-        Just nx ->
-            whileJust f nx
-
-        Nothing ->
-            x
+last : ListZipper a -> ListZipper a
+last =
+    whileJust right

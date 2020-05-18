@@ -91,6 +91,20 @@ prepend =
 
 
 
+-- Set
+
+
+notMemberOfSet : Set comparable -> comparable -> Bool
+notMemberOfSet set x =
+    Set.member x set |> not
+
+
+setRemoveAll : Set comparable -> Set comparable -> Set comparable
+setRemoveAll rs s =
+    Set.diff s rs
+
+
+
 -- Function
 
 
@@ -104,15 +118,11 @@ applyTo =
     (|>)
 
 
+whileJust : (a -> Maybe a) -> a -> a
+whileJust f x =
+    case f x of
+        Just nx ->
+            whileJust f nx
 
--- Set
-
-
-notMemberOfSet : Set comparable -> comparable -> Bool
-notMemberOfSet set x =
-    Set.member x set |> not
-
-
-setRemoveAll : Set comparable -> Set comparable -> Set comparable
-setRemoveAll rs s =
-    Set.diff s rs
+        Nothing ->
+            x

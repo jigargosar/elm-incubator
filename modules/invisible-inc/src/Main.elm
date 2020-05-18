@@ -72,6 +72,11 @@ positionOfGuard =
     .path >> LZ.current
 
 
+targetPositionOfGuard : Guard -> IntPos
+targetPositionOfGuard =
+    .path >> LZ.last >> LZ.current
+
+
 adjacentOf pos =
     [ mapFirst (add 1)
     , mapFirst (add -1)
@@ -114,6 +119,16 @@ editGuard mv startPos endPos guard =
                 |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
                 |> Maybe.withDefault (LZ.singleton startPos)
     }
+
+
+guardSetStartPosition : (IntPos -> Set IntPos) -> IntPos -> Guard -> Guard
+guardSetStartPosition mv startPos guard =
+    editGuard mv startPos (targetPositionOfGuard guard) guard
+
+
+guardSetEndPosition : (IntPos -> Set IntPos) -> IntPos -> Guard -> Guard
+guardSetEndPosition mv endPos guard =
+    editGuard mv (positionOfGuard guard) endPos guard
 
 
 stepGuard : Guard -> ( Bool, Guard )
