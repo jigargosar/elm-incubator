@@ -6,6 +6,9 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
+import Json.Decode.Extra as JDX
+import Json.Decode.Pipeline exposing (required)
+import Json.Encode exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import Process
@@ -86,7 +89,7 @@ type Status
 
 
 type alias Flags =
-    ()
+    { cache : String }
 
 
 initialWallPositions =
@@ -107,14 +110,35 @@ vWall n start =
         |> List.scanl (always (mapSecond (add 1))) start
 
 
+modelDecoder : Decoder Model
+modelDecoder =
+    JD.succeed initModel
+        |> required "wallPositions" (JDX.set intPosDecoder)
+
+
+intPosDecoder : Decoder IntPos
+intPosDecoder =
+    JD.map2 pair (JD.index 0 JD.int) (JD.index 1 JD.int)
+
+
+initModel : Set IntPos -> Model
+initModel wallPositions =
+    { guard = initGuard
+    , status = PlayerTurn
+    , wallPositions = wallPositions
+    }
+
+
 init : Flags -> ( Model, Cmd Msg )
-init () =
-    ( { guard = initGuard
-      , status = PlayerTurn
-      , wallPositions = Set.fromList initialWallPositions
-      }
-    , Cmd.none
-    )
+init flags =
+    case JD.decodeString modelDecoder flags.cache of
+        Ok model ->
+            ( model, Cmd.none )
+
+        Err _ ->
+            ( initModel (Set.fromList initialWallPositions)
+            , Cmd.none
+            )
 
 
 triggerStepEnemyTurn =
