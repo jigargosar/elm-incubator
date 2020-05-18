@@ -293,7 +293,11 @@ update message model =
                         ( model, Cmd.none )
 
                 EditGuard ->
-                    ( model, Cmd.none )
+                    if sizeContains pos gridSize then
+                        ( model, Cmd.none )
+
+                    else
+                        ( model, Cmd.none )
 
                 EditGuardDest ->
                     ( model, Cmd.none )
