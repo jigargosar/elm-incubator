@@ -16,7 +16,7 @@ import ListZipper as LZ exposing (ListZipper)
 import More exposing (..)
 import Process
 import Set exposing (Set)
-import String exposing (fromInt)
+import String exposing (String, fromInt)
 import Task
 
 
@@ -309,13 +309,16 @@ subscriptions _ =
         [ Browser.Events.onKeyDown
             (JD.field "key" JD.string
                 |> JD.andThen
-                    (\key ->
-                        [ ( " ", EndTurnClicked ) ]
-                            |> List.find (fst >> eq key)
-                            |> unwrap (JD.fail "ignore") (snd >> JD.succeed)
-                    )
+                    (keyToMsg >> unwrap (JD.fail "ignore") JD.succeed)
             )
         ]
+
+
+keyToMsg : String -> Maybe Msg
+keyToMsg key =
+    [ ( " ", EndTurnClicked ) ]
+        |> List.find (fst >> eq key)
+        |> Maybe.map snd
 
 
 
