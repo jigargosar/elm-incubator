@@ -86,7 +86,7 @@ gridSize =
 type alias Model =
     { guard : Guard
     , status : Status
-    , wallPositions : Set IntPos
+    , walls : Set IntPos
     }
 
 
@@ -108,7 +108,7 @@ modelDecoder =
     JD.succeed
         (\wallPositions ->
             initialModel
-                |> mapWallPositions (always wallPositions)
+                |> mapWalls (always wallPositions)
         )
         |> required "wallPositions" (JDX.set intPosDecoder)
 
@@ -116,7 +116,7 @@ modelDecoder =
 modelEncoder : Model -> Value
 modelEncoder model =
     JE.object <|
-        [ ( "wallPositions", JE.set intPosEncoder model.wallPositions )
+        [ ( "wallPositions", JE.set intPosEncoder model.walls )
         ]
 
 
@@ -134,7 +134,7 @@ initialModel : Model
 initialModel =
     { guard = initGuard
     , status = PlayerTurn
-    , wallPositions = Set.empty
+    , walls = Set.empty
     }
 
 
@@ -227,7 +227,7 @@ update message model =
                     && (pos /= positionOfGuard model.guard)
             then
                 model
-                    |> mapWallPositions (toggleSetMember pos)
+                    |> mapWalls (toggleSetMember pos)
                     |> addEffect cacheCmd
 
             else
@@ -248,9 +248,9 @@ toggleSetMember x xs =
         Set.insert x xs
 
 
-mapWallPositions : (Set IntPos -> Set IntPos) -> Model -> Model
-mapWallPositions f model =
-    { model | wallPositions = f model.wallPositions }
+mapWalls : (Set IntPos -> Set IntPos) -> Model -> Model
+mapWalls f model =
+    { model | walls = f model.walls }
 
 
 cacheCmd : Model -> Cmd msg
@@ -330,7 +330,7 @@ viewGrid model =
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
          )
-            ++ (model.wallPositions |> Set.toList |> List.map viewWall)
+            ++ (model.walls |> Set.toList |> List.map viewWall)
             ++ [ viewPlayer, viewGuard model.guard ]
         )
 
