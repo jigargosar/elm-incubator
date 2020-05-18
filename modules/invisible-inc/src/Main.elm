@@ -292,34 +292,32 @@ update message model =
             in
             if sizeContains pos gridSize then
                 updateOnPosClicked pos model
+                    |> withEffect (cacheIfChanged model)
 
             else
                 ( model, Cmd.none )
 
 
-updateOnPosClicked : IntPos -> Model -> ( Model, Cmd Msg )
+updateOnPosClicked : IntPos -> Model -> Model
 updateOnPosClicked pos model =
     case model.edit of
         EditWall ->
             if pos /= positionOfGuard model.guard then
                 model
                     |> mapWalls (toggleSetMember pos)
-                    |> withEffect cacheCmd
 
             else
-                ( model, Cmd.none )
+                model
 
         EditGuard ->
             model
                 |> mapGuard (editGuard (mvf model.walls) pos pos)
                 |> setEdit EditGuardDest
-                |> withEffect cacheCmd
 
         EditGuardDest ->
             model
                 |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
                 |> setEdit EditGuard
-                |> withEffect cacheCmd
 
 
 withEffect : (b -> a) -> b -> ( b, a )
@@ -354,6 +352,15 @@ setEdit edit model =
 cacheCmd : Model -> Cmd msg
 cacheCmd =
     modelEncoder >> JE.encode 0 >> cache
+
+
+cacheIfChanged : Model -> Model -> Cmd msg
+cacheIfChanged oldModel model =
+    if oldModel /= model then
+        cacheCmd model
+
+    else
+        Cmd.none
 
 
 subscriptions : Model -> Sub Msg
