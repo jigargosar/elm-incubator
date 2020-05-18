@@ -412,7 +412,7 @@ viewGuardPathPos pos =
         ]
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
-                [ class "br-pill bg-pink ba red "
+                [ class "br-pill bg-pink ba red"
                 , style "width" "15px"
                 , style "height" "15px"
                 ]
