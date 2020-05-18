@@ -237,6 +237,7 @@ addEffect f model =
     ( model, f model )
 
 
+toggleSetMember : comparable -> Set comparable -> Set comparable
 toggleSetMember x xs =
     if Set.member x xs then
         Set.remove x xs
