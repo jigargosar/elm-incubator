@@ -64,6 +64,15 @@ mapBoth f =
 
 
 
+-- List
+
+
+prepend : a -> List a -> List a
+prepend =
+    (::)
+
+
+
 -- Function
 
 
