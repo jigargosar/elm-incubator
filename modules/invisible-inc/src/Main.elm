@@ -6,7 +6,6 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
-import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import Process
@@ -283,7 +282,12 @@ viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
-        , HE.on "click" (JD.map2 XY (JD.field "pageX" JD.float) (JD.field "pageY" JD.float) |> JD.map GridClicked)
+        , HE.on "click"
+            (JD.map2 XY
+                (JD.field "pageX" JD.float)
+                (JD.field "pageY" JD.float)
+                |> JD.map GridClicked
+            )
         , HA.id "grid-container"
         ]
         ((positionsOf gridSize
@@ -349,7 +353,6 @@ viewBackgroundTile pos =
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
-        , HA.attribute "data-beacon" (intPosEncoder pos |> JE.encode 0)
         ]
         [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
 
@@ -360,11 +363,6 @@ renderCellTransform ( x, y ) =
 
 type alias IntPos =
     ( Int, Int )
-
-
-intPosEncoder : IntPos -> Value
-intPosEncoder intPos =
-    (\( a, b ) -> JE.list identity [ JE.int a, JE.int b ]) intPos
 
 
 type alias IntSize =
