@@ -225,9 +225,10 @@ update message model =
         GridElementClicked xy (Ok { element }) ->
             let
                 pos =
-                    ( round ((element.x - xy.x) / cellWidthPx)
-                    , round ((element.y - xy.y) / cellWidthPx)
+                    ( floor ((-element.x + xy.x) / cellWidthPx)
+                    , floor ((-element.y + xy.y) / cellWidthPx)
                     )
+                        |> Debug.log "debug"
             in
             if
                 sizeContains pos gridSize
