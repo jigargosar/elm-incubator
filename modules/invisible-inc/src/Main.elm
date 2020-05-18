@@ -4,7 +4,7 @@ import AStar
 import Browser exposing (Document)
 import Browser.Dom as Dom exposing (Element)
 import Browser.Events
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, span, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
@@ -348,7 +348,13 @@ view model =
             , style "width" (fromInt gridWidthPx ++ "px")
             ]
             [ div [ class "pv2 flex items-center " ]
-                [ div [ class "mr3 flex-auto f3" ] [ text (Debug.toString model.status) ]
+                [ div [ class "mr3 flex-auto f3" ]
+                    [ span []
+                        [ text (Debug.toString model.status)
+                        , text " "
+                        , text (Debug.toString model.edit)
+                        ]
+                    ]
                 , div [ class "" ] [ endTurnButton ]
                 ]
             , viewGrid model
