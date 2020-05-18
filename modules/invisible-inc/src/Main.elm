@@ -312,7 +312,7 @@ subscriptions _ =
                     (\key ->
                         [ ( " ", EndTurnClicked ) ]
                             |> List.find (fst >> eq key)
-                            |> unwrap (JD.fail "ignore") JD.succeed
+                            |> unwrap (JD.fail "ignore") (snd >> JD.succeed)
                     )
             )
         ]
