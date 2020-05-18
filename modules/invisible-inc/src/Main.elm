@@ -290,38 +290,47 @@ update message model =
                     , floor ((-element.y + xy.y) / cellWidthPx)
                     )
             in
-            case model.edit of
-                EditWall ->
-                    if
-                        sizeContains pos gridSize
-                            && (pos /= positionOfGuard model.guard)
-                    then
-                        model
-                            |> mapWalls (toggleSetMember pos)
-                            |> addEffect cacheCmd
+            if sizeContains pos gridSize then
+                updateOnPosClicked pos model
 
-                    else
-                        ( model, Cmd.none )
+            else
+                ( model, Cmd.none )
 
-                EditGuard ->
-                    if sizeContains pos gridSize then
-                        model
-                            |> mapGuard (editGuard (mvf model.walls) pos pos)
-                            |> setEdit EditGuardDest
-                            |> addEffect cacheCmd
 
-                    else
-                        ( model, Cmd.none )
+updateOnPosClicked : IntPos -> Model -> ( Model, Cmd Msg )
+updateOnPosClicked pos model =
+    case model.edit of
+        EditWall ->
+            if
+                sizeContains pos gridSize
+                    && (pos /= positionOfGuard model.guard)
+            then
+                model
+                    |> mapWalls (toggleSetMember pos)
+                    |> addEffect cacheCmd
 
-                EditGuardDest ->
-                    if sizeContains pos gridSize then
-                        model
-                            |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
-                            |> setEdit EditGuard
-                            |> addEffect cacheCmd
+            else
+                ( model, Cmd.none )
 
-                    else
-                        ( model, Cmd.none )
+        EditGuard ->
+            if sizeContains pos gridSize then
+                model
+                    |> mapGuard (editGuard (mvf model.walls) pos pos)
+                    |> setEdit EditGuardDest
+                    |> addEffect cacheCmd
+
+            else
+                ( model, Cmd.none )
+
+        EditGuardDest ->
+            if sizeContains pos gridSize then
+                model
+                    |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
+                    |> setEdit EditGuard
+                    |> addEffect cacheCmd
+
+            else
+                ( model, Cmd.none )
 
 
 addEffect : (b -> a) -> b -> ( b, a )
