@@ -329,6 +329,7 @@ keyToMsg : String -> Maybe Msg
 keyToMsg key =
     [ ( " ", EndTurnClicked )
     , ( "w", SetEdit EditWall )
+    , ( "g", SetEdit EditGuard )
     ]
         |> List.find (fst >> eq key)
         |> Maybe.map snd
