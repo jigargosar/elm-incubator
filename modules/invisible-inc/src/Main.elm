@@ -226,7 +226,17 @@ update message model =
             ( model, Cmd.none )
 
         OnGridElementClick xy (Ok { element }) ->
-            ( model, Cmd.none )
+            if rectContains xy element then
+                let
+                    pos =
+                        ( round ((element.x - xy.x) / cellWidthPx)
+                        , round ((element.y - xy.y) / cellWidthPx)
+                        )
+                in
+                ( { model | wallPositions = toggleSetMember pos model.wallPositions }, Cmd.none )
+
+            else
+                ( model, Cmd.none )
 
 
 toggleSetMember x xs =
@@ -340,7 +350,7 @@ viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
-        , HE.on "click" (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
+        , HE.on "click" (JD.map2 XY (JD.field "pageX" JD.float) (JD.field "pageY" JD.float) |> JD.map OnClick)
         , HA.id "grid-container"
         ]
         ((positionsOf gridSize
