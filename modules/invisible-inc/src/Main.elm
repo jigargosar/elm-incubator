@@ -105,6 +105,16 @@ initGuard walls =
     }
 
 
+editGuard : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Guard -> Guard
+editGuard mv startPos endPos guard =
+    { guard
+        | path =
+            AStar.findPath AStar.pythagoreanCost mv startPos endPos
+                |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
+                |> Maybe.withDefault (LZ.singleton startPos)
+    }
+
+
 stepGuard : Guard -> ( Bool, Guard )
 stepGuard guard =
     case LZ.right guard.path of
