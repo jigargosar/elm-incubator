@@ -11,6 +11,7 @@ import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
+import More exposing (..)
 import Process
 import Set exposing (Set)
 import String exposing (fromInt)
@@ -67,10 +68,6 @@ stepGuard guard =
 
         Nothing ->
             ( True, { guard | path = LZ.swap guard.path } )
-
-
-add =
-    (+)
 
 
 
@@ -136,20 +133,6 @@ initialModel =
     , status = PlayerTurn
     , walls = Set.empty
     }
-
-
-neq =
-    (/=)
-
-
-anyPass : List (a -> Bool) -> a -> Bool
-anyPass fs x =
-    List.any ((|>) x) fs
-
-
-allPass : List (a -> Bool) -> a -> Bool
-allPass fs x =
-    List.all ((|>) x) fs
 
 
 init : Flags -> ( Model, Cmd Msg )
