@@ -103,27 +103,13 @@ type alias Flags =
     { cache : String }
 
 
-initialWallPositions =
-    [ hWall 5 ( 2, 8 )
-    , vWall 6 ( 7, 6 )
-    , vWall 8 ( 1, 4 )
-    ]
-        |> List.concat
-
-
-hWall n start =
-    List.range 0 (n - 1)
-        |> List.scanl (always (mapFirst (add 1))) start
-
-
-vWall n start =
-    List.range 0 (n - 1)
-        |> List.scanl (always (mapSecond (add 1))) start
-
-
 modelDecoder : Decoder Model
 modelDecoder =
-    JD.succeed initModel
+    JD.succeed
+        (\wallPositions ->
+            initialModel
+                |> mapWallPositions (always wallPositions)
+        )
         |> required "wallPositions" (JDX.set intPosDecoder)
 
 
@@ -144,11 +130,11 @@ intPosEncoder intPos =
     (\( a, b ) -> JE.list identity [ JE.int a, JE.int b ]) intPos
 
 
-initModel : Set IntPos -> Model
-initModel wallPositions =
+initialModel : Model
+initialModel =
     { guard = initGuard
     , status = PlayerTurn
-    , wallPositions = wallPositions
+    , wallPositions = Set.empty
     }
 
 
@@ -159,7 +145,7 @@ init flags =
             ( model, Cmd.none )
 
         Err _ ->
-            ( initModel (Set.fromList initialWallPositions)
+            ( initialModel
             , Cmd.none
             )
 
