@@ -231,8 +231,7 @@ update message model =
             in
             if
                 sizeContains pos gridSize
-                    && pos
-                    /= positionOfGuard model.guard
+                    && (pos /= positionOfGuard model.guard)
             then
                 model
                     |> mapWallPositions (toggleSetMember pos)
@@ -264,16 +263,6 @@ mapWallPositions f model =
 cacheCmd : Model -> Cmd msg
 cacheCmd =
     modelEncoder >> JE.encode 0 >> cache
-
-
-type alias DomRect =
-    { x : Float, y : Float, width : Float, height : Float }
-
-
-rectContains : XY -> DomRect -> Bool
-rectContains xy r =
-    (clamp r.x (r.x + r.width) xy.x == xy.x)
-        && (clamp r.y (r.y + r.height) xy.y == xy.y)
 
 
 subscriptions : Model -> Sub Msg
