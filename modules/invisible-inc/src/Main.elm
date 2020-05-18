@@ -38,6 +38,11 @@ type alias Guard =
     }
 
 
+positionOfGuard : Guard -> IntPos
+positionOfGuard =
+    .path >> LZ.current
+
+
 initGuard : Guard
 initGuard =
     let
@@ -218,13 +223,17 @@ update message model =
             ( model, Cmd.none )
 
         GridElementClicked xy (Ok { element }) ->
-            if rectContains xy element then
-                let
-                    pos =
-                        ( round ((element.x - xy.x) / cellWidthPx)
-                        , round ((element.y - xy.y) / cellWidthPx)
-                        )
-                in
+            let
+                pos =
+                    ( round ((element.x - xy.x) / cellWidthPx)
+                    , round ((element.y - xy.y) / cellWidthPx)
+                    )
+            in
+            if
+                sizeContains pos gridSize
+                    && pos
+                    /= positionOfGuard model.guard
+            then
                 model
                     |> mapWallPositions (toggleSetMember pos)
                     |> addEffect cacheCmd
@@ -421,6 +430,12 @@ type alias IntSize =
     { width : Int
     , height : Int
     }
+
+
+sizeContains : IntPos -> IntSize -> Bool
+sizeContains ( x, y ) s =
+    (clamp 0 (s.width - 1) x == x)
+        && (clamp 0 (s.height - 1) y == y)
 
 
 positionsOf : IntSize -> List IntPos
