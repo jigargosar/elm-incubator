@@ -99,12 +99,6 @@ initGuard walls =
             AStar.findPath AStar.pythagoreanCost mv startPos endPos
                 |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
                 |> Maybe.withDefault (LZ.singleton startPos)
-
-        path =
-            List.range 0 5
-                |> List.scanl (\_ -> mapFirst (add -1)) startPos
-                |> LZ.fromList
-                |> Maybe.withDefault (LZ.singleton startPos)
     in
     { path = p2
     }
