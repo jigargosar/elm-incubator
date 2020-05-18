@@ -73,7 +73,6 @@ type alias Model =
     { guard : Guard
     , status : Status
     , wallPositions : Set IntPos
-    , mouse : Maybe XY
     }
 
 
@@ -113,7 +112,6 @@ init () =
     ( { guard = initGuard
       , status = PlayerTurn
       , wallPositions = Set.fromList initialWallPositions
-      , mouse = Nothing
       }
     , Cmd.none
     )
@@ -171,7 +169,7 @@ update message model =
                     ( model, Cmd.none )
 
         GridClicked xy ->
-            ( { model | mouse = Just xy }
+            ( model
             , Dom.getElement "grid-container"
                 |> Task.attempt (GridElementClicked xy)
             )
