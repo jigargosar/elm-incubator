@@ -326,12 +326,12 @@ updateOnPosClicked pos model =
 
         EditGuard ->
             model
-                |> mapGuard (editGuard (mvf model.walls) pos pos)
+                |> mapGuard (guardSetStartPosition (mvf model.walls) pos)
                 |> setEdit EditGuardDest
 
         EditGuardDest ->
             model
-                |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
+                |> mapGuard (guardSetEndPosition (mvf model.walls) pos)
                 |> setEdit EditGuard
 
 
