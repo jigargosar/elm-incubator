@@ -2,12 +2,10 @@ port module Main exposing (main)
 
 import Browser exposing (Document)
 import Browser.Dom as Dom exposing (Element)
-import Browser.Events
 import Html exposing (Html, button, div, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
-import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
@@ -19,12 +17,6 @@ import Tuple exposing (..)
 
 
 port cache : String -> Cmd msg
-
-
-port gotBeacons : (Value -> msg) -> Sub msg
-
-
-port getBeacons : () -> Cmd msg
 
 
 
@@ -181,11 +173,8 @@ update message model =
 
         OnClick xy ->
             ( { model | mouse = Just xy }
-            , Cmd.batch
-                [ getBeacons ()
-                , Dom.getElement "grid-container"
-                    |> Task.attempt (OnGridElementClick xy)
-                ]
+            , Dom.getElement "grid-container"
+                |> Task.attempt (OnGridElementClick xy)
             )
 
         OnGridElementClick _ (Err error) ->
@@ -217,12 +206,6 @@ toggleSetMember x xs =
         Set.insert x xs
 
 
-type alias Beacon =
-    { pos : IntPos
-    , rect : DomRect
-    }
-
-
 type alias DomRect =
     { x : Float, y : Float, width : Float, height : Float }
 
@@ -231,22 +214,6 @@ rectContains : XY -> DomRect -> Bool
 rectContains xy r =
     (clamp r.x (r.x + r.width) xy.x == xy.x)
         && (clamp r.y (r.y + r.height) xy.y == xy.y)
-
-
-beaconDecoder : Decoder Beacon
-beaconDecoder =
-    JD.succeed Beacon
-        |> required "pos" (JD.map2 pair (JD.index 0 JD.int) (JD.index 1 JD.int))
-        |> required "rect" rectDecoder
-
-
-rectDecoder : Decoder DomRect
-rectDecoder =
-    JD.succeed DomRect
-        |> required "x" JD.float
-        |> required "y" JD.float
-        |> required "width" JD.float
-        |> required "height" JD.float
 
 
 subscriptions : Model -> Sub Msg
