@@ -3,6 +3,7 @@ port module Main exposing (main)
 import AStar
 import Browser exposing (Document)
 import Browser.Dom as Dom exposing (Element)
+import Browser.Events
 import Html exposing (Html, button, div, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events as HE exposing (onClick)
@@ -304,7 +305,17 @@ cacheCmd =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch
+        [ Browser.Events.onKeyDown
+            (JD.field "key" JD.string
+                |> JD.andThen
+                    (\key ->
+                        [ ( " ", EndTurnClicked ) ]
+                            |> List.find (fst >> eq key)
+                            |> unwrap (JD.fail "ignore") JD.succeed
+                    )
+            )
+        ]
 
 
 

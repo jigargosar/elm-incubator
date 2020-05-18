@@ -2,6 +2,7 @@ module More exposing (..)
 
 -- Math
 
+import Maybe.Extra
 import Set exposing (Set)
 
 
@@ -61,6 +62,23 @@ mapEach =
 mapBoth : (a -> x) -> ( a, a ) -> ( x, x )
 mapBoth f =
     mapEach f f
+
+
+fst =
+    Tuple.first
+
+
+snd =
+    Tuple.second
+
+
+
+-- Maybe
+
+
+unwrap : b -> (a -> b) -> Maybe a -> b
+unwrap =
+    Maybe.Extra.unwrap
 
 
 

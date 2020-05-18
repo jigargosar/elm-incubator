@@ -13,6 +13,7 @@
             "elm/json": "1.1.3",
             "elm-community/json-extra": "4.2.0",
             "elm-community/list-extra": "8.2.4",
+            "elm-community/maybe-extra": "5.2.0",
             "krisajenkins/elm-astar": "2.1.3"
         },
         "indirect": {
