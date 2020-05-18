@@ -358,6 +358,7 @@ viewGrid model =
          )
             ++ (model.walls |> Set.toList |> List.map viewWall)
             ++ [ viewPlayer, viewGuard model.guard ]
+            ++ viewGuardPath model.guard
         )
 
 
@@ -390,6 +391,34 @@ viewGuard guard =
         , class "absolute"
         ]
         [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
+
+
+viewGuardPath : Guard -> List HM
+viewGuardPath guard =
+    let
+        ps =
+            LZ.toList guard.path
+    in
+    List.map viewGuardPathPos ps
+
+
+viewGuardPathPos pos =
+    div
+        [ style "width" (fromInt cellWidthPx ++ "px")
+        , style "height" (fromInt cellWidthPx ++ "px")
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
+        [ div [ class "w-100 h-100 flex items-center justify-center" ]
+            [ div
+                [ class "br-pill bg-pink ba red "
+                , style "width" "15px"
+                , style "height" "15px"
+                ]
+                []
+            ]
+        ]
 
 
 viewWall : IntPos -> HM
