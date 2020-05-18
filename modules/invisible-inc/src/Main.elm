@@ -132,8 +132,8 @@ type Msg
     = NoOp
     | StepEnemyTurn
     | EndTurnClicked
-    | OnClick XY
-    | OnGridElementClick XY (Result Dom.Error Element)
+    | GridClicked XY
+    | GridElementClicked XY (Result Dom.Error Element)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -171,20 +171,20 @@ update message model =
                 EnemyTurn ->
                     ( model, Cmd.none )
 
-        OnClick xy ->
+        GridClicked xy ->
             ( { model | mouse = Just xy }
             , Dom.getElement "grid-container"
-                |> Task.attempt (OnGridElementClick xy)
+                |> Task.attempt (GridElementClicked xy)
             )
 
-        OnGridElementClick _ (Err error) ->
+        GridElementClicked _ (Err error) ->
             let
                 _ =
                     Debug.log "error" error
             in
             ( model, Cmd.none )
 
-        OnGridElementClick xy (Ok { element }) ->
+        GridElementClicked xy (Ok { element }) ->
             if rectContains xy element then
                 let
                     pos =
@@ -283,7 +283,7 @@ viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
-        , HE.on "click" (JD.map2 XY (JD.field "pageX" JD.float) (JD.field "pageY" JD.float) |> JD.map OnClick)
+        , HE.on "click" (JD.map2 XY (JD.field "pageX" JD.float) (JD.field "pageY" JD.float) |> JD.map GridClicked)
         , HA.id "grid-container"
         ]
         ((positionsOf gridSize
