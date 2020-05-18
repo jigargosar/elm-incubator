@@ -138,12 +138,17 @@ initialModel =
     }
 
 
+neq =
+    (/=)
+
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     case JD.decodeString modelDecoder flags.cache of
         Ok model ->
             ( model
                 |> mapWalls (Set.filter (isPosMemberOf gridSize))
+                |> mapWalls (Set.filter (neq (positionOfGuard model.guard)))
             , Cmd.none
             )
 
