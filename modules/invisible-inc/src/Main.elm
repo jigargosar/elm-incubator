@@ -213,6 +213,7 @@ triggerStepEnemyTurn =
 
 type Msg
     = NoOp
+    | SetEdit Edit
     | StepEnemyTurn
     | EndTurnClicked
     | GridClicked XY
@@ -224,6 +225,9 @@ update message model =
     case message of
         NoOp ->
             ( model, Cmd.none )
+
+        SetEdit edit ->
+            ( { model | edit = edit }, Cmd.none )
 
         StepEnemyTurn ->
             let
@@ -323,7 +327,9 @@ subscriptions _ =
 
 keyToMsg : String -> Maybe Msg
 keyToMsg key =
-    [ ( " ", EndTurnClicked ) ]
+    [ ( " ", EndTurnClicked )
+    , ( "w", SetEdit EditWall )
+    ]
         |> List.find (fst >> eq key)
         |> Maybe.map snd
 
