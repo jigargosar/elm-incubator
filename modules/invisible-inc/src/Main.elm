@@ -1,5 +1,6 @@
 port module Main exposing (main)
 
+import AStar
 import Browser exposing (Document)
 import Browser.Dom as Dom exposing (Element)
 import Html exposing (Html, button, div, text)
@@ -29,8 +30,8 @@ type alias IntPos =
     ( Int, Int )
 
 
-isPosMemberOf : IntSize -> IntPos -> Bool
-isPosMemberOf s p =
+isMemberOfSize : IntSize -> IntPos -> Bool
+isMemberOfSize s p =
     sizeContains p s
 
 
@@ -70,11 +71,29 @@ positionOfGuard =
     .path >> LZ.current
 
 
-initGuard : Guard
-initGuard =
+adjacentOf pos =
+    [ mapFirst (add 1)
+    , mapFirst (add -1)
+    , mapSecond (add 1)
+    , mapSecond (add -1)
+    ]
+        |> List.map (applyTo pos)
+
+
+initGuard : Set IntPos -> Guard
+initGuard walls =
     let
         startPos =
             ( 8, 12 )
+
+        mv pos =
+            adjacentOf pos
+                |> Set.fromList
+                |> Set.filter (isMemberOfSize gridSize)
+                |> setRemoveAll walls
+
+        _ =
+            AStar.findPath AStar.straightLineCost mv
 
         path =
             List.range 0 5
@@ -129,9 +148,9 @@ type alias Flags =
 modelDecoder : Decoder Model
 modelDecoder =
     JD.succeed
-        (\wallPositions ->
-            initialModel
-                |> mapWalls (always wallPositions)
+        (\walls ->
+            initModel walls
+                |> mapWalls (always walls)
         )
         |> required "wallPositions" (JDX.set intPosDecoder)
 
@@ -153,11 +172,11 @@ intPosEncoder intPos =
     (\( a, b ) -> JE.list identity [ JE.int a, JE.int b ]) intPos
 
 
-initialModel : Model
-initialModel =
-    { guard = initGuard
+initModel : Set IntPos -> Model
+initModel walls =
+    { guard = initGuard walls
     , status = PlayerTurn
-    , walls = Set.empty
+    , walls = walls
     }
 
 
@@ -166,13 +185,13 @@ init flags =
     case JD.decodeString modelDecoder flags.cache of
         Ok model ->
             ( model
-                |> mapWalls (Set.filter (isPosMemberOf gridSize))
+                |> mapWalls (Set.filter (isMemberOfSize gridSize))
                 |> mapWalls (Set.filter (neq (positionOfGuard model.guard)))
             , Cmd.none
             )
 
         Err _ ->
-            ( initialModel
+            ( initModel Set.empty
             , Cmd.none
             )
 

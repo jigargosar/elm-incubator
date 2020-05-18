@@ -2,6 +2,8 @@ module More exposing (..)
 
 -- Math
 
+import Set exposing (Set)
+
 
 add : number -> number -> number
 add =
@@ -73,3 +75,17 @@ flip f b a =
 applyTo : a -> (a -> b) -> b
 applyTo =
     (|>)
+
+
+
+-- Set
+
+
+notMemberOfSet : Set comparable -> comparable -> Bool
+notMemberOfSet set x =
+    Set.member x set |> not
+
+
+setRemoveAll : Set comparable -> Set comparable -> Set comparable
+setRemoveAll rs s =
+    Set.diff s rs
