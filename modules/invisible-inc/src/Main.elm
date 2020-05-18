@@ -279,16 +279,24 @@ update message model =
                     , floor ((-element.y + xy.y) / cellWidthPx)
                     )
             in
-            if
-                sizeContains pos gridSize
-                    && (pos /= positionOfGuard model.guard)
-            then
-                model
-                    |> mapWalls (toggleSetMember pos)
-                    |> addEffect cacheCmd
+            case model.edit of
+                EditWall ->
+                    if
+                        sizeContains pos gridSize
+                            && (pos /= positionOfGuard model.guard)
+                    then
+                        model
+                            |> mapWalls (toggleSetMember pos)
+                            |> addEffect cacheCmd
 
-            else
-                ( model, Cmd.none )
+                    else
+                        ( model, Cmd.none )
+
+                EditGuard ->
+                    ( model, Cmd.none )
+
+                EditGuardDest ->
+                    ( model, Cmd.none )
 
 
 addEffect : (b -> a) -> b -> ( b, a )
