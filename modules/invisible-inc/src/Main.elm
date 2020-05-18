@@ -304,7 +304,7 @@ updateOnPosClicked pos model =
             if pos /= positionOfGuard model.guard then
                 model
                     |> mapWalls (toggleSetMember pos)
-                    |> addEffect cacheCmd
+                    |> withEffect cacheCmd
 
             else
                 ( model, Cmd.none )
@@ -313,17 +313,17 @@ updateOnPosClicked pos model =
             model
                 |> mapGuard (editGuard (mvf model.walls) pos pos)
                 |> setEdit EditGuardDest
-                |> addEffect cacheCmd
+                |> withEffect cacheCmd
 
         EditGuardDest ->
             model
                 |> mapGuard (editGuard (mvf model.walls) (positionOfGuard model.guard) pos)
                 |> setEdit EditGuard
-                |> addEffect cacheCmd
+                |> withEffect cacheCmd
 
 
-addEffect : (b -> a) -> b -> ( b, a )
-addEffect f model =
+withEffect : (b -> a) -> b -> ( b, a )
+withEffect f model =
     ( model, f model )
 
 
