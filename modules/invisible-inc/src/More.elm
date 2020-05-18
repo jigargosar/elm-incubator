@@ -59,3 +59,12 @@ mapEach =
 mapBoth : (a -> x) -> ( a, a ) -> ( x, x )
 mapBoth f =
     mapEach f f
+
+
+
+-- Function
+
+
+flip : (a -> b -> x) -> b -> a -> x
+flip f b a =
+    f a b
