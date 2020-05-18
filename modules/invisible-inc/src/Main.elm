@@ -307,6 +307,7 @@ update message model =
                     if sizeContains pos gridSize then
                         model
                             |> mapGuard (editGuard (mvf model.walls) pos pos)
+                            |> setEdit EditGuardDest
                             |> addEffect cacheCmd
 
                     else
@@ -338,6 +339,11 @@ mapWalls f model =
 mapGuard : (Guard -> Guard) -> Model -> Model
 mapGuard f model =
     { model | guard = f model.guard }
+
+
+setEdit : Edit -> Model -> Model
+setEdit edit model =
+    { model | edit = edit }
 
 
 cacheCmd : Model -> Cmd msg
