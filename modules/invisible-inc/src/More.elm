@@ -24,12 +24,12 @@ eq =
 
 anyPass : List (a -> Bool) -> a -> Bool
 anyPass fs x =
-    List.any ((|>) x) fs
+    List.any (applyTo x) fs
 
 
 allPass : List (a -> Bool) -> a -> Bool
 allPass fs x =
-    List.all ((|>) x) fs
+    List.all (applyTo x) fs
 
 
 
@@ -68,3 +68,8 @@ mapBoth f =
 flip : (a -> b -> x) -> b -> a -> x
 flip f b a =
     f a b
+
+
+applyTo : a -> (a -> b) -> b
+applyTo =
+    (|>)
