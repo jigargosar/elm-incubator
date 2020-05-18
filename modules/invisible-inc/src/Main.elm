@@ -140,7 +140,6 @@ type Msg
     = NoOp
     | StepEnemyTurn
     | EndTurnClicked
-    | GotBeacons Value
     | OnClick XY
     | OnGridElementClick XY (Result Dom.Error Element)
 
@@ -178,35 +177,6 @@ update message model =
                     ( { model | status = EnemyTurn }, triggerStepEnemyTurn )
 
                 EnemyTurn ->
-                    ( model, Cmd.none )
-
-        GotBeacons encoded ->
-            case model.mouse of
-                Just xy ->
-                    case JD.decodeValue (JD.list beaconDecoder) encoded of
-                        Err error ->
-                            let
-                                _ =
-                                    Debug.log "error" error
-                            in
-                            ( model, Cmd.none )
-
-                        Ok beacons ->
-                            let
-                                maybeClickedGridPos : Maybe IntPos
-                                maybeClickedGridPos =
-                                    beacons
-                                        |> List.find (.rect >> rectContains xy)
-                                        |> Maybe.map .pos
-                            in
-                            case maybeClickedGridPos of
-                                Just pos ->
-                                    ( { model | wallPositions = toggleSetMember pos model.wallPositions }, Cmd.none )
-
-                                Nothing ->
-                                    ( model, Cmd.none )
-
-                Nothing ->
                     ( model, Cmd.none )
 
         OnClick xy ->
@@ -281,11 +251,7 @@ rectDecoder =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch
-        [ gotBeacons GotBeacons
-
-        --, Browser.Events.onClick (JD.map2 XY (JD.field "clientX" JD.float) (JD.field "clientY" JD.float) |> JD.map OnClick)
-        ]
+    Sub.batch []
 
 
 
