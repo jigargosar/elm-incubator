@@ -225,7 +225,8 @@ update message model =
                         , round ((element.y - xy.y) / cellWidthPx)
                         )
                 in
-                mapWallPositions (toggleSetMember pos) model
+                model
+                    |> mapWallPositions (toggleSetMember pos)
                     |> addEffect cacheCmd
 
             else
