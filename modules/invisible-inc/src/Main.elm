@@ -8,7 +8,7 @@ import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Extra as JDX
 import Json.Decode.Pipeline exposing (required)
-import Json.Encode exposing (Value)
+import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import Process
@@ -116,9 +116,21 @@ modelDecoder =
         |> required "wallPositions" (JDX.set intPosDecoder)
 
 
+modelEncoder : Model -> Value
+modelEncoder model =
+    JE.object <|
+        [ ( "wallPositions", JE.set intPosEncoder model.wallPositions )
+        ]
+
+
 intPosDecoder : Decoder IntPos
 intPosDecoder =
     JD.map2 pair (JD.index 0 JD.int) (JD.index 1 JD.int)
+
+
+intPosEncoder : IntPos -> Value
+intPosEncoder intPos =
+    (\( a, b ) -> JE.list identity [ JE.int a, JE.int b ]) intPos
 
 
 initModel : Set IntPos -> Model
@@ -213,10 +225,16 @@ update message model =
                         , round ((element.y - xy.y) / cellWidthPx)
                         )
                 in
-                ( { model | wallPositions = toggleSetMember pos model.wallPositions }, Cmd.none )
+                mapWallPositions (toggleSetMember pos) model
+                    |> addEffect cacheCmd
 
             else
                 ( model, Cmd.none )
+
+
+addEffect : (b -> a) -> b -> ( b, a )
+addEffect f model =
+    ( model, f model )
 
 
 toggleSetMember x xs =
@@ -225,6 +243,16 @@ toggleSetMember x xs =
 
     else
         Set.insert x xs
+
+
+mapWallPositions : (Set IntPos -> Set IntPos) -> Model -> Model
+mapWallPositions f model =
+    { model | wallPositions = f model.wallPositions }
+
+
+cacheCmd : Model -> Cmd msg
+cacheCmd =
+    modelEncoder >> JE.encode 0 >> cache
 
 
 type alias DomRect =
