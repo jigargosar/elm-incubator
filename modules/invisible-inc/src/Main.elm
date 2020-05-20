@@ -309,24 +309,28 @@ update message model =
 
 updateOnPosClicked : IntPos -> Model -> Model
 updateOnPosClicked pos model =
-    case model.edit of
-        EditWall ->
-            if pos /= positionOfGuard model.guard then
+    if positionOfGuard model.guard == pos then
+        model
+
+    else
+        case model.edit of
+            EditWall ->
+                if pos /= positionOfGuard model.guard then
+                    model
+                        |> mapWalls (toggleSetMember pos)
+
+                else
+                    model
+
+            EditGuard ->
                 model
-                    |> mapWalls (toggleSetMember pos)
+                    |> mapGuard (guardSetStartPosition (mvf model.walls) pos)
+                    |> setEdit EditGuardDest
 
-            else
+            EditGuardDest ->
                 model
-
-        EditGuard ->
-            model
-                |> mapGuard (guardSetStartPosition (mvf model.walls) pos)
-                |> setEdit EditGuardDest
-
-        EditGuardDest ->
-            model
-                |> mapGuard (guardSetEndPosition (mvf model.walls) pos)
-                |> setEdit EditGuard
+                    |> mapGuard (guardSetEndPosition (mvf model.walls) pos)
+                    |> setEdit EditGuard
 
 
 withEffect : (b -> a) -> b -> ( b, a )
