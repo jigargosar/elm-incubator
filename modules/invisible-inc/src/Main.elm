@@ -310,7 +310,7 @@ update message model =
 updateOnPosClicked : IntPos -> Model -> Model
 updateOnPosClicked pos model =
     if positionOfGuard model.guard == pos then
-        model
+        { model | selection = GuardSelected }
 
     else
         case model.edit of
