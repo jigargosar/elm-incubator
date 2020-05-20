@@ -456,19 +456,33 @@ gridHeightPx =
     cellWidthPx * gridSize.height
 
 
+pageXYDecoder : Decoder XY
+pageXYDecoder =
+    JD.map2 XY
+        (JD.field "pageX" JD.float)
+        (JD.field "pageY" JD.float)
+
+
+currentTargetOffsetXYDecoder : Decoder XY
+currentTargetOffsetXYDecoder =
+    JD.field "currentTarget"
+        (JD.map2 XY
+            (JD.field "offsetLeft" JD.float)
+            (JD.field "offsetTop" JD.float)
+        )
+
+
 viewGrid : Model -> HM
 viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
         , HE.on "click"
-            (JD.map2 XY
-                (JD.field "pageX" JD.float)
-                (JD.field "pageY" JD.float)
+            (pageXYDecoder
                 |> JD.map GridClicked
             )
         , HE.on "mouseover"
-            (JD.at [ "currentTarget", "offsetLeft" ] JD.int
+            (currentTargetOffsetXYDecoder
                 |> JD.map (Debug.log "debug")
                 |> JD.andThen (always (JD.fail ""))
             )
