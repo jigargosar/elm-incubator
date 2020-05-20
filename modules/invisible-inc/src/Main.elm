@@ -467,6 +467,11 @@ viewGrid model =
                 (JD.field "pageY" JD.float)
                 |> JD.map GridClicked
             )
+        , HE.on "mouseover"
+            (JD.at [ "currentTarget", "offsetLeft" ] JD.int
+                |> JD.map (Debug.log "debug")
+                |> JD.andThen (always (JD.fail ""))
+            )
         , HA.id "grid-container"
         ]
         ((positionsOf gridSize
