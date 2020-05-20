@@ -153,6 +153,7 @@ gridSize =
 
 type alias Model =
     { guard : Guard
+    , agent : IntPos
     , status : Status
     , walls : Set IntPos
     , edit : Edit
@@ -210,6 +211,7 @@ intPosEncoder intPos =
 initModel : Set IntPos -> Model
 initModel walls =
     { guard = initGuard walls
+    , agent = ( 5, 5 )
     , status = PlayerTurn
     , walls = walls
     , edit = EditWall
@@ -311,6 +313,9 @@ updateOnPosClicked : IntPos -> Model -> Model
 updateOnPosClicked pos model =
     if positionOfGuard model.guard == pos then
         { model | selection = GuardSelected }
+
+    else if model.agent == pos then
+        { model | selection = AgentSelected }
 
     else
         case model.edit of
@@ -485,7 +490,7 @@ viewGrid model =
             (JD.map2 XY
                 (JD.field "offsetX" JD.float)
                 (JD.field "offsetY" JD.float)
-                |> JD.map (Debug.log "debug")
+                --|> JD.map (Debug.log "debug")
                 |> JD.andThen (always (JD.fail ""))
             )
         ]
@@ -501,6 +506,7 @@ viewGrid model =
                         GuardSelected ->
                             False
                     )
+                    model.agent
                , viewGuard
                     (case model.selection of
                         AgentSelected ->
@@ -541,11 +547,7 @@ viewGrid model =
 --        ]
 
 
-viewAgent isSelected =
-    let
-        pos =
-            ( 5, 5 )
-    in
+viewAgent isSelected pos =
     div
         [ style "width" (fromInt cellWidthPx ++ "px")
         , style "height" (fromInt cellWidthPx ++ "px")
