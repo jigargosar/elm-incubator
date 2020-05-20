@@ -489,7 +489,9 @@ viewGrid model =
             |> List.map viewBackgroundTile
          )
             ++ (model.walls |> Set.toList |> List.map viewWall)
-            ++ [ viewAgent, viewGuard model.guard ]
+            ++ [ viewAgent True
+               , viewGuard model.guard
+               ]
             ++ viewGuardPath model.guard
         )
 
@@ -520,7 +522,7 @@ viewGrid model =
 --        ]
 
 
-viewAgent =
+viewAgent isSelected =
     let
         pos =
             ( 5, 5 )
@@ -534,7 +536,11 @@ viewAgent =
         ]
         [ div
             [ class "w-100 h-100 br3 bg-light-blue"
-            , shadowSelection
+            , if isSelected then
+                shadowSelection
+
+              else
+                class ""
             ]
             []
         ]
