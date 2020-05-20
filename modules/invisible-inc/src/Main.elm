@@ -501,7 +501,15 @@ viewGrid model =
                         GuardSelected ->
                             False
                     )
-               , viewGuard model.guard
+               , viewGuard
+                    (case model.selection of
+                        AgentSelected ->
+                            False
+
+                        GuardSelected ->
+                            True
+                    )
+                    model.guard
                ]
             ++ viewGuardPath model.guard
         )
@@ -566,8 +574,8 @@ shadowSelection =
         )
 
 
-viewGuard : Guard -> HM
-viewGuard guard =
+viewGuard : Bool -> Guard -> HM
+viewGuard isSelected guard =
     let
         pos =
             LZ.current guard.path
@@ -579,7 +587,16 @@ viewGuard guard =
         , style "padding" "3px"
         , class "absolute"
         ]
-        [ div [ class "w-100 h-100 br3 bg-pink" ] [] ]
+        [ div
+            [ class "w-100 h-100 br3 bg-pink"
+            , if isSelected then
+                shadowSelection
+
+              else
+                class ""
+            ]
+            []
+        ]
 
 
 viewGuardPath : Guard -> List HM
