@@ -2,10 +2,9 @@ port module Main exposing (main)
 
 import AStar
 import Browser exposing (Document)
-import Browser.Dom as Dom exposing (Element)
 import Browser.Events
 import Html exposing (Html, button, div, span, text)
-import Html.Attributes as HA exposing (class, style)
+import Html.Attributes exposing (class, style)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Extra as JDX
@@ -241,7 +240,6 @@ type Msg
     | StepEnemyTurn
     | EndTurnClicked
     | GridClicked XY
-    | GridElementClicked XY (Result Dom.Error Element)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -292,27 +290,6 @@ update message model =
                 pos =
                     ( floor (xy.x / cellWidthPx)
                     , floor (xy.y / cellWidthPx)
-                    )
-            in
-            if sizeContains pos gridSize then
-                updateOnPosClicked pos model
-                    |> withEffect (cacheIfChanged model)
-
-            else
-                ( model, Cmd.none )
-
-        GridElementClicked _ (Err error) ->
-            let
-                _ =
-                    Debug.log "error" error
-            in
-            ( model, Cmd.none )
-
-        GridElementClicked xy (Ok { element }) ->
-            let
-                pos =
-                    ( floor ((-element.x + xy.x) / cellWidthPx)
-                    , floor ((-element.y + xy.y) / cellWidthPx)
                     )
             in
             if sizeContains pos gridSize then
@@ -500,7 +477,6 @@ viewGrid model =
                 |> JD.map (Debug.log "debug")
                 |> JD.andThen (always (JD.fail ""))
             )
-        , HA.id "grid-container"
         ]
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
