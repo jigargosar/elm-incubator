@@ -282,11 +282,24 @@ update message model =
                 EnemyTurn ->
                     ( model, Cmd.none )
 
+        --GridClicked xy ->
+        --    ( model
+        --    , Dom.getElement "grid-container"
+        --        |> Task.attempt (GridElementClicked xy)
+        --    )
         GridClicked xy ->
-            ( model
-            , Dom.getElement "grid-container"
-                |> Task.attempt (GridElementClicked xy)
-            )
+            let
+                pos =
+                    ( floor (xy.x / cellWidthPx)
+                    , floor (xy.y / cellWidthPx)
+                    )
+            in
+            if sizeContains pos gridSize then
+                updateOnPosClicked pos model
+                    |> withEffect (cacheIfChanged model)
+
+            else
+                ( model, Cmd.none )
 
         GridElementClicked _ (Err error) ->
             let
@@ -475,14 +488,16 @@ viewGrid model =
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
         , HE.on "click"
-            (pageXYDecoder
+            (JD.map2 XY.sub
+                pageXYDecoder
+                currentTargetOffsetXYDecoder
                 |> JD.map GridClicked
             )
         , HE.on "mouseover"
             (JD.map2 XY.sub
                 pageXYDecoder
                 currentTargetOffsetXYDecoder
-                |> JD.map (Debug.log "debug")
+                --|> JD.map (Debug.log "debug")
                 |> JD.andThen (always (JD.fail ""))
             )
         , HA.id "grid-container"
