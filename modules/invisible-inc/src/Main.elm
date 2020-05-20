@@ -494,6 +494,32 @@ viewGrid model =
         )
 
 
+
+--viewAgent isSelected =
+--    let
+--        pos =
+--            ( 5, 5 )
+--    in
+--    div
+--        [ style "width" (fromInt cellWidthPx ++ "px")
+--        , style "height" (fromInt cellWidthPx ++ "px")
+--        , style "transform" (renderCellTransform pos)
+--        , class "absolute"
+--        ]
+--        [ div
+--            [ class "w-100 h-100"
+--            , class "ba"
+--            , style "padding" "3px"
+--            ]
+--            [ div
+--                [ class "w-100 h-100"
+--                , class "br3 bg-light-blue"
+--                ]
+--                []
+--            ]
+--        ]
+
+
 viewAgent =
     let
         pos =
