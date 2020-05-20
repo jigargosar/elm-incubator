@@ -489,7 +489,14 @@ viewGrid model =
             |> List.map viewBackgroundTile
          )
             ++ (model.walls |> Set.toList |> List.map viewWall)
-            ++ [ viewAgent True
+            ++ [ viewAgent
+                    (case model.selection of
+                        AgentSelected ->
+                            True
+
+                        GuardSelected ->
+                            False
+                    )
                , viewGuard model.guard
                ]
             ++ viewGuardPath model.guard
