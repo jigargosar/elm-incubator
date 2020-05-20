@@ -538,7 +538,7 @@ viewAgent =
             [ class "w-100 h-100 br3 bg-light-blue"
             , style "box-shadow"
                 ([ "0 0 0 2px hsl(0, 0%, 100%)"
-                 , "0 0 0 4px hsl(14, 100%, 78%)"
+                 , "0 0 0 4px hsl(14, 100%, 57%)"
                  ]
                     |> String.join ","
                 )
