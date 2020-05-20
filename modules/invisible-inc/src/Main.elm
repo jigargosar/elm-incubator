@@ -156,7 +156,13 @@ type alias Model =
     , status : Status
     , walls : Set IntPos
     , edit : Edit
+    , selection : Selection
     }
+
+
+type Selection
+    = AgentSelected
+    | GuardSelected
 
 
 type Status
@@ -207,6 +213,7 @@ initModel walls =
     , status = PlayerTurn
     , walls = walls
     , edit = EditWall
+    , selection = AgentSelected
     }
 
 
