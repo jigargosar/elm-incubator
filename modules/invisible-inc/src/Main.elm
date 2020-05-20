@@ -489,12 +489,12 @@ viewGrid model =
             |> List.map viewBackgroundTile
          )
             ++ (model.walls |> Set.toList |> List.map viewWall)
-            ++ [ viewPlayer, viewGuard model.guard ]
+            ++ [ viewAgent, viewGuard model.guard ]
             ++ viewGuardPath model.guard
         )
 
 
-viewPlayer =
+viewAgent =
     let
         pos =
             ( 5, 5 )
