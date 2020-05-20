@@ -18,6 +18,7 @@ import Process
 import Set exposing (Set)
 import String exposing (String, fromInt)
 import Task
+import XY exposing (XY)
 
 
 port cache : String -> Cmd msg
@@ -157,10 +158,6 @@ type alias Model =
     , walls : Set IntPos
     , edit : Edit
     }
-
-
-type alias XY =
-    { x : Float, y : Float }
 
 
 type Status
