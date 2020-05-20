@@ -530,8 +530,6 @@ viewAgent =
         , style "height" (fromInt cellWidthPx ++ "px")
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
-
-        --, class "shadow-1 br3 bg-pink"
         , class "absolute"
         ]
         [ div
