@@ -494,10 +494,10 @@ viewGrid model =
                 |> JD.map GridClicked
             )
         , HE.on "mouseover"
-            (JD.map2 XY.sub
-                pageXYDecoder
-                currentTargetOffsetXYDecoder
-                --|> JD.map (Debug.log "debug")
+            (JD.map2 XY
+                (JD.field "offsetX" JD.float)
+                (JD.field "offsetY" JD.float)
+                |> JD.map (Debug.log "debug")
                 |> JD.andThen (always (JD.fail ""))
             )
         , HA.id "grid-container"
