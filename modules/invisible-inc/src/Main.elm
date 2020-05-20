@@ -479,7 +479,9 @@ viewGrid model =
                 |> JD.map GridClicked
             )
         , HE.on "mouseover"
-            (currentTargetOffsetXYDecoder
+            (JD.map2 XY.sub
+                currentTargetOffsetXYDecoder
+                pageXYDecoder
                 |> JD.map (Debug.log "debug")
                 |> JD.andThen (always (JD.fail ""))
             )

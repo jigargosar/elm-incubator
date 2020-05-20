@@ -1,4 +1,4 @@
-module XY exposing (XY, negate)
+module XY exposing (XY, negate, sub)
 
 
 type alias XY =
@@ -8,6 +8,16 @@ type alias XY =
 negate : XY -> XY
 negate =
     mapBoth Basics.negate
+
+
+sub : XY -> XY -> XY
+sub a b =
+    add a (negate b)
+
+
+add : XY -> XY -> XY
+add a b =
+    XY (a.x + b.x) (a.y + b.y)
 
 
 mapEach : (Float -> Float) -> (Float -> Float) -> XY -> XY
