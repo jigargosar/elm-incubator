@@ -283,7 +283,12 @@ update message model =
         GridPosHovered hover isPrimaryDown ->
             ( (if
                 isPrimaryDown
-                    && (occupied model |> setRemoveAll model.walls |> Set.member hover)
+                    && (model.hover /= hover)
+                    && (occupied model
+                            |> setRemoveAll model.walls
+                            |> Set.member hover
+                            |> not
+                       )
                then
                 model
                     |> mapWalls (toggleSetMember hover)
@@ -312,7 +317,12 @@ updateOnPosClicked pos model =
     else
         case model.edit of
             EditWall ->
-                if occupied model |> setRemoveAll model.walls |> Set.member pos then
+                if
+                    occupied model
+                        |> setRemoveAll model.walls
+                        |> Set.member pos
+                        |> not
+                then
                     model
                         |> mapWalls (toggleSetMember pos)
 
@@ -471,7 +481,7 @@ viewGrid model =
     div
         [ wpx gridWidthPx
         , hpx gridHeightPx
-        , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
+        , ME.down (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map2 GridPosHovered mouseGridPosDecoder (JD.field "buttons" (JD.map (eq 1) JD.int)))
         ]
         ((IntSize.positions gridSize
