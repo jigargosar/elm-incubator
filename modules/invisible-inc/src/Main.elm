@@ -231,7 +231,7 @@ type Msg
     | StepEnemyTurn
     | EndTurnClicked
     | GridPosClicked IntPos
-    | GridPosHovered IntPos
+    | GridPosHovered IntPos Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -280,8 +280,25 @@ update message model =
             else
                 ( model, Cmd.none )
 
-        GridPosHovered hover ->
-            ( { model | hover = hover }, Cmd.none )
+        GridPosHovered hover isPrimaryDown ->
+            ( (if
+                isPrimaryDown
+                    && (occupied model |> setRemoveAll model.walls |> Set.member hover)
+               then
+                model
+                    |> mapWalls (toggleSetMember hover)
+
+               else
+                model
+              )
+                |> setHover hover
+            , Cmd.none
+            )
+
+
+setHover : IntPos -> Model -> Model
+setHover hover model =
+    { model | hover = hover }
 
 
 updateOnPosClicked : IntPos -> Model -> Model
@@ -295,7 +312,7 @@ updateOnPosClicked pos model =
     else
         case model.edit of
             EditWall ->
-                if pos /= positionOfGuard model.guard then
+                if occupied model |> setRemoveAll model.walls |> Set.member pos then
                     model
                         |> mapWalls (toggleSetMember pos)
 
@@ -455,7 +472,7 @@ viewGrid model =
         [ wpx gridWidthPx
         , hpx gridHeightPx
         , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
-        , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
+        , ME.over (JD.map2 GridPosHovered mouseGridPosDecoder (JD.field "buttons" (JD.map (eq 1) JD.int)))
         ]
         ((IntSize.positions gridSize
             |> List.map viewBackgroundTile
