@@ -484,6 +484,10 @@ cellWidthPx =
     50
 
 
+innerCellWidth =
+    cellWidthPx - 10
+
+
 gridWidthPx =
     cellWidthPx * gridSize.width
 
@@ -580,6 +584,21 @@ computePath mv startPos endPos =
         |> Cons.init startPos
 
 
+cellContainerStyles pos =
+    [ wpx cellWidthPx
+    , hpx cellWidthPx
+    , cellTransformStyle pos
+    , pa 3
+    , absolute
+    , class "flex items-center justify-center"
+    , class "o-70"
+    ]
+
+
+cellTransformStyle pos =
+    style "transform" (renderCellTransform pos)
+
+
 viewAgent isSelected pos =
     div
         (cellContainerStyles pos)
@@ -650,33 +669,17 @@ viewPathPos attrs pos =
 
 viewWall : IntPos -> HM
 viewWall pos =
-    div
-        (cellContainerStyles pos)
-        [ div
-            [ class "w-100 h-100 br3"
-            , style "background-color" "hsl(0, 25%, 65%)"
-            ]
-            []
+    square innerCellWidth
+        [ SA.fill "hsl(0, 25%, 65%)"
+        , SA.stroke "hsl(0, 25%, 65%)"
+        , SA.rx "10"
+        , svgCellTransform pos
         ]
-
-
-cellContainerStyles pos =
-    [ wpx cellWidthPx
-    , hpx cellWidthPx
-    , cellTransformStyle pos
-    , pa 3
-    , absolute
-    , class "flex items-center justify-center"
-    , class "o-70"
-    ]
-
-
-cellTransformStyle pos =
-    style "transform" (renderCellTransform pos)
+        []
 
 
 viewBackgroundTile pos =
-    square (cellWidthPx - 10)
+    square innerCellWidth
         [ SA.fill "none"
         , SA.stroke "dodgerblue"
         , SA.rx "10"
