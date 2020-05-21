@@ -546,14 +546,6 @@ absolute =
     class "absolute"
 
 
-centerCenter =
-    class "flex items-center justify-center"
-
-
-wh100 =
-    class "w-100 h-100"
-
-
 viewHoverPathPos pos =
     div
         (cellContainerStyles pos)
