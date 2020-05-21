@@ -546,8 +546,7 @@ isGuardSelected model =
 viewGrid : Model -> HM
 viewGrid model =
     Svg.svg
-        [ wpx gridWidthPx
-        , hpx gridHeightPx
+        [ TSA.viewBox (gridWidthPx * -0.5) (gridHeightPx * -0.5) gridWidthPx gridHeightPx
         , ME.down (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map2 GridPosHovered mouseGridPosDecoder (JD.field "buttons" (JD.map (eq 1) JD.int)))
         ]
@@ -644,8 +643,8 @@ viewBackgroundTile pos =
 svgCellTransform ( x, y ) =
     TSA.transform
         [ TST.Translate
-            (toFloat x * cellWidthPx + cellWidthPx * 0.5)
-            (toFloat y * cellWidthPx + cellWidthPx * 0.5)
+            (toFloat x * cellWidthPx + cellWidthPx * 0.5 - gridWidthPx * 0.5)
+            (toFloat y * cellWidthPx + cellWidthPx * 0.5 - gridHeightPx * 0.5)
         ]
 
 
