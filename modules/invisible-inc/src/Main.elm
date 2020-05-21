@@ -605,6 +605,33 @@ viewWall pos =
         ]
 
 
+cellContainerStyles pos =
+    [ wpx cellWidthPx
+    , hpx cellWidthPx
+    , cellTransformStyle pos
+    , pa 3
+    , absolute
+    ]
+
+
+cellTransformStyle pos =
+    style "transform" (renderCellTransform pos)
+
+
+viewBackgroundTile pos =
+    div
+        (cellContainerStyles pos)
+        [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
+
+
+renderCellTransform ( x, y ) =
+    "translate(" ++ px (x * cellWidthPx) ++ ", " ++ px (y * cellWidthPx) ++ ")"
+
+
+
+-- STYLES
+
+
 pa =
     px >> style "padding"
 
@@ -631,29 +658,6 @@ bwpx =
 
 shadows =
     join ", " >> style "box-shadow"
-
-
-cellContainerStyles pos =
-    [ wpx cellWidthPx
-    , hpx cellWidthPx
-    , cellTransformStyle pos
-    , pa 3
-    , absolute
-    ]
-
-
-cellTransformStyle pos =
-    style "transform" (renderCellTransform pos)
-
-
-viewBackgroundTile pos =
-    div
-        (cellContainerStyles pos)
-        [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
-
-
-renderCellTransform ( x, y ) =
-    "translate(" ++ px (x * cellWidthPx) ++ ", " ++ px (y * cellWidthPx) ++ ")"
 
 
 
