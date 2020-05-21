@@ -117,6 +117,11 @@ occupied model =
         |> Set.insert model.agent
 
 
+isOccupied : IntPos -> Model -> Bool
+isOccupied pos model =
+    Set.member pos (occupied model)
+
+
 isValidToggleWallGridPos : IntPos -> Model -> Bool
 isValidToggleWallGridPos pos model =
     IntSize.member pos gridSize
@@ -333,9 +338,13 @@ updateOnPosMouseDown pos model =
                     model
 
             EditGuard ->
-                model
-                    |> mapGuard (guardSetStartPosition (unOccupiedNeighbours model) pos)
-                    |> setEdit EditGuardDest
+                if isOccupied pos model then
+                    model
+
+                else
+                    model
+                        |> mapGuard (guardSetStartPosition (unOccupiedNeighbours model) pos)
+                        |> setEdit EditGuardDest
 
             EditGuardDest ->
                 model
