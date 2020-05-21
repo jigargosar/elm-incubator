@@ -1,4 +1,6 @@
-module XY exposing (XY, negate, sub)
+module XY exposing (XY, currentTargetOffsetXYDecoder, negate, pageXYDecoder, sub)
+
+import Json.Decode as JD exposing (Decoder)
 
 
 type alias XY =
@@ -28,3 +30,19 @@ mapEach fx fy xy =
 mapBoth : (Float -> Float) -> XY -> XY
 mapBoth f =
     mapEach f f
+
+
+pageXYDecoder : Decoder XY
+pageXYDecoder =
+    JD.map2 XY
+        (JD.field "pageX" JD.float)
+        (JD.field "pageY" JD.float)
+
+
+currentTargetOffsetXYDecoder : Decoder XY
+currentTargetOffsetXYDecoder =
+    JD.field "currentTarget"
+        (JD.map2 XY
+            (JD.field "offsetLeft" JD.float)
+            (JD.field "offsetTop" JD.float)
+        )

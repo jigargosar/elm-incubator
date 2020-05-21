@@ -455,22 +455,6 @@ gridHeightPx =
     cellWidthPx * gridSize.height
 
 
-pageXYDecoder : Decoder XY
-pageXYDecoder =
-    JD.map2 XY
-        (JD.field "pageX" JD.float)
-        (JD.field "pageY" JD.float)
-
-
-currentTargetOffsetXYDecoder : Decoder XY
-currentTargetOffsetXYDecoder =
-    JD.field "currentTarget"
-        (JD.map2 XY
-            (JD.field "offsetLeft" JD.float)
-            (JD.field "offsetTop" JD.float)
-        )
-
-
 toGridPos : XY -> IntPos
 toGridPos xy =
     ( floor (xy.x / cellWidthPx)
@@ -481,8 +465,8 @@ toGridPos xy =
 mouseGridPosDecoder : Decoder IntPos
 mouseGridPosDecoder =
     JD.map2 XY.sub
-        pageXYDecoder
-        currentTargetOffsetXYDecoder
+        XY.pageXYDecoder
+        XY.currentTargetOffsetXYDecoder
         |> JD.map toGridPos
 
 
