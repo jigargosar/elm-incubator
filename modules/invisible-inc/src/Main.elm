@@ -293,11 +293,6 @@ update message model =
                 EnemyTurn ->
                     ( model, Cmd.none )
 
-        --GridClicked xy ->
-        --    ( model
-        --    , Dom.getElement "grid-container"
-        --        |> Task.attempt (GridElementClicked xy)
-        --    )
         GridPosClicked pos ->
             if sizeContains pos gridSize then
                 updateOnPosClicked pos model
