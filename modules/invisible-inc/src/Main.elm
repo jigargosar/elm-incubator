@@ -87,21 +87,9 @@ adjacentOf pos =
         |> List.map (applyTo pos)
 
 
-initGuard : Set IntPos -> Guard
-initGuard walls =
-    let
-        startPos =
-            ( 8, 12 )
-
-        endPos =
-            ( 0, 0 )
-
-        p2 =
-            AStar.findPath AStar.pythagoreanCost (unOccupiedNeighboursHelp walls) startPos endPos
-                |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
-                |> Maybe.withDefault (LZ.singleton startPos)
-    in
-    { path = p2
+initGuard : Guard
+initGuard =
+    { path = LZ.singleton ( 8, 12 )
     }
 
 
@@ -225,7 +213,7 @@ intPosEncoder intPos =
 
 initModel : Set IntPos -> Model
 initModel walls =
-    { guard = initGuard walls
+    { guard = initGuard
     , agent = ( 5, 5 )
     , status = PlayerTurn
     , walls = walls
@@ -338,12 +326,12 @@ updateOnPosClicked pos model =
 
             EditGuard ->
                 model
-                    |> mapGuard (guardSetStartPosition (unOccupiedNeighboursHelp model.walls) pos)
+                    |> mapGuard (guardSetStartPosition (unOccupiedNeighbours model) pos)
                     |> setEdit EditGuardDest
 
             EditGuardDest ->
                 model
-                    |> mapGuard (guardSetEndPosition (unOccupiedNeighboursHelp model.walls) pos)
+                    |> mapGuard (guardSetEndPosition (unOccupiedNeighbours model) pos)
                     |> setEdit EditGuard
 
 
@@ -517,7 +505,7 @@ viewGrid model =
             ++ viewGuardPath model.guard
             ++ (case model.selection of
                     AgentSelected ->
-                        viewHoverPath (toHoverPath (unOccupiedNeighboursHelp model.walls) model.agent model.hover)
+                        viewHoverPath (toHoverPath (unOccupiedNeighbours model) model.agent model.hover)
 
                     GuardSelected ->
                         []
