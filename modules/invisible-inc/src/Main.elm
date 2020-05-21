@@ -502,7 +502,13 @@ viewGrid model =
                     model.guard
                ]
             ++ viewGuardPath model.guard
-            ++ viewHoverPath (toHoverPath (mvf model.walls) model.agent model.hover)
+            ++ (case model.selection of
+                    AgentSelected ->
+                        viewHoverPath (toHoverPath (mvf model.walls) model.agent model.hover)
+
+                    GuardSelected ->
+                        []
+               )
         )
 
 
