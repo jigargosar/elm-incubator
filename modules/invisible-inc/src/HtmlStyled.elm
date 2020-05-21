@@ -10,7 +10,7 @@ type Style
     | CLASS String
 
 
-toAttrs : List Style -> List (Attribute msg)
+toAttrs : List Style -> List (Attribute Never)
 toAttrs =
     let
         toAttrsHelp style =
@@ -42,5 +42,6 @@ column styles =
     styled div (CLASS "flex flex-column" :: styles)
 
 
+styled : (List (Attribute msg) -> a) -> List Style -> List (Attribute msg) -> a
 styled constructor styles attrs =
-    constructor (toAttrs styles ++ attrs)
+    constructor (List.map (HA.map never) (toAttrs styles) ++ attrs)
