@@ -542,10 +542,6 @@ viewHoverPath =
     Cons.toList >> List.map viewHoverPathPos
 
 
-absolute =
-    class "absolute"
-
-
 viewHoverPathPos pos =
     div
         (cellContainerStyles pos)
@@ -621,6 +617,10 @@ renderCellTransform ( x, y ) =
 
 
 -- STYLES
+
+
+absolute =
+    class "absolute"
 
 
 pa =
