@@ -498,12 +498,7 @@ toHoverPath mv startPos endPos =
 
 viewAgent isSelected pos =
     div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+        (cellContainerStyles pos)
         [ div
             [ class "w-100 h-100 br3 bg-light-blue"
             , if isSelected then
@@ -530,12 +525,7 @@ viewGuard isSelected guard =
             LZ.current guard.path
     in
     div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+        (cellContainerStyles pos)
         [ div
             [ class "w-100 h-100 br3 bg-pink"
             , if isSelected then
@@ -555,12 +545,7 @@ viewHoverPath =
 
 viewHoverPathPos pos =
     div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+        (cellContainerStyles pos)
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
                 [ class "br-pill ba bw2 b--light-blue  "
@@ -584,12 +569,7 @@ viewGuardPath guard =
 
 viewGuardPathPos pos =
     div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+        (cellContainerStyles pos)
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
                 [ class "br-pill bg-pink ba red"
@@ -604,12 +584,7 @@ viewGuardPathPos pos =
 viewWall : IntPos -> HM
 viewWall pos =
     div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+        (cellContainerStyles pos)
         [ div
             [ class "w-100 h-100 br3 o-70"
             , style "background-color" "hsl(0, 25%, 65%)"
@@ -618,14 +593,18 @@ viewWall pos =
         ]
 
 
+cellContainerStyles pos =
+    [ Styles.wi cellWidthPx
+    , Styles.hi cellWidthPx
+    , style "transform" (renderCellTransform pos)
+    , style "padding" "3px"
+    , class "absolute"
+    ]
+
+
 viewBackgroundTile pos =
     div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+        (cellContainerStyles pos)
         [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
 
 
