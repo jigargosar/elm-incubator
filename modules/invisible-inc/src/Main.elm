@@ -502,7 +502,15 @@ viewGrid model =
                     model.guard
                ]
             ++ viewGuardPath model.guard
+            ++ viewHoverPath (toHoverPath (mvf model.walls) model.agent model.hover)
         )
+
+
+toHoverPath : (IntPos -> Set IntPos) -> IntPos -> IntPos -> List IntPos
+toHoverPath mv startPos endPos =
+    AStar.findPath AStar.pythagoreanCost mv startPos endPos
+        |> Maybe.map (prepend startPos >> List.take 10)
+        |> Maybe.withDefault (List.singleton startPos)
 
 
 viewAgent isSelected pos =
@@ -559,6 +567,11 @@ viewGuard isSelected guard =
         ]
 
 
+viewHoverPath : List IntPos -> List HM
+viewHoverPath ps =
+    List.map viewHoverPathPos ps
+
+
 viewGuardPath : Guard -> List HM
 viewGuardPath guard =
     let
@@ -579,6 +592,25 @@ viewGuardPathPos pos =
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
                 [ class "br-pill bg-pink ba red"
+                , Styles.wi 15
+                , Styles.hi 15
+                ]
+                []
+            ]
+        ]
+
+
+viewHoverPathPos pos =
+    div
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
+        [ div [ class "w-100 h-100 flex items-center justify-center" ]
+            [ div
+                [ class "br-pill ba b--red bg-light-blue "
                 , Styles.wi 15
                 , Styles.hi 15
                 ]
