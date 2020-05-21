@@ -125,9 +125,8 @@ unOccupiedNeighbours =
 
 unOccupiedNeighboursHelp : Set IntPos -> IntPos -> Set IntPos
 unOccupiedNeighboursHelp blocked pos =
-    IntPos.adjacent pos
+    IntSize.adjacentMembers pos gridSize
         |> Set.fromList
-        |> Set.filter (isMemberOfSize gridSize)
         |> setRemoveAll blocked
 
 
