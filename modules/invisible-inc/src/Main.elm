@@ -213,10 +213,22 @@ intPosEncoder intPos =
 
 initModel : Set IntPos -> Model
 initModel walls =
-    { guard = initGuard ( 8, 12 )
-    , agent = ( 5, 5 )
+    let
+        guardPos =
+            ( 8, 12 )
+
+        agentPos =
+            ( 5, 5 )
+
+        filteredWalls =
+            walls
+                |> Set.remove guardPos
+                |> Set.remove agentPos
+    in
+    { guard = initGuard guardPos
+    , agent = agentPos
     , status = PlayerTurn
-    , walls = walls
+    , walls = filteredWalls
     , edit = EditWall
     , selection = AgentSelected
     , hover = ( 0, 0 )
