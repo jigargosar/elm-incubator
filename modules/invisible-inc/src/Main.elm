@@ -604,19 +604,20 @@ viewGuardPathPos pos =
 
 viewWall : IntPos -> HM
 viewWall pos =
-    div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
-        ]
+    HS.column [ gridCellContainerStyleAt pos ]
+        []
         [ div
             [ class "w-100 h-100 br3 o-70"
             , style "background-color" "hsl(0, 25%, 65%)"
             ]
             []
         ]
+
+
+viewBackgroundTile pos =
+    HS.column [ gridCellContainerStyleAt pos ]
+        []
+        [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
 
 
 gridCellContainerStyle =
@@ -628,11 +629,11 @@ gridCellContainerStyle =
         ]
 
 
-viewBackgroundTile pos =
-    HS.el [ gridCellContainerStyle ]
-        [ style "transform" (renderCellTransform pos)
+gridCellContainerStyleAt pos =
+    HSA.batch
+        [ gridCellContainerStyle
+        , HSA.string "transform" (renderCellTransform pos)
         ]
-        (div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [])
 
 
 renderCellTransform ( x, y ) =
