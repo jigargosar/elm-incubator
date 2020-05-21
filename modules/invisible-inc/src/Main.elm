@@ -17,6 +17,7 @@ import MouseEvents as ME
 import Process
 import Set exposing (Set)
 import String exposing (String, fromInt)
+import Styles
 import Task
 import XY exposing (XY)
 
@@ -420,7 +421,7 @@ view model =
     Document "Invisible Inc."
         [ div
             [ class "center"
-            , style "width" (fromInt gridWidthPx ++ "px")
+            , Styles.wi gridWidthPx
             ]
             [ div [ class "pv2 flex items-center " ]
                 [ div [ class "mr3 flex-auto f3" ]
@@ -478,8 +479,8 @@ mouseGridPosDecoder =
 viewGrid : Model -> HM
 viewGrid model =
     div
-        [ style "width" (fromInt gridWidthPx ++ "px")
-        , style "height" (fromInt gridHeightPx ++ "px")
+        [ Styles.wi gridWidthPx
+        , Styles.hi gridHeightPx
         , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
         ]
@@ -517,8 +518,8 @@ viewGrid model =
 --            ( 5, 5 )
 --    in
 --    div
---        [ style "width" (fromInt cellWidthPx ++ "px")
---        , style "height" (fromInt cellWidthPx ++ "px")
+--        [ Styles.wi cellWidthPx
+--        , Styles.hi cellWidthPx
 --        , style "transform" (renderCellTransform pos)
 --        , class "absolute"
 --        ]
@@ -538,8 +539,8 @@ viewGrid model =
 
 viewAgent isSelected pos =
     div
-        [ style "width" (fromInt cellWidthPx ++ "px")
-        , style "height" (fromInt cellWidthPx ++ "px")
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
@@ -572,8 +573,8 @@ viewGuard isSelected guard =
             LZ.current guard.path
     in
     div
-        [ style "width" (fromInt cellWidthPx ++ "px")
-        , style "height" (fromInt cellWidthPx ++ "px")
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
@@ -601,8 +602,8 @@ viewGuardPath guard =
 
 viewGuardPathPos pos =
     div
-        [ style "width" (fromInt cellWidthPx ++ "px")
-        , style "height" (fromInt cellWidthPx ++ "px")
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
@@ -610,8 +611,8 @@ viewGuardPathPos pos =
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
                 [ class "br-pill bg-pink ba red"
-                , style "width" "15px"
-                , style "height" "15px"
+                , Styles.wi 15
+                , Styles.hi 15
                 ]
                 []
             ]
@@ -621,8 +622,8 @@ viewGuardPathPos pos =
 viewWall : IntPos -> HM
 viewWall pos =
     div
-        [ style "width" (fromInt cellWidthPx ++ "px")
-        , style "height" (fromInt cellWidthPx ++ "px")
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
@@ -637,8 +638,8 @@ viewWall pos =
 
 viewBackgroundTile pos =
     div
-        [ style "width" (fromInt cellWidthPx ++ "px")
-        , style "height" (fromInt cellWidthPx ++ "px")
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
         , style "transform" (renderCellTransform pos)
         , style "padding" "3px"
         , class "absolute"
