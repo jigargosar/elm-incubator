@@ -556,7 +556,6 @@ viewPathPos attrs pos =
         (cellContainerStyles pos)
         [ div
             ([ class "br-pill ba bg-white"
-             , class "o-60"
              , bwpx 3
              , wpx 15
              , hpx 15
@@ -573,7 +572,7 @@ viewWall pos =
     div
         (cellContainerStyles pos)
         [ div
-            [ class "w-100 h-100 br3 o-70"
+            [ class "w-100 h-100 br3"
             , style "background-color" "hsl(0, 25%, 65%)"
             ]
             []
@@ -587,6 +586,7 @@ cellContainerStyles pos =
     , pa 3
     , absolute
     , class "flex items-center justify-center"
+    , class "o-70"
     ]
 
 
