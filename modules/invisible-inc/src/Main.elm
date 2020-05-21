@@ -5,11 +5,8 @@ import Browser exposing (Document)
 import Browser.Events
 import Cons exposing (Cons)
 import Html exposing (Attribute, Html, button, div, span, text)
-import Html.Attributes exposing (class, style)
+import Html.Attributes as HA exposing (class, style)
 import Html.Events exposing (onClick)
-import HtmlStyled as HS
-import HtmlStyledAttributes as HSA
-import HtmlStyledAttributesIntPx as IP
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import Json.Decode as JD exposing (Decoder)
@@ -451,8 +448,10 @@ mouseGridPosDecoder =
 
 viewGrid : Model -> HM
 viewGrid model =
-    HS.column [ IP.width gridWidthPx, IP.height gridHeightPx ]
-        [ ME.click (JD.map GridPosClicked mouseGridPosDecoder)
+    div
+        [ Styles.wi gridWidthPx
+        , Styles.hi gridHeightPx
+        , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
         ]
         ((IntSize.positions gridSize
@@ -604,8 +603,13 @@ viewGuardPathPos pos =
 
 viewWall : IntPos -> HM
 viewWall pos =
-    HS.column [ gridCellContainerStyleAt pos ]
-        []
+    div
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
         [ div
             [ class "w-100 h-100 br3 o-70"
             , style "background-color" "hsl(0, 25%, 65%)"
@@ -615,25 +619,14 @@ viewWall pos =
 
 
 viewBackgroundTile pos =
-    HS.column [ gridCellContainerStyleAt pos ]
-        []
+    div
+        [ Styles.wi cellWidthPx
+        , Styles.hi cellWidthPx
+        , style "transform" (renderCellTransform pos)
+        , style "padding" "3px"
+        , class "absolute"
+        ]
         [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
-
-
-gridCellContainerStyle =
-    HSA.batch
-        [ IP.width cellWidthPx
-        , IP.height cellWidthPx
-        , HSA.absolute
-        , HSA.intPx "padding" 3
-        ]
-
-
-gridCellContainerStyleAt pos =
-    HSA.batch
-        [ gridCellContainerStyle
-        , HSA.string "transform" (renderCellTransform pos)
-        ]
 
 
 renderCellTransform ( x, y ) =
