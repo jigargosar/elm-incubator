@@ -87,9 +87,9 @@ adjacentOf pos =
         |> List.map (applyTo pos)
 
 
-initGuard : Guard
-initGuard =
-    { path = LZ.singleton ( 8, 12 )
+initGuard : IntPos -> Guard
+initGuard pos =
+    { path = LZ.singleton pos
     }
 
 
@@ -213,7 +213,7 @@ intPosEncoder intPos =
 
 initModel : Set IntPos -> Model
 initModel walls =
-    { guard = initGuard
+    { guard = initGuard ( 8, 12 )
     , agent = ( 5, 5 )
     , status = PlayerTurn
     , walls = walls
