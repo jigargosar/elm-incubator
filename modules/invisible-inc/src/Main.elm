@@ -41,6 +41,7 @@ isMemberOfSize s p =
 
 type alias Guard =
     { path : ListZipper IntPos
+    , ko : Int
     }
 
 
@@ -57,6 +58,7 @@ targetPositionOfGuard =
 initGuard : IntPos -> Guard
 initGuard pos =
     { path = LZ.singleton pos
+    , ko = 0
     }
 
 
