@@ -556,21 +556,15 @@ wh100 =
 
 viewHoverPathPos pos =
     div
-        [ wpx cellWidthPx
-        , hpx cellWidthPx
-        , cellTransformStyle pos
-        , absolute
-        ]
-        [ div [ wh100, centerCenter ]
-            [ div
-                [ class "br-pill ba b--light-blue bg-white"
-                , bwpx 2
-                , wpx 15
-                , hpx 15
-                , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
-                ]
-                []
+        (cellContainerStyles pos)
+        [ div
+            [ class "br-pill ba b--light-blue bg-white"
+            , bwpx 2
+            , wpx 15
+            , hpx 15
+            , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
             ]
+            []
         ]
 
 
@@ -615,6 +609,7 @@ cellContainerStyles pos =
     , cellTransformStyle pos
     , pa 3
     , absolute
+    , class "flex items-center justify-center"
     ]
 
 
