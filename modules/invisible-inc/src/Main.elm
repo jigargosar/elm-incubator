@@ -106,7 +106,6 @@ type alias Model =
     , status : Status
     , walls : Set IntPos
     , edit : Edit
-    , selection : Selection
     , hover : IntPos
     }
 
@@ -138,11 +137,6 @@ unOccupiedNeighboursHelp blocked pos =
     IntSize.adjacentMembers pos gridSize
         |> Set.fromList
         |> setRemoveAll blocked
-
-
-type Selection
-    = AgentSelected
-    | GuardSelected
 
 
 type Status
@@ -198,13 +192,13 @@ initModel walls =
                 |> Set.remove guardPos
                 |> Set.remove agentPos
 
+        model : Model
         model =
             { guard = initGuard guardPos
             , agent = agentPos
             , status = PlayerTurn
             , walls = filteredWalls
             , edit = EditNone
-            , selection = AgentSelected
             , hover = ( 0, 0 )
             }
     in
@@ -316,11 +310,17 @@ setHover hover model =
 
 updateOnPosMouseDown : IntPos -> Model -> Model
 updateOnPosMouseDown pos model =
-    if positionOfGuard model.guard == pos then
-        { model | selection = GuardSelected }
+    if
+        not (isGuardSelected model)
+            && (positionOfGuard model.guard == pos)
+    then
+        setEdit EditGuard model
 
-    else if model.agent == pos then
-        { model | selection = AgentSelected }
+    else if
+        not (isAgentSelected model)
+            && (model.agent == pos)
+    then
+        setEdit EditNone model
 
     else
         case model.edit of
@@ -533,11 +533,11 @@ viewGrid model =
                     model.guard
                ]
             ++ viewGuardPath model.guard
-            ++ (case model.selection of
-                    AgentSelected ->
+            ++ (case isAgentSelected model of
+                    True ->
                         viewHoverPath (toHoverPath (unOccupiedNeighbours model) model.agent model.hover)
 
-                    GuardSelected ->
+                    False ->
                         []
                )
         )
