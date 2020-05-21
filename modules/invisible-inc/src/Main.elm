@@ -13,6 +13,7 @@ import Json.Encode as JE exposing (Value)
 import List.Extra as List
 import ListZipper as LZ exposing (ListZipper)
 import More exposing (..)
+import MouseEvents as ME
 import Process
 import Set exposing (Set)
 import String exposing (String, fromInt)
@@ -479,14 +480,8 @@ viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
-        , HE.on "click"
-            (mouseGridPosDecoder
-                |> JD.map GridPosClicked
-            )
-        , HE.on "mouseover"
-            (mouseGridPosDecoder
-                |> JD.map GridPosHovered
-            )
+        , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
+        , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
         ]
         ((positionsOf gridSize
             |> List.map viewBackgroundTile
