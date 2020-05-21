@@ -6,6 +6,7 @@ import Browser.Events
 import Html exposing (Html, button, div, span, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
+import IntSize exposing (IntPos, IntSize)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Extra as JDX
 import Json.Decode.Pipeline exposing (required)
@@ -28,35 +29,9 @@ port cache : String -> Cmd msg
 -- IntPos
 
 
-type alias IntPos =
-    ( Int, Int )
-
-
 isMemberOfSize : IntSize -> IntPos -> Bool
 isMemberOfSize s p =
-    sizeContains p s
-
-
-
--- IntSize
-
-
-type alias IntSize =
-    { width : Int
-    , height : Int
-    }
-
-
-sizeContains : IntPos -> IntSize -> Bool
-sizeContains ( x, y ) s =
-    (clamp 0 (s.width - 1) x == x)
-        && (clamp 0 (s.height - 1) y == y)
-
-
-positionsOf : IntSize -> List IntPos
-positionsOf s =
-    List.range 0 (s.width - 1)
-        |> List.concatMap (\x -> List.range 0 (s.height - 1) |> List.map (pair x))
+    IntSize.member p s
 
 
 
@@ -303,7 +278,7 @@ update message model =
                     ( model, Cmd.none )
 
         GridPosClicked pos ->
-            if sizeContains pos gridSize then
+            if IntSize.member pos gridSize then
                 updateOnPosClicked pos model
                     |> withEffect (cacheIfChanged model)
 
@@ -487,7 +462,7 @@ viewGrid model =
         , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
         ]
-        ((positionsOf gridSize
+        ((IntSize.positions gridSize
             |> List.map viewBackgroundTile
          )
             ++ (model.walls |> Set.toList |> List.map viewWall)
