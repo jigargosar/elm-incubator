@@ -5,7 +5,7 @@ import Browser exposing (Document)
 import Browser.Events
 import Cons exposing (Cons)
 import Html exposing (Attribute, Html, button, div, span, text)
-import Html.Attributes as HA exposing (class, style)
+import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
@@ -19,7 +19,6 @@ import More exposing (..)
 import MouseEvents as ME
 import Process
 import Set exposing (Set)
-import Styles
 import Task
 import XY exposing (XY)
 
@@ -391,7 +390,7 @@ view model =
     Document "Invisible Inc."
         [ div
             [ class "center"
-            , Styles.wi gridWidthPx
+            , wpx gridWidthPx
             ]
             [ div [ class "pv2 flex items-center " ]
                 [ div [ class "mr3 flex-auto f3" ]
@@ -449,8 +448,8 @@ mouseGridPosDecoder =
 viewGrid : Model -> HM
 viewGrid model =
     div
-        [ Styles.wi gridWidthPx
-        , Styles.hi gridHeightPx
+        [ wpx gridWidthPx
+        , hpx gridHeightPx
         , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
         ]
@@ -512,7 +511,7 @@ viewAgent isSelected pos =
 
 
 shadowSelection =
-    Styles.shadows
+    shadows
         [ "0 0 0 2px hsl(0, 0%, 100%)"
         , "0 0 0 4px hsl(14, 100%, 57%)"
         ]
@@ -561,10 +560,10 @@ viewHoverPathPos pos =
         [ div [ wh100, centerCenter ]
             [ div
                 [ class "br-pill ba b--light-blue bg-white"
-                , Styles.bwi 2
-                , Styles.wi 15
-                , Styles.hi 15
-                , Styles.shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
+                , bwpx 2
+                , wpx 15
+                , hpx 15
+                , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
                 ]
                 []
             ]
@@ -586,8 +585,8 @@ viewGuardPathPos pos =
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
                 [ class "br-pill bg-pink ba red"
-                , Styles.wi 15
-                , Styles.hi 15
+                , wpx 15
+                , hpx 15
                 ]
                 []
             ]
@@ -606,19 +605,39 @@ viewWall pos =
         ]
 
 
-pai =
-    ipx >> style "padding"
+pa =
+    px >> style "padding"
 
 
-ipx i =
+px i =
     String.fromInt i ++ "px"
 
 
+wpx =
+    px >> style "width"
+
+
+hpx =
+    px >> style "height"
+
+
+
+--noinspection SpellCheckingInspection
+
+
+bwpx =
+    px >> style "border-width"
+
+
+shadows =
+    join ", " >> style "box-shadow"
+
+
 cellContainerStyles pos =
-    [ Styles.wi cellWidthPx
-    , Styles.hi cellWidthPx
+    [ wpx cellWidthPx
+    , hpx cellWidthPx
     , cellTransformStyle pos
-    , pai 3
+    , pa 3
     , absolute
     ]
 
@@ -634,7 +653,7 @@ viewBackgroundTile pos =
 
 
 renderCellTransform ( x, y ) =
-    "translate(" ++ String.fromInt (x * cellWidthPx) ++ "px, " ++ String.fromInt (y * cellWidthPx) ++ "px)"
+    "translate(" ++ px (x * cellWidthPx) ++ ", " ++ px (y * cellWidthPx) ++ ")"
 
 
 
