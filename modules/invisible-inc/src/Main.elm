@@ -483,6 +483,38 @@ mouseGridPosDecoder =
         |> JD.map toGridPos
 
 
+isAgentSelected : Model -> Bool
+isAgentSelected model =
+    case model.edit of
+        EditWall ->
+            False
+
+        EditGuard ->
+            False
+
+        EditGuardDest ->
+            False
+
+        EditNone ->
+            True
+
+
+isGuardSelected : Model -> Bool
+isGuardSelected model =
+    case model.edit of
+        EditWall ->
+            False
+
+        EditGuard ->
+            True
+
+        EditGuardDest ->
+            True
+
+        EditNone ->
+            False
+
+
 viewGrid : Model -> HM
 viewGrid model =
     div
@@ -495,23 +527,9 @@ viewGrid model =
             |> List.map viewBackgroundTile
          )
             ++ (model.walls |> Set.toList |> List.map viewWall)
-            ++ [ viewAgent
-                    (case model.selection of
-                        AgentSelected ->
-                            True
-
-                        GuardSelected ->
-                            False
-                    )
+            ++ [ viewAgent (isAgentSelected model)
                     model.agent
-               , viewGuard
-                    (case model.selection of
-                        AgentSelected ->
-                            False
-
-                        GuardSelected ->
-                            True
-                    )
+               , viewGuard (isGuardSelected model)
                     model.guard
                ]
             ++ viewGuardPath model.guard
