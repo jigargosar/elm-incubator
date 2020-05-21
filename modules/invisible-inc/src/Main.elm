@@ -19,7 +19,12 @@ import More exposing (..)
 import MouseEvents as ME
 import Process
 import Set exposing (Set)
+import Svg
+import Svg.Attributes as SA
 import Task
+import TypedSvg.Attributes as TSA
+import TypedSvg.Attributes.InPx as Px
+import TypedSvg.Types as TST
 import XY exposing (XY)
 
 
@@ -536,7 +541,7 @@ isGuardSelected model =
 
 viewGrid : Model -> HM
 viewGrid model =
-    div
+    Svg.svg
         [ wpx gridWidthPx
         , hpx gridHeightPx
         , ME.down (JD.map GridPosClicked mouseGridPosDecoder)
@@ -671,9 +676,36 @@ cellTransformStyle pos =
 
 
 viewBackgroundTile pos =
-    div
-        (cellContainerStyles pos)
-        [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
+    square (cellWidthPx - 10)
+        [ SA.fill "none"
+        , SA.stroke "dodgerblue"
+        , SA.rx "10"
+        , SA.strokeWidth "1"
+        , svgCellTransform pos
+        ]
+        []
+
+
+svgCellTransform ( x, y ) =
+    TSA.transform
+        [ TST.Translate
+            (toFloat x * cellWidthPx + cellWidthPx * 0.5)
+            (toFloat y * cellWidthPx + cellWidthPx * 0.5)
+        ]
+
+
+square w =
+    rect w w
+
+
+rect w h xs =
+    Svg.rect
+        (Px.x (w * -0.5)
+            :: Px.y (h * -0.5)
+            :: Px.width w
+            :: Px.height h
+            :: xs
+        )
 
 
 renderCellTransform ( x, y ) =
