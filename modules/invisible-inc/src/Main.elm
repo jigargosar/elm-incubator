@@ -6,7 +6,8 @@ import Browser.Events
 import Html exposing (Html, button, div, span, text)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
-import IntSize exposing (IntPos, IntSize)
+import IntPos exposing (IntPos)
+import IntSize exposing (IntSize)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Extra as JDX
 import Json.Decode.Pipeline exposing (required)
@@ -51,15 +52,6 @@ positionOfGuard =
 targetPositionOfGuard : Guard -> IntPos
 targetPositionOfGuard =
     .path >> LZ.last >> LZ.current
-
-
-adjacentOf pos =
-    [ mapFirst (add 1)
-    , mapFirst (add -1)
-    , mapSecond (add 1)
-    , mapSecond (add -1)
-    ]
-        |> List.map (applyTo pos)
 
 
 initGuard : IntPos -> Guard
@@ -133,7 +125,7 @@ unOccupiedNeighbours =
 
 unOccupiedNeighboursHelp : Set IntPos -> IntPos -> Set IntPos
 unOccupiedNeighboursHelp blocked pos =
-    adjacentOf pos
+    IntPos.adjacent pos
         |> Set.fromList
         |> Set.filter (isMemberOfSize gridSize)
         |> setRemoveAll blocked
