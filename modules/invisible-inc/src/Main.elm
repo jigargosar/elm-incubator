@@ -186,11 +186,7 @@ type alias Flags =
 
 modelDecoder : Decoder Model
 modelDecoder =
-    JD.succeed
-        (\walls ->
-            initModel walls
-                |> mapWalls (always walls)
-        )
+    JD.succeed initModel
         |> required "wallPositions" (JDX.set intPosDecoder)
 
 
