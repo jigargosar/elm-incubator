@@ -23,3 +23,12 @@ positions : IntSize -> List IntPos
 positions s =
     List.range 0 (s.width - 1)
         |> List.concatMap (\x -> List.range 0 (s.height - 1) |> List.map (pair x))
+
+
+adjacentOf pos =
+    [ mapFirst (add 1)
+    , mapFirst (add -1)
+    , mapSecond (add 1)
+    , mapSecond (add -1)
+    ]
+        |> List.map (applyTo pos)
