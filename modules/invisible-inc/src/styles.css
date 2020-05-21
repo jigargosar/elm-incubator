@@ -2,3 +2,7 @@
   --animate-delay: 0.05s;
   --animate-duration: 0.15s;
 }
+
+.b--light-blue {
+  border-color: hsl(324, 100%, 75%);
+}

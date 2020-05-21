@@ -643,27 +643,19 @@ viewGuard isSelected guard =
 
 viewHoverPath : Cons IntPos -> List HM
 viewHoverPath =
-    Cons.toList >> List.map (viewPathPos [ class "b--light-blue" ])
+    Cons.toList >> List.map (viewPathPos "hsl(209, 100%, 79%)")
 
 
 viewGuardPath : Guard -> List HM
 viewGuardPath =
-    .path >> LZ.toList >> List.map (viewPathPos [ class "b--pink" ])
+    .path >> LZ.toList >> List.map (viewPathPos "hsl(324, 100%, 75%)")
 
 
-viewPathPos attrs pos =
-    div
-        (cellContainerStyles pos)
-        [ div
-            ([ class "br-pill ba bg-white"
-             , bwpx 3
-             , wpx 15
-             , hpx 15
-             , shadows [ "#fff 0px 0px 0px 2px" ]
-             ]
-                ++ attrs
-            )
-            []
+viewPathPos c pos =
+    circle (innerCellWidth * 0.2)
+        [ svgCellTransform pos
+        , SA.fill "none"
+        , SA.stroke c
         ]
 
 
@@ -675,17 +667,15 @@ viewWall pos =
         , SA.rx "10"
         , svgCellTransform pos
         ]
-        []
 
 
 viewBackgroundTile pos =
     square innerCellWidth
         [ SA.fill "none"
-        , SA.stroke "dodgerblue"
+        , SA.stroke "hsl(209, 100%, 79%)"
         , SA.rx "10"
         , svgCellTransform pos
         ]
-        []
 
 
 svgCellTransform ( x, y ) =
@@ -700,6 +690,10 @@ square w =
     rect w w
 
 
+circle r xs =
+    Svg.circle (Px.r r :: xs) []
+
+
 rect w h xs =
     Svg.rect
         (Px.x (w * -0.5)
@@ -708,6 +702,7 @@ rect w h xs =
             :: Px.height h
             :: xs
         )
+        []
 
 
 renderCellTransform ( x, y ) =
