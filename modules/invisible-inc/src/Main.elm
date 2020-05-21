@@ -517,12 +517,10 @@ viewAgent isSelected pos =
 
 
 shadowSelection =
-    style "box-shadow"
-        ([ "0 0 0 2px hsl(0, 0%, 100%)"
-         , "0 0 0 4px hsl(14, 100%, 57%)"
-         ]
-            |> String.join ","
-        )
+    Styles.shadows
+        [ "0 0 0 2px hsl(0, 0%, 100%)"
+        , "0 0 0 4px hsl(14, 100%, 57%)"
+        ]
 
 
 viewGuard : Bool -> Guard -> HM
@@ -565,9 +563,10 @@ viewHoverPathPos pos =
         ]
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
-                [ class "br-pill ba b--red bg-light-blue "
+                [ class "br-pill ba bw2 b--light-blue  "
                 , Styles.wi 15
                 , Styles.hi 15
+                , Styles.shadows [ "hsla(50, 60%, 50%, 0.5) 0px 0px 0px 3px" ]
                 ]
                 []
             ]

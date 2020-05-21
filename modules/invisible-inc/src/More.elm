@@ -105,6 +105,15 @@ setRemoveAll rs s =
 
 
 
+-- String
+
+
+join : String -> List String -> String
+join =
+    String.join
+
+
+
 -- Function
 
 

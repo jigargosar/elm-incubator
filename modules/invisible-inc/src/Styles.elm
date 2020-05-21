@@ -1,6 +1,7 @@
-module Styles exposing (hi, wi)
+module Styles exposing (hi, shadows, wi)
 
 import Html.Attributes exposing (style)
+import More exposing (..)
 
 
 wi =
@@ -13,3 +14,7 @@ hi =
 
 ipx i =
     String.fromInt i ++ "px"
+
+
+shadows =
+    join ", " >> style "box-shadow"
