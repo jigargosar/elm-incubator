@@ -154,6 +154,7 @@ type Edit
     = EditWall
     | EditGuard
     | EditGuardDest
+    | EditNone
 
 
 type alias Flags =
@@ -294,6 +295,7 @@ update message model =
             ( (if
                 isPrimaryDown
                     && (model.hover /= hover)
+                    && (model.edit == EditWall)
                     && isValidToggleWallGridPos hover model
                then
                 model
@@ -339,6 +341,9 @@ updateOnPosClicked pos model =
                 model
                     |> mapGuard (guardSetEndPosition (unOccupiedNeighbours model) pos)
                     |> setEdit EditGuard
+
+            EditNone ->
+                model
 
 
 withEffect : (b -> a) -> b -> ( b, a )
