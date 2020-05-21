@@ -606,11 +606,19 @@ viewWall pos =
         ]
 
 
+pai =
+    ipx >> style "padding"
+
+
+ipx i =
+    String.fromInt i ++ "px"
+
+
 cellContainerStyles pos =
     [ Styles.wi cellWidthPx
     , Styles.hi cellWidthPx
     , cellTransformStyle pos
-    , style "padding" "3px"
+    , pai 3
     , absolute
     ]
 
