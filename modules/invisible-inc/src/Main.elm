@@ -680,7 +680,6 @@ viewBackgroundTile pos =
         [ SA.fill "none"
         , SA.stroke "dodgerblue"
         , SA.rx "10"
-        , SA.strokeWidth "1"
         , svgCellTransform pos
         ]
         []
