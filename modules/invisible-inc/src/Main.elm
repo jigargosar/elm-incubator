@@ -251,6 +251,7 @@ type Msg
     | StepEnemyTurn
     | EndTurnClicked
     | GridPosClicked IntPos
+    | GridPosHovered IntPos
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -303,6 +304,9 @@ update message model =
 
             else
                 ( model, Cmd.none )
+
+        GridPosHovered hover ->
+            ( { model | hover = hover }, Cmd.none )
 
 
 updateOnPosClicked : IntPos -> Model -> Model
@@ -480,11 +484,8 @@ viewGrid model =
                 |> JD.map GridPosClicked
             )
         , HE.on "mouseover"
-            (JD.map2 XY
-                (JD.field "offsetX" JD.float)
-                (JD.field "offsetY" JD.float)
-                --|> JD.map (Debug.log "debug")
-                |> JD.andThen (always (JD.fail ""))
+            (mouseGridPosDecoder
+                |> JD.map GridPosHovered
             )
         ]
         ((positionsOf gridSize
