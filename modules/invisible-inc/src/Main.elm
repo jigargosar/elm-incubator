@@ -250,7 +250,7 @@ type Msg
     | SetEdit Edit
     | StepEnemyTurn
     | EndTurnClicked
-    | GridClicked XY
+    | GridPosClicked IntPos
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -296,13 +296,7 @@ update message model =
         --    , Dom.getElement "grid-container"
         --        |> Task.attempt (GridElementClicked xy)
         --    )
-        GridClicked xy ->
-            let
-                pos =
-                    ( floor (xy.x / cellWidthPx)
-                    , floor (xy.y / cellWidthPx)
-                    )
-            in
+        GridPosClicked pos ->
             if sizeContains pos gridSize then
                 updateOnPosClicked pos model
                     |> withEffect (cacheIfChanged model)
@@ -477,16 +471,29 @@ currentTargetOffsetXYDecoder =
         )
 
 
+toGridPos : XY -> IntPos
+toGridPos xy =
+    ( floor (xy.x / cellWidthPx)
+    , floor (xy.y / cellWidthPx)
+    )
+
+
+mouseGridPosDecoder : Decoder IntPos
+mouseGridPosDecoder =
+    JD.map2 XY.sub
+        pageXYDecoder
+        currentTargetOffsetXYDecoder
+        |> JD.map toGridPos
+
+
 viewGrid : Model -> HM
 viewGrid model =
     div
         [ style "width" (fromInt gridWidthPx ++ "px")
         , style "height" (fromInt gridHeightPx ++ "px")
         , HE.on "click"
-            (JD.map2 XY.sub
-                pageXYDecoder
-                currentTargetOffsetXYDecoder
-                |> JD.map GridClicked
+            (mouseGridPosDecoder
+                |> JD.map GridPosClicked
             )
         , HE.on "mouseover"
             (JD.map2 XY
