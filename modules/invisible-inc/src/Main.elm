@@ -65,7 +65,7 @@ editGuard mv startPos endPos guard =
     { guard
         | path =
             AStar.findPath AStar.pythagoreanCost mv startPos endPos
-                |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
+                |> Maybe.andThen (cons startPos >> List.take 10 >> LZ.fromList)
                 |> Maybe.withDefault (LZ.singleton startPos)
     }
 
@@ -490,7 +490,7 @@ viewGrid model =
 toHoverPath : (IntPos -> Set IntPos) -> IntPos -> IntPos -> List IntPos
 toHoverPath mv startPos endPos =
     AStar.findPath AStar.pythagoreanCost mv startPos endPos
-        |> Maybe.map (prepend startPos >> List.take 10)
+        |> Maybe.map (cons startPos >> List.take 10)
         |> Maybe.withDefault (List.singleton startPos)
 
 

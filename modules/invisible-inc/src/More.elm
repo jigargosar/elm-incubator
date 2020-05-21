@@ -85,8 +85,8 @@ unwrap =
 -- List
 
 
-prepend : a -> List a -> List a
-prepend =
+cons : a -> List a -> List a
+cons =
     (::)
 
 
