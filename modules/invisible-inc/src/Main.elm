@@ -120,10 +120,12 @@ occupied model =
 
 canToggleWallAt : IntPos -> Model -> Bool
 canToggleWallAt pos model =
-    occupied model
-        |> setRemoveAll model.walls
-        |> Set.member pos
-        |> not
+    IntSize.member pos gridSize
+        && (occupied model
+                |> setRemoveAll model.walls
+                |> Set.member pos
+                |> not
+           )
 
 
 unOccupiedNeighbours : Model -> IntPos -> Set IntPos
