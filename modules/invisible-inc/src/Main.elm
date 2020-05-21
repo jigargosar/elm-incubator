@@ -675,10 +675,6 @@ wpx =
     px >> style "width"
 
 
-hpx =
-    px >> style "height"
-
-
 
 -- Main
 
