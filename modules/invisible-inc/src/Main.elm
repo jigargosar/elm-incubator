@@ -97,19 +97,12 @@ initGuard walls =
             ( 0, 0 )
 
         p2 =
-            AStar.findPath AStar.pythagoreanCost (mvf walls) startPos endPos
+            AStar.findPath AStar.pythagoreanCost (unOccupiedNeighboursHelp walls) startPos endPos
                 |> Maybe.andThen (prepend startPos >> List.take 10 >> LZ.fromList)
                 |> Maybe.withDefault (LZ.singleton startPos)
     in
     { path = p2
     }
-
-
-mvf walls pos =
-    adjacentOf pos
-        |> Set.fromList
-        |> Set.filter (isMemberOfSize gridSize)
-        |> setRemoveAll walls
 
 
 editGuard : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Guard -> Guard
@@ -161,6 +154,26 @@ type alias Model =
     , selection : Selection
     , hover : IntPos
     }
+
+
+occupied : Model -> Set IntPos
+occupied model =
+    model.walls
+        |> Set.insert (positionOfGuard model.guard)
+        |> Set.insert model.agent
+
+
+unOccupiedNeighbours : Model -> IntPos -> Set IntPos
+unOccupiedNeighbours =
+    occupied >> unOccupiedNeighboursHelp
+
+
+unOccupiedNeighboursHelp : Set IntPos -> IntPos -> Set IntPos
+unOccupiedNeighboursHelp blocked pos =
+    adjacentOf pos
+        |> Set.fromList
+        |> Set.filter (isMemberOfSize gridSize)
+        |> setRemoveAll blocked
 
 
 type Selection
@@ -325,12 +338,12 @@ updateOnPosClicked pos model =
 
             EditGuard ->
                 model
-                    |> mapGuard (guardSetStartPosition (mvf model.walls) pos)
+                    |> mapGuard (guardSetStartPosition (unOccupiedNeighboursHelp model.walls) pos)
                     |> setEdit EditGuardDest
 
             EditGuardDest ->
                 model
-                    |> mapGuard (guardSetEndPosition (mvf model.walls) pos)
+                    |> mapGuard (guardSetEndPosition (unOccupiedNeighboursHelp model.walls) pos)
                     |> setEdit EditGuard
 
 
@@ -504,7 +517,7 @@ viewGrid model =
             ++ viewGuardPath model.guard
             ++ (case model.selection of
                     AgentSelected ->
-                        viewHoverPath (toHoverPath (mvf model.walls) model.agent model.hover)
+                        viewHoverPath (toHoverPath (unOccupiedNeighboursHelp model.walls) model.agent model.hover)
 
                     GuardSelected ->
                         []
