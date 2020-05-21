@@ -556,7 +556,11 @@ wh100 =
 
 viewHoverPathPos pos =
     div
-        (cellContainerStyles pos)
+        [ wpx cellWidthPx
+        , hpx cellWidthPx
+        , cellTransformStyle pos
+        , absolute
+        ]
         [ div [ wh100, centerCenter ]
             [ div
                 [ class "br-pill ba b--light-blue bg-white"
