@@ -203,7 +203,7 @@ initModel walls =
             , agent = agentPos
             , status = PlayerTurn
             , walls = filteredWalls
-            , edit = EditWall
+            , edit = EditNone
             , selection = AgentSelected
             , hover = ( 0, 0 )
             }
