@@ -118,6 +118,14 @@ occupied model =
         |> Set.insert model.agent
 
 
+canToggleWallAt : IntPos -> Model -> Bool
+canToggleWallAt pos model =
+    occupied model
+        |> setRemoveAll model.walls
+        |> Set.member pos
+        |> not
+
+
 unOccupiedNeighbours : Model -> IntPos -> Set IntPos
 unOccupiedNeighbours =
     occupied >> unOccupiedNeighboursHelp
@@ -284,11 +292,7 @@ update message model =
             ( (if
                 isPrimaryDown
                     && (model.hover /= hover)
-                    && (occupied model
-                            |> setRemoveAll model.walls
-                            |> Set.member hover
-                            |> not
-                       )
+                    && canToggleWallAt hover model
                then
                 model
                     |> mapWalls (toggleSetMember hover)
@@ -317,12 +321,7 @@ updateOnPosClicked pos model =
     else
         case model.edit of
             EditWall ->
-                if
-                    occupied model
-                        |> setRemoveAll model.walls
-                        |> Set.member pos
-                        |> not
-                then
+                if canToggleWallAt pos model then
                     model
                         |> mapWalls (toggleSetMember pos)
 
