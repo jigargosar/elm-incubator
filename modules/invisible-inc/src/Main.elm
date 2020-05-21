@@ -177,7 +177,7 @@ initModel : Set IntPos -> Model
 initModel walls =
     let
         guardPos =
-            ( 8, 12 )
+            ( 3, 3 )
 
         agentPos =
             ( 5, 5 )
@@ -186,15 +186,19 @@ initModel walls =
             walls
                 |> Set.remove guardPos
                 |> Set.remove agentPos
+
+        model =
+            { guard = initGuard guardPos
+            , agent = agentPos
+            , status = PlayerTurn
+            , walls = filteredWalls
+            , edit = EditWall
+            , selection = AgentSelected
+            , hover = ( 0, 0 )
+            }
     in
-    { guard = initGuard guardPos
-    , agent = agentPos
-    , status = PlayerTurn
-    , walls = filteredWalls
-    , edit = EditWall
-    , selection = AgentSelected
-    , hover = ( 0, 0 )
-    }
+    model
+        |> mapGuard (guardSetEndPosition (unOccupiedNeighbours model) ( 5, 12 ))
 
 
 init : Flags -> ( Model, Cmd Msg )
