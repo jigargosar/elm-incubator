@@ -158,6 +158,7 @@ type alias Model =
     , walls : Set IntPos
     , edit : Edit
     , selection : Selection
+    , hover : IntPos
     }
 
 
@@ -216,6 +217,7 @@ initModel walls =
     , walls = walls
     , edit = EditWall
     , selection = AgentSelected
+    , hover = ( 0, 0 )
     }
 
 
