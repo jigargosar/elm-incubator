@@ -543,15 +543,28 @@ viewHoverPath =
     Cons.toList >> List.map viewHoverPathPos
 
 
+absolute =
+    class "absolute"
+
+
+centerCenter =
+    class "flex items-center justify-center"
+
+
+wh100 =
+    class "w-100 h-100"
+
+
 viewHoverPathPos pos =
     div
         (cellContainerStyles pos)
         [ div [ class "w-100 h-100 flex items-center justify-center" ]
             [ div
-                [ class "br-pill ba bw2 b--light-blue  "
+                [ class "br-pill ba b--light-blue bg-white"
+                , Styles.bwi 2
                 , Styles.wi 15
                 , Styles.hi 15
-                , Styles.shadows [ "hsla(50, 60%, 50%, 0.5) 0px 0px 0px 3px" ]
+                , Styles.shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
                 ]
                 []
             ]
@@ -596,10 +609,14 @@ viewWall pos =
 cellContainerStyles pos =
     [ Styles.wi cellWidthPx
     , Styles.hi cellWidthPx
-    , style "transform" (renderCellTransform pos)
+    , cellTransformStyle pos
     , style "padding" "3px"
     , class "absolute"
     ]
+
+
+cellTransformStyle pos =
+    style "transform" (renderCellTransform pos)
 
 
 viewBackgroundTile pos =
