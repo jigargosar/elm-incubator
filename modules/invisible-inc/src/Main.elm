@@ -5,7 +5,7 @@ import Browser exposing (Document)
 import Browser.Events
 import Html exposing (Html, button, div, span, text)
 import Html.Attributes exposing (class, style)
-import Html.Events as HE exposing (onClick)
+import Html.Events exposing (onClick)
 import Json.Decode as JD exposing (Decoder)
 import Json.Decode.Extra as JDX
 import Json.Decode.Pipeline exposing (required)
@@ -16,7 +16,6 @@ import More exposing (..)
 import MouseEvents as ME
 import Process
 import Set exposing (Set)
-import String exposing (String, fromInt)
 import Styles
 import Task
 import XY exposing (XY)
@@ -509,32 +508,6 @@ viewGrid model =
                ]
             ++ viewGuardPath model.guard
         )
-
-
-
---viewAgent isSelected =
---    let
---        pos =
---            ( 5, 5 )
---    in
---    div
---        [ Styles.wi cellWidthPx
---        , Styles.hi cellWidthPx
---        , style "transform" (renderCellTransform pos)
---        , class "absolute"
---        ]
---        [ div
---            [ class "w-100 h-100"
---            , class "ba"
---            , style "padding" "3px"
---            ]
---            [ div
---                [ class "w-100 h-100"
---                , class "br3 bg-light-blue"
---                ]
---                []
---            ]
---        ]
 
 
 viewAgent isSelected pos =
