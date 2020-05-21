@@ -8,6 +8,7 @@ import Html exposing (Attribute, Html, button, div, span, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events exposing (onClick)
 import HtmlStyled as HS
+import HtmlStyledAttributes as HSA
 import HtmlStyledAttributesIntPx as IP
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
@@ -618,15 +619,20 @@ viewWall pos =
         ]
 
 
-viewBackgroundTile pos =
-    div
-        [ Styles.wi cellWidthPx
-        , Styles.hi cellWidthPx
-        , style "transform" (renderCellTransform pos)
-        , style "padding" "3px"
-        , class "absolute"
+gridCellContainerStyle =
+    HSA.batch
+        [ IP.width cellWidthPx
+        , IP.height cellWidthPx
+        , HSA.absolute
+        , HSA.intPx "padding" 3
         ]
-        [ div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [] ]
+
+
+viewBackgroundTile pos =
+    HS.el [ gridCellContainerStyle ]
+        [ style "transform" (renderCellTransform pos)
+        ]
+        (div [ class "w-100 h-100 br3 ba bw1 b--light-blue" ] [])
 
 
 renderCellTransform ( x, y ) =
