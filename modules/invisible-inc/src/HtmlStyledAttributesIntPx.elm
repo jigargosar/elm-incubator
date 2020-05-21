@@ -1,4 +1,4 @@
-module HtmlStyledAttributes exposing (height, width)
+module HtmlStyledAttributesIntPx exposing (height, width)
 
 import HtmlStyledAttributes as HSA exposing (Style)
 

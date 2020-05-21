@@ -8,6 +8,7 @@ import Html exposing (Attribute, Html, button, div, span, text)
 import Html.Attributes as HA exposing (class, style)
 import Html.Events exposing (onClick)
 import HtmlStyled as HS
+import HtmlStyledAttributesIntPx as IP
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
 import Json.Decode as JD exposing (Decoder)
@@ -449,10 +450,8 @@ mouseGridPosDecoder =
 
 viewGrid : Model -> HM
 viewGrid model =
-    HS.column []
-        [ Styles.wi gridWidthPx
-        , Styles.hi gridHeightPx
-        , ME.click (JD.map GridPosClicked mouseGridPosDecoder)
+    HS.column [ IP.width gridWidthPx, IP.height gridHeightPx ]
+        [ ME.click (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map GridPosHovered mouseGridPosDecoder)
         ]
         ((IntSize.positions gridSize
