@@ -490,8 +490,8 @@ viewGrid model =
 toHoverPath : (IntPos -> Set IntPos) -> IntPos -> IntPos -> List IntPos
 toHoverPath mv startPos endPos =
     AStar.findPath AStar.pythagoreanCost mv startPos endPos
-        |> Maybe.map (cons startPos >> List.take 10)
-        |> Maybe.withDefault (List.singleton startPos)
+        |> Maybe.withDefault []
+        |> (cons startPos >> List.take 10)
 
 
 viewAgent isSelected pos =
