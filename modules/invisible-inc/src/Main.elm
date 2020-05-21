@@ -546,6 +546,11 @@ viewHoverPath =
     Cons.toList >> List.map (viewPathPos [ class "b--light-blue" ])
 
 
+viewGuardPath : Guard -> List HM
+viewGuardPath =
+    .path >> LZ.toList >> List.map (viewPathPos [ class "b--pink" ])
+
+
 viewPathPos attrs pos =
     div
         (cellContainerStyles pos)
@@ -561,15 +566,6 @@ viewPathPos attrs pos =
             )
             []
         ]
-
-
-viewGuardPath : Guard -> List HM
-viewGuardPath guard =
-    let
-        ps =
-            LZ.toList guard.path
-    in
-    List.map (viewPathPos [ class "b--pink" ]) ps
 
 
 viewWall : IntPos -> HM
