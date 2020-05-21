@@ -569,9 +569,11 @@ viewGuardPathPos pos =
     div
         (cellContainerStyles pos)
         [ div
-            [ class "br-pill bg-pink ba red"
+            [ class "br-pill ba b--pink bg-white"
+            , bwpx 2
             , wpx 15
             , hpx 15
+            , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
             ]
             []
         ]
