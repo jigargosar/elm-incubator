@@ -405,6 +405,7 @@ keyToMsg key =
     [ ( " ", EndTurnClicked )
     , ( "w", SetEdit EditWall )
     , ( "g", SetEdit EditGuard )
+    , ( "Escape", SetEdit EditNone )
     ]
         |> List.find (fst >> eq key)
         |> Maybe.map snd
