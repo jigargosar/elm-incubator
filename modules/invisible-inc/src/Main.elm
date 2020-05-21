@@ -601,7 +601,16 @@ el styles attrs child =
     styled div styles attrs [ child ]
 
 
-styled : (List (Attribute msg) -> a) -> List Style -> List (Attribute msg) -> a
+row : List Style -> List (Attribute msg) -> List (Html msg) -> Html msg
+row styles =
+    styled div (CLASS "flex flex-row" :: styles)
+
+
+column : List Style -> List (Attribute msg) -> List (Html msg) -> Html msg
+column styles =
+    styled div (CLASS "flex flex-column" :: styles)
+
+
 styled constructor styles attrs =
     constructor (toAttrs styles ++ attrs)
 
