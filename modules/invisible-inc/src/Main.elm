@@ -118,8 +118,8 @@ occupied model =
         |> Set.insert model.agent
 
 
-canToggleWallAt : IntPos -> Model -> Bool
-canToggleWallAt pos model =
+isValidToggleWallGridPos : IntPos -> Model -> Bool
+isValidToggleWallGridPos pos model =
     IntSize.member pos gridSize
         && (occupied model
                 |> setRemoveAll model.walls
@@ -294,7 +294,7 @@ update message model =
             ( (if
                 isPrimaryDown
                     && (model.hover /= hover)
-                    && canToggleWallAt hover model
+                    && isValidToggleWallGridPos hover model
                then
                 model
                     |> mapWalls (toggleSetMember hover)
@@ -323,7 +323,7 @@ updateOnPosClicked pos model =
     else
         case model.edit of
             EditWall ->
-                if canToggleWallAt pos model then
+                if isValidToggleWallGridPos pos model then
                     model
                         |> mapWalls (toggleSetMember pos)
 
