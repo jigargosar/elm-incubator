@@ -539,19 +539,22 @@ viewGuard isSelected guard =
 
 viewHoverPath : Cons IntPos -> List HM
 viewHoverPath =
-    Cons.toList >> List.map viewHoverPathPos
+    Cons.toList >> List.map (viewPathPosHelp [ class "b--light-blue" ])
 
 
-viewHoverPathPos pos =
+viewPathPosHelp attrs pos =
     div
         (cellContainerStyles pos)
         [ div
-            [ class "br-pill ba b--light-blue bg-white"
-            , bwpx 2
-            , wpx 15
-            , hpx 15
-            , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
-            ]
+            ([ class "br-pill ba bg-white"
+             , style "background-color" "hsla(0,0%,100%,0.5)"
+             , bwpx 2
+             , wpx 15
+             , hpx 15
+             , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
+             ]
+                ++ attrs
+            )
             []
         ]
 
@@ -562,21 +565,7 @@ viewGuardPath guard =
         ps =
             LZ.toList guard.path
     in
-    List.map viewGuardPathPos ps
-
-
-viewGuardPathPos pos =
-    div
-        (cellContainerStyles pos)
-        [ div
-            [ class "br-pill ba b--pink bg-white"
-            , bwpx 2
-            , wpx 15
-            , hpx 15
-            , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
-            ]
-            []
-        ]
+    List.map (viewPathPosHelp [ class "b--pink" ]) ps
 
 
 viewWall : IntPos -> HM
