@@ -584,40 +584,11 @@ computePath mv startPos endPos =
         |> Cons.init startPos
 
 
-cellContainerStyles pos =
-    [ wpx cellWidthPx
-    , hpx cellWidthPx
-    , cellTransformStyle pos
-    , pa 3
-    , absolute
-    , class "flex items-center justify-center"
-    , class "o-70"
-    ]
-
-
-cellTransformStyle pos =
-    style "transform" (renderCellTransform pos)
-
-
 viewAgent isSelected pos =
-    div
-        (cellContainerStyles pos)
-        [ div
-            [ class "w-100 h-100 br3 bg-light-blue"
-            , if isSelected then
-                shadowSelection
-
-              else
-                class ""
-            ]
-            []
-        ]
-
-
-shadowSelection =
-    shadows
-        [ "0 0 0 2px hsl(0, 0%, 100%)"
-        , "0 0 0 4px hsl(14, 100%, 57%)"
+    square innerCellWidth
+        [ SA.fill "hsl(209, 100%, 79%)"
+        , SA.rx "10"
+        , svgCellTransform pos
         ]
 
 
@@ -627,17 +598,10 @@ viewGuard isSelected guard =
         pos =
             LZ.current guard.path
     in
-    div
-        (cellContainerStyles pos)
-        [ div
-            [ class "w-100 h-100 br3 bg-pink"
-            , if isSelected then
-                shadowSelection
-
-              else
-                class ""
-            ]
-            []
+    square innerCellWidth
+        [ SA.fill "hsl(324, 100%, 75%)"
+        , SA.rx "10"
+        , svgCellTransform pos
         ]
 
 
@@ -663,7 +627,6 @@ viewWall : IntPos -> HM
 viewWall pos =
     square innerCellWidth
         [ SA.fill "hsl(0, 25%, 65%)"
-        , SA.stroke "hsl(0, 25%, 65%)"
         , SA.rx "10"
         , svgCellTransform pos
         ]
@@ -705,22 +668,6 @@ rect w h xs =
         []
 
 
-renderCellTransform ( x, y ) =
-    "translate(" ++ px (x * cellWidthPx) ++ ", " ++ px (y * cellWidthPx) ++ ")"
-
-
-
--- STYLES
-
-
-absolute =
-    class "absolute"
-
-
-pa =
-    px >> style "padding"
-
-
 px i =
     String.fromInt i ++ "px"
 
@@ -731,18 +678,6 @@ wpx =
 
 hpx =
     px >> style "height"
-
-
-
---noinspection SpellCheckingInspection
-
-
-bwpx =
-    px >> style "border-width"
-
-
-shadows =
-    join ", " >> style "box-shadow"
 
 
 
