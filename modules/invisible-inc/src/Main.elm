@@ -545,29 +545,32 @@ isGuardSelected model =
 
 viewGrid : Model -> HM
 viewGrid model =
-    Svg.svg
-        [ TSA.viewBox (gridWidthPx * -0.5) (gridHeightPx * -0.5) gridWidthPx gridHeightPx
-        , ME.down (JD.map GridPosClicked mouseGridPosDecoder)
+    div
+        [ ME.down (JD.map GridPosClicked mouseGridPosDecoder)
         , ME.over (JD.map2 GridPosHovered mouseGridPosDecoder (JD.field "buttons" (JD.map (eq 1) JD.int)))
         ]
-        ((IntSize.positions gridSize
-            |> List.map viewBackgroundTile
-         )
-            ++ (model.walls |> Set.toList |> List.map viewWall)
-            ++ [ viewAgent (isAgentSelected model)
-                    model.agent
-               , viewGuard (isGuardSelected model)
-                    model.guard
-               ]
-            ++ viewGuardPath model.guard
-            ++ (case isAgentSelected model of
-                    True ->
-                        viewHoverPath (agentHoverPath model)
+        [ Svg.svg
+            [ TSA.viewBox (gridWidthPx * -0.5) (gridHeightPx * -0.5) gridWidthPx gridHeightPx
+            ]
+            ((IntSize.positions gridSize
+                |> List.map viewBackgroundTile
+             )
+                ++ (model.walls |> Set.toList |> List.map viewWall)
+                ++ [ viewAgent (isAgentSelected model)
+                        model.agent
+                   , viewGuard (isGuardSelected model)
+                        model.guard
+                   ]
+                ++ viewGuardPath model.guard
+                ++ (case isAgentSelected model of
+                        True ->
+                            viewHoverPath (agentHoverPath model)
 
-                    False ->
-                        []
-               )
-        )
+                        False ->
+                            []
+                   )
+            )
+        ]
 
 
 agentHoverPath : Model -> Cons IntPos
