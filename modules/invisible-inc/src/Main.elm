@@ -352,7 +352,15 @@ updateOnPosMouseDown pos model =
                     |> setEdit EditGuard
 
             EditNone ->
-                model
+                let
+                    ap =
+                        agentHoverPath model
+                in
+                if Cons.last ap == pos then
+                    { model | agent = pos }
+
+                else
+                    model
 
 
 withEffect : (b -> a) -> b -> ( b, a )
@@ -544,7 +552,7 @@ viewGrid model =
             ++ viewGuardPath model.guard
             ++ (case isAgentSelected model of
                     True ->
-                        viewHoverPath (toHoverPath (unOccupiedNeighbours model) model.agent model.hover)
+                        viewHoverPath (agentHoverPath model)
 
                     False ->
                         []
@@ -552,8 +560,13 @@ viewGrid model =
         )
 
 
-toHoverPath : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Cons IntPos
-toHoverPath mv startPos endPos =
+agentHoverPath : Model -> Cons IntPos
+agentHoverPath model =
+    computePath (unOccupiedNeighbours model) model.agent model.hover
+
+
+computePath : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Cons IntPos
+computePath mv startPos endPos =
     AStar.findPath AStar.pythagoreanCost mv startPos endPos
         |> Maybe.withDefault []
         |> List.take 10
