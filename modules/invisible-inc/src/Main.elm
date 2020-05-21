@@ -285,7 +285,7 @@ update message model =
 
         GridPosClicked pos ->
             if IntSize.member pos gridSize then
-                updateOnPosClicked pos model
+                updateOnPosMouseDown pos model
                     |> withEffect (cacheIfChanged model)
 
             else
@@ -314,8 +314,8 @@ setHover hover model =
     { model | hover = hover }
 
 
-updateOnPosClicked : IntPos -> Model -> Model
-updateOnPosClicked pos model =
+updateOnPosMouseDown : IntPos -> Model -> Model
+updateOnPosMouseDown pos model =
     if positionOfGuard model.guard == pos then
         { model | selection = GuardSelected }
 
