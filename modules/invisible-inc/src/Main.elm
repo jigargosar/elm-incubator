@@ -568,14 +568,12 @@ viewGuardPath guard =
 viewGuardPathPos pos =
     div
         (cellContainerStyles pos)
-        [ div [ class "w-100 h-100 flex items-center justify-center" ]
-            [ div
-                [ class "br-pill bg-pink ba red"
-                , wpx 15
-                , hpx 15
-                ]
-                []
+        [ div
+            [ class "br-pill bg-pink ba red"
+            , wpx 15
+            , hpx 15
             ]
+            []
         ]
 
 
