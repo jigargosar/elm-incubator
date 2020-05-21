@@ -552,12 +552,10 @@ viewPathPos attrs pos =
         [ div
             ([ class "br-pill ba bg-white"
              , class "o-60"
-
-             --, style "background-color" "hsla(0,0%,100%,0.5)"
              , bwpx 3
              , wpx 15
              , hpx 15
-             , shadows [ "hsla(0, 0%, 100%, 1) 0px 0px 0px 2px" ]
+             , shadows [ "#fff 0px 0px 0px 2px" ]
              ]
                 ++ attrs
             )
