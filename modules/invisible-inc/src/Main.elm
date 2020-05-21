@@ -558,7 +558,7 @@ wh100 =
 viewHoverPathPos pos =
     div
         (cellContainerStyles pos)
-        [ div [ class "w-100 h-100 flex items-center justify-center" ]
+        [ div [ wh100, centerCenter ]
             [ div
                 [ class "br-pill ba b--light-blue bg-white"
                 , Styles.bwi 2
@@ -611,7 +611,7 @@ cellContainerStyles pos =
     , Styles.hi cellWidthPx
     , cellTransformStyle pos
     , style "padding" "3px"
-    , class "absolute"
+    , absolute
     ]
 
 
