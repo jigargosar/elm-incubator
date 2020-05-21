@@ -4,8 +4,8 @@ import AStar
 import Browser exposing (Document)
 import Browser.Events
 import Cons exposing (Cons)
-import Html exposing (Html, button, div, span, text)
-import Html.Attributes exposing (class, style)
+import Html exposing (Attribute, Html, button, div, span, text)
+import Html.Attributes as HA exposing (class, style)
 import Html.Events exposing (onClick)
 import IntPos exposing (IntPos)
 import IntSize exposing (IntSize)
@@ -571,6 +571,39 @@ viewHoverPathPos pos =
                 []
             ]
         ]
+
+
+type Style
+    = Batch (List Style)
+    | IPX String Int
+    | CLASS String
+
+
+toAttrs : List Style -> List (Attribute msg)
+toAttrs =
+    let
+        toAttrsHelp style =
+            case style of
+                Batch xs ->
+                    List.concatMap toAttrsHelp xs
+
+                IPX n i ->
+                    [ HA.style n (String.fromInt i ++ "px") ]
+
+                CLASS cn ->
+                    [ HA.class cn ]
+    in
+    List.concatMap toAttrsHelp
+
+
+el : List Style -> List (Attribute msg) -> Html msg -> Html msg
+el styles attrs child =
+    styled div styles attrs [ child ]
+
+
+styled : (List (Attribute msg) -> a) -> List Style -> List (Attribute msg) -> a
+styled constructor styles attrs =
+    constructor (toAttrs styles ++ attrs)
 
 
 viewGuardPath : Guard -> List HM
