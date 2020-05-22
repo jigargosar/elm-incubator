@@ -613,6 +613,7 @@ viewGuard isSelected guard =
             [ fill "black"
             , SA.textAnchor "middle"
             , SA.dominantBaseline "central"
+            , TSA.transform [ TST.Translate -10 -10 ]
             ]
             [ text "KO" ]
         ]
