@@ -609,6 +609,12 @@ viewGuard isSelected guard =
             , SA.rx "10"
             ]
         , viewSelectionOutline isSelected
+        , Svg.text_
+            [ fill "black"
+            , SA.textAnchor "middle"
+            , SA.dominantBaseline "central"
+            ]
+            [ text "KO" ]
         ]
 
 
