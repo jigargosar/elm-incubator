@@ -4,6 +4,7 @@ module More exposing (..)
 
 import Maybe.Extra
 import Set exposing (Set)
+import VirtualDom as VD
 
 
 add : number -> number -> number
@@ -127,6 +128,11 @@ applyTo =
     (|>)
 
 
+apply : (a -> b) -> a -> b
+apply =
+    (<|)
+
+
 whileJust : (a -> Maybe a) -> a -> a
 whileJust f x =
     case f x of
@@ -135,3 +141,24 @@ whileJust f x =
 
         Nothing ->
             x
+
+
+
+-- View
+
+
+viewBool bool v =
+    if bool then
+        v
+
+    else
+        noView
+
+
+noView =
+    VD.text ""
+
+
+unwrapView : (a -> VD.Node msg) -> Maybe a -> VD.Node msg
+unwrapView =
+    unwrap noView

@@ -629,6 +629,39 @@ viewAgent isSelected pos =
         ]
 
 
+type alias GuardView =
+    { pos : IntPos
+    , selected : Bool
+    , ko : Maybe Int
+    }
+
+
+renderGuardView : GuardView -> HM
+renderGuardView gv =
+    let
+        pos =
+            gv.pos
+    in
+    group [ svgCellTransform pos ]
+        [ square innerCellWidth
+            [ SA.fill "hsl(324, 100%, 75%)"
+            , SA.rx "10"
+            ]
+        , viewSelectionOutline gv.selected
+        , gv.ko
+            |> unwrapView
+                (\ko ->
+                    Svg.text_
+                        [ fill "black"
+                        , SA.textAnchor "middle"
+                        , SA.dominantBaseline "central"
+                        , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
+                        ]
+                        [ text <| "KO=" ++ String.fromInt ko ]
+                )
+        ]
+
+
 viewGuard : Bool -> Guard -> HM
 viewGuard isSelected guard =
     let
@@ -658,14 +691,6 @@ viewGuard isSelected guard =
 
 viewSelectionOutline isSelected =
     viewBool isSelected (square cellWidthPx [ stroke "hsl(26, 91%, 47%)", SA.rx "10" ])
-
-
-viewBool bool v =
-    if bool then
-        v
-
-    else
-        text ""
 
 
 noFill =
