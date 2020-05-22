@@ -588,10 +588,12 @@ computePath mv startPos endPos =
 
 
 viewAgent isSelected pos =
-    square innerCellWidth
-        [ SA.fill "hsl(209, 100%, 79%)"
-        , SA.rx "10"
-        , svgCellTransform pos
+    group [ svgCellTransform pos ]
+        [ square innerCellWidth
+            [ SA.fill "hsl(209, 100%, 79%)"
+            , SA.rx "10"
+            ]
+        , viewSelectionOutline isSelected
         ]
 
 
@@ -606,12 +608,20 @@ viewGuard isSelected guard =
             [ SA.fill "hsl(324, 100%, 75%)"
             , SA.rx "10"
             ]
-        , if isSelected then
-            square cellWidthPx [ stroke "black" ]
-
-          else
-            text ""
+        , viewSelectionOutline isSelected
         ]
+
+
+viewSelectionOutline isSelected =
+    viewBool isSelected (square cellWidthPx [ stroke "black" ])
+
+
+viewBool bool v =
+    if bool then
+        v
+
+    else
+        text ""
 
 
 noFill =
