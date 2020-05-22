@@ -1,6 +1,7 @@
-module Cons exposing (Cons, init, last, singleton, toList)
+module Cons exposing (Cons, init, last, singleton, tail, toList)
 
 import List.Extra as List
+import More exposing (..)
 
 
 type alias Cons a =
@@ -25,3 +26,8 @@ toList ( x, xs ) =
 last : Cons a -> a
 last ( x, xs ) =
     List.last xs |> Maybe.withDefault x
+
+
+tail : Cons a -> List a
+tail =
+    snd

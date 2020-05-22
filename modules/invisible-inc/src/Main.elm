@@ -160,7 +160,7 @@ type Status
 
 
 type alias EnemyTurnModel =
-    {}
+    { guardPath : List IntPos }
 
 
 type Edit
@@ -268,30 +268,45 @@ update message model =
             ( { model | edit = edit }, Cmd.none )
 
         StepEnemyTurn ->
-            let
-                ( isDone, guard ) =
-                    stepGuard model.guard
-            in
-            ( { model
-                | guard = guard
-                , status =
-                    if isDone then
-                        PlayerTurn
+            case model.status of
+                PlayerTurn ->
+                    ( model, Cmd.none )
 
-                    else
-                        model.status
-              }
-            , if isDone then
-                Cmd.none
+                EnemyTurn et ->
+                    let
+                        ( isDone, guard ) =
+                            stepGuard model.guard
+                    in
+                    ( { model
+                        | guard = guard
+                        , status =
+                            if isDone then
+                                PlayerTurn
 
-              else
-                triggerStepEnemyTurn
-            )
+                            else
+                                model.status
+                      }
+                    , if isDone then
+                        Cmd.none
+
+                      else
+                        triggerStepEnemyTurn
+                    )
 
         EndTurnClicked ->
             case model.status of
                 PlayerTurn ->
-                    ( { model | status = EnemyTurn {} }, triggerStepEnemyTurn )
+                    ( { model
+                        | status =
+                            EnemyTurn
+                                { guardPath =
+                                    model
+                                        |> guardPredictedPath
+                                        |> Cons.tail
+                                }
+                      }
+                    , triggerStepEnemyTurn
+                    )
 
                 EnemyTurn _ ->
                     ( model, Cmd.none )
