@@ -14,7 +14,6 @@ import Json.Decode.Extra as JDX
 import Json.Decode.Pipeline exposing (required)
 import Json.Encode as JE exposing (Value)
 import List.Extra as List
-import ListZipper as LZ exposing (ListZipper)
 import More exposing (..)
 import MouseEvents as ME
 import Process
@@ -157,7 +156,11 @@ unOccupiedNeighboursHelp blocked pos =
 
 type Status
     = PlayerTurn
-    | EnemyTurn
+    | EnemyTurn EnemyTurnModel
+
+
+type alias EnemyTurnModel =
+    {}
 
 
 type Edit
@@ -288,9 +291,9 @@ update message model =
         EndTurnClicked ->
             case model.status of
                 PlayerTurn ->
-                    ( { model | status = EnemyTurn }, triggerStepEnemyTurn )
+                    ( { model | status = EnemyTurn {} }, triggerStepEnemyTurn )
 
-                EnemyTurn ->
+                EnemyTurn _ ->
                     ( model, Cmd.none )
 
         GridPosClicked pos ->
