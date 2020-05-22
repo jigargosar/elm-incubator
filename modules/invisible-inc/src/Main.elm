@@ -613,9 +613,9 @@ viewGuard isSelected guard =
             [ fill "black"
             , SA.textAnchor "middle"
             , SA.dominantBaseline "central"
-            , TSA.transform [ TST.Translate -10 -10 ]
+            , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
             ]
-            [ text "KO" ]
+            [ text <| "KO=" ++ String.fromInt guard.ko ]
         ]
 
 
