@@ -20,7 +20,7 @@ import MouseEvents as ME
 import Process
 import Set exposing (Set)
 import Svg
-import Svg.Attributes as SA
+import Svg.Attributes as SA exposing (fill, stroke)
 import Task
 import TypedSvg.Attributes as TSA
 import TypedSvg.Attributes.InPx as Px
@@ -551,6 +551,7 @@ viewGrid model =
         ]
         [ Svg.svg
             [ TSA.viewBox (gridWidthPx * -0.5) (gridHeightPx * -0.5) gridWidthPx gridHeightPx
+            , noFill
             ]
             ((IntSize.positions gridSize
                 |> List.map viewBackgroundTile
@@ -600,11 +601,25 @@ viewGuard isSelected guard =
         pos =
             LZ.current guard.path
     in
-    square innerCellWidth
-        [ SA.fill "hsl(324, 100%, 75%)"
-        , SA.rx "10"
-        , svgCellTransform pos
+    group [ svgCellTransform pos ]
+        [ square innerCellWidth
+            [ SA.fill "hsl(324, 100%, 75%)"
+            , SA.rx "10"
+            ]
+        , if isSelected then
+            square cellWidthPx [ stroke "black" ]
+
+          else
+            text ""
         ]
+
+
+noFill =
+    fill "none"
+
+
+group =
+    Svg.g
 
 
 viewHoverPath : Cons IntPos -> List HM
