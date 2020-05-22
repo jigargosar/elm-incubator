@@ -46,8 +46,13 @@ isMemberOfSize s p =
 
 type alias Guard =
     { path : ListZipper IntPos
-    , ko : Int
+    , state : GuardState
     }
+
+
+type GuardState
+    = Patrolling IntPos IntPos
+    | KnockedOut IntPos Int
 
 
 positionOfGuard : Guard -> IntPos
@@ -63,7 +68,7 @@ targetPositionOfGuard =
 initGuard : IntPos -> Guard
 initGuard pos =
     { path = LZ.singleton pos
-    , ko = 0
+    , state = Patrolling pos pos
     }
 
 
@@ -609,13 +614,18 @@ viewGuard isSelected guard =
             , SA.rx "10"
             ]
         , viewSelectionOutline isSelected
-        , Svg.text_
-            [ fill "black"
-            , SA.textAnchor "middle"
-            , SA.dominantBaseline "central"
-            , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
-            ]
-            [ text <| "KO=" ++ String.fromInt guard.ko ]
+        , case guard.state of
+            KnockedOut _ ko ->
+                Svg.text_
+                    [ fill "black"
+                    , SA.textAnchor "middle"
+                    , SA.dominantBaseline "central"
+                    , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
+                    ]
+                    [ text <| "KO=" ++ String.fromInt ko ]
+
+            Patrolling s e ->
+                text ""
         ]
 
 
