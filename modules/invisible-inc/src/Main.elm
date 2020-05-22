@@ -613,7 +613,7 @@ viewGuard isSelected guard =
 
 
 viewSelectionOutline isSelected =
-    viewBool isSelected (square cellWidthPx [ stroke "black" ])
+    viewBool isSelected (square cellWidthPx [ stroke "hsl(26, 91%, 47%)", SA.rx "10" ])
 
 
 viewBool bool v =
