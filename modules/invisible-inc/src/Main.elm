@@ -45,8 +45,7 @@ isMemberOfSize s p =
 
 
 type alias Guard =
-    { path : ListZipper IntPos
-    , state : GuardState
+    { state : GuardState
     }
 
 
@@ -56,50 +55,50 @@ type GuardState
 
 
 positionOfGuard : Guard -> IntPos
-positionOfGuard =
-    .path >> LZ.current
+positionOfGuard guard =
+    case guard.state of
+        Patrolling s _ ->
+            s
+
+        KnockedOut p _ ->
+            p
 
 
-targetPositionOfGuard : Guard -> IntPos
-targetPositionOfGuard =
-    .path >> LZ.last >> LZ.current
+
+--targetPositionOfGuard : Guard -> IntPos
+--targetPositionOfGuard =
+--    .path >> LZ.last >> LZ.current
 
 
 initGuard : IntPos -> Guard
 initGuard pos =
-    { path = LZ.singleton pos
-    , state = Patrolling pos pos
+    { state = Patrolling pos pos
     }
 
 
-editGuard : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Guard -> Guard
-editGuard mv startPos endPos guard =
-    { guard
-        | path =
-            AStar.findPath AStar.pythagoreanCost mv startPos endPos
-                |> Maybe.andThen (cons startPos >> List.take 10 >> LZ.fromList)
-                |> Maybe.withDefault (LZ.singleton startPos)
-    }
+guardSetStartPosition : IntPos -> Guard -> Guard
+guardSetStartPosition s guard =
+    case guard.state of
+        Patrolling _ e ->
+            { guard | state = Patrolling s e }
+
+        KnockedOut _ _ ->
+            guard
 
 
-guardSetStartPosition : (IntPos -> Set IntPos) -> IntPos -> Guard -> Guard
-guardSetStartPosition mv startPos guard =
-    editGuard mv startPos (targetPositionOfGuard guard) guard
+guardSetEndPosition : IntPos -> Guard -> Guard
+guardSetEndPosition e guard =
+    case guard.state of
+        Patrolling s _ ->
+            { guard | state = Patrolling s e }
 
-
-guardSetEndPosition : (IntPos -> Set IntPos) -> IntPos -> Guard -> Guard
-guardSetEndPosition mv endPos guard =
-    editGuard mv (positionOfGuard guard) endPos guard
+        KnockedOut _ _ ->
+            guard
 
 
 stepGuard : Guard -> ( Bool, Guard )
 stepGuard guard =
-    case LZ.right guard.path of
-        Just path ->
-            ( False, { guard | path = path } )
-
-        Nothing ->
-            ( True, { guard | path = LZ.swap guard.path } )
+    ( True, guard )
 
 
 
@@ -220,7 +219,7 @@ initModel walls =
             }
     in
     model
-        |> mapGuard (guardSetEndPosition (unOccupiedNeighbours model) ( 5, 12 ))
+        |> mapGuard (guardSetEndPosition ( 5, 12 ))
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -355,12 +354,12 @@ updateOnPosMouseDown pos model =
 
                 else
                     model
-                        |> mapGuard (guardSetStartPosition (unOccupiedNeighbours model) pos)
+                        |> mapGuard (guardSetStartPosition pos)
                         |> setEdit EditGuardDest
 
             EditGuardDest ->
                 model
-                    |> mapGuard (guardSetEndPosition (unOccupiedNeighbours model) pos)
+                    |> mapGuard (guardSetEndPosition pos)
                     |> setEdit EditGuard
 
             EditNone ->
@@ -567,7 +566,7 @@ viewGrid model =
                    , viewGuard (isGuardSelected model)
                         model.guard
                    ]
-                ++ viewGuardPath model.guard
+                ++ viewGuardPath (guardPredictedPath model)
                 ++ (case isAgentSelected model of
                         True ->
                             viewHoverPath (agentHoverPath model)
@@ -582,6 +581,16 @@ viewGrid model =
 agentHoverPath : Model -> Cons IntPos
 agentHoverPath model =
     computePath (unOccupiedNeighbours model) model.agent model.hover
+
+
+guardPredictedPath : Model -> Cons IntPos
+guardPredictedPath model =
+    case model.guard.state of
+        Patrolling s e ->
+            computePath (unOccupiedNeighbours model) s e
+
+        KnockedOut p _ ->
+            Cons.singleton p
 
 
 computePath : (IntPos -> Set IntPos) -> IntPos -> IntPos -> Cons IntPos
@@ -606,7 +615,7 @@ viewGuard : Bool -> Guard -> HM
 viewGuard isSelected guard =
     let
         pos =
-            LZ.current guard.path
+            positionOfGuard guard
     in
     group [ svgCellTransform pos ]
         [ square innerCellWidth
@@ -624,7 +633,7 @@ viewGuard isSelected guard =
                     ]
                     [ text <| "KO=" ++ String.fromInt ko ]
 
-            Patrolling s e ->
+            Patrolling _ _ ->
                 text ""
         ]
 
@@ -654,9 +663,9 @@ viewHoverPath =
     Cons.toList >> List.map (viewPathPos "hsl(209, 100%, 79%)")
 
 
-viewGuardPath : Guard -> List HM
+viewGuardPath : Cons IntPos -> List HM
 viewGuardPath =
-    .path >> LZ.toList >> List.map (viewPathPos "hsl(324, 100%, 75%)")
+    Cons.toList >> List.map (viewPathPos "hsl(324, 100%, 75%)")
 
 
 viewPathPos c pos =

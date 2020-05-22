@@ -1,4 +1,4 @@
-module Cons exposing (Cons, init, last, toList)
+module Cons exposing (Cons, init, last, singleton, toList)
 
 import List.Extra as List
 
@@ -10,6 +10,11 @@ type alias Cons a =
 init : a -> List a -> Cons a
 init =
     Tuple.pair
+
+
+singleton : a -> Cons a
+singleton x =
+    init x []
 
 
 toList : Cons a -> List a
