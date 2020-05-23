@@ -286,6 +286,14 @@ update message model =
                     let
                         ( isDone, guard ) =
                             stepGuard model.guard
+
+                        _ =
+                            case et.guardPath of
+                                [] ->
+                                    ( model, Cmd.none )
+
+                                h :: t ->
+                                    ( model, Cmd.none )
                     in
                     ( { model
                         | guard = guard
@@ -679,31 +687,32 @@ renderGuardView gv =
         ]
 
 
-viewGuard : Bool -> Guard -> HM
-viewGuard isSelected guard =
-    let
-        pos =
-            positionOfGuard guard
-    in
-    group [ svgCellTransform pos ]
-        [ square innerCellWidth
-            [ SA.fill "hsl(324, 100%, 75%)"
-            , SA.rx "10"
-            ]
-        , viewSelectionOutline isSelected
-        , case guard.state of
-            KnockedOut _ ko ->
-                Svg.text_
-                    [ fill "black"
-                    , SA.textAnchor "middle"
-                    , SA.dominantBaseline "central"
-                    , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
-                    ]
-                    [ text <| "KO=" ++ String.fromInt ko ]
 
-            Patrolling _ _ ->
-                text ""
-        ]
+--viewGuard : Bool -> Guard -> HM
+--viewGuard isSelected guard =
+--    let
+--        pos =
+--            positionOfGuard guard
+--    in
+--    group [ svgCellTransform pos ]
+--        [ square innerCellWidth
+--            [ SA.fill "hsl(324, 100%, 75%)"
+--            , SA.rx "10"
+--            ]
+--        , viewSelectionOutline isSelected
+--        , case guard.state of
+--            KnockedOut _ ko ->
+--                Svg.text_
+--                    [ fill "black"
+--                    , SA.textAnchor "middle"
+--                    , SA.dominantBaseline "central"
+--                    , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
+--                    ]
+--                    [ text <| "KO=" ++ String.fromInt ko ]
+--
+--            Patrolling _ _ ->
+--                text ""
+--        ]
 
 
 viewSelectionOutline isSelected =
