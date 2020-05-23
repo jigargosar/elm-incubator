@@ -114,6 +114,10 @@ join =
     String.join
 
 
+intS =
+    String.fromInt
+
+
 
 -- Function
 

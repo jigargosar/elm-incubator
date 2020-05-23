@@ -657,7 +657,7 @@ renderGuardView gv =
                         , SA.dominantBaseline "central"
                         , TSA.transform [ TST.Translate 0 -10, TST.Scale 0.8 0.8 ]
                         ]
-                        [ text <| "KO=" ++ String.fromInt ko ]
+                        [ text <| "KO=" ++ intS ko ]
                 )
         ]
 
