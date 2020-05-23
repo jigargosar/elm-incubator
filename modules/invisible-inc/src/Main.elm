@@ -63,6 +63,16 @@ positionOfGuard guard =
             p
 
 
+koValueOfGuard : Guard -> Maybe Int
+koValueOfGuard guard =
+    case guard.state of
+        Patrolling _ _ ->
+            Nothing
+
+        KnockedOut _ ko ->
+            Just ko
+
+
 
 --targetPositionOfGuard : Guard -> IntPos
 --targetPositionOfGuard =
@@ -581,8 +591,7 @@ viewGrid model =
                 ++ (model.walls |> Set.toList |> List.map viewWall)
                 ++ [ viewAgent (isAgentSelected model)
                         model.agent
-                   , viewGuard (isGuardSelected model)
-                        model.guard
+                   , renderGuardView (toGuardView model)
                    ]
                 ++ viewGuardPath (guardPredictedPath model)
                 ++ (case isAgentSelected model of
@@ -633,6 +642,14 @@ type alias GuardView =
     { pos : IntPos
     , selected : Bool
     , ko : Maybe Int
+    }
+
+
+toGuardView : Model -> GuardView
+toGuardView model =
+    { pos = positionOfGuard model.guard
+    , selected = isGuardSelected model
+    , ko = koValueOfGuard model.guard
     }
 
 
