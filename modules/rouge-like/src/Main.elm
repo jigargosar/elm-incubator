@@ -184,8 +184,37 @@ gridMoveLeft (Grid d) =
 
 
 gridMoveRight : Grid -> Grid
-gridMoveRight (Grid g) =
-    Grid g
+gridMoveRight (Grid d) =
+    case
+        d
+            |> Dict.filter (\_ t -> t == Player)
+            |> Dict.keys
+    of
+        ( r, c ) :: [] ->
+            case Dict.get ( r, c + 1 ) d of
+                Nothing ->
+                    Grid d
+
+                Just t ->
+                    case t of
+                        Player ->
+                            Debug.todo "impl"
+
+                        Enemy ->
+                            Dict.insert ( r, c + 1 ) Player d
+                                |> Dict.insert ( r, c ) Empty
+                                |> Grid
+
+                        Wall ->
+                            Grid d
+
+                        Empty ->
+                            Dict.insert ( r, c + 1 ) Player d
+                                |> Dict.insert ( r, c ) Empty
+                                |> Grid
+
+        _ ->
+            Debug.todo "impl"
 
 
 
