@@ -23,7 +23,7 @@ gridInit =
         [ "#..."
         , ".#.e"
         , "e..."
-        , "...3"
+        , "..3."
         ]
 
 
@@ -32,13 +32,23 @@ gridToList (Grid l) =
     l
 
 
-gridMovePlayer : Grid
-gridMovePlayer =
+gridMoveLeft : Grid
+gridMoveLeft =
     Grid
         [ "#..."
         , ".#.e"
         , "e..."
-        , "..3."
+        , ".3.."
+        ]
+
+
+gridMoveRight : Grid
+gridMoveRight =
+    Grid
+        [ "#..."
+        , ".#.e"
+        , "e..."
+        , "...3"
         ]
 
 
@@ -76,8 +86,16 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        KeyDown _ ->
-            ( gridMovePlayer, Cmd.none )
+        KeyDown key ->
+            case key of
+                "ArrowLeft" ->
+                    ( gridMoveLeft, Cmd.none )
+
+                "ArrowRight" ->
+                    ( gridMoveRight, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
