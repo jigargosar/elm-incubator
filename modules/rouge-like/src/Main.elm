@@ -3,8 +3,32 @@ module Main exposing (main)
 -- Browser.Element Scaffold
 
 import Browser
+import Browser.Events
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
+import Json.Decode as JD
+
+
+
+-- Grid
+
+
+type Grid
+    = Grid
+
+
+gridInit : Grid
+gridInit =
+    Grid
+
+
+gridToList : Grid -> List String
+gridToList _ =
+    [ "#..."
+    , ".#.e"
+    , "e..."
+    , "...3"
+    ]
 
 
 
@@ -12,7 +36,7 @@ import Html.Attributes exposing (class)
 
 
 type alias Model =
-    List String
+    Grid
 
 
 type alias Flags =
@@ -21,11 +45,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( [ "#..."
-      , ".#.e"
-      , "e..."
-      , "...3"
-      ]
+    ( gridInit
     , Cmd.none
     )
 
@@ -36,6 +56,7 @@ init _ =
 
 type Msg
     = NoOp
+    | KeyDown String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -44,10 +65,18 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
+        KeyDown key ->
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.batch []
+    Sub.batch
+        [ Browser.Events.onKeyDown
+            (JD.field "key" JD.string
+                |> JD.map KeyDown
+            )
+        ]
 
 
 
@@ -59,6 +88,7 @@ view model =
     div [ class "measure center" ]
         [ div [ class "code f1" ]
             (model
+                |> gridToList
                 |> List.map (\s -> div [] [ text s ])
             )
         ]
