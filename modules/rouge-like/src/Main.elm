@@ -95,6 +95,19 @@ toGridRecord =
             }
 
 
+fromGridRecord : GridRecord -> GridDict
+fromGridRecord gr =
+    ( gr.player, Player )
+        :: (gr.enemies |> Set.toList |> List.map (pairTo Enemy))
+        ++ (gr.walls |> Set.toList |> List.map (pairTo Wall))
+        ++ (gr.empty |> Set.toList |> List.map (pairTo Empty))
+        |> Dict.fromList
+
+
+pairTo b a =
+    pair a b
+
+
 type Grid
     = Grid GridDict
 
