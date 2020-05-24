@@ -14,42 +14,27 @@ import Json.Decode as JD
 
 
 type Grid
-    = Grid (List String)
+    = Grid {}
 
 
 gridInit : Grid
 gridInit =
-    Grid
-        [ "#..."
-        , ".#.e"
-        , "e..."
-        , "..3."
-        ]
+    Grid {}
 
 
 gridToList : Grid -> List String
-gridToList (Grid l) =
-    l
+gridToList (Grid g) =
+    []
 
 
-gridMoveLeft : Grid
-gridMoveLeft =
-    Grid
-        [ "#..."
-        , ".#.e"
-        , "e..."
-        , ".3.."
-        ]
+gridMoveLeft : Grid -> Grid
+gridMoveLeft (Grid g) =
+    Grid g
 
 
-gridMoveRight : Grid
-gridMoveRight =
-    Grid
-        [ "#..."
-        , ".#.e"
-        , "e..."
-        , "...3"
-        ]
+gridMoveRight : Grid -> Grid
+gridMoveRight (Grid g) =
+    Grid g
 
 
 
@@ -89,10 +74,10 @@ update message model =
         KeyDown key ->
             case key of
                 "ArrowLeft" ->
-                    ( gridMoveLeft, Cmd.none )
+                    ( gridMoveLeft model, Cmd.none )
 
                 "ArrowRight" ->
-                    ( gridMoveRight, Cmd.none )
+                    ( gridMoveRight model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
