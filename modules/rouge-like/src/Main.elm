@@ -159,6 +159,16 @@ gridMoveRight =
     gridMoveBy 0 1
 
 
+gridMoveUp : Grid -> Grid
+gridMoveUp =
+    gridMoveBy -1 0
+
+
+gridMoveDown : Grid -> Grid
+gridMoveDown =
+    gridMoveBy 1 0
+
+
 gridMoveBy : Int -> Int -> Grid -> Grid
 gridMoveBy dr dc (Grid d) =
     tileDictMoveBy dr dc d |> Grid
@@ -241,6 +251,12 @@ update message model =
 
                 "ArrowRight" ->
                     ( gridMoveRight model, Cmd.none )
+
+                "ArrowUp" ->
+                    ( gridMoveUp model, Cmd.none )
+
+                "ArrowDown" ->
+                    ( gridMoveDown model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
