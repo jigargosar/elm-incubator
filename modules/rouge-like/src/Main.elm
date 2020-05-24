@@ -149,24 +149,20 @@ groupByRow =
         >> List.map Dict.values
 
 
-gridMoveLeft : Grid -> Grid
-gridMoveLeft =
-    gridMoveBy 0 -1
+gridMovePlayer : Direction -> Grid -> Grid
+gridMovePlayer direction =
+    case direction of
+        Left ->
+            gridMoveBy 0 -1
 
+        Right ->
+            gridMoveBy 0 1
 
-gridMoveRight : Grid -> Grid
-gridMoveRight =
-    gridMoveBy 0 1
+        Up ->
+            gridMoveBy -1 0
 
-
-gridMoveUp : Grid -> Grid
-gridMoveUp =
-    gridMoveBy -1 0
-
-
-gridMoveDown : Grid -> Grid
-gridMoveDown =
-    gridMoveBy 1 0
+        Down ->
+            gridMoveBy 1 0
 
 
 gridMoveBy : Int -> Int -> Grid -> Grid
@@ -211,11 +207,41 @@ tileDictMoveBy dr dc d =
 
 
 
+-- Grid2
+
+
+type alias Position =
+    { row : Int
+    , column : Int
+    }
+
+
+type alias World =
+    { rows : Int
+    , columns : Int
+    , player : Position
+    , walls : List Position
+    , enemies : List Position
+    }
+
+
+worldInit =
+    { rows = 10
+    , columns = 18
+    , player = Position 0 0
+    , walls = []
+    , enemies = []
+    }
+
+
+
 -- Model
 
 
 type alias Model =
-    Grid
+    { grid : Grid
+    , world : World
+    }
 
 
 type alias Flags =
@@ -224,7 +250,9 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( gridInit
+    ( { grid = gridInit
+      , world = worldInit
+      }
     , Cmd.none
     )
 
@@ -245,21 +273,43 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            case key of
-                "ArrowLeft" ->
-                    ( gridMoveLeft model, Cmd.none )
+            case directionFromKey key of
+                Just direction ->
+                    ( mapGrid (gridMovePlayer direction) model, Cmd.none )
 
-                "ArrowRight" ->
-                    ( gridMoveRight model, Cmd.none )
-
-                "ArrowUp" ->
-                    ( gridMoveUp model, Cmd.none )
-
-                "ArrowDown" ->
-                    ( gridMoveDown model, Cmd.none )
-
-                _ ->
+                Nothing ->
                     ( model, Cmd.none )
+
+
+directionFromKey : String -> Maybe Direction
+directionFromKey key =
+    case key of
+        "ArrowLeft" ->
+            Just Left
+
+        "ArrowRight" ->
+            Just Right
+
+        "ArrowUp" ->
+            Just Up
+
+        "ArrowDown" ->
+            Just Down
+
+        _ ->
+            Nothing
+
+
+type Direction
+    = Left
+    | Right
+    | Up
+    | Down
+
+
+mapGrid : (Grid -> Grid) -> Model -> Model
+mapGrid f model =
+    { model | grid = f model.grid }
 
 
 subscriptions : Model -> Sub Msg
@@ -280,7 +330,7 @@ view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
         [ div [ class "code f1" ]
-            (model
+            (model.grid
                 |> gridToRows
                 |> List.map (List.map tileToChar >> String.fromList)
                 |> List.map (\s -> div [] [ text s ])
