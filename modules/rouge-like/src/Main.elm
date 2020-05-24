@@ -225,6 +225,7 @@ type alias World =
     }
 
 
+worldInit : World
 worldInit =
     { rows = 10
     , columns = 18
