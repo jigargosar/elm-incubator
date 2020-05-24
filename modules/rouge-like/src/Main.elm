@@ -61,51 +61,53 @@ type alias GridDict =
     Dict ( Int, Int ) Tile
 
 
-type alias GridRecord =
-    { player : ( Int, Int )
-    , enemies : Set ( Int, Int )
-    , walls : Set ( Int, Int )
-    , empty : Set ( Int, Int )
-    }
 
-
-toGridRecord : GridDict -> GridRecord
-toGridRecord =
-    let
-        reducer ( position, t ) gr =
-            case t of
-                Player ->
-                    { gr | player = position }
-
-                Enemy ->
-                    { gr | enemies = Set.insert position gr.enemies }
-
-                Wall ->
-                    { gr | walls = Set.insert position gr.walls }
-
-                Empty ->
-                    { gr | empty = Set.insert position gr.empty }
-    in
-    Dict.toList
-        >> List.foldl reducer
-            { player = ( 0, 0 )
-            , enemies = Set.empty
-            , walls = Set.empty
-            , empty = Set.empty
-            }
-
-
-fromGridRecord : GridRecord -> GridDict
-fromGridRecord gr =
-    ( gr.player, Player )
-        :: (gr.enemies |> Set.toList |> List.map (pairTo Enemy))
-        ++ (gr.walls |> Set.toList |> List.map (pairTo Wall))
-        ++ (gr.empty |> Set.toList |> List.map (pairTo Empty))
-        |> Dict.fromList
-
-
-pairTo b a =
-    pair a b
+--type alias GridRecord =
+--    { player : ( Int, Int )
+--    , enemies : Set ( Int, Int )
+--    , walls : Set ( Int, Int )
+--    , empty : Set ( Int, Int )
+--    }
+--
+--
+--toGridRecord : GridDict -> GridRecord
+--toGridRecord =
+--    let
+--        reducer ( position, t ) gr =
+--            case t of
+--                Player ->
+--                    { gr | player = position }
+--
+--                Enemy ->
+--                    { gr | enemies = Set.insert position gr.enemies }
+--
+--                Wall ->
+--                    { gr | walls = Set.insert position gr.walls }
+--
+--                Empty ->
+--                    { gr | empty = Set.insert position gr.empty }
+--    in
+--    Dict.toList
+--        >> List.foldl reducer
+--            { player = ( 0, 0 )
+--            , enemies = Set.empty
+--            , walls = Set.empty
+--            , empty = Set.empty
+--            }
+--
+--
+--fromGridRecord : GridRecord -> GridDict
+--fromGridRecord gr =
+--    ( gr.player, Player )
+--        :: (gr.enemies |> Set.toList |> List.map (pairTo Enemy))
+--        ++ (gr.walls |> Set.toList |> List.map (pairTo Wall))
+--        ++ (gr.empty |> Set.toList |> List.map (pairTo Empty))
+--        |> Dict.fromList
+--
+--
+--pairTo b a =
+--    pair a b
+--
 
 
 type Grid
@@ -148,8 +150,37 @@ groupByRow =
 
 
 gridMoveLeft : Grid -> Grid
-gridMoveLeft (Grid g) =
-    Grid g
+gridMoveLeft (Grid d) =
+    case
+        d
+            |> Dict.filter (\_ t -> t == Player)
+            |> Dict.keys
+    of
+        ( r, c ) :: [] ->
+            case Dict.get ( r, c - 1 ) d of
+                Nothing ->
+                    Grid d
+
+                Just t ->
+                    case t of
+                        Player ->
+                            Debug.todo "impl"
+
+                        Enemy ->
+                            Dict.insert ( r, c - 1 ) Player d
+                                |> Dict.insert ( r, c ) Empty
+                                |> Grid
+
+                        Wall ->
+                            Grid d
+
+                        Empty ->
+                            Dict.insert ( r, c - 1 ) Player d
+                                |> Dict.insert ( r, c ) Empty
+                                |> Grid
+
+        _ ->
+            Debug.todo "impl"
 
 
 gridMoveRight : Grid -> Grid
