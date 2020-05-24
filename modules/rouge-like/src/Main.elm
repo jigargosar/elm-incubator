@@ -150,41 +150,22 @@ groupByRow =
 
 
 gridMoveLeft : Grid -> Grid
-gridMoveLeft (Grid d) =
-    case
-        d
-            |> Dict.filter (\_ t -> t == Player)
-            |> Dict.keys
-    of
-        ( r, c ) :: [] ->
-            case Dict.get ( r, c - 1 ) d of
-                Nothing ->
-                    Grid d
-
-                Just t ->
-                    case t of
-                        Player ->
-                            Debug.todo "impl"
-
-                        Enemy ->
-                            Dict.insert ( r, c - 1 ) Player d
-                                |> Dict.insert ( r, c ) Empty
-                                |> Grid
-
-                        Wall ->
-                            Grid d
-
-                        Empty ->
-                            Dict.insert ( r, c - 1 ) Player d
-                                |> Dict.insert ( r, c ) Empty
-                                |> Grid
-
-        _ ->
-            Debug.todo "impl"
+gridMoveLeft =
+    gridMoveBy 0 -1
 
 
-gridMoveBy : Int -> Int -> TileDict -> TileDict
-gridMoveBy dr dc d =
+gridMoveRight : Grid -> Grid
+gridMoveRight =
+    gridMoveBy 0 1
+
+
+gridMoveBy : Int -> Int -> Grid -> Grid
+gridMoveBy dr dc (Grid d) =
+    tileDictMoveBy dr dc d |> Grid
+
+
+tileDictMoveBy : Int -> Int -> TileDict -> TileDict
+tileDictMoveBy dr dc d =
     case
         d
             |> Dict.filter (\_ t -> t == Player)
@@ -214,40 +195,6 @@ gridMoveBy dr dc d =
                         Empty ->
                             Dict.insert candidatePosition Player d
                                 |> Dict.insert position Empty
-
-        _ ->
-            Debug.todo "impl"
-
-
-gridMoveRight : Grid -> Grid
-gridMoveRight (Grid d) =
-    case
-        d
-            |> Dict.filter (\_ t -> t == Player)
-            |> Dict.keys
-    of
-        ( r, c ) :: [] ->
-            case Dict.get ( r, c + 1 ) d of
-                Nothing ->
-                    Grid d
-
-                Just t ->
-                    case t of
-                        Player ->
-                            Debug.todo "impl"
-
-                        Enemy ->
-                            Dict.insert ( r, c + 1 ) Player d
-                                |> Dict.insert ( r, c ) Empty
-                                |> Grid
-
-                        Wall ->
-                            Grid d
-
-                        Empty ->
-                            Dict.insert ( r, c + 1 ) Player d
-                                |> Dict.insert ( r, c ) Empty
-                                |> Grid
 
         _ ->
             Debug.todo "impl"
