@@ -57,7 +57,7 @@ tileToChar tile =
 -- Grid
 
 
-type alias GridDict =
+type alias TileDict =
     Dict ( Int, Int ) Tile
 
 
@@ -111,7 +111,7 @@ type alias GridDict =
 
 
 type Grid
-    = Grid GridDict
+    = Grid TileDict
 
 
 gridInit : Grid
@@ -178,6 +178,42 @@ gridMoveLeft (Grid d) =
                             Dict.insert ( r, c - 1 ) Player d
                                 |> Dict.insert ( r, c ) Empty
                                 |> Grid
+
+        _ ->
+            Debug.todo "impl"
+
+
+gridMoveBy : Int -> Int -> TileDict -> TileDict
+gridMoveBy dr dc d =
+    case
+        d
+            |> Dict.filter (\_ t -> t == Player)
+            |> Dict.keys
+    of
+        (( r, c ) as position) :: [] ->
+            let
+                candidatePosition =
+                    ( r + dr, c + dc )
+            in
+            case Dict.get candidatePosition d of
+                Nothing ->
+                    d
+
+                Just t ->
+                    case t of
+                        Player ->
+                            Debug.todo "impl"
+
+                        Enemy ->
+                            Dict.insert candidatePosition Player d
+                                |> Dict.insert position Empty
+
+                        Wall ->
+                            d
+
+                        Empty ->
+                            Dict.insert candidatePosition Player d
+                                |> Dict.insert position Empty
 
         _ ->
             Debug.todo "impl"
