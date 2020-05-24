@@ -14,21 +14,32 @@ import Json.Decode as JD
 
 
 type Grid
-    = Grid
+    = Grid (List String)
 
 
 gridInit : Grid
 gridInit =
     Grid
+        [ "#..."
+        , ".#.e"
+        , "e..."
+        , "...3"
+        ]
 
 
 gridToList : Grid -> List String
-gridToList _ =
-    [ "#..."
-    , ".#.e"
-    , "e..."
-    , "...3"
-    ]
+gridToList (Grid l) =
+    l
+
+
+gridMovePlayer : Grid
+gridMovePlayer =
+    Grid
+        [ "#..."
+        , ".#.e"
+        , "e..."
+        , "..3."
+        ]
 
 
 
@@ -65,8 +76,8 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        KeyDown key ->
-            ( model, Cmd.none )
+        KeyDown _ ->
+            ( gridMovePlayer, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
