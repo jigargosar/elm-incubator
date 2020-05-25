@@ -206,7 +206,6 @@ tileDictMoveBy dr dc d =
 
 
 
--- Position
 -- Model
 
 
