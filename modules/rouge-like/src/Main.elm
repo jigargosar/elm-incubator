@@ -265,26 +265,45 @@ worldGenerator config =
     let
         positions =
             positionsOfDimension config
-
-        wallsGenerator =
-            Random.list (List.length positions) (Random.weighted ( 20, True ) [ ( 80, False ) ])
-                |> Random.map (List.map2 pair positions >> List.filter second >> List.map first)
     in
     Random.constant worldInit
+
+
+wallsGenerator : List Position -> Generator ( List Position, List Position )
+wallsGenerator =
+    randomTakePercent 0.2
 
 
 
 -- More
 
 
-randomUniformTake : Int -> ( List a, List a ) -> Generator ( List a, List a )
-randomUniformTake n ( l, r ) =
+randomTakePercent : Float -> List a -> Generator ( List a, List a )
+randomTakePercent pct xs =
+    let
+        takePct =
+            clamp 0 1 pct
+
+        dropPct =
+            1 - takePct
+    in
+    Random.list (List.length xs) (Random.weighted ( takePct, True ) [ ( dropPct, False ) ])
+        |> Random.map
+            (List.map2 pair xs
+                >> List.filter second
+                >> List.map first
+                >> (\taken -> ( taken, removeAll taken xs ))
+            )
+
+
+randomTakeUniform : Int -> ( List a, List a ) -> Generator ( List a, List a )
+randomTakeUniform n ( l, r ) =
     case ( n > 0, randomUniformChooseOne r ) of
         ( True, Just consGenerator ) ->
             consGenerator
                 |> Random.andThen
                     (\( x, xs ) ->
-                        randomUniformTake (n - 1) ( x :: l, xs )
+                        randomTakeUniform (n - 1) ( x :: l, xs )
                     )
 
         _ ->
@@ -306,6 +325,11 @@ randomUniformSelectOne : a -> List a -> Generator ( a, List a )
 randomUniformSelectOne x xs =
     Random.uniform x xs
         |> Random.map (\s -> ( s, remove s xs ))
+
+
+removeAll : List a -> List a -> List a
+removeAll rs =
+    reject (\x -> List.member x rs)
 
 
 remove : a -> List a -> List a
