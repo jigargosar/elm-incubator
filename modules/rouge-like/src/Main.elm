@@ -281,6 +281,7 @@ worldGenerator config =
         _ =
             wallsGenerator acc
                 |> Random.andThen enemiesGenerator
+                |> Random.andThen (playerGenerator >> Random.constant)
     in
     Random.constant worldInit
 
@@ -307,6 +308,27 @@ enemiesGenerator acc =
                     , empty = removeAll enemies acc.empty
                 }
             )
+
+
+maybeRandomMap : (a -> b) -> Maybe (Generator a) -> Maybe (Generator b)
+maybeRandomMap =
+    Maybe.map << Random.map
+
+
+playerGenerator : WorldGeneratorAccumulator -> Maybe (Generator WorldGeneratorAccumulator)
+playerGenerator acc =
+    randomUniformChooseOne acc.empty
+        |> maybeRandomMap
+            (\( player, empty ) ->
+                { acc
+                    | player = player
+                    , empty = empty
+                }
+            )
+
+
+maybeGeneratorToGeneratorMaybe mb =
+    Random.constant mb
 
 
 
