@@ -251,30 +251,20 @@ worldInit =
     }
 
 
-type alias WorldGeneratorConfig =
-    { rows : Int
-    , columns : Int
-    , walls : Int
-    , enemies : Int
-    }
-
-
 type alias WorldGeneratorAccumulator =
-    { config : WorldGeneratorConfig
-    , empty : List Position
+    { empty : List Position
     , walls : List Position
     , enemies : List Position
     , player : Position
     }
 
 
-worldGenerator : WorldGeneratorConfig -> Generator World
+worldGenerator : { a | rows : Int, columns : Int } -> Generator World
 worldGenerator config =
     let
         acc : WorldGeneratorAccumulator
         acc =
-            { config = config
-            , empty = positionsOfDimension config
+            { empty = positionsOfDimension config
             , walls = []
             , enemies = []
             , player = Position 0 0
@@ -284,13 +274,13 @@ worldGenerator config =
         |> Random.andThen enemiesGenerator
         |> Random.andThen playerGenerator
         |> Random.map (Maybe.withDefault acc)
-        |> Random.map toWorld
+        |> Random.map (toWorld config)
 
 
-toWorld : WorldGeneratorAccumulator -> World
-toWorld acc =
-    { rows = acc.config.rows
-    , columns = acc.config.columns
+toWorld : { a | rows : Int, columns : Int } -> WorldGeneratorAccumulator -> World
+toWorld config acc =
+    { rows = config.rows
+    , columns = config.columns
     , player = acc.player
     , walls = acc.walls
     , enemies = acc.enemies
