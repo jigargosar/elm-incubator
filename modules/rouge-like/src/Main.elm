@@ -6,6 +6,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
+import Random exposing (Generator)
 import Set exposing (Set)
 import Tuple exposing (..)
 
@@ -207,13 +208,29 @@ tileDictMoveBy dr dc d =
 
 
 
--- Grid2
+-- Position
 
 
 type alias Position =
     { row : Int
     , column : Int
     }
+
+
+positionsOf : Int -> Int -> List Position
+positionsOf rows columns =
+    List.range 0 (rows - 1)
+        |> List.map (\r -> List.range 0 (columns - 1) |> List.map (Position r))
+        |> List.concat
+
+
+positionsOfDimension : { a | rows : Int, columns : Int } -> List Position
+positionsOfDimension { rows, columns } =
+    positionsOf rows columns
+
+
+
+-- World
 
 
 type alias World =
@@ -233,6 +250,47 @@ worldInit =
     , walls = []
     , enemies = []
     }
+
+
+type alias WorldGeneratorConfig =
+    { rows : Int
+    , columns : Int
+    , walls : Int
+    , enemies : Int
+    }
+
+
+worldGenerator : WorldGeneratorConfig -> Generator World
+worldGenerator config =
+    let
+        positions =
+            positionsOfDimension config
+
+        wallsGenerator =
+            Random.list (List.length positions) (Random.weighted ( 20, True ) [ ( 80, False ) ])
+                |> Random.map (List.map2 pair positions >> List.filter second >> List.map first)
+    in
+    Random.constant worldInit
+
+
+
+-- More
+
+
+pickUniform : a -> List a -> Generator ( a, List a )
+pickUniform x xs =
+    Random.uniform x xs
+        |> Random.map (\s -> ( s, remove s xs ))
+
+
+remove : a -> List a -> List a
+remove x =
+    reject ((==) x)
+
+
+reject : (a -> Bool) -> List a -> List a
+reject p =
+    List.filter (p >> not)
 
 
 
