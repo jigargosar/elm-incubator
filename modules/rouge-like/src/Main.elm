@@ -260,7 +260,8 @@ type alias WorldGeneratorConfig =
 
 
 type alias WorldGeneratorAccumulator =
-    { empty : List Position
+    { config : WorldGeneratorConfig
+    , empty : List Position
     , walls : List Position
     , enemies : List Position
     , player : Position
@@ -272,19 +273,28 @@ worldGenerator config =
     let
         acc : WorldGeneratorAccumulator
         acc =
-            { empty = positionsOfDimension config
+            { config = config
+            , empty = positionsOfDimension config
             , walls = []
             , enemies = []
             , player = Position 0 0
             }
-
-        foo : Generator (Maybe WorldGeneratorAccumulator)
-        foo =
-            wallsGenerator acc
-                |> Random.andThen enemiesGenerator
-                |> Random.andThen playerGenerator
     in
-    Random.constant worldInit
+    wallsGenerator acc
+        |> Random.andThen enemiesGenerator
+        |> Random.andThen playerGenerator
+        |> Random.map (Maybe.withDefault acc)
+        |> Random.map toWorld
+
+
+toWorld : WorldGeneratorAccumulator -> World
+toWorld acc =
+    { rows = acc.config.rows
+    , columns = acc.config.columns
+    , player = acc.player
+    , walls = acc.walls
+    , enemies = acc.enemies
+    }
 
 
 wallsGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulator
