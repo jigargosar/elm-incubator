@@ -301,7 +301,7 @@ wallsGenerator acc =
 
 enemiesGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulator
 enemiesGenerator acc =
-    randomTakeUniform acc.config.enemies acc.empty
+    randomTakeUniform 10 acc.empty
         |> Random.map
             (\enemies ->
                 { acc
@@ -327,11 +327,6 @@ playerGenerator acc =
                         }
                             |> Just
                     )
-
-
-maybeRandomMap : (a -> b) -> Maybe (Generator a) -> Maybe (Generator b)
-maybeRandomMap =
-    Maybe.map << Random.map
 
 
 
