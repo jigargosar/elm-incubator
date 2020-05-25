@@ -289,7 +289,7 @@ wallsGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulato
 wallsGenerator acc =
     randomTakePercent 0.2 acc.empty
         |> Random.map
-            (\( walls, _ ) ->
+            (\walls ->
                 { acc
                     | walls = walls
                     , empty = removeAll walls acc.empty
@@ -313,7 +313,7 @@ enemiesGenerator acc =
 -- More
 
 
-randomTakePercent : Float -> List a -> Generator ( List a, List a )
+randomTakePercent : Float -> List a -> Generator (List a)
 randomTakePercent pct xs =
     let
         takePct =
@@ -327,7 +327,6 @@ randomTakePercent pct xs =
             (List.map2 pair xs
                 >> List.filter second
                 >> List.map first
-                >> (\taken -> ( taken, removeAll taken xs ))
             )
 
 
