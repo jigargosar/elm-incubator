@@ -282,8 +282,7 @@ worldGenerator config =
         foo =
             wallsGenerator acc
                 |> Random.andThen enemiesGenerator
-                |> Random.map playerGenerator
-                |> Random.andThen identity
+                |> Random.andThen playerGenerator
     in
     Random.constant worldInit
 
