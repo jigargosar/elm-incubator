@@ -310,11 +310,6 @@ enemiesGenerator acc =
             )
 
 
-maybeRandomMap : (a -> b) -> Maybe (Generator a) -> Maybe (Generator b)
-maybeRandomMap =
-    Maybe.map << Random.map
-
-
 playerGenerator : WorldGeneratorAccumulator -> Maybe (Generator WorldGeneratorAccumulator)
 playerGenerator acc =
     randomUniformChooseOne acc.empty
@@ -327,8 +322,9 @@ playerGenerator acc =
             )
 
 
-maybeGeneratorToGeneratorMaybe mb =
-    Random.constant mb
+maybeRandomMap : (a -> b) -> Maybe (Generator a) -> Maybe (Generator b)
+maybeRandomMap =
+    Maybe.map << Random.map
 
 
 
