@@ -301,7 +301,7 @@ enemiesGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumula
 enemiesGenerator acc =
     randomTakeUniform 10 acc.empty
         |> Random.map
-            (\( enemies, _ ) ->
+            (\enemies ->
                 { acc
                     | enemies = enemies
                     , empty = removeAll enemies acc.empty
@@ -330,12 +330,12 @@ randomTakePercent pct xs =
             )
 
 
-randomTakeUniform : Int -> List a -> Generator ( List a, List a )
+randomTakeUniform : Int -> List a -> Generator (List a)
 randomTakeUniform n xs =
     randomTakeUniformHelp n ( [], xs )
 
 
-randomTakeUniformHelp : Int -> ( List a, List a ) -> Generator ( List a, List a )
+randomTakeUniformHelp : Int -> ( List a, List a ) -> Generator (List a)
 randomTakeUniformHelp n ( l, r ) =
     case ( n > 0, randomUniformChooseOne r ) of
         ( True, Just consGenerator ) ->
@@ -346,7 +346,7 @@ randomTakeUniformHelp n ( l, r ) =
                     )
 
         _ ->
-            Random.constant ( l, r )
+            Random.constant l
 
 
 randomUniformChooseOne : List a -> Maybe (Generator ( a, List a ))
