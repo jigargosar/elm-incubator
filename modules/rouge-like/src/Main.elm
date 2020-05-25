@@ -60,55 +60,6 @@ type alias TileDict =
     Dict ( Int, Int ) Tile
 
 
-
---type alias GridRecord =
---    { player : ( Int, Int )
---    , enemies : Set ( Int, Int )
---    , walls : Set ( Int, Int )
---    , empty : Set ( Int, Int )
---    }
---
---
---toGridRecord : GridDict -> GridRecord
---toGridRecord =
---    let
---        reducer ( position, t ) gr =
---            case t of
---                Player ->
---                    { gr | player = position }
---
---                Enemy ->
---                    { gr | enemies = Set.insert position gr.enemies }
---
---                Wall ->
---                    { gr | walls = Set.insert position gr.walls }
---
---                Empty ->
---                    { gr | empty = Set.insert position gr.empty }
---    in
---    Dict.toList
---        >> List.foldl reducer
---            { player = ( 0, 0 )
---            , enemies = Set.empty
---            , walls = Set.empty
---            , empty = Set.empty
---            }
---
---
---fromGridRecord : GridRecord -> GridDict
---fromGridRecord gr =
---    ( gr.player, Player )
---        :: (gr.enemies |> Set.toList |> List.map (pairTo Enemy))
---        ++ (gr.walls |> Set.toList |> List.map (pairTo Wall))
---        ++ (gr.empty |> Set.toList |> List.map (pairTo Empty))
---        |> Dict.fromList
---
---
---pairTo b a =
---    pair a b
---
-
-
 type Grid
     = Grid TileDict
 
