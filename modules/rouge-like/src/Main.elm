@@ -277,6 +277,31 @@ worldGenerator config =
 -- More
 
 
+randomUniformTake : Int -> ( List a, List a ) -> Generator ( List a, List a )
+randomUniformTake n ( l, r ) =
+    case ( n > 0, randomUniformChooseOne r ) of
+        ( True, Just consGenerator ) ->
+            consGenerator
+                |> Random.andThen
+                    (\( x, xs ) ->
+                        randomUniformTake (n - 1) ( x :: l, xs )
+                    )
+
+        _ ->
+            Random.constant ( l, r )
+
+
+randomUniformChooseOne : List a -> Maybe (Generator ( a, List a ))
+randomUniformChooseOne xs =
+    case xs of
+        [] ->
+            Nothing
+
+        h :: t ->
+            randomUniformSelectOne h t
+                |> Just
+
+
 randomUniformSelectOne : a -> List a -> Generator ( a, List a )
 randomUniformSelectOne x xs =
     Random.uniform x xs
