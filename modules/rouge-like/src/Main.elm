@@ -7,7 +7,6 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
 import Random exposing (Generator)
-import Set exposing (Set)
 import Tuple exposing (..)
 
 
@@ -260,18 +259,54 @@ type alias WorldGeneratorConfig =
     }
 
 
+type alias WorldGeneratorAccumulator =
+    { empty : List Position
+    , walls : List Position
+    , enemies : List Position
+    , player : Position
+    }
+
+
 worldGenerator : WorldGeneratorConfig -> Generator World
 worldGenerator config =
     let
-        positions =
-            positionsOfDimension config
+        acc : WorldGeneratorAccumulator
+        acc =
+            { empty = positionsOfDimension config
+            , walls = []
+            , enemies = []
+            , player = Position 0 0
+            }
+
+        _ =
+            wallsGenerator acc
+                |> Random.andThen enemiesGenerator
     in
     Random.constant worldInit
 
 
-wallsGenerator : List Position -> Generator ( List Position, List Position )
-wallsGenerator =
-    randomTakePercent 0.2
+wallsGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulator
+wallsGenerator acc =
+    randomTakePercent 0.2 acc.empty
+        |> Random.map
+            (\( walls, _ ) ->
+                { acc
+                    | walls = walls
+                    , empty = removeAll walls acc.empty
+                }
+            )
+
+
+enemiesGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulator
+enemiesGenerator acc =
+    randomTakeUniform 10 acc.empty
+        |> Random.map
+            (\( enemies, _ ) ->
+                { acc
+                    | enemies = enemies
+                    , empty = removeAll enemies acc.empty
+                }
+            )
 
 
 
@@ -296,14 +331,19 @@ randomTakePercent pct xs =
             )
 
 
-randomTakeUniform : Int -> ( List a, List a ) -> Generator ( List a, List a )
-randomTakeUniform n ( l, r ) =
+randomTakeUniform : Int -> List a -> Generator ( List a, List a )
+randomTakeUniform n xs =
+    randomTakeUniformHelp n ( [], xs )
+
+
+randomTakeUniformHelp : Int -> ( List a, List a ) -> Generator ( List a, List a )
+randomTakeUniformHelp n ( l, r ) =
     case ( n > 0, randomUniformChooseOne r ) of
         ( True, Just consGenerator ) ->
             consGenerator
                 |> Random.andThen
                     (\( x, xs ) ->
-                        randomTakeUniform (n - 1) ( x :: l, xs )
+                        randomTakeUniformHelp (n - 1) ( x :: l, xs )
                     )
 
         _ ->
