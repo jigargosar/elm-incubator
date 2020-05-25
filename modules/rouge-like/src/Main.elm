@@ -277,8 +277,8 @@ worldGenerator config =
 -- More
 
 
-pickUniform : a -> List a -> Generator ( a, List a )
-pickUniform x xs =
+randomUniformSelectOne : a -> List a -> Generator ( a, List a )
+randomUniformSelectOne x xs =
     Random.uniform x xs
         |> Random.map (\s -> ( s, remove s xs ))
 
