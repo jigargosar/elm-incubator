@@ -6,7 +6,6 @@ import Dict exposing (Dict)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
-import Random exposing (Generator)
 import Tuple exposing (..)
 
 
@@ -208,206 +207,11 @@ tileDictMoveBy dr dc d =
 
 
 -- Position
-
-
-type alias Position =
-    { row : Int
-    , column : Int
-    }
-
-
-positionsOf : Int -> Int -> List Position
-positionsOf rows columns =
-    List.range 0 (rows - 1)
-        |> List.map (\r -> List.range 0 (columns - 1) |> List.map (Position r))
-        |> List.concat
-
-
-positionsOfDimension : { a | rows : Int, columns : Int } -> List Position
-positionsOfDimension { rows, columns } =
-    positionsOf rows columns
-
-
-
--- World
-
-
-type alias World =
-    { rows : Int
-    , columns : Int
-    , player : Position
-    , walls : List Position
-    , enemies : List Position
-    }
-
-
-worldInit : World
-worldInit =
-    { rows = 10
-    , columns = 18
-    , player = Position 0 0
-    , walls = []
-    , enemies = []
-    }
-
-
-type alias WorldGeneratorAccumulator =
-    { empty : List Position
-    , walls : List Position
-    , enemies : List Position
-    , player : Position
-    }
-
-
-worldGenerator : { a | rows : Int, columns : Int } -> Generator World
-worldGenerator config =
-    let
-        acc : WorldGeneratorAccumulator
-        acc =
-            { empty = positionsOfDimension config
-            , walls = []
-            , enemies = []
-            , player = Position 0 0
-            }
-    in
-    wallsGenerator acc
-        |> Random.andThen enemiesGenerator
-        |> Random.andThen playerGenerator
-        |> Random.map (Maybe.withDefault acc)
-        |> Random.map (toWorld config)
-
-
-toWorld : { a | rows : Int, columns : Int } -> WorldGeneratorAccumulator -> World
-toWorld config acc =
-    { rows = config.rows
-    , columns = config.columns
-    , player = acc.player
-    , walls = acc.walls
-    , enemies = acc.enemies
-    }
-
-
-wallsGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulator
-wallsGenerator acc =
-    randomTakePercent 0.2 acc.empty
-        |> Random.map
-            (\walls ->
-                { acc
-                    | walls = walls
-                    , empty = removeAll walls acc.empty
-                }
-            )
-
-
-enemiesGenerator : WorldGeneratorAccumulator -> Generator WorldGeneratorAccumulator
-enemiesGenerator acc =
-    randomTakeUniform 10 acc.empty
-        |> Random.map
-            (\enemies ->
-                { acc
-                    | enemies = enemies
-                    , empty = removeAll enemies acc.empty
-                }
-            )
-
-
-playerGenerator : WorldGeneratorAccumulator -> Generator (Maybe WorldGeneratorAccumulator)
-playerGenerator acc =
-    case randomUniformChooseOne acc.empty of
-        Nothing ->
-            Random.constant Nothing
-
-        Just g ->
-            g
-                |> Random.map
-                    (\( player, empty ) ->
-                        { acc
-                            | player = player
-                            , empty = empty
-                        }
-                            |> Just
-                    )
-
-
-
--- More
-
-
-randomTakePercent : Float -> List a -> Generator (List a)
-randomTakePercent pct xs =
-    let
-        takePct =
-            clamp 0 1 pct
-
-        dropPct =
-            1 - takePct
-    in
-    Random.list (List.length xs) (Random.weighted ( takePct, True ) [ ( dropPct, False ) ])
-        |> Random.map
-            (List.map2 pair xs
-                >> List.filter second
-                >> List.map first
-            )
-
-
-randomTakeUniform : Int -> List a -> Generator (List a)
-randomTakeUniform n xs =
-    randomTakeUniformHelp n ( [], xs )
-
-
-randomTakeUniformHelp : Int -> ( List a, List a ) -> Generator (List a)
-randomTakeUniformHelp n ( l, r ) =
-    case ( n > 0, randomUniformChooseOne r ) of
-        ( True, Just consGenerator ) ->
-            consGenerator
-                |> Random.andThen
-                    (\( x, xs ) ->
-                        randomTakeUniformHelp (n - 1) ( x :: l, xs )
-                    )
-
-        _ ->
-            Random.constant l
-
-
-randomUniformChooseOne : List a -> Maybe (Generator ( a, List a ))
-randomUniformChooseOne xs =
-    case xs of
-        [] ->
-            Nothing
-
-        h :: t ->
-            randomUniformSelectOne h t
-                |> Just
-
-
-randomUniformSelectOne : a -> List a -> Generator ( a, List a )
-randomUniformSelectOne x xs =
-    Random.uniform x xs
-        |> Random.map (\s -> ( s, remove s xs ))
-
-
-removeAll : List a -> List a -> List a
-removeAll rs =
-    reject (\x -> List.member x rs)
-
-
-remove : a -> List a -> List a
-remove x =
-    reject ((==) x)
-
-
-reject : (a -> Bool) -> List a -> List a
-reject p =
-    List.filter (p >> not)
-
-
-
 -- Model
 
 
 type alias Model =
     { grid : Grid
-    , world : World
     }
 
 
@@ -418,7 +222,6 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( { grid = gridInit
-      , world = worldInit
       }
     , Cmd.none
     )
