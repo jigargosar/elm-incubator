@@ -292,8 +292,8 @@ moveEnemyTo nextPosition enemy model =
                 , playerHp = model.playerHp - 1 |> atLeast 0
             }
 
-        E_Enemy enemy2 ->
-            { model | enemies = model.enemies |> List.remove enemy2 }
+        E_Enemy victim ->
+            { model | enemies = model.enemies |> List.remove victim }
 
         E_Wall ->
             model
