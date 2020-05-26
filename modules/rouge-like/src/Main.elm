@@ -46,10 +46,10 @@ init _ =
             Random.initialSeed 10
 
         ( ( walls, emptyPositions1 ), _ ) =
-            Random.step (shuffleSplit 40 emptyPositions0) seed0
+            Random.step (shuffleSplit 20 emptyPositions0) seed0
 
         ( enemies, _ ) =
-            List.splitAt 10 emptyPositions1
+            List.splitAt 8 emptyPositions1
     in
     ( { dimension = dimension
       , player = playerPosition
