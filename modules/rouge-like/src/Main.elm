@@ -262,8 +262,8 @@ stepEnemyWithUid uid model =
         Just enemy ->
             nextEnemyPositionGenerator model enemy
                 |> Random.map
-                    (\mp ->
-                        case mp of
+                    (\maybePosition ->
+                        case maybePosition of
                             Nothing ->
                                 model
 
