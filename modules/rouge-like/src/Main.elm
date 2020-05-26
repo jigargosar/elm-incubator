@@ -49,11 +49,41 @@ update message model =
 
         KeyDown key ->
             case directionFromKey key of
-                Just _ ->
-                    ( model, Cmd.none )
+                Just direction ->
+                    ( movePlayerInDirection direction model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
+
+
+movePlayerInDirection : Direction -> Model -> Model
+movePlayerInDirection direction model =
+    let
+        position =
+            model.player
+                |> stepPositionInDirection direction
+    in
+    if Dimension.member position model.dimension then
+        { model | player = position }
+
+    else
+        model
+
+
+stepPositionInDirection : Direction -> Position -> Position
+stepPositionInDirection direction =
+    case direction of
+        Left ->
+            Position.left
+
+        Right ->
+            Position.right
+
+        Up ->
+            Position.up
+
+        Down ->
+            Position.down
 
 
 directionFromKey : String -> Maybe Direction

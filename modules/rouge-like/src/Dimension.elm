@@ -1,4 +1,4 @@
-module Dimension exposing (Dimension, new, toRows)
+module Dimension exposing (Dimension, member, new, toRows)
 
 import Position exposing (Position)
 
@@ -26,3 +26,11 @@ toRows d =
 rangeLen : Int -> List Int
 rangeLen len =
     List.range 0 (len - 1)
+
+
+member : Position -> Dimension -> Bool
+member position dimension =
+    case Position.toTuple position of
+        ( row, column ) ->
+            (clamp 0 dimension.rows row == row)
+                && (clamp 0 dimension.columns column == column)

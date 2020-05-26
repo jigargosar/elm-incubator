@@ -1,4 +1,4 @@
-module Position exposing (Position, fromTuple, new, toTuple)
+module Position exposing (Position, down, fromTuple, left, new, right, toTuple, up)
 
 
 type alias Position =
@@ -19,3 +19,37 @@ toTuple p =
 fromTuple : ( Int, Int ) -> Position
 fromTuple ( r, c ) =
     new r c
+
+
+left : Position -> Position
+left =
+    mapColumn (add -1)
+
+
+right : Position -> Position
+right =
+    mapColumn (add 1)
+
+
+up : Position -> Position
+up =
+    mapRow (add -1)
+
+
+down : Position -> Position
+down =
+    mapRow (add 1)
+
+
+mapColumn : (Int -> Int) -> Position -> Position
+mapColumn f model =
+    { model | column = f model.column }
+
+
+mapRow : (Int -> Int) -> Position -> Position
+mapRow f model =
+    { model | row = f model.row }
+
+
+add =
+    (+)
