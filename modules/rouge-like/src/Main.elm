@@ -63,6 +63,7 @@ init _ =
 shuffleSplit : Int -> List a -> Random.Generator ( List a, List a )
 shuffleSplit n xs =
     Random.shuffle xs
+        |> Random.andThen Random.shuffle
         |> Random.map (List.splitAt n)
 
 
