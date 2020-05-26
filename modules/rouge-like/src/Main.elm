@@ -146,6 +146,7 @@ wallsGenerator acc =
 type alias Model =
     { dimension : Dimension
     , player : Position
+    , playerHp : Int
     , walls : List Position
     , enemies : List Enemy
     , seed : Seed
@@ -167,6 +168,7 @@ init flags =
     in
     ( { dimension = dimension
       , player = acc.player
+      , playerHp = 3
       , walls = acc.walls
       , enemies = acc.enemies
       , seed = seed
@@ -464,7 +466,12 @@ positionsToString model =
 
 positionToChar : Model -> Position -> Char
 positionToChar model position =
-    [ ( isPlayer, '3' )
+    [ ( isPlayer
+      , String.fromInt model.playerHp
+            |> String.toList
+            |> List.last
+            |> Maybe.withDefault '3'
+      )
     , ( isEnemy, 'e' )
     , ( isWall, '#' )
     ]
