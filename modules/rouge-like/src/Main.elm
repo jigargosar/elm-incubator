@@ -293,11 +293,7 @@ moveEnemyTo nextPosition enemy model =
             }
 
         E_Enemy enemy2 ->
-            { model
-                | enemies =
-                    model.enemies
-                        |> List.remove enemy2
-            }
+            { model | enemies = model.enemies |> List.remove enemy2 }
 
         E_Wall ->
             model
