@@ -280,7 +280,7 @@ stepEnemyAtIndex enemyIndex model =
                                 { model
                                     | enemies =
                                         model.enemies
-                                            |> List.updateIf (enemyPositionEq nextPosition) enemyTakeHit
+                                            |> enemiesRemoveAtPosition nextPosition
                                             |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
                                 }
                     )
