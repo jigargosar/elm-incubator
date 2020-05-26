@@ -74,8 +74,8 @@ enemiesRemove uid =
     List.filterNot (enemyIdEq uid)
 
 
-enemiesUpdateById : Uid -> (Enemy -> Enemy) -> List Enemy -> List Enemy
-enemiesUpdateById id =
+enemiesUpdate : Uid -> (Enemy -> Enemy) -> List Enemy -> List Enemy
+enemiesUpdate id =
     List.updateIf (enemyIdEq id)
 
 
@@ -288,7 +288,7 @@ stepEnemyWithUid uid model =
                                     { model
                                         | enemies =
                                             model.enemies
-                                                |> enemiesUpdateById uid (enemySetPosition nextPosition)
+                                                |> enemiesUpdate uid (enemySetPosition nextPosition)
                                     }
                         )
                         >> Maybe.withDefault model
