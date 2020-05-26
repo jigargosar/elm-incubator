@@ -66,7 +66,7 @@ enemySetPosition position enemy =
 
 enemiesRemoveAtPosition : Position -> List Enemy -> List Enemy
 enemiesRemoveAtPosition position =
-    List.filter (enemyPositionEq position >> not)
+    List.filterNot (enemyPositionEq position)
 
 
 enemiesRemove : Uid -> List Enemy -> List Enemy
