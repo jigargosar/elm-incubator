@@ -170,8 +170,17 @@ type alias HM =
 
 viewGridRows : Model -> List HM
 viewGridRows model =
+    let
+        viewRow rowString =
+            div [] [ text rowString ]
+    in
     Dimension.toRows model.dimension
-        |> List.map (List.map (positionToChar model) >> String.fromList >> viewRow)
+        |> List.map (positionsToString model >> viewRow)
+
+
+positionsToString : Model -> List Position -> String
+positionsToString model =
+    List.map (positionToChar model) >> String.fromList
 
 
 positionToChar : Model -> Position -> Char
@@ -184,10 +193,6 @@ positionToChar model position =
 
     else
         '.'
-
-
-viewRow rowString =
-    div [] [ text rowString ]
 
 
 
