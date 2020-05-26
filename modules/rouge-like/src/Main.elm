@@ -115,6 +115,7 @@ movePlayerInDirection direction model =
             | player = position
             , enemies = List.remove position model.enemies
         }
+            |> stepEnemies
 
     else
         model
