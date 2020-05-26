@@ -94,13 +94,31 @@ movePlayerInDirection direction model =
                 |> stepPositionInDirection direction
     in
     if
-        Dimension.member position model.dimension
-            && not (List.member position model.walls)
+        allPass
+            [ isWithinDimension model
+            , isWall model >> not
+            ]
+            position
     then
         { model | player = position }
 
     else
         model
+
+
+allPass : List (a -> Bool) -> a -> Bool
+allPass fs v =
+    List.all ((|>) v) fs
+
+
+isWithinDimension : Model -> Position -> Bool
+isWithinDimension model position =
+    Dimension.member position model.dimension
+
+
+isWall : Model -> Position -> Bool
+isWall model position =
+    List.member position model.walls
 
 
 stepPositionInDirection : Direction -> Position -> Position
