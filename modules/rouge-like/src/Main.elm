@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Basics.More exposing (..)
 import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
@@ -93,13 +92,15 @@ movePlayerInDirection direction model =
         position =
             model.player
                 |> stepPositionInDirection direction
+
+        allTrue =
+            List.all (\f -> f model position)
     in
     if
-        allPass
-            [ isWithinDimension model
-            , notWall model
+        allTrue
+            [ isWithinDimension
+            , notWall
             ]
-            position
     then
         { model | player = position }
 
