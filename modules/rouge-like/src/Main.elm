@@ -55,6 +55,11 @@ enemyPositionEq position enemy =
     enemy.position == position
 
 
+enemySetPosition : Position -> Enemy -> Enemy
+enemySetPosition position enemy =
+    { enemy | position = position }
+
+
 type alias Flags =
     ()
 
@@ -150,26 +155,6 @@ movePlayerInDirection direction model =
         model
 
 
-enemyMoves : Model -> Enemy -> List Position
-enemyMoves model enemy =
-    if enemy.hp > 0 then
-        Dimension.adjacentPositions enemy.position model.dimension
-            |> List.filter (notWall model)
-
-    else
-        []
-
-
-nextEnemyPositionGenerator : Model -> Enemy -> Generator (Maybe Position)
-nextEnemyPositionGenerator model enemy =
-    case enemyMoves model enemy of
-        [] ->
-            Random.constant Nothing
-
-        h :: t ->
-            Random.maybe Random.bool (Random.uniform h t)
-
-
 stepEnemies : Model -> Model
 stepEnemies model =
     generate stepEnemiesGenerator model
@@ -198,10 +183,46 @@ stepEnemiesGenerator model =
 
 stepEnemyAtIndex : Int -> Model -> Generator Model
 stepEnemyAtIndex enemyIndex model =
-    --case List.getAt enemyIndex model.enemies of
-    --    Nothing -> Random.constant model
-    --    Just enemy ->
-    Debug.todo "impl"
+    case List.getAt enemyIndex model.enemies of
+        Nothing ->
+            Random.constant model
+
+        Just enemy ->
+            nextEnemyPositionGenerator model enemy
+                |> Random.map
+                    (\mp ->
+                        case mp of
+                            Nothing ->
+                                model
+
+                            Just nextPosition ->
+                                { model
+                                    | enemies =
+                                        model.enemies
+                                            |> List.updateIf (enemyPositionEq nextPosition) enemyTakeHit
+                                            |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
+                                }
+                    )
+
+
+enemyMoves : Model -> Enemy -> List Position
+enemyMoves model enemy =
+    if enemy.hp > 0 then
+        Dimension.adjacentPositions enemy.position model.dimension
+            |> List.filter (notWall model)
+
+    else
+        []
+
+
+nextEnemyPositionGenerator : Model -> Enemy -> Generator (Maybe Position)
+nextEnemyPositionGenerator model enemy =
+    case enemyMoves model enemy of
+        [] ->
+            Random.constant Nothing
+
+        h :: t ->
+            Random.maybe Random.bool (Random.uniform h t)
 
 
 isWithinDimension : Model -> Position -> Bool
@@ -216,7 +237,12 @@ isWall model position =
 
 isEnemy : Model -> Position -> Bool
 isEnemy model position =
-    List.any (enemyPositionEq position) model.enemies
+    case List.find (enemyPositionEq position) model.enemies of
+        Just enemy ->
+            enemy.hp > 0
+
+        Nothing ->
+            False
 
 
 isPlayer : Model -> Position -> Bool
