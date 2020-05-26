@@ -2,9 +2,10 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
+import Tuple exposing (..)
 
 
 type alias Dimension =
@@ -97,11 +98,44 @@ subscriptions _ =
 
 
 view : Model -> Html Msg
-view _ =
+view model =
     div [ class "measure center" ]
         [ div [ class "code f1" ]
-            []
+            (viewGridRows model.dimension)
         ]
+
+
+type alias HM =
+    Html Msg
+
+
+viewGridRows : Dimension -> List HM
+viewGridRows dimension =
+    positionsByRows dimension
+        |> List.map viewRow
+
+
+viewRow positions =
+    div [] (List.map viewCell positions)
+
+
+viewCell _ =
+    text "."
+
+
+positionsByRows : { a | rows : Int, columns : Int } -> List (List ( Int, Int ))
+positionsByRows { rows, columns } =
+    rangeLen rows
+        |> List.map
+            (\r ->
+                rangeLen columns
+                    |> List.map (\c -> pair r c)
+            )
+
+
+rangeLen : Int -> List Int
+rangeLen len =
+    List.range 0 (len - 1)
 
 
 
