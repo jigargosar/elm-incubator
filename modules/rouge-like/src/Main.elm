@@ -16,6 +16,7 @@ import Position exposing (Position)
 type alias Model =
     { dimension : Dimension
     , player : Position
+    , walls : List Position
     }
 
 
@@ -27,6 +28,7 @@ init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( { dimension = Dimension.new 10 18
       , player = Position.new 5 5
+      , walls = []
       }
     , Cmd.none
     )
