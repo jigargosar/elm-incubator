@@ -2,21 +2,11 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
+import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
-
-
-type alias Dimension =
-    { rows : Int
-    , columns : Int
-    }
-
-
-type alias Position =
-    { row : Int
-    , column : Int
-    }
+import Position exposing (Position)
 
 
 
@@ -35,8 +25,8 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( { dimension = Dimension 10 18
-      , player = Position 5 5
+    ( { dimension = Dimension.new 10 18
+      , player = Position.new 5 5
       }
     , Cmd.none
     )
@@ -120,7 +110,7 @@ type alias HM =
 
 viewGridRows : Position -> Dimension -> List HM
 viewGridRows playerPosition dimension =
-    positionsByRows dimension
+    Dimension.toRows dimension
         |> List.map (viewRow playerPosition)
 
 
@@ -134,21 +124,6 @@ viewCell playerPosition position =
 
     else
         text "."
-
-
-positionsByRows : { a | rows : Int, columns : Int } -> List (List Position)
-positionsByRows { rows, columns } =
-    rangeLen rows
-        |> List.map
-            (\r ->
-                rangeLen columns
-                    |> List.map (\c -> Position r c)
-            )
-
-
-rangeLen : Int -> List Int
-rangeLen len =
-    List.range 0 (len - 1)
 
 
 
