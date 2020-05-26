@@ -1,4 +1,4 @@
-module Dimension exposing (Dimension, member, new, toRows)
+module Dimension exposing (Dimension, member, new, toRows, toTuple)
 
 import Index
 import Position exposing (Position)
@@ -24,9 +24,16 @@ toRows d =
             )
 
 
+toTuple : Dimension -> ( Int, Int )
+toTuple dimension =
+    ( dimension.rows, dimension.columns )
+
+
 member : Position -> Dimension -> Bool
 member position dimension =
-    case Position.toTuple position of
-        ( row, column ) ->
-            Index.memberOf dimension.rows row
-                && Index.memberOf dimension.columns column
+    let
+        ( row, column ) =
+            Position.toTuple position
+    in
+    Index.memberOf dimension.rows row
+        && Index.memberOf dimension.columns column
