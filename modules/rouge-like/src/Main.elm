@@ -46,7 +46,7 @@ init _ =
             Random.initialSeed 0
 
         ( ( walls, emptyPositions1 ), _ ) =
-            Random.step (shuffleSplit 50 emptyPositions0) seed0
+            Random.step (shuffleSplit 40 emptyPositions0) seed0
 
         ( enemies, _ ) =
             List.splitAt 10 emptyPositions1
