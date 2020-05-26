@@ -32,7 +32,6 @@ newUid =
 type alias Enemy =
     { uid : Uid
     , position : Position
-    , hp : Int
     }
 
 
@@ -43,18 +42,12 @@ newEnemy position =
             (\uid ->
                 { uid = uid
                 , position = position
-                , hp = 1
                 }
             )
 
 
 atLeast =
     max
-
-
-enemyTakeHit : Enemy -> Enemy
-enemyTakeHit enemy =
-    { enemy | hp = enemy.hp - 1 |> atLeast 0 }
 
 
 enemyPositionEq : Position -> Enemy -> Bool
@@ -332,12 +325,8 @@ entityAt model position =
 
 enemyMoves : Model -> Enemy -> List Position
 enemyMoves model enemy =
-    if enemy.hp > 0 then
-        Dimension.adjacentPositions enemy.position model.dimension
-            |> List.filter (notWall model)
-
-    else
-        []
+    Dimension.adjacentPositions enemy.position model.dimension
+        |> List.filter (notWall model)
 
 
 nextEnemyPositionGenerator : Model -> Enemy -> Generator (Maybe Position)
