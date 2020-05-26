@@ -48,13 +48,6 @@ newEnemy position =
             )
 
 
-newEnemies : List Position -> Generator (List Enemy)
-newEnemies positions =
-    positions
-        |> List.map newEnemy
-        |> Random.combine
-
-
 atLeast =
     max
 
@@ -88,7 +81,7 @@ type alias Model =
 
 
 type alias Flags =
-    ()
+    { now : Int }
 
 
 type alias WorldGeneratorAcc =
@@ -99,11 +92,9 @@ type alias WorldGeneratorAcc =
     }
 
 
-foo =
+worldGenerator : Dimension -> Generator WorldGeneratorAcc
+worldGenerator dimension =
     let
-        dimension =
-            Dimension.new 10 18
-
         acc : WorldGeneratorAcc
         acc =
             { empty =
@@ -118,38 +109,54 @@ foo =
         playerPosition =
             Position.new 5 5
     in
-    1
+    wallsGenerator acc
+        |> Random.andThen enemiesGenerator
+
+
+enemiesGenerator : WorldGeneratorAcc -> Generator WorldGeneratorAcc
+enemiesGenerator acc =
+    shuffleSplit 8 acc.empty
+        |> Random.andThen
+            (\( enemyPositions, empty ) ->
+                enemyPositions
+                    |> List.map newEnemy
+                    |> Random.combine
+                    |> Random.map
+                        (\enemies ->
+                            { acc
+                                | enemies = enemies
+                                , empty = empty
+                            }
+                        )
+            )
+
+
+wallsGenerator : WorldGeneratorAcc -> Generator WorldGeneratorAcc
+wallsGenerator acc =
+    shuffleSplit 20 acc.empty
+        |> Random.map
+            (\( walls, empty ) ->
+                { acc
+                    | walls = walls
+                    , empty = empty
+                }
+            )
 
 
 init : Flags -> ( Model, Cmd Msg )
-init _ =
+init flags =
     let
         dimension =
             Dimension.new 10 18
 
-        playerPosition =
-            Position.new 5 5
-
-        emptyPositions0 =
-            dimension
-                |> Dimension.toPositions
-                |> List.remove playerPosition
-
-        seed0 =
-            Random.initialSeed 10
-
-        ( ( walls, emptyPositions1 ), seed1 ) =
-            Random.step (shuffleSplit 20 emptyPositions0) seed0
-
-        ( ( enemies, seed2 ), _ ) =
-            List.splitAt 8 emptyPositions1
-                |> Tuple.mapFirst (\enemyPositions -> Random.step (newEnemies enemyPositions) seed1)
+        ( acc, seed ) =
+            Random.step (worldGenerator dimension) (Random.initialSeed flags.now)
     in
     ( { dimension = dimension
-      , player = playerPosition
-      , walls = walls
-      , enemies = enemies
-      , seed = seed2
+      , player = acc.player
+      , walls = acc.walls
+      , enemies = acc.enemies
+      , seed = seed
       }
     , Cmd.none
     )
