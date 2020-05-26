@@ -7,6 +7,12 @@ import Html.Attributes exposing (class)
 import Json.Decode as JD
 
 
+type alias Dimension =
+    { rows : Int
+    , columns : Int
+    }
+
+
 
 -- Model
 
