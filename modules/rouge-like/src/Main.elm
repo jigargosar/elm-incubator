@@ -15,17 +15,44 @@ import Random.List
 import Tuple exposing (first, second)
 
 
+type Uid
+    = Uid Int
+
+
+newUid : Generator Uid
+newUid =
+    Random.int Random.minInt Random.maxInt
+        |> Random.map Uid
+
+
+
+--
+
+
 type alias Enemy =
-    { position : Position
+    { uid : Uid
+    , position : Position
     , hp : Int
     }
 
 
-newEnemy : Position -> Enemy
+newEnemy : Position -> Generator Enemy
 newEnemy position =
-    { position = position
-    , hp = 1
-    }
+    newUid
+        |> Random.map
+            (\uid ->
+                { uid = uid
+                , position = position
+                , hp = 1
+                }
+            )
+
+
+newEnemies : List Position -> Generator (List Enemy)
+newEnemies positions =
+    positions
+        |> List.map newEnemy
+        |> Random.combine
 
 
 atLeast =
@@ -84,14 +111,15 @@ init _ =
         ( ( walls, emptyPositions1 ), seed1 ) =
             Random.step (shuffleSplit 20 emptyPositions0) seed0
 
-        ( enemyPositions, _ ) =
+        ( ( enemies, seed2 ), _ ) =
             List.splitAt 8 emptyPositions1
+                |> Tuple.mapFirst (\enemyPositions -> Random.step (newEnemies enemyPositions) seed1)
     in
     ( { dimension = dimension
       , player = playerPosition
       , walls = walls
-      , enemies = List.map newEnemy enemyPositions
-      , seed = seed1
+      , enemies = enemies
+      , seed = seed2
       }
     , Cmd.none
     )
