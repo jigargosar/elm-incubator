@@ -93,7 +93,10 @@ movePlayerInDirection direction model =
             model.player
                 |> stepPositionInDirection direction
     in
-    if Dimension.member position model.dimension then
+    if
+        Dimension.member position model.dimension
+            && not (List.member position model.walls)
+    then
         { model | player = position }
 
     else
