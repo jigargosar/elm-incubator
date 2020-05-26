@@ -159,8 +159,7 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
-        [ div [ class "code f1" ]
-            (viewGridRows model)
+        [ viewGrid model
         ]
 
 
@@ -168,14 +167,16 @@ type alias HM =
     Html Msg
 
 
-viewGridRows : Model -> List HM
-viewGridRows model =
+viewGrid : Model -> HM
+viewGrid model =
     let
         viewRow rowString =
             div [] [ text rowString ]
     in
-    Dimension.toRows model.dimension
-        |> List.map (positionsToString model >> viewRow)
+    div [ class "code f1" ]
+        (Dimension.toRows model.dimension
+            |> List.map (positionsToString model >> viewRow)
+        )
 
 
 positionsToString : Model -> List Position -> String
