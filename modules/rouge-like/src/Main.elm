@@ -96,7 +96,7 @@ movePlayerInDirection direction model =
     if
         allPass
             [ isWithinDimension model
-            , isWall model >> not
+            , notWall model
             ]
             position
     then
@@ -119,6 +119,11 @@ isWithinDimension model position =
 isWall : Model -> Position -> Bool
 isWall model position =
     List.member position model.walls
+
+
+notWall : Model -> Position -> Bool
+notWall model =
+    isWall model >> not
 
 
 stepPositionInDirection : Direction -> Position -> Position
