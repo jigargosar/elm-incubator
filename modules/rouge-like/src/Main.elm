@@ -7,10 +7,12 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
 import List.Extra as List
+import Maybe.Extra exposing (unwrap)
 import Position exposing (Position)
-import Random exposing (Seed)
+import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
+import Tuple exposing (first, second)
 
 
 
@@ -21,9 +23,36 @@ type alias Model =
     { dimension : Dimension
     , player : Position
     , walls : List Position
-    , enemies : List Position
+    , enemies : List Enemy
     , seed : Seed
     }
+
+
+type alias Enemy =
+    { position : Position
+    , hp : Int
+    }
+
+
+newEnemy : Position -> Enemy
+newEnemy position =
+    { position = position
+    , hp = 1
+    }
+
+
+atLeast =
+    max
+
+
+enemyTakeHit : Enemy -> Enemy
+enemyTakeHit enemy =
+    { enemy | hp = enemy.hp - 1 |> atLeast 0 }
+
+
+enemyPositionEq : Position -> Enemy -> Bool
+enemyPositionEq position enemy =
+    enemy.position == position
 
 
 type alias Flags =
@@ -50,20 +79,20 @@ init _ =
         ( ( walls, emptyPositions1 ), seed1 ) =
             Random.step (shuffleSplit 20 emptyPositions0) seed0
 
-        ( enemies, _ ) =
+        ( enemyPositions, _ ) =
             List.splitAt 8 emptyPositions1
     in
     ( { dimension = dimension
       , player = playerPosition
       , walls = walls
-      , enemies = enemies
+      , enemies = List.map newEnemy enemyPositions
       , seed = seed1
       }
     , Cmd.none
     )
 
 
-shuffleSplit : Int -> List a -> Random.Generator ( List a, List a )
+shuffleSplit : Int -> List a -> Generator ( List a, List a )
 shuffleSplit n xs =
     Random.List.shuffle xs
         |> Random.andThen Random.List.shuffle
@@ -113,7 +142,7 @@ movePlayerInDirection direction model =
     then
         { model
             | player = position
-            , enemies = List.remove position model.enemies
+            , enemies = List.updateIf (enemyPositionEq position) enemyTakeHit model.enemies
         }
             |> stepEnemies
 
@@ -121,36 +150,58 @@ movePlayerInDirection direction model =
         model
 
 
+enemyMoves : Model -> Enemy -> List Position
+enemyMoves model enemy =
+    if enemy.hp > 0 then
+        Dimension.adjacentPositions enemy.position model.dimension
+            |> List.filter (notWall model)
+
+    else
+        []
+
+
+nextEnemyPositionGenerator : Model -> Enemy -> Generator (Maybe Position)
+nextEnemyPositionGenerator model enemy =
+    case enemyMoves model enemy of
+        [] ->
+            Random.constant Nothing
+
+        h :: t ->
+            Random.maybe Random.bool (Random.uniform h t)
+
+
 stepEnemies : Model -> Model
 stepEnemies model =
-    let
-        randomAdjacent : Position -> Random.Generator ( Position, Maybe Position )
-        randomAdjacent position =
-            Dimension.adjacentPositions position model.dimension
-                |> List.filter (notWall model)
-                |> (::) position
-                |> Random.List.choose
-                |> Random.map (\( maybeNextPosition, _ ) -> ( position, maybeNextPosition ))
+    generate stepEnemiesGenerator model
 
-        foo : Random.Generator (List Position)
-        foo =
-            List.map randomAdjacent model.enemies
-                |> Random.combine
-                |> Random.map
-                    (List.map
-                        (\( position, maybeNextPosition ) ->
-                            maybeNextPosition
-                                |> Maybe.withDefault position
-                        )
-                    )
 
-        ( enemies, seed ) =
-            Random.step foo model.seed
-    in
-    { model
-        | enemies = enemies
-        , seed = seed
-    }
+generate : ({ a | seed : Seed } -> Generator { b | seed : Seed }) -> { a | seed : Seed } -> { b | seed : Seed }
+generate f model =
+    Random.step (f model) model.seed
+        |> setSeedIn
+
+
+setSeedIn ( model, seed ) =
+    { model | seed = seed }
+
+
+indicesOf : List a -> List Int
+indicesOf xs =
+    List.range 0 (List.length xs - 1)
+
+
+stepEnemiesGenerator : Model -> Generator Model
+stepEnemiesGenerator model =
+    indicesOf model.enemies
+        |> List.foldl (\i -> Random.andThen (stepEnemyAtIndex i)) (Random.constant model)
+
+
+stepEnemyAtIndex : Int -> Model -> Generator Model
+stepEnemyAtIndex enemyIndex model =
+    --case List.getAt enemyIndex model.enemies of
+    --    Nothing -> Random.constant model
+    --    Just enemy ->
+    Debug.todo "impl"
 
 
 isWithinDimension : Model -> Position -> Bool
@@ -161,6 +212,16 @@ isWithinDimension model position =
 isWall : Model -> Position -> Bool
 isWall model position =
     List.member position model.walls
+
+
+isEnemy : Model -> Position -> Bool
+isEnemy model position =
+    List.any (enemyPositionEq position) model.enemies
+
+
+isPlayer : Model -> Position -> Bool
+isPlayer model position =
+    model.player == position
 
 
 notWall : Model -> Position -> Bool
@@ -254,17 +315,12 @@ positionsToString model =
 
 positionToChar : Model -> Position -> Char
 positionToChar model position =
-    if position == model.player then
-        '3'
-
-    else if List.member position model.enemies then
-        'e'
-
-    else if List.member position model.walls then
-        '#'
-
-    else
-        '.'
+    [ ( isPlayer, '3' )
+    , ( isEnemy, 'e' )
+    , ( isWall, '#' )
+    ]
+        |> List.find (first >> (\f -> f model position))
+        |> unwrap '.' second
 
 
 
