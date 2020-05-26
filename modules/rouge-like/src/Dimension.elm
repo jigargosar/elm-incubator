@@ -28,6 +28,11 @@ rangeLen len =
     List.range 0 (len - 1)
 
 
+memberLen : Int -> Int -> Bool
+memberLen len x =
+    clamp 0 (len - 1) x == x
+
+
 member : Position -> Dimension -> Bool
 member position dimension =
     case Position.toTuple position of
