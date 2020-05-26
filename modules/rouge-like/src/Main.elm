@@ -29,9 +29,27 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( { dimension = Dimension.new 10 18
-      , player = Position.new 5 5
-      , walls = []
+    let
+        dimension =
+            Dimension.new 10 18
+
+        playerPosition =
+            Position.new 5 5
+
+        emptyPositions0 =
+            dimension
+                |> Dimension.toPositions
+                |> List.remove playerPosition
+
+        seed0 =
+            Random.initialSeed 0
+
+        ( ( walls, _ ), _ ) =
+            Random.step (shuffleSplit 20 emptyPositions0) seed0
+    in
+    ( { dimension = dimension
+      , player = playerPosition
+      , walls = walls
       }
     , Cmd.none
     )

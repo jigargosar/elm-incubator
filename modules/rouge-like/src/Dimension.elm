@@ -1,4 +1,4 @@
-module Dimension exposing (Dimension, member, new, toRows, toTuple)
+module Dimension exposing (Dimension, member, new, toPositions, toRows, toTuple)
 
 import Index
 import Position exposing (Position)
@@ -14,7 +14,7 @@ new =
     Dimension
 
 
-toRows : { a | rows : Int, columns : Int } -> List (List Position)
+toRows : Dimension -> List (List Position)
 toRows d =
     Index.range d.rows
         |> List.map
@@ -22,6 +22,11 @@ toRows d =
                 Index.range d.columns
                     |> List.map (\c -> Position.new r c)
             )
+
+
+toPositions : Dimension -> List Position
+toPositions =
+    toRows >> List.concat
 
 
 toTuple : Dimension -> ( Int, Int )
