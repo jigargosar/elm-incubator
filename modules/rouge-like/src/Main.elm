@@ -160,7 +160,7 @@ view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
         [ div [ class "code f1" ]
-            (viewGridRows model.player model.dimension)
+            (viewGridRows model)
         ]
 
 
@@ -168,22 +168,26 @@ type alias HM =
     Html Msg
 
 
-viewGridRows : Position -> Dimension -> List HM
-viewGridRows playerPosition dimension =
-    Dimension.toRows dimension
-        |> List.map (viewRow playerPosition)
+viewGridRows : Model -> List HM
+viewGridRows model =
+    Dimension.toRows model.dimension
+        |> List.map (List.map (positionToChar model) >> String.fromList >> viewRow)
 
 
-viewRow playerPosition positions =
-    div [] (List.map (viewCell playerPosition) positions)
+positionToChar : Model -> Position -> Char
+positionToChar model position =
+    if position == model.player then
+        '3'
 
-
-viewCell playerPosition position =
-    if position == playerPosition then
-        text "3"
+    else if List.member position model.walls then
+        '#'
 
     else
-        text "."
+        '.'
+
+
+viewRow rowString =
+    div [] [ text rowString ]
 
 
 
