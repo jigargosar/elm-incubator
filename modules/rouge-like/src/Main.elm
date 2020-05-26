@@ -18,7 +18,7 @@ type alias Dimension =
 
 
 type alias Model =
-    {}
+    { dimension : Dimension }
 
 
 type alias Flags =
@@ -27,7 +27,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( {}
+    ( { dimension = Dimension 10 18 }
     , Cmd.none
     )
 
