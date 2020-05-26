@@ -68,20 +68,7 @@ enemySetPosition position enemy =
 
 
 
--- Model
-
-
-type alias Model =
-    { dimension : Dimension
-    , player : Position
-    , walls : List Position
-    , enemies : List Enemy
-    , seed : Seed
-    }
-
-
-type alias Flags =
-    { now : Int }
+-- World Generator
 
 
 type alias WorldGeneratorAcc =
@@ -141,6 +128,23 @@ wallsGenerator acc =
                     , empty = empty
                 }
             )
+
+
+
+-- Model
+
+
+type alias Model =
+    { dimension : Dimension
+    , player : Position
+    , walls : List Position
+    , enemies : List Enemy
+    , seed : Seed
+    }
+
+
+type alias Flags =
+    { now : Int }
 
 
 init : Flags -> ( Model, Cmd Msg )
