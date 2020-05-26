@@ -15,19 +15,6 @@ import Random.List
 import Tuple exposing (first, second)
 
 
-
--- Model
-
-
-type alias Model =
-    { dimension : Dimension
-    , player : Position
-    , walls : List Position
-    , enemies : List Enemy
-    , seed : Seed
-    }
-
-
 type alias Enemy =
     { position : Position
     , hp : Int
@@ -58,6 +45,19 @@ enemyPositionEq position enemy =
 enemySetPosition : Position -> Enemy -> Enemy
 enemySetPosition position enemy =
     { enemy | position = position }
+
+
+
+-- Model
+
+
+type alias Model =
+    { dimension : Dimension
+    , player : Position
+    , walls : List Position
+    , enemies : List Enemy
+    , seed : Seed
+    }
 
 
 type alias Flags =
