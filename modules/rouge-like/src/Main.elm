@@ -217,6 +217,9 @@ positionToChar model position =
     if position == model.player then
         '3'
 
+    else if List.member position model.enemies then
+        'e'
+
     else if List.member position model.walls then
         '#'
 
