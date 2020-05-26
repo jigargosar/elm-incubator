@@ -108,7 +108,10 @@ movePlayerInDirection direction model =
             , notWall
             ]
     then
-        { model | player = position }
+        { model
+            | player = position
+            , enemies = List.remove position model.enemies
+        }
 
     else
         model
