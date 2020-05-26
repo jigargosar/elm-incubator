@@ -127,6 +127,7 @@ stepEnemies model =
         randomAdjacent : Position -> Random.Generator ( Position, Maybe Position )
         randomAdjacent position =
             Dimension.adjacentPositions position model.dimension
+                |> List.filter (notWall model)
                 |> Random.List.choose
                 |> Random.map (\( maybeNextPosition, _ ) -> ( position, maybeNextPosition ))
 
