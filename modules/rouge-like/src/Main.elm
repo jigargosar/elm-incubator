@@ -279,32 +279,35 @@ stepEnemyAtIndex enemyIndex model =
                                 model
 
                             Just nextPosition ->
-                                case entityAt model nextPosition of
-                                    E_Player ->
-                                        { model
-                                            | enemies =
-                                                model.enemies
-                                                    |> List.remove enemy
-                                            , playerHp = model.playerHp - 1 |> atLeast 0
-                                        }
-
-                                    E_Enemy enemy2 ->
-                                        { model
-                                            | enemies =
-                                                model.enemies
-                                                    |> List.remove enemy2
-                                        }
-
-                                    E_Wall ->
-                                        model
-
-                                    E_Empty ->
-                                        { model
-                                            | enemies =
-                                                model.enemies
-                                                    |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
-                                        }
+                                moveEnemyTo nextPosition enemy model
                     )
+
+
+moveEnemyTo : Position -> Enemy -> Model -> Model
+moveEnemyTo nextPosition enemy model =
+    case entityAt model nextPosition of
+        E_Player ->
+            { model
+                | enemies = model.enemies |> List.remove enemy
+                , playerHp = model.playerHp - 1 |> atLeast 0
+            }
+
+        E_Enemy enemy2 ->
+            { model
+                | enemies =
+                    model.enemies
+                        |> List.remove enemy2
+            }
+
+        E_Wall ->
+            model
+
+        E_Empty ->
+            { model
+                | enemies =
+                    model.enemies
+                        |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
+            }
 
 
 type Entity
