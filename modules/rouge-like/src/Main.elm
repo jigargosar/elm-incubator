@@ -71,7 +71,7 @@ enemySetPosition position enemy =
 -- World Generator
 
 
-type alias WorldGeneratorAcc =
+type alias WorldBuilder =
     { empty : List Position
     , player : Position
     , walls : List Position
@@ -79,10 +79,10 @@ type alias WorldGeneratorAcc =
     }
 
 
-worldGenerator : Dimension -> Generator WorldGeneratorAcc
-worldGenerator dimension =
+newWorldBuilder : Dimension -> Generator WorldBuilder
+newWorldBuilder dimension =
     let
-        acc : WorldGeneratorAcc
+        acc : WorldBuilder
         acc =
             { empty =
                 dimension
@@ -100,7 +100,7 @@ worldGenerator dimension =
         |> Random.andThen enemiesGenerator
 
 
-enemiesGenerator : WorldGeneratorAcc -> Generator WorldGeneratorAcc
+enemiesGenerator : WorldBuilder -> Generator WorldBuilder
 enemiesGenerator acc =
     shuffleSplit 8 acc.empty
         |> Random.andThen
@@ -118,7 +118,7 @@ enemiesGenerator acc =
             )
 
 
-wallsGenerator : WorldGeneratorAcc -> Generator WorldGeneratorAcc
+wallsGenerator : WorldBuilder -> Generator WorldBuilder
 wallsGenerator acc =
     shuffleSplit 20 acc.empty
         |> Random.map
@@ -154,7 +154,7 @@ init flags =
             Dimension.new 10 18
 
         ( acc, seed ) =
-            Random.step (worldGenerator dimension) (Random.initialSeed flags.now)
+            Random.step (newWorldBuilder dimension) (Random.initialSeed flags.now)
     in
     ( { dimension = dimension
       , player = acc.player
