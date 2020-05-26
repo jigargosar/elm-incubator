@@ -20,6 +20,7 @@ type alias Model =
     { dimension : Dimension
     , player : Position
     , walls : List Position
+    , enemies : List Position
     }
 
 
@@ -44,12 +45,16 @@ init _ =
         seed0 =
             Random.initialSeed 0
 
-        ( ( walls, _ ), _ ) =
-            Random.step (shuffleSplit 20 emptyPositions0) seed0
+        ( ( walls, emptyPositions1 ), _ ) =
+            Random.step (shuffleSplit 50 emptyPositions0) seed0
+
+        ( enemies, _ ) =
+            List.splitAt 10 emptyPositions1
     in
     ( { dimension = dimension
       , player = playerPosition
       , walls = walls
+      , enemies = enemies
       }
     , Cmd.none
     )
