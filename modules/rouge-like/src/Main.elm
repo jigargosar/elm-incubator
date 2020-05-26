@@ -14,12 +14,20 @@ type alias Dimension =
     }
 
 
+type alias Position =
+    { row : Int
+    , column : Int
+    }
+
+
 
 -- Model
 
 
 type alias Model =
-    { dimension : Dimension }
+    { dimension : Dimension
+    , player : Position
+    }
 
 
 type alias Flags =
@@ -28,7 +36,9 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( { dimension = Dimension 10 18 }
+    ( { dimension = Dimension 10 18
+      , player = Position 5 5
+      }
     , Cmd.none
     )
 
@@ -101,7 +111,7 @@ view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
         [ div [ class "code f1" ]
-            (viewGridRows model.dimension)
+            (viewGridRows model.player model.dimension)
         ]
 
 
@@ -109,27 +119,31 @@ type alias HM =
     Html Msg
 
 
-viewGridRows : Dimension -> List HM
-viewGridRows dimension =
+viewGridRows : Position -> Dimension -> List HM
+viewGridRows playerPosition dimension =
     positionsByRows dimension
-        |> List.map viewRow
+        |> List.map (viewRow playerPosition)
 
 
-viewRow positions =
-    div [] (List.map viewCell positions)
+viewRow playerPosition positions =
+    div [] (List.map (viewCell playerPosition) positions)
 
 
-viewCell _ =
-    text "."
+viewCell playerPosition position =
+    if position == playerPosition then
+        text "3"
+
+    else
+        text "."
 
 
-positionsByRows : { a | rows : Int, columns : Int } -> List (List ( Int, Int ))
+positionsByRows : { a | rows : Int, columns : Int } -> List (List Position)
 positionsByRows { rows, columns } =
     rangeLen rows
         |> List.map
             (\r ->
                 rangeLen columns
-                    |> List.map (\c -> pair r c)
+                    |> List.map (\c -> Position r c)
             )
 
 
