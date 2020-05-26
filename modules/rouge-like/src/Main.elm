@@ -68,6 +68,15 @@ enemySetPosition position enemy =
 
 
 
+-- Enemies
+
+
+enemiesRemoveAtPosition : Position -> List Enemy -> List Enemy
+enemiesRemoveAtPosition position =
+    List.filter (enemyPositionEq position >> not)
+
+
+
 -- World Generator
 
 
@@ -214,14 +223,17 @@ movePlayerInDirection direction model =
             , notWall
             ]
     then
-        { model
-            | player = position
-            , enemies = List.updateIf (enemyPositionEq position) enemyTakeHit model.enemies
-        }
+        { model | player = position }
+            |> mapEnemies (enemiesRemoveAtPosition position)
             |> stepEnemies
 
     else
         model
+
+
+mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
+mapEnemies f model =
+    { model | enemies = f model.enemies }
 
 
 stepEnemies : Model -> Model
