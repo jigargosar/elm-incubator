@@ -271,19 +271,45 @@ stepEnemyAtIndex enemyIndex model =
         Just enemy ->
             nextEnemyPositionGenerator model enemy
                 |> Random.map
-                    (\mp ->
-                        case mp of
-                            Nothing ->
-                                model
+                    (Maybe.map identity
+                        >> (\mp ->
+                                case mp of
+                                    Nothing ->
+                                        model
 
-                            Just nextPosition ->
-                                { model
-                                    | enemies =
-                                        model.enemies
-                                            |> enemiesRemoveAtPosition nextPosition
-                                            |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
-                                }
+                                    Just nextPosition ->
+                                        { model
+                                            | enemies =
+                                                model.enemies
+                                                    |> enemiesRemoveAtPosition nextPosition
+                                                    |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
+                                        }
+                           )
                     )
+
+
+type Entity
+    = E_Player
+    | E_Enemy Enemy
+    | E_Wall
+    | E_Empty
+
+
+entityAt : Model -> Position -> Entity
+entityAt model position =
+    if isPlayer model position then
+        E_Player
+
+    else if isWall model position then
+        E_Wall
+
+    else
+        case List.find (enemyPositionEq position) model.enemies of
+            Nothing ->
+                E_Empty
+
+            Just enemy ->
+                E_Enemy enemy
 
 
 enemyMoves : Model -> Enemy -> List Position
