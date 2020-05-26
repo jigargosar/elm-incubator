@@ -1,4 +1,4 @@
-module Position exposing (Position, new)
+module Position exposing (Position, fromTuple, new, toTuple)
 
 
 type alias Position =
@@ -9,3 +9,13 @@ type alias Position =
 
 new =
     Position
+
+
+toTuple : Position -> ( Int, Int )
+toTuple p =
+    ( p.row, p.column )
+
+
+fromTuple : ( Int, Int ) -> Position
+fromTuple ( r, c ) =
+    new r c
