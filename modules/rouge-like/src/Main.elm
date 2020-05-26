@@ -351,12 +351,8 @@ isWall model position =
 
 isEnemy : Model -> Position -> Bool
 isEnemy model position =
-    case List.find (enemyPositionEq position) model.enemies of
-        Just enemy ->
-            enemy.hp > 0
-
-        Nothing ->
-            False
+    List.find (enemyPositionEq position) model.enemies
+        |> unwrap False (always True)
 
 
 isPlayer : Model -> Position -> Bool
