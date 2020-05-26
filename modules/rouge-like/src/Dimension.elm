@@ -32,5 +32,5 @@ member : Position -> Dimension -> Bool
 member position dimension =
     case Position.toTuple position of
         ( row, column ) ->
-            (clamp 0 dimension.rows row == row)
-                && (clamp 0 dimension.columns column == column)
+            (clamp 0 (dimension.rows - 1) row == row)
+                && (clamp 0 (dimension.columns - 1) column == column)
