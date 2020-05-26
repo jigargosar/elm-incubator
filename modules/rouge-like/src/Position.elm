@@ -1,4 +1,4 @@
-module Position exposing (Position, down, fromTuple, left, new, right, toTuple, up)
+module Position exposing (Position, adjacent, down, fromTuple, left, new, right, toTuple, up)
 
 
 type alias Position =
@@ -19,6 +19,12 @@ toTuple p =
 fromTuple : ( Int, Int ) -> Position
 fromTuple ( r, c ) =
     new r c
+
+
+adjacent : Position -> List Position
+adjacent position =
+    [ up, right, down, left ]
+        |> List.map (\f -> f position)
 
 
 left : Position -> Position

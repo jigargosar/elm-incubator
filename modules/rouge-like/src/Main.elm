@@ -9,7 +9,8 @@ import Json.Decode as JD
 import List.Extra as List
 import Position exposing (Position)
 import Random exposing (Seed)
-import Random.List as Random
+import Random.Extra as Random
+import Random.List
 
 
 
@@ -64,8 +65,8 @@ init _ =
 
 shuffleSplit : Int -> List a -> Random.Generator ( List a, List a )
 shuffleSplit n xs =
-    Random.shuffle xs
-        |> Random.andThen Random.shuffle
+    Random.List.shuffle xs
+        |> Random.andThen Random.List.shuffle
         |> Random.map (List.splitAt n)
 
 
@@ -117,6 +118,36 @@ movePlayerInDirection direction model =
 
     else
         model
+
+
+stepEnemies : Model -> Model
+stepEnemies model =
+    let
+        randomAdjacent : Position -> Random.Generator ( Position, Maybe Position )
+        randomAdjacent position =
+            Dimension.adjacentPositions position model.dimension
+                |> Random.List.choose
+                |> Random.map (\( maybeNextPosition, _ ) -> ( position, maybeNextPosition ))
+
+        foo : Random.Generator (List Position)
+        foo =
+            List.map randomAdjacent model.enemies
+                |> Random.combine
+                |> Random.map
+                    (List.map
+                        (\( position, maybeNextPosition ) ->
+                            maybeNextPosition
+                                |> Maybe.withDefault position
+                        )
+                    )
+
+        ( enemies, seed ) =
+            Random.step foo model.seed
+    in
+    { model
+        | enemies = enemies
+        , seed = seed
+    }
 
 
 isWithinDimension : Model -> Position -> Bool
