@@ -1,4 +1,4 @@
-module Tuple.Extra exposing (andMap, apply, map, map2)
+module Tuple.More exposing (andMap, apply, map, map2)
 
 
 map =

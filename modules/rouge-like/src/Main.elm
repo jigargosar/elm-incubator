@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.More exposing (..)
 import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
@@ -104,11 +105,6 @@ movePlayerInDirection direction model =
 
     else
         model
-
-
-allPass : List (a -> Bool) -> a -> Bool
-allPass fs v =
-    List.all ((|>) v) fs
 
 
 isWithinDimension : Model -> Position -> Bool
