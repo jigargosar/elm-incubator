@@ -43,7 +43,7 @@ init _ =
                 |> List.remove playerPosition
 
         seed0 =
-            Random.initialSeed 0
+            Random.initialSeed 10
 
         ( ( walls, emptyPositions1 ), _ ) =
             Random.step (shuffleSplit 40 emptyPositions0) seed0
