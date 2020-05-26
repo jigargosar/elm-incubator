@@ -91,6 +91,36 @@ type alias Flags =
     ()
 
 
+type alias WorldGeneratorAcc =
+    { empty : List Position
+    , player : Position
+    , walls : List Position
+    , enemies : List Enemy
+    }
+
+
+foo =
+    let
+        dimension =
+            Dimension.new 10 18
+
+        acc : WorldGeneratorAcc
+        acc =
+            { empty =
+                dimension
+                    |> Dimension.toPositions
+                    |> List.remove playerPosition
+            , player = playerPosition
+            , walls = []
+            , enemies = []
+            }
+
+        playerPosition =
+            Position.new 5 5
+    in
+    1
+
+
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     let
