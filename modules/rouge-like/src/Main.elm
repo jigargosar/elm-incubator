@@ -59,6 +59,7 @@ update message model =
 movePlayerInDirection : Direction -> Model -> Model
 movePlayerInDirection direction model =
     let
+        position : Position
         position =
             model.player
                 |> stepPositionInDirection direction
