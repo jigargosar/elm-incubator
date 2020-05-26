@@ -8,7 +8,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as JD
 import List.Extra as List
 import Position exposing (Position)
-import Random
+import Random exposing (Seed)
 import Random.List as Random
 
 
@@ -21,6 +21,7 @@ type alias Model =
     , player : Position
     , walls : List Position
     , enemies : List Position
+    , seed : Seed
     }
 
 
@@ -45,7 +46,7 @@ init _ =
         seed0 =
             Random.initialSeed 10
 
-        ( ( walls, emptyPositions1 ), _ ) =
+        ( ( walls, emptyPositions1 ), seed1 ) =
             Random.step (shuffleSplit 20 emptyPositions0) seed0
 
         ( enemies, _ ) =
@@ -55,6 +56,7 @@ init _ =
       , player = playerPosition
       , walls = walls
       , enemies = enemies
+      , seed = seed1
       }
     , Cmd.none
     )
