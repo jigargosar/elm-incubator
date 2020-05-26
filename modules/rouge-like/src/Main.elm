@@ -69,8 +69,8 @@ enemiesRemoveAtPosition position =
     List.filter (enemyPositionEq position >> not)
 
 
-enemiesRemoveById : Uid -> List Enemy -> List Enemy
-enemiesRemoveById uid =
+enemiesRemove : Uid -> List Enemy -> List Enemy
+enemiesRemove uid =
     List.filterNot (enemyIdEq uid)
 
 
@@ -274,7 +274,7 @@ stepEnemyWithUid uid model =
                             case entityAt model nextPosition of
                                 E_Player ->
                                     { model
-                                        | enemies = enemiesRemoveById uid model.enemies
+                                        | enemies = enemiesRemove uid model.enemies
                                         , playerHp = model.playerHp - 1 |> atLeast 0
                                     }
 
