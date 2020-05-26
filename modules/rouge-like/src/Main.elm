@@ -220,7 +220,7 @@ movePlayerInDirection direction model =
     then
         { model | player = position }
             |> mapEnemies (enemiesRemoveAtPosition position)
-            |> stepEnemies
+            |> generate stepEnemiesGenerator
 
     else
         model
@@ -229,11 +229,6 @@ movePlayerInDirection direction model =
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
 mapEnemies f model =
     { model | enemies = f model.enemies }
-
-
-stepEnemies : Model -> Model
-stepEnemies model =
-    generate stepEnemiesGenerator model
 
 
 generate : ({ a | seed : Seed } -> Generator { b | seed : Seed }) -> { a | seed : Seed } -> { b | seed : Seed }
@@ -246,20 +241,21 @@ setSeedIn ( model, seed ) =
     { model | seed = seed }
 
 
-indicesOf : List a -> List Int
-indicesOf xs =
-    List.range 0 (List.length xs - 1)
-
-
 stepEnemiesGenerator : Model -> Generator Model
 stepEnemiesGenerator model =
-    indicesOf model.enemies
-        |> List.foldl (\i -> Random.andThen (stepEnemyAtIndex i)) (Random.constant model)
+    model.enemies
+        |> List.map .uid
+        |> List.foldl (\uid -> Random.andThen (stepEnemyWithUid uid)) (Random.constant model)
 
 
-stepEnemyAtIndex : Int -> Model -> Generator Model
-stepEnemyAtIndex enemyIndex model =
-    case List.getAt enemyIndex model.enemies of
+enemyIdEq : Uid -> Enemy -> Bool
+enemyIdEq uid enemy =
+    enemy.uid == uid
+
+
+stepEnemyWithUid : Uid -> Model -> Generator Model
+stepEnemyWithUid uid model =
+    case List.find (enemyIdEq uid) model.enemies of
         Nothing ->
             Random.constant model
 
