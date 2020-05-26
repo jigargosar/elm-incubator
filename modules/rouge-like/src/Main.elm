@@ -285,6 +285,7 @@ stepEnemyAtIndex enemyIndex model =
                                             | enemies =
                                                 model.enemies
                                                     |> List.remove enemy
+                                            , playerHp = model.playerHp - 1 |> atLeast 0
                                         }
 
                                     E_Enemy enemy2 ->
