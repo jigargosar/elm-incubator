@@ -6,7 +6,10 @@ import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
+import List.Extra as List
 import Position exposing (Position)
+import Random
+import Random.List as Random
 
 
 
@@ -32,6 +35,12 @@ init _ =
       }
     , Cmd.none
     )
+
+
+shuffleSplit : Int -> List a -> Random.Generator ( List a, List a )
+shuffleSplit n xs =
+    Random.shuffle xs
+        |> Random.map (List.splitAt n)
 
 
 
