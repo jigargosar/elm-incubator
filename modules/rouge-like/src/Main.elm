@@ -69,6 +69,16 @@ enemiesRemoveAtPosition position =
     List.filter (enemyPositionEq position >> not)
 
 
+enemiesRemoveById : Uid -> List Enemy -> List Enemy
+enemiesRemoveById uid =
+    List.filterNot (enemyIdEq uid)
+
+
+enemiesUpdateById : Uid -> (Enemy -> Enemy) -> List Enemy -> List Enemy
+enemiesUpdateById id =
+    List.updateIf (enemyIdEq id)
+
+
 
 -- World Generator
 
@@ -255,44 +265,36 @@ enemyIdEq uid enemy =
 
 stepEnemyWithUid : Uid -> Model -> Generator Model
 stepEnemyWithUid uid model =
-    case List.find (enemyIdEq uid) model.enemies of
-        Nothing ->
-            Random.constant model
+    List.find (enemyIdEq uid) model.enemies
+        |> Maybe.map
+            (nextEnemyPositionGenerator model
+                >> Random.map
+                    (Maybe.map
+                        (\nextPosition ->
+                            case entityAt model nextPosition of
+                                E_Player ->
+                                    { model
+                                        | enemies = enemiesRemoveById uid model.enemies
+                                        , playerHp = model.playerHp - 1 |> atLeast 0
+                                    }
 
-        Just enemy ->
-            nextEnemyPositionGenerator model enemy
-                |> Random.map
-                    (\maybePosition ->
-                        case maybePosition of
-                            Nothing ->
-                                model
+                                E_Enemy victim ->
+                                    { model | enemies = model.enemies |> List.remove victim }
 
-                            Just nextPosition ->
-                                moveEnemyTo nextPosition enemy model
+                                E_Wall ->
+                                    model
+
+                                E_Empty ->
+                                    { model
+                                        | enemies =
+                                            model.enemies
+                                                |> enemiesUpdateById uid (enemySetPosition nextPosition)
+                                    }
+                        )
+                        >> Maybe.withDefault model
                     )
-
-
-moveEnemyTo : Position -> Enemy -> Model -> Model
-moveEnemyTo nextPosition enemy model =
-    case entityAt model nextPosition of
-        E_Player ->
-            { model
-                | enemies = model.enemies |> List.remove enemy
-                , playerHp = model.playerHp - 1 |> atLeast 0
-            }
-
-        E_Enemy victim ->
-            { model | enemies = model.enemies |> List.remove victim }
-
-        E_Wall ->
-            model
-
-        E_Empty ->
-            { model
-                | enemies =
-                    model.enemies
-                        |> List.updateIf ((==) enemy) (enemySetPosition nextPosition)
-            }
+            )
+        |> Maybe.withDefault (Random.constant model)
 
 
 type Entity
