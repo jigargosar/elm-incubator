@@ -212,7 +212,7 @@ update message model =
         KeyDown key ->
             ( directionFromKey key
                 |> Maybe.andThen (flip computePlayerMove model)
-                |> Maybe.map (flip movePlayerTo model)
+                |> Maybe.map (flip movePlayerTo model >> stepEnemies)
                 |> Maybe.withDefault model
             , Cmd.none
             )
@@ -222,7 +222,6 @@ movePlayerTo : Position -> Model -> Model
 movePlayerTo position model =
     { model | player = position }
         |> mapEnemies (enemiesRemoveAtPosition position)
-        |> stepEnemies
 
 
 computePlayerMove : Direction -> Model -> Maybe Position
