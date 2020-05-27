@@ -273,11 +273,14 @@ enemyIdEq uid enemy =
 
 stepEnemy : Uid -> Model -> Generator Model
 stepEnemy uid model =
-    case movesOfEnemy uid model of
-        [] ->
+    case
+        movesOfEnemy uid model
+            |> List.uncons
+    of
+        Nothing ->
             Random.constant model
 
-        h :: t ->
+        Just ( h, t ) ->
             Random.uniform h t
                 |> Random.map
                     (\nextPosition ->
