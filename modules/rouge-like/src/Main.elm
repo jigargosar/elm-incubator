@@ -283,17 +283,15 @@ stepEnemyWithUid uid model =
                                 }
 
                             E_Enemy victim ->
-                                { model | enemies = model.enemies |> List.remove victim }
+                                model
+                                    |> mapEnemies (enemiesRemove victim.uid)
 
                             E_Wall ->
                                 model
 
                             E_Empty ->
-                                { model
-                                    | enemies =
-                                        model.enemies
-                                            |> enemiesUpdate uid (enemySetPosition nextPosition)
-                                }
+                                model
+                                    |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
                     )
 
 
