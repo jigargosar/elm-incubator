@@ -57,6 +57,11 @@ enemySetPosition position enemy =
     { enemy | position = position }
 
 
+enemyIdEq : Uid -> Enemy -> Bool
+enemyIdEq uid enemy =
+    enemy.uid == uid
+
+
 
 -- Enemies
 
@@ -253,11 +258,6 @@ stepEnemies model =
     model.enemies
         |> List.map .uid
         |> List.foldl stepEnemy model
-
-
-enemyIdEq : Uid -> Enemy -> Bool
-enemyIdEq uid enemy =
-    enemy.uid == uid
 
 
 stepEnemy : Uid -> Model -> Model
