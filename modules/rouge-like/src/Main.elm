@@ -211,10 +211,20 @@ update message model =
 
         KeyDown key ->
             ( directionFromKey key
-                |> Maybe.andThen (flip computePlayerMove model)
-                |> Maybe.map (flip movePlayerTo model >> stepEnemies)
+                |> Maybe.andThen (\direction -> stepPlayerInDirection direction model)
                 |> Maybe.withDefault model
             , Cmd.none
+            )
+
+
+stepPlayerInDirection : Direction -> Model -> Maybe Model
+stepPlayerInDirection direction model =
+    computePlayerMove direction model
+        |> Maybe.map
+            (\position ->
+                model
+                    |> movePlayerTo position
+                    |> stepEnemies
             )
 
 
