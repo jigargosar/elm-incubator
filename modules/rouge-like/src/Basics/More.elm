@@ -6,8 +6,8 @@ allPass fs v =
     List.all ((|>) v) fs
 
 
-filterValue : (a -> Bool) -> a -> Maybe a
-filterValue isOk x =
+justWhen : (a -> Bool) -> a -> Maybe a
+justWhen isOk x =
     if isOk x then
         Just x
 
