@@ -211,22 +211,22 @@ update message model =
 
         KeyDown key ->
             ( directionFromKey key
-                |> Maybe.andThen (computePlayerMove model)
-                |> Maybe.map (movePlayer model)
+                |> Maybe.andThen (flip computePlayerMove model)
+                |> Maybe.map (flip movePlayerTo model)
                 |> Maybe.withDefault model
             , Cmd.none
             )
 
 
-movePlayer : Model -> Position -> Model
-movePlayer model position =
+movePlayerTo : Position -> Model -> Model
+movePlayerTo position model =
     { model | player = position }
         |> mapEnemies (enemiesRemoveAtPosition position)
         |> stepEnemies
 
 
-computePlayerMove : Model -> Direction -> Maybe Position
-computePlayerMove model direction =
+computePlayerMove : Direction -> Model -> Maybe Position
+computePlayerMove direction model =
     model.player
         |> stepPositionInDirection direction
         |> justWhen (allPass [ isWithinDimension model, isWall model >> not ])
