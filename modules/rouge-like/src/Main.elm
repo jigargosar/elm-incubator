@@ -76,6 +76,11 @@ enemiesUpdate id =
     List.updateIf (enemyIdEq id)
 
 
+enemiesFindById : Uid -> List Enemy -> Maybe Enemy
+enemiesFindById uid enemies =
+    List.find (enemyIdEq uid) enemies
+
+
 
 -- World Generator
 
@@ -262,38 +267,34 @@ enemyIdEq uid enemy =
 
 stepEnemyWithUid : Uid -> Model -> Generator Model
 stepEnemyWithUid uid model =
-    case List.find (enemyIdEq uid) model.enemies of
-        Just enemy ->
-            enemy
-                |> nextEnemyPositionGenerator model
-                >> Random.map
-                    (Maybe.map
-                        (\nextPosition ->
-                            case entityAt model nextPosition of
-                                E_Player ->
-                                    { model
-                                        | enemies = enemiesRemove uid model.enemies
-                                        , playerHp = model.playerHp - 1 |> atLeast 0
-                                    }
-
-                                E_Enemy victim ->
-                                    { model | enemies = model.enemies |> List.remove victim }
-
-                                E_Wall ->
-                                    model
-
-                                E_Empty ->
-                                    { model
-                                        | enemies =
-                                            model.enemies
-                                                |> enemiesUpdate uid (enemySetPosition nextPosition)
-                                    }
-                        )
-                        >> Maybe.withDefault model
-                    )
-
-        Nothing ->
+    case movesOfEnemyWithId uid model of
+        [] ->
             Random.constant model
+
+        h :: t ->
+            Random.uniform h t
+                |> Random.map
+                    (\nextPosition ->
+                        case entityAt model nextPosition of
+                            E_Player ->
+                                { model
+                                    | enemies = enemiesRemove uid model.enemies
+                                    , playerHp = model.playerHp - 1 |> atLeast 0
+                                }
+
+                            E_Enemy victim ->
+                                { model | enemies = model.enemies |> List.remove victim }
+
+                            E_Wall ->
+                                model
+
+                            E_Empty ->
+                                { model
+                                    | enemies =
+                                        model.enemies
+                                            |> enemiesUpdate uid (enemySetPosition nextPosition)
+                                }
+                    )
 
 
 type Entity
@@ -320,20 +321,17 @@ entityAt model position =
                 E_Enemy enemy
 
 
+movesOfEnemyWithId : Uid -> Model -> List Position
+movesOfEnemyWithId uid model =
+    enemiesFindById uid model.enemies
+        |> Maybe.map (enemyMoves model)
+        |> Maybe.withDefault []
+
+
 enemyMoves : Model -> Enemy -> List Position
 enemyMoves model enemy =
     Dimension.adjacentPositions enemy.position model.dimension
         |> List.filter (notWall model)
-
-
-nextEnemyPositionGenerator : Model -> Enemy -> Generator (Maybe Position)
-nextEnemyPositionGenerator model enemy =
-    case enemyMoves model enemy of
-        [] ->
-            Random.constant Nothing
-
-        h :: t ->
-            Random.maybe Random.bool (Random.uniform h t)
 
 
 isWithinDimension : Model -> Position -> Bool
