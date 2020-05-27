@@ -280,46 +280,46 @@ stepEnemyWithUid uid model =
             Random.uniform h t
                 |> Random.map
                     (\nextPosition ->
-                        case entityAt model nextPosition of
-                            E_Player ->
+                        case classifyPosition model nextPosition of
+                            Player ->
                                 { model | playerHp = model.playerHp - 1 |> atLeast 0 }
                                     |> mapEnemies (enemiesRemove uid)
 
-                            E_Enemy victim ->
+                            Enemy_ victim ->
                                 model
                                     |> mapEnemies (enemiesRemove victim.uid)
 
-                            E_Wall ->
+                            Wall ->
                                 model
 
-                            E_Empty ->
+                            Empty ->
                                 model
                                     |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
                     )
 
 
 type Entity
-    = E_Player
-    | E_Enemy Enemy
-    | E_Wall
-    | E_Empty
+    = Player
+    | Enemy_ Enemy
+    | Wall
+    | Empty
 
 
-entityAt : Model -> Position -> Entity
-entityAt model position =
+classifyPosition : Model -> Position -> Entity
+classifyPosition model position =
     if isPlayer model position then
-        E_Player
+        Player
 
     else if isWall model position then
-        E_Wall
+        Wall
 
     else
         case enemiesFindAtPosition position model.enemies of
             Nothing ->
-                E_Empty
+                Empty
 
             Just enemy ->
-                E_Enemy enemy
+                Enemy_ enemy
 
 
 movesOfEnemyWithId : Uid -> Model -> List Position
