@@ -1,6 +1,7 @@
 module Main exposing (main)
 
-import Basics.Extra exposing (atLeast)
+import Basics.Extra exposing (..)
+import Basics.More exposing (..)
 import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
@@ -251,14 +252,13 @@ stepEnemies : Model -> Model
 stepEnemies model =
     model.enemies
         |> List.map .uid
-        |> List.foldl stepEnemy model
+        |> List.foldl (ignoreNothing2 stepEnemy) model
 
 
-stepEnemy : Uid -> Model -> Model
+stepEnemy : Uid -> Model -> Maybe Model
 stepEnemy uid model =
     computeEnemyMove uid model
         |> Maybe.map (moveEnemy uid)
-        |> Maybe.withDefault model
 
 
 moveEnemy : Uid -> ( Position, Model ) -> Model
