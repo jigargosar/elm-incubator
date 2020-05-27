@@ -237,7 +237,7 @@ movePlayerInDirection direction model =
     then
         { model | player = position }
             |> mapEnemies (enemiesRemoveAtPosition position)
-            |> generate stepEnemiesGenerator
+            |> stepEnemies
 
     else
         model
@@ -258,11 +258,11 @@ setSeedIn ( model, seed ) =
     { model | seed = seed }
 
 
-stepEnemiesGenerator : Model -> Generator Model
-stepEnemiesGenerator model =
+stepEnemies : Model -> Model
+stepEnemies model =
     model.enemies
         |> List.map .uid
-        |> List.foldl (\uid -> Random.andThen (stepEnemyWithUid uid)) (Random.constant model)
+        |> List.foldl (\uid -> generate (stepEnemyWithUid uid)) model
 
 
 enemyIdEq : Uid -> Enemy -> Bool
