@@ -46,10 +46,6 @@ newEnemy position =
             )
 
 
-atLeast =
-    max
-
-
 enemyPositionEq : Position -> Enemy -> Bool
 enemyPositionEq position enemy =
     enemy.position == position
