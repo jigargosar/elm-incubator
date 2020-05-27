@@ -230,11 +230,6 @@ computePlayerMove direction model =
         position =
             stepPositionInDirection direction model.player
     in
-    validatePlayerMove position model
-
-
-validatePlayerMove : Position -> Model -> Maybe Position
-validatePlayerMove position model =
     if
         Dimension.member position model.dimension
             && (isWall model position |> not)
