@@ -220,27 +220,24 @@ update message model =
 
 movePlayerInDirection : Direction -> Model -> Model
 movePlayerInDirection direction model =
-    let
-        position : Position
-        position =
-            model.player
-                |> stepPositionInDirection direction
+    case computePlayerMove direction model of
+        Just position ->
+            { model | player = position }
+                |> mapEnemies (enemiesRemoveAtPosition position)
+                |> stepEnemies
 
-        allTrue =
-            List.all (\f -> f model position)
-    in
-    if
-        allTrue
-            [ isWithinDimension
-            , notWall
-            ]
-    then
-        { model | player = position }
-            |> mapEnemies (enemiesRemoveAtPosition position)
-            |> stepEnemies
+        Nothing ->
+            model
 
-    else
-        model
+
+computePlayerMove : Direction -> Model -> Maybe Position
+computePlayerMove direction model =
+    model.player
+        |> stepPositionInDirection direction
+        |> List.singleton
+        |> List.filter (isWithinDimension model)
+        |> List.filterNot (isWall model)
+        |> List.head
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -328,7 +325,7 @@ movesOfEnemy uid model =
 movesOfEnemyHelp : Model -> Enemy -> List Position
 movesOfEnemyHelp model enemy =
     Dimension.adjacentPositions enemy.position model.dimension
-        |> List.filter (notWall model)
+        |> List.filterNot (isWall model)
 
 
 isWithinDimension : Model -> Position -> Bool
@@ -350,11 +347,6 @@ isEnemy model position =
 isPlayer : Model -> Position -> Bool
 isPlayer model position =
     model.player == position
-
-
-notWall : Model -> Position -> Bool
-notWall model =
-    isWall model >> not
 
 
 stepPositionInDirection : Direction -> Position -> Position

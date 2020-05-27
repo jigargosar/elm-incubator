@@ -1,4 +1,4 @@
-module Dimension exposing (Dimension, adjacentPositions, member, memberOf, new, toPositions, toRows, toTuple)
+module Dimension exposing (Dimension, adjacentPositions, member, new, toPositions, toRows, toTuple)
 
 import Index
 import Position exposing (Position)
