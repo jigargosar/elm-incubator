@@ -81,6 +81,11 @@ enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
 
 
+enemiesFindAtPosition : Position -> List Enemy -> Maybe Enemy
+enemiesFindAtPosition position =
+    List.find (enemyPositionEq position)
+
+
 
 -- World Generator
 
@@ -309,7 +314,7 @@ entityAt model position =
         E_Wall
 
     else
-        case List.find (enemyPositionEq position) model.enemies of
+        case enemiesFindAtPosition position model.enemies of
             Nothing ->
                 E_Empty
 
