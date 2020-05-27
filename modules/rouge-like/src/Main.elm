@@ -76,8 +76,8 @@ enemiesUpdate id =
     List.updateIf (enemyIdEq id)
 
 
-enemiesFindById : Uid -> List Enemy -> Maybe Enemy
-enemiesFindById uid enemies =
+enemiesFind : Uid -> List Enemy -> Maybe Enemy
+enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
 
 
@@ -319,7 +319,7 @@ entityAt model position =
 
 movesOfEnemyWithId : Uid -> Model -> List Position
 movesOfEnemyWithId uid model =
-    enemiesFindById uid model.enemies
+    enemiesFind uid model.enemies
         |> Maybe.map (enemyMoves model)
         |> Maybe.withDefault []
 
