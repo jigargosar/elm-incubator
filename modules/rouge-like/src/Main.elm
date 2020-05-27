@@ -134,10 +134,7 @@ enemiesGenerator acc =
                     |> Random.combine
                     |> Random.map
                         (\enemies ->
-                            { acc
-                                | enemies = enemies
-                                , empty = empty
-                            }
+                            { acc | enemies = enemies, empty = empty }
                         )
             )
 
@@ -147,10 +144,7 @@ wallsGenerator acc =
     shuffleSplit 20 acc.empty
         |> Random.map
             (\( walls, empty ) ->
-                { acc
-                    | walls = walls
-                    , empty = empty
-                }
+                { acc | walls = walls, empty = empty }
             )
 
 
