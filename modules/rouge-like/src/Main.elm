@@ -219,7 +219,8 @@ update message model =
 
 stepPlayerInDirection : Direction -> Model -> Maybe Model
 stepPlayerInDirection direction model =
-    computePlayerMove direction model
+    model
+        |> computePlayerMove direction
         |> Maybe.map
             (\position ->
                 model
