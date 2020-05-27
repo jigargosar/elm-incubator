@@ -256,21 +256,13 @@ stepEnemies model =
 
 stepEnemy : Uid -> Model -> Model
 stepEnemy uid model =
-    case
-        movesOfEnemy uid model
-            |> Random.sample
-            |> (\g -> Random.step g model.seed)
-    of
-        ( Nothing, _ ) ->
-            model
-
-        ( Just nextPosition, seed ) ->
-            { model | seed = seed }
-                |> moveEnemy uid nextPosition
+    computeEnemyMove uid model
+        |> Maybe.map (moveEnemy uid)
+        |> Maybe.withDefault model
 
 
-moveEnemy : Uid -> Position -> Model -> Model
-moveEnemy uid nextPosition model =
+moveEnemy : Uid -> ( Position, Model ) -> Model
+moveEnemy uid ( nextPosition, model ) =
     case classifyPosition model nextPosition of
         Player ->
             { model | playerHp = model.playerHp - 1 |> atLeast 0 }
@@ -312,9 +304,18 @@ classifyPosition model position =
                 Enemy_ enemy
 
 
-nextMoveOfEnemy : Uid -> Model -> Maybe ( Position, Model )
-nextMoveOfEnemy uid model =
-    Debug.todo "impl"
+computeEnemyMove : Uid -> Model -> Maybe ( Position, Model )
+computeEnemyMove uid model =
+    case
+        movesOfEnemy uid model
+            |> Random.sample
+            |> (\g -> Random.step g model.seed)
+    of
+        ( Nothing, _ ) ->
+            Nothing
+
+        ( Just nextPosition, seed ) ->
+            Just ( nextPosition, { model | seed = seed } )
 
 
 movesOfEnemy : Uid -> Model -> List Position
