@@ -226,15 +226,23 @@ movePlayerTo position model =
 
 computePlayerMove : Direction -> Model -> Maybe Position
 computePlayerMove direction model =
-    model.player
-        |> stepPositionInDirection direction
-        |> justWhen (flip canPlayerMoveTo model)
+    let
+        position =
+            stepPositionInDirection direction model.player
+    in
+    validatePlayerMove position model
 
 
-canPlayerMoveTo : Position -> Model -> Bool
-canPlayerMoveTo position model =
-    Dimension.member position model.dimension
-        && (isWall model position |> not)
+validatePlayerMove : Position -> Model -> Maybe Position
+validatePlayerMove position model =
+    if
+        Dimension.member position model.dimension
+            && (isWall model position |> not)
+    then
+        Just position
+
+    else
+        Nothing
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
