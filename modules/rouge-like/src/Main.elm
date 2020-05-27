@@ -250,7 +250,8 @@ mapEnemies f model =
 
 generate : ({ a | seed : Seed } -> Generator { b | seed : Seed }) -> { a | seed : Seed } -> { b | seed : Seed }
 generate f model =
-    Random.step (f model) model.seed
+    model.seed
+        |> Random.step (f model)
         |> setSeedIn
 
 
