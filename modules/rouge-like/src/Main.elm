@@ -278,6 +278,7 @@ stepEnemy uid model =
                 |> moveEnemy uid nextPosition
 
 
+moveEnemy : Uid -> Position -> Model -> Model
 moveEnemy uid nextPosition model =
     case classifyPosition model nextPosition of
         Player ->
