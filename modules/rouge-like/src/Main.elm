@@ -230,14 +230,17 @@ computePlayerMove direction model =
         position =
             stepPositionInDirection direction model.player
     in
-    if
-        Dimension.member position model.dimension
-            && (isWall model position |> not)
-    then
+    if canPlayerMoveTo position model then
         Just position
 
     else
         Nothing
+
+
+canPlayerMoveTo : Position -> Model -> Bool
+canPlayerMoveTo position model =
+    Dimension.member position model.dimension
+        && (isWall model position |> not)
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
