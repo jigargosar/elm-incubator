@@ -277,9 +277,7 @@ stepEnemyWithUid uid model =
                     (\nextPosition ->
                         case entityAt model nextPosition of
                             E_Player ->
-                                { model
-                                    | playerHp = model.playerHp - 1 |> atLeast 0
-                                }
+                                { model | playerHp = model.playerHp - 1 |> atLeast 0 }
                                     |> mapEnemies (enemiesRemove uid)
 
                             E_Enemy victim ->
