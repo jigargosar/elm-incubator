@@ -258,16 +258,13 @@ stepEnemy : Uid -> Model -> Model
 stepEnemy uid model =
     case
         movesOfEnemy uid model
-            |> List.uncons
+            |> Random.sample
+            |> (\g -> Random.step g model.seed)
     of
-        Nothing ->
+        ( Nothing, _ ) ->
             model
 
-        Just ( h, t ) ->
-            let
-                ( nextPosition, seed ) =
-                    Random.step (Random.uniform h t) model.seed
-            in
+        ( Just nextPosition, seed ) ->
             { model | seed = seed }
                 |> moveEnemy uid nextPosition
 
