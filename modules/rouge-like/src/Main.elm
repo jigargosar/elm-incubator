@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Basics.Extra exposing (atLeast)
 import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
