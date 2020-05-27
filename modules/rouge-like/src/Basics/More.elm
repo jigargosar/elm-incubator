@@ -23,3 +23,8 @@ ignoreNothing f x =
 ignoreNothing2 : (b -> a -> Maybe a) -> b -> a -> a
 ignoreNothing2 f x =
     ignoreNothing (f x)
+
+
+pairTo : a -> b -> ( b, a )
+pairTo b a =
+    Tuple.pair a b

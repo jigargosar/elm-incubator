@@ -210,28 +210,32 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            case directionFromKey key of
-                Just direction ->
-                    ( movePlayerInDirection direction model, Cmd.none )
-
-                Nothing ->
-                    ( model, Cmd.none )
-
-
-movePlayerInDirection : Direction -> Model -> Model
-movePlayerInDirection direction model =
-    case computePlayerMove direction model of
-        Just position ->
-            { model | player = position }
-                |> mapEnemies (enemiesRemoveAtPosition position)
-                |> stepEnemies
-
-        Nothing ->
-            model
+            ( directionFromKey key
+                |> Maybe.andThen (\d -> movePlayerInDirection d model)
+                |> Maybe.withDefault model
+            , Cmd.none
+            )
 
 
-computePlayerMove : Direction -> Model -> Maybe Position
+movePlayerInDirection : Direction -> Model -> Maybe Model
+movePlayerInDirection direction =
+    computePlayerMove direction
+        >> Maybe.map
+            (\( position, model ) ->
+                { model | player = position }
+                    |> mapEnemies (enemiesRemoveAtPosition position)
+                    |> stepEnemies
+            )
+
+
+computePlayerMove : Direction -> Model -> Maybe ( Position, Model )
 computePlayerMove direction model =
+    computePlayerMoveHelp direction model
+        |> Maybe.map (pairTo model)
+
+
+computePlayerMoveHelp : Direction -> Model -> Maybe Position
+computePlayerMoveHelp direction model =
     model.player
         |> stepPositionInDirection direction
         |> justWhen (allPass [ isWithinDimension model, isWall model >> not ])
