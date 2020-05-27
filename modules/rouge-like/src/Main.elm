@@ -211,31 +211,22 @@ update message model =
 
         KeyDown key ->
             ( directionFromKey key
-                |> Maybe.andThen (\d -> movePlayerInDirection d model)
+                |> Maybe.andThen (\direction -> computePlayerMove direction model)
+                |> Maybe.map (\position -> movePlayerTo position model)
                 |> Maybe.withDefault model
             , Cmd.none
             )
 
 
-movePlayerInDirection : Direction -> Model -> Maybe Model
-movePlayerInDirection direction =
-    computePlayerMove direction
-        >> Maybe.map
-            (\( position, model ) ->
-                { model | player = position }
-                    |> mapEnemies (enemiesRemoveAtPosition position)
-                    |> stepEnemies
-            )
+movePlayerTo : Position -> Model -> Model
+movePlayerTo position model =
+    { model | player = position }
+        |> mapEnemies (enemiesRemoveAtPosition position)
+        |> stepEnemies
 
 
-computePlayerMove : Direction -> Model -> Maybe ( Position, Model )
+computePlayerMove : Direction -> Model -> Maybe Position
 computePlayerMove direction model =
-    computePlayerMoveHelp direction model
-        |> Maybe.map (pairTo model)
-
-
-computePlayerMoveHelp : Direction -> Model -> Maybe Position
-computePlayerMoveHelp direction model =
     model.player
         |> stepPositionInDirection direction
         |> justWhen (allPass [ isWithinDimension model, isWall model >> not ])
