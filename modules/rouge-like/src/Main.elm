@@ -273,7 +273,7 @@ enemyIdEq uid enemy =
 
 stepEnemy : Uid -> Model -> Generator Model
 stepEnemy uid model =
-    case movesOfEnemyWithId uid model of
+    case movesOfEnemy uid model of
         [] ->
             Random.constant model
 
@@ -323,15 +323,15 @@ classifyPosition model position =
                 Enemy_ enemy
 
 
-movesOfEnemyWithId : Uid -> Model -> List Position
-movesOfEnemyWithId uid model =
+movesOfEnemy : Uid -> Model -> List Position
+movesOfEnemy uid model =
     enemiesFind uid model.enemies
-        |> Maybe.map (enemyMoves model)
+        |> Maybe.map (movesOfEnemyHelp model)
         |> Maybe.withDefault []
 
 
-enemyMoves : Model -> Enemy -> List Position
-enemyMoves model enemy =
+movesOfEnemyHelp : Model -> Enemy -> List Position
+movesOfEnemyHelp model enemy =
     Dimension.adjacentPositions enemy.position model.dimension
         |> List.filter (notWall model)
 
