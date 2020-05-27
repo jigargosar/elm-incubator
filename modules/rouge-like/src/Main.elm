@@ -223,16 +223,10 @@ stepPlayerInDirection direction model =
         |> computePlayerMove direction
         |> Maybe.map
             (\position ->
-                model
-                    |> movePlayerTo position
+                { model | player = position }
+                    |> mapEnemies (enemiesRemoveAtPosition position)
                     |> stepEnemies
             )
-
-
-movePlayerTo : Position -> Model -> Model
-movePlayerTo position model =
-    { model | player = position }
-        |> mapEnemies (enemiesRemoveAtPosition position)
 
 
 computePlayerMove : Direction -> Model -> Maybe Position
