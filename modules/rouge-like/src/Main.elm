@@ -263,7 +263,7 @@ stepEnemies : Model -> Model
 stepEnemies model =
     model.enemies
         |> List.map .uid
-        |> List.foldl (\uid -> generate (stepEnemyWithUid uid)) model
+        |> List.foldl (\uid -> generate (stepEnemy uid)) model
 
 
 enemyIdEq : Uid -> Enemy -> Bool
@@ -271,8 +271,8 @@ enemyIdEq uid enemy =
     enemy.uid == uid
 
 
-stepEnemyWithUid : Uid -> Model -> Generator Model
-stepEnemyWithUid uid model =
+stepEnemy : Uid -> Model -> Generator Model
+stepEnemy uid model =
     case movesOfEnemyWithId uid model of
         [] ->
             Random.constant model
