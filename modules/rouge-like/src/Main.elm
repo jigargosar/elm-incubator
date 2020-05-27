@@ -228,7 +228,12 @@ computePlayerMove : Direction -> Model -> Maybe Position
 computePlayerMove direction model =
     model.player
         |> stepPositionInDirection direction
-        |> justWhen (allPass [ isWithinDimension model, isWall model >> not ])
+        |> justWhen
+            (allPass
+                [ flip Dimension.member model.dimension
+                , isWall model >> not
+                ]
+            )
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -317,11 +322,6 @@ movesOfEnemyHelp : Model -> Enemy -> List Position
 movesOfEnemyHelp model enemy =
     Dimension.adjacentPositions enemy.position model.dimension
         |> List.filterNot (isWall model)
-
-
-isWithinDimension : Model -> Position -> Bool
-isWithinDimension model position =
-    Dimension.member position model.dimension
 
 
 isWall : Model -> Position -> Bool
