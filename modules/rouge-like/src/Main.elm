@@ -275,10 +275,10 @@ stepEnemy uid model =
                     Random.step (Random.uniform h t) model.seed
             in
             { model | seed = seed }
-                |> foo uid nextPosition
+                |> moveEnemy uid nextPosition
 
 
-foo uid nextPosition model =
+moveEnemy uid nextPosition model =
     case classifyPosition model nextPosition of
         Player ->
             { model | playerHp = model.playerHp - 1 |> atLeast 0 }
