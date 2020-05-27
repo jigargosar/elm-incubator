@@ -274,10 +274,10 @@ enemyIdEq uid enemy =
 stepEnemy : Uid -> Model -> Generator Model
 stepEnemy uid model =
     case movesOfEnemy uid model of
-        Nothing ->
+        [] ->
             Random.constant model
 
-        Just ( h, t ) ->
+        h :: t ->
             Random.uniform h t
                 |> Random.map
                     (\nextPosition ->
@@ -323,17 +323,17 @@ classifyPosition model position =
                 Enemy_ enemy
 
 
-movesOfEnemy : Uid -> Model -> Maybe ( Position, List Position )
+movesOfEnemy : Uid -> Model -> List Position
 movesOfEnemy uid model =
     enemiesFind uid model.enemies
-        |> Maybe.andThen (movesOfEnemyHelp model)
+        |> Maybe.map (movesOfEnemyHelp model)
+        |> Maybe.withDefault []
 
 
-movesOfEnemyHelp : Model -> Enemy -> Maybe ( Position, List Position )
+movesOfEnemyHelp : Model -> Enemy -> List Position
 movesOfEnemyHelp model enemy =
     Dimension.adjacentPositions enemy.position model.dimension
         |> List.filter (notWall model)
-        |> List.uncons
 
 
 isWithinDimension : Model -> Position -> Bool
