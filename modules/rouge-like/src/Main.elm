@@ -312,6 +312,11 @@ classifyPosition model position =
                 Enemy_ enemy
 
 
+nextMoveOfEnemy : Uid -> Model -> Maybe ( Position, Model )
+nextMoveOfEnemy uid model =
+    Debug.todo "impl"
+
+
 movesOfEnemy : Uid -> Model -> List Position
 movesOfEnemy uid model =
     enemiesFind uid model.enemies
