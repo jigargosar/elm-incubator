@@ -262,9 +262,10 @@ enemyIdEq uid enemy =
 
 stepEnemyWithUid : Uid -> Model -> Generator Model
 stepEnemyWithUid uid model =
-    List.find (enemyIdEq uid) model.enemies
-        |> Maybe.map
-            (nextEnemyPositionGenerator model
+    case List.find (enemyIdEq uid) model.enemies of
+        Just enemy ->
+            enemy
+                |> nextEnemyPositionGenerator model
                 >> Random.map
                     (Maybe.map
                         (\nextPosition ->
@@ -290,8 +291,9 @@ stepEnemyWithUid uid model =
                         )
                         >> Maybe.withDefault model
                     )
-            )
-        |> Maybe.withDefault (Random.constant model)
+
+        Nothing ->
+            Random.constant model
 
 
 type Entity
