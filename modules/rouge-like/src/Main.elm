@@ -248,22 +248,11 @@ mapEnemies f model =
     { model | enemies = f model.enemies }
 
 
-generate : ({ a | seed : Seed } -> Generator { b | seed : Seed }) -> { a | seed : Seed } -> { b | seed : Seed }
-generate f model =
-    model.seed
-        |> Random.step (f model)
-        |> setSeedIn
-
-
-setSeedIn ( model, seed ) =
-    { model | seed = seed }
-
-
 stepEnemies : Model -> Model
 stepEnemies model =
     model.enemies
         |> List.map .uid
-        |> List.foldl (\uid -> generate (stepEnemy uid)) model
+        |> List.foldl stepEnemy model
 
 
 enemyIdEq : Uid -> Enemy -> Bool
@@ -271,35 +260,40 @@ enemyIdEq uid enemy =
     enemy.uid == uid
 
 
-stepEnemy : Uid -> Model -> Generator Model
+stepEnemy : Uid -> Model -> Model
 stepEnemy uid model =
     case
         movesOfEnemy uid model
             |> List.uncons
     of
         Nothing ->
-            Random.constant model
+            model
 
         Just ( h, t ) ->
-            Random.uniform h t
-                |> Random.map
-                    (\nextPosition ->
-                        case classifyPosition model nextPosition of
-                            Player ->
-                                { model | playerHp = model.playerHp - 1 |> atLeast 0 }
-                                    |> mapEnemies (enemiesRemove uid)
+            let
+                ( nextPosition, seed ) =
+                    Random.step (Random.uniform h t) model.seed
+            in
+            { model | seed = seed }
+                |> foo uid nextPosition
 
-                            Enemy_ victim ->
-                                model
-                                    |> mapEnemies (enemiesRemove victim.uid)
 
-                            Wall ->
-                                model
+foo uid nextPosition model =
+    case classifyPosition model nextPosition of
+        Player ->
+            { model | playerHp = model.playerHp - 1 |> atLeast 0 }
+                |> mapEnemies (enemiesRemove uid)
 
-                            Empty ->
-                                model
-                                    |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
-                    )
+        Enemy_ victim ->
+            model
+                |> mapEnemies (enemiesRemove victim.uid)
+
+        Wall ->
+            model
+
+        Empty ->
+            model
+                |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
 
 
 type Entity
