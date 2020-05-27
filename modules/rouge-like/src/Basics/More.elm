@@ -6,6 +6,15 @@ allPass fs v =
     List.all ((|>) v) fs
 
 
+filterValue : (a -> Bool) -> a -> Maybe a
+filterValue isOk x =
+    if isOk x then
+        Just x
+
+    else
+        Nothing
+
+
 ignoreNothing : (b -> Maybe b) -> b -> b
 ignoreNothing f x =
     f x |> Maybe.withDefault x

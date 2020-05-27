@@ -234,10 +234,7 @@ computePlayerMove : Direction -> Model -> Maybe Position
 computePlayerMove direction model =
     model.player
         |> stepPositionInDirection direction
-        |> List.singleton
-        |> List.filter (isWithinDimension model)
-        |> List.filterNot (isWall model)
-        |> List.head
+        |> filterValue (allPass [ isWithinDimension model, isWall model >> not ])
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
