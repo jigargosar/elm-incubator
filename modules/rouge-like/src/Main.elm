@@ -233,23 +233,23 @@ computePlayerMove direction model =
         position =
             stepPositionInDirection direction model.player
     in
-    case classifyPosition model position of
-        Nothing ->
-            Nothing
+    position
+        |> classifyPosition model
+        |> Maybe.andThen
+            (\entity ->
+                case entity of
+                    Player ->
+                        Nothing
 
-        Just entity ->
-            case entity of
-                Player ->
-                    Nothing
+                    Enemy_ _ ->
+                        Just position
 
-                Enemy_ _ ->
-                    Just position
+                    Wall ->
+                        Nothing
 
-                Wall ->
-                    Nothing
-
-                Empty ->
-                    Just position
+                    Empty ->
+                        Just position
+            )
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
