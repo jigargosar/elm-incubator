@@ -345,6 +345,43 @@ computeEnemyMove uid model =
             Just ( nextPosition, { model | seed = seed } )
 
 
+type EnemyMove
+    = EnemyMove Position
+    | EnemyAttackPlayer
+    | EnemyAttackEnemy Enemy
+
+
+plausibleEnemyMoves : Uid -> Model -> List EnemyMove
+plausibleEnemyMoves uid model =
+    enemiesFind uid model.enemies
+        |> Maybe.map
+            (\enemy ->
+                Position.adjacent enemy.position
+                    |> List.filterMap (toEnemyMove model)
+            )
+        |> Maybe.withDefault []
+
+
+toEnemyMove : Model -> Position -> Maybe EnemyMove
+toEnemyMove model position =
+    classifyPosition model position
+        |> Maybe.andThen
+            (\entity ->
+                case entity of
+                    Player ->
+                        Just EnemyAttackPlayer
+
+                    Enemy_ e ->
+                        Just (EnemyAttackEnemy e)
+
+                    Wall ->
+                        Nothing
+
+                    Empty ->
+                        Just (EnemyMove position)
+            )
+
+
 canEnemyMoveTo : Position -> Model -> Bool
 canEnemyMoveTo position model =
     case classifyPosition model position of
