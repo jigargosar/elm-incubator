@@ -452,40 +452,44 @@ view model =
     div [ class "measure center" ]
         [ div [ class "flex relative" ]
             [ viewGrid model
-            , let
-                won =
-                    List.length model.enemies == 0
-
-                lost =
-                    model.playerHp == 0
-
-                over =
-                    won || lost
-
-                subTitle =
-                    if won then
-                        "You Won!"
-
-                    else if lost then
-                        "You Lost!"
-
-                    else
-                        ""
-              in
-              if over then
-                div
-                    [ class "absolute w-100 h-100 flex items-center justify-center"
-                    ]
-                    [ div [ class "bg-black-50 white pa3 br3" ]
-                        [ div [ class "f1" ] [ text "Game Over" ]
-                        , div [ class "f2 tc" ] [ text subTitle ]
-                        ]
-                    ]
-
-              else
-                text ""
+            , viewOverlay model
             ]
         ]
+
+
+viewOverlay model =
+    let
+        won =
+            List.length model.enemies == 0
+
+        lost =
+            model.playerHp == 0
+
+        over =
+            won || lost
+
+        subTitle =
+            if won then
+                "You Won!"
+
+            else if lost then
+                "You Lost!"
+
+            else
+                ""
+    in
+    if over then
+        div
+            [ class "absolute w-100 h-100 flex items-center justify-center"
+            ]
+            [ div [ class "bg-black-50 white pa3 br3" ]
+                [ div [ class "f1" ] [ text "Game Over" ]
+                , div [ class "f2 tc" ] [ text subTitle ]
+                ]
+            ]
+
+    else
+        text ""
 
 
 type alias HM =
