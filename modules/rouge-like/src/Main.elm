@@ -272,28 +272,25 @@ stepEnemy uid model =
 
 moveEnemy : Uid -> ( Position, Model ) -> Maybe Model
 moveEnemy uid ( nextPosition, model ) =
-    case classifyPosition model nextPosition of
-        Nothing ->
-            Nothing
+    classifyPosition model nextPosition
+        |> Maybe.map
+            (\entity ->
+                case entity of
+                    Player ->
+                        { model | playerHp = model.playerHp - 1 |> atLeast 0 }
+                            |> mapEnemies (enemiesRemove uid)
 
-        Just entity ->
-            (case entity of
-                Player ->
-                    { model | playerHp = model.playerHp - 1 |> atLeast 0 }
-                        |> mapEnemies (enemiesRemove uid)
+                    Enemy_ victim ->
+                        model
+                            |> mapEnemies (enemiesRemove victim.uid)
 
-                Enemy_ victim ->
-                    model
-                        |> mapEnemies (enemiesRemove victim.uid)
+                    Wall ->
+                        model
 
-                Wall ->
-                    model
-
-                Empty ->
-                    model
-                        |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
+                    Empty ->
+                        model
+                            |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
             )
-                |> Just
 
 
 type Entity
