@@ -233,17 +233,23 @@ computePlayerMove direction model =
         position =
             stepPositionInDirection direction model.player
     in
-    if canPlayerMoveTo position model then
-        Just position
+    case classifyPosition model position of
+        Nothing ->
+            Nothing
 
-    else
-        Nothing
+        Just entity ->
+            case entity of
+                Player ->
+                    Nothing
 
+                Enemy_ _ ->
+                    Just position
 
-canPlayerMoveTo : Position -> Model -> Bool
-canPlayerMoveTo position model =
-    Dimension.member position model.dimension
-        && (isWall model position |> not)
+                Wall ->
+                    Nothing
+
+                Empty ->
+                    Just position
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -325,7 +331,13 @@ classifyPosition model position =
 computeEnemyMove : Uid -> Model -> Maybe ( Position, Model )
 computeEnemyMove uid model =
     case
-        movesOfEnemy uid model
+        enemiesFind uid model.enemies
+            |> Maybe.map
+                (\e ->
+                    Position.adjacent e.position
+                        |> List.filter (\position -> canEnemyMoveTo position model)
+                )
+            |> Maybe.withDefault []
             |> Random.sample
             |> (\g -> Random.step g model.seed)
     of
@@ -336,22 +348,25 @@ computeEnemyMove uid model =
             Just ( nextPosition, { model | seed = seed } )
 
 
-movesOfEnemy : Uid -> Model -> List Position
-movesOfEnemy uid model =
-    enemiesFind uid model.enemies
-        |> Maybe.map (movesOfEnemyHelp model)
-        |> Maybe.withDefault []
+canEnemyMoveTo : Position -> Model -> Bool
+canEnemyMoveTo position model =
+    case classifyPosition model position of
+        Nothing ->
+            False
 
+        Just entity ->
+            case entity of
+                Player ->
+                    True
 
-movesOfEnemyHelp : Model -> Enemy -> List Position
-movesOfEnemyHelp model enemy =
-    Dimension.adjacentPositions enemy.position model.dimension
-        |> List.filterNot (isWall model)
+                Enemy_ _ ->
+                    True
 
+                Wall ->
+                    False
 
-isWall : Model -> Position -> Bool
-isWall model position =
-    classifyPosition model position == Just Wall
+                Empty ->
+                    True
 
 
 stepPositionInDirection : Direction -> Position -> Position

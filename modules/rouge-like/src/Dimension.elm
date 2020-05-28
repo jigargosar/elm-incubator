@@ -1,4 +1,4 @@
-module Dimension exposing (Dimension, adjacentPositions, member, new, toPositions, toRows, toTuple)
+module Dimension exposing (Dimension, member, new, toPositions, toRows)
 
 import Index
 import Position exposing (Position)
@@ -27,22 +27,6 @@ toRows d =
 toPositions : Dimension -> List Position
 toPositions =
     toRows >> List.concat
-
-
-adjacentPositions : Position -> Dimension -> List Position
-adjacentPositions position dimension =
-    Position.adjacent position
-        |> List.filter (memberOf dimension)
-
-
-toTuple : Dimension -> ( Int, Int )
-toTuple dimension =
-    ( dimension.rows, dimension.columns )
-
-
-memberOf : Dimension -> Position -> Bool
-memberOf dimension position =
-    member position dimension
 
 
 member : Position -> Dimension -> Bool
