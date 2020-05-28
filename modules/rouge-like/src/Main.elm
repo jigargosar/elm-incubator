@@ -485,6 +485,7 @@ viewOverlay model =
             [ div [ class "bg-black-50 white pa3 br3" ]
                 [ div [ class "f1" ] [ text "Game Over" ]
                 , div [ class "f2 tc" ] [ text subTitle ]
+                , div [ class "f2 tc" ] [ text "Ctrl+R to restart" ]
                 ]
             ]
 
