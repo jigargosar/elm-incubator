@@ -13,6 +13,7 @@ import Position exposing (Position)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
+import Tuple exposing (pair)
 
 
 type Uid
