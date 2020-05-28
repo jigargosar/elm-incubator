@@ -223,7 +223,7 @@ stepPlayerInDirection direction model =
         |> Maybe.map
             (\playerMove ->
                 case playerMove of
-                    PlayerMoveTo position ->
+                    PlayerSetPosition position ->
                         { model | player = position }
                             |> mapEnemies (enemiesRemoveAtPosition position)
                             |> stepEnemies
@@ -236,7 +236,7 @@ stepPlayerInDirection direction model =
 
 
 type PlayerMove
-    = PlayerMoveTo Position
+    = PlayerSetPosition Position
     | PlayerAttackEnemy Enemy
 
 
@@ -261,7 +261,7 @@ computePlayerMove direction model =
                         Nothing
 
                     Empty ->
-                        Just (PlayerMoveTo position)
+                        Just (PlayerSetPosition position)
             )
 
 
@@ -297,7 +297,7 @@ moveEnemy uid ( enemyMove, model ) =
             model
                 |> mapEnemies (enemiesRemove victim.uid)
 
-        EnemyMove position ->
+        EnemySetPosition position ->
             model
                 |> mapEnemies (enemiesUpdate uid (enemySetPosition position))
 
@@ -349,7 +349,7 @@ computeEnemyMove uid model =
 
 
 type EnemyMove
-    = EnemyMove Position
+    = EnemySetPosition Position
     | EnemyAttackPlayer
     | EnemyAttackEnemy Enemy
 
@@ -381,7 +381,7 @@ toEnemyMove model position =
                         Nothing
 
                     Empty ->
-                        Just (EnemyMove position)
+                        Just (EnemySetPosition position)
             )
 
 
