@@ -267,30 +267,23 @@ stepEnemies model =
 stepEnemy : Uid -> Model -> Maybe Model
 stepEnemy uid model =
     computeEnemyMove uid model
-        |> Maybe.andThen (moveEnemy uid)
+        |> Maybe.map (moveEnemy uid)
 
 
-moveEnemy : Uid -> ( Position, Model ) -> Maybe Model
-moveEnemy uid ( nextPosition, model ) =
-    classifyPosition model nextPosition
-        |> Maybe.map
-            (\entity ->
-                case entity of
-                    Player ->
-                        { model | playerHp = model.playerHp - 1 |> atLeast 0 }
-                            |> mapEnemies (enemiesRemove uid)
+moveEnemy : Uid -> ( EnemyMove, Model ) -> Model
+moveEnemy uid ( enemyMove, model ) =
+    case enemyMove of
+        EnemyAttackPlayer ->
+            { model | playerHp = model.playerHp - 1 |> atLeast 0 }
+                |> mapEnemies (enemiesRemove uid)
 
-                    Enemy_ victim ->
-                        model
-                            |> mapEnemies (enemiesRemove victim.uid)
+        EnemyAttackEnemy victim ->
+            model
+                |> mapEnemies (enemiesRemove victim.uid)
 
-                    Wall ->
-                        model
-
-                    Empty ->
-                        model
-                            |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
-            )
+        EnemyMove position ->
+            model
+                |> mapEnemies (enemiesUpdate uid (enemySetPosition position))
 
 
 type Entity
@@ -325,24 +318,18 @@ classifyPosition model position =
         Nothing
 
 
-computeEnemyMove : Uid -> Model -> Maybe ( Position, Model )
+computeEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
 computeEnemyMove uid model =
     case
-        enemiesFind uid model.enemies
-            |> Maybe.map
-                (\e ->
-                    Position.adjacent e.position
-                        |> List.filter (\position -> canEnemyMoveTo position model)
-                )
-            |> Maybe.withDefault []
+        plausibleEnemyMoves uid model
             |> Random.sample
             |> (\g -> Random.step g model.seed)
     of
         ( Nothing, _ ) ->
             Nothing
 
-        ( Just nextPosition, seed ) ->
-            Just ( nextPosition, { model | seed = seed } )
+        ( Just enemyMove, seed ) ->
+            Just ( enemyMove, { model | seed = seed } )
 
 
 type EnemyMove
