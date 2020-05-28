@@ -149,6 +149,13 @@ wallsGenerator acc =
             )
 
 
+shuffleSplit : Int -> List a -> Generator ( List a, List a )
+shuffleSplit n xs =
+    Random.List.shuffle xs
+        |> Random.andThen Random.List.shuffle
+        |> Random.map (List.splitAt n)
+
+
 
 -- Model
 
@@ -185,13 +192,6 @@ init flags =
       }
     , Cmd.none
     )
-
-
-shuffleSplit : Int -> List a -> Generator ( List a, List a )
-shuffleSplit n xs =
-    Random.List.shuffle xs
-        |> Random.andThen Random.List.shuffle
-        |> Random.map (List.splitAt n)
 
 
 
