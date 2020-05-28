@@ -439,9 +439,9 @@ positionsToString model =
 positionToChar : Model -> Position -> Char
 positionToChar model position =
     [ ( isPlayer
-      , String.fromInt model.playerHp
+      , String.fromInt (abs model.playerHp)
             |> String.toList
-            |> List.last
+            |> List.head
             |> Maybe.withDefault '3'
       )
     , ( isEnemy, 'e' )
