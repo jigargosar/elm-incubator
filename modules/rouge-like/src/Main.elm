@@ -450,7 +450,13 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
-        [ viewGrid model
+        [ div [ class "flex relative" ]
+            [ viewGrid model
+            , div
+                [ class "absolute w-100 h-100 flex items-center justify-center"
+                ]
+                [ div [ class "f1 bg-black white pa3 o-80 br3" ] [ text "Game Over" ] ]
+            ]
         ]
 
 
