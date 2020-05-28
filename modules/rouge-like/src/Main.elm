@@ -459,11 +459,17 @@ view model =
 
 viewOverlay model =
     let
-        won =
+        alive =
+            model.playerHp > 0
+
+        allEnemiesDead =
             List.length model.enemies == 0
 
+        won =
+            alive && allEnemiesDead
+
         lost =
-            model.playerHp == 0
+            not alive
 
         over =
             won || lost
