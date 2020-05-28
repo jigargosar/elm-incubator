@@ -439,21 +439,18 @@ viewGrid model =
 
                 Empty ->
                     '.'
-
-        viewRow entities =
-            div []
-                [ entities
-                    |> List.map entityToChar
-                    |> String.fromList
-                    |> text
-                ]
     in
     div [ class "code f1" ]
         (Dimension.toRows model.dimension
             |> List.map
                 (List.filterMap
                     (classifyPosition model)
-                    >> viewRow
+                    >> List.map
+                        (entityToChar
+                            >> String.fromChar
+                            >> text
+                        )
+                    >> div []
                 )
         )
 
