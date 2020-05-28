@@ -441,8 +441,7 @@ positionToChar model position =
     [ ( isPlayer
       , String.fromInt (abs model.playerHp)
             |> String.toList
-            |> List.head
-            |> Maybe.withDefault '3'
+            |> headOr '3'
       )
     , ( isEnemy, 'e' )
     , ( isWall, '#' )

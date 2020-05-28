@@ -28,3 +28,8 @@ ignoreNothing2 f x =
 pairTo : a -> b -> ( b, a )
 pairTo b a =
     Tuple.pair a b
+
+
+headOr : a -> List a -> a
+headOr default =
+    List.head >> Maybe.withDefault default
