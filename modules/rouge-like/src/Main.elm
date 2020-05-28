@@ -295,8 +295,9 @@ classifyPosition model position =
     -- Is Player
     if model.player == position then
         Player
+        -- Is Wall
 
-    else if isWall model position then
+    else if List.member position model.walls then
         Wall
 
     else
@@ -337,7 +338,7 @@ movesOfEnemyHelp model enemy =
 
 isWall : Model -> Position -> Bool
 isWall model position =
-    List.member position model.walls
+    classifyPosition model position == Wall
 
 
 stepPositionInDirection : Direction -> Position -> Position
