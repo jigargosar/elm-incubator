@@ -9,7 +9,6 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
 import List.Extra as List
-import Maybe.Extra exposing (unwrap)
 import Position exposing (Position)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
@@ -293,7 +292,8 @@ type Entity
 
 classifyPosition : Model -> Position -> Entity
 classifyPosition model position =
-    if isPlayer model position then
+    -- Is Player
+    if model.player == position then
         Player
 
     else if isWall model position then
@@ -338,11 +338,6 @@ movesOfEnemyHelp model enemy =
 isWall : Model -> Position -> Bool
 isWall model position =
     List.member position model.walls
-
-
-isPlayer : Model -> Position -> Bool
-isPlayer model position =
-    model.player == position
 
 
 stepPositionInDirection : Direction -> Position -> Position
