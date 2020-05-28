@@ -452,11 +452,15 @@ view model =
     div [ class "measure center" ]
         [ div [ class "flex relative" ]
             [ viewGrid model
-            , if model.playerHp < 1 then
+            , if model.playerHp < 4 then
                 div
                     [ class "absolute w-100 h-100 flex items-center justify-center"
                     ]
-                    [ div [ class "f1 bg-black white pa3 o-80 br3" ] [ text "Game Over" ] ]
+                    [ div [ class "bg-black-50 white pa3 br3" ]
+                        [ div [ class "f1" ] [ text "Game Over" ]
+                        , div [ class "f2 tc" ] [ text "You Lost!" ]
+                        ]
+                    ]
 
               else
                 text ""
