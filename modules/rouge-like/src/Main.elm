@@ -515,7 +515,7 @@ viewGrid model =
                 Empty ->
                     '.'
     in
-    div [ class "code f1 bg-black white pa3" ]
+    div [ class "code f1 bg-black white pa3 br3" ]
         (Dimension.toRows model.dimension
             |> List.map
                 (List.filterMap
