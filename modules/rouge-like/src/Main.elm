@@ -14,7 +14,6 @@ import Position exposing (Position)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
-import Tuple exposing (first, second)
 
 
 type Uid
@@ -339,12 +338,6 @@ movesOfEnemyHelp model enemy =
 isWall : Model -> Position -> Bool
 isWall model position =
     List.member position model.walls
-
-
-isEnemy : Model -> Position -> Bool
-isEnemy model position =
-    List.find (enemyPositionEq position) model.enemies
-        |> unwrap False (always True)
 
 
 isPlayer : Model -> Position -> Bool
