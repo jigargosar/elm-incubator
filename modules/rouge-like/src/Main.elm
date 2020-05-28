@@ -369,27 +369,6 @@ toEnemyMove model position =
             )
 
 
-canEnemyMoveTo : Position -> Model -> Bool
-canEnemyMoveTo position model =
-    case classifyPosition model position of
-        Nothing ->
-            False
-
-        Just entity ->
-            case entity of
-                Player ->
-                    True
-
-                Enemy_ _ ->
-                    True
-
-                Wall ->
-                    False
-
-                Empty ->
-                    True
-
-
 stepPositionInDirection : Direction -> Position -> Position
 stepPositionInDirection direction =
     case direction of
