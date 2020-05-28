@@ -290,23 +290,29 @@ type Entity
     | Empty
 
 
-classifyPosition : Model -> Position -> Entity
+classifyPosition : Model -> Position -> Maybe Entity
 classifyPosition model position =
-    -- Is Player
-    if model.player == position then
-        Player
-        -- Is Wall
+    if Dimension.member position model.dimension then
+        Just
+            -- Is Player
+            (if model.player == position then
+                Player
+                -- Is Wall
 
-    else if List.member position model.walls then
-        Wall
+             else if List.member position model.walls then
+                Wall
+
+             else
+                case enemiesFindAtPosition position model.enemies of
+                    Nothing ->
+                        Empty
+
+                    Just enemy ->
+                        Enemy_ enemy
+            )
 
     else
-        case enemiesFindAtPosition position model.enemies of
-            Nothing ->
-                Empty
-
-            Just enemy ->
-                Enemy_ enemy
+        Nothing
 
 
 computeEnemyMove : Uid -> Model -> Maybe ( Position, Model )
