@@ -440,7 +440,6 @@ viewGrid model =
                 Empty ->
                     '.'
 
-        viewRow : List Entity -> Html msg
         viewRow entities =
             div []
                 [ entities
