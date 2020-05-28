@@ -452,25 +452,6 @@ viewGrid model =
         )
 
 
-positionsToString : Model -> List Position -> String
-positionsToString model =
-    List.map (positionToChar model) >> String.fromList
-
-
-positionToChar : Model -> Position -> Char
-positionToChar model position =
-    [ ( isPlayer
-      , String.fromInt (abs model.playerHp)
-            |> String.toList
-            |> headOr '3'
-      )
-    , ( isEnemy, 'e' )
-    , ( isWall, '#' )
-    ]
-        |> List.find (first >> (\f -> f model position))
-        |> unwrap '.' second
-
-
 
 -- Main
 
