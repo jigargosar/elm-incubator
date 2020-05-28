@@ -261,26 +261,33 @@ stepEnemies model =
 stepEnemy : Uid -> Model -> Maybe Model
 stepEnemy uid model =
     computeEnemyMove uid model
-        |> Maybe.map (moveEnemy uid)
+        |> Maybe.andThen (moveEnemy uid)
 
 
-moveEnemy : Uid -> ( Position, Model ) -> Model
+moveEnemy : Uid -> ( Position, Model ) -> Maybe Model
 moveEnemy uid ( nextPosition, model ) =
     case classifyPosition model nextPosition of
-        Player ->
-            { model | playerHp = model.playerHp - 1 |> atLeast 0 }
-                |> mapEnemies (enemiesRemove uid)
+        Nothing ->
+            Nothing
 
-        Enemy_ victim ->
-            model
-                |> mapEnemies (enemiesRemove victim.uid)
+        Just entity ->
+            (case entity of
+                Player ->
+                    { model | playerHp = model.playerHp - 1 |> atLeast 0 }
+                        |> mapEnemies (enemiesRemove uid)
 
-        Wall ->
-            model
+                Enemy_ victim ->
+                    model
+                        |> mapEnemies (enemiesRemove victim.uid)
 
-        Empty ->
-            model
-                |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
+                Wall ->
+                    model
+
+                Empty ->
+                    model
+                        |> mapEnemies (enemiesUpdate uid (enemySetPosition nextPosition))
+            )
+                |> Just
 
 
 type Entity
@@ -344,7 +351,7 @@ movesOfEnemyHelp model enemy =
 
 isWall : Model -> Position -> Bool
 isWall model position =
-    classifyPosition model position == Wall
+    classifyPosition model position == Just Wall
 
 
 stepPositionInDirection : Direction -> Position -> Position
@@ -433,6 +440,7 @@ viewGrid model =
                 Empty ->
                     '.'
 
+        viewRow : List Entity -> Html msg
         viewRow entities =
             div []
                 [ entities
@@ -443,7 +451,7 @@ viewGrid model =
     in
     div [ class "code f1" ]
         (Dimension.toRows model.dimension
-            |> List.map (List.map (classifyPosition model) >> viewRow)
+            |> List.map (List.filterMap (classifyPosition model) >> viewRow)
         )
 
 
