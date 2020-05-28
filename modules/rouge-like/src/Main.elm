@@ -457,6 +457,7 @@ view model =
         ]
 
 
+viewOverlay : Model -> HM
 viewOverlay model =
     let
         alive =
