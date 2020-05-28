@@ -286,7 +286,10 @@ moveEnemy : Uid -> ( EnemyMove, Model ) -> Model
 moveEnemy uid ( enemyMove, model ) =
     case enemyMove of
         EnemyAttackPlayer ->
-            { model | playerHp = model.playerHp - 1 |> atLeast 0 }
+            { model
+                | playerHp =
+                    model.playerHp - 1 |> atLeast 0
+            }
                 |> mapEnemies (enemiesRemove uid)
 
         EnemyAttackEnemy victim ->
