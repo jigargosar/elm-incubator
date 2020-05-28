@@ -209,9 +209,13 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( directionFromKey key
-                |> Maybe.andThen (\direction -> stepPlayerInDirection direction model)
-                |> Maybe.withDefault model
+            ( if model.playerHp > 0 then
+                directionFromKey key
+                    |> Maybe.andThen (\direction -> stepPlayerInDirection direction model)
+                    |> Maybe.withDefault model
+
+              else
+                model
             , Cmd.none
             )
 
