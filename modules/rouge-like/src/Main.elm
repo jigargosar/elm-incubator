@@ -422,12 +422,33 @@ type alias HM =
 viewGrid : Model -> HM
 viewGrid model =
     let
-        viewRow rowString =
-            div [] [ text rowString ]
+        entityToChar e =
+            case e of
+                Player ->
+                    String.fromInt (abs model.playerHp)
+                        |> String.toList
+                        |> headOr '3'
+
+                Enemy_ _ ->
+                    'e'
+
+                Wall ->
+                    '#'
+
+                Empty ->
+                    '.'
+
+        viewRow entities =
+            div []
+                [ entities
+                    |> List.map entityToChar
+                    |> String.fromList
+                    |> text
+                ]
     in
     div [ class "code f1" ]
         (Dimension.toRows model.dimension
-            |> List.map (positionsToString model >> viewRow)
+            |> List.map (List.map (classifyPosition model) >> viewRow)
         )
 
 
