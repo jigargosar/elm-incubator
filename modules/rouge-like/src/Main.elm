@@ -221,31 +221,20 @@ stepPlayerInDirection direction model =
     model
         |> computePlayerMove direction
         |> Maybe.map
-            ((\playerMove ->
-                case playerMove of
-                    PlayerSetPosition position ->
-                        { model | player = position }
-
-                    PlayerAttackEnemy enemy ->
-                        { model | player = enemy.position }
-                            |> mapEnemies (enemiesRemove enemy.uid)
-                            |> stepEnemies
-             )
+            ((\playerMove -> movePlayer playerMove model)
                 >> stepEnemies
             )
 
 
 movePlayer : PlayerMove -> Model -> Model
 movePlayer playerMove model =
-    (case playerMove of
+    case playerMove of
         PlayerSetPosition position ->
             { model | player = position }
 
         PlayerAttackEnemy enemy ->
             { model | player = enemy.position }
                 |> mapEnemies (enemiesRemove enemy.uid)
-    )
-        |> stepEnemies
 
 
 type PlayerMove
