@@ -510,21 +510,21 @@ aStarHelp c =
 
 updateNeighbours current currentGScore =
     List.foldl
-        (\( n, w ) c ->
+        (\( n, w ) acc ->
             let
                 tentativeNGScore =
                     currentGScore + w
 
                 foo =
-                    { c
-                        | open = Dict.insert n ( tentativeNGScore, tentativeNGScore + c.h n ) c.open
-                        , cameFrom = Dict.insert n current c.cameFrom
+                    { acc
+                        | open = Dict.insert n ( tentativeNGScore, tentativeNGScore + acc.h n ) acc.open
+                        , cameFrom = Dict.insert n current acc.cameFrom
                     }
 
                 bar =
-                    c
+                    acc
             in
-            case Dict.get n c.open of
+            case Dict.get n acc.open of
                 Nothing ->
                     foo
 
