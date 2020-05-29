@@ -461,21 +461,25 @@ view model =
 
 
 viewPathGrid model =
-    div []
-        (Dimension.toRows model.dimension
-            |> List.map
-                (\rowPositions ->
-                    div [ class "flex" ]
-                        (List.map
-                            (\_ -> viewPathCell "bg-black")
-                            rowPositions
-                        )
-                )
-        )
-
-
-viewPathCell c =
-    div [ class "ba b--transparent" ] [ div [ class "w1 h1", class c ] [] ]
+    div [ class "flex items-center justify-center" ]
+        [ div [ class "debug-white" ]
+            (Dimension.toRows model.dimension
+                |> List.map
+                    (\rowPositions ->
+                        div [ class "flex" ]
+                            (List.map
+                                (\_ ->
+                                    div
+                                        [ class "w1 h1"
+                                        , class "bg-black"
+                                        ]
+                                        []
+                                )
+                                rowPositions
+                            )
+                    )
+            )
+        ]
 
 
 viewOverlay : Model -> HM
