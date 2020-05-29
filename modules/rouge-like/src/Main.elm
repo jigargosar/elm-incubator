@@ -468,14 +468,19 @@ aStar :
     -> comparable
     -> comparable
     -> List comparable
-aStar neighbours h start goal =
-    aStarHelp
-        { open = Dict.singleton start (AStarNode 0 (h start))
+aStar neighbours cost start goal =
+    aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
+        { open = Dict.singleton start (AStarNode 0 (cost start))
         , cameFrom = Dict.empty
-        , neighbours = neighbours
-        , h = h
-        , goal = goal
         }
+
+
+type alias AStarConfig comparable =
+    { neighbours : comparable -> List ( comparable, Float )
+    , cost : comparable -> Float
+    , start : comparable
+    , goal : comparable
+    }
 
 
 type alias AStarNode =
@@ -487,14 +492,11 @@ type alias AStarNode =
 type alias AStartContext comparable =
     { open : Dict comparable AStarNode
     , cameFrom : Dict comparable comparable
-    , neighbours : comparable -> List ( comparable, Float )
-    , h : comparable -> Float
-    , goal : comparable
     }
 
 
-aStarHelp : AStartContext comparable -> List comparable
-aStarHelp c =
+aStarHelp : AStarConfig comparable -> AStartContext comparable -> List comparable
+aStarHelp config c =
     case
         c.open
             |> Dict.toList
@@ -504,18 +506,18 @@ aStarHelp c =
             []
 
         Just ( current, ( currentGScore, _ ) ) ->
-            if current == c.goal then
+            if current == config.goal then
                 List.iterate (\n -> Dict.get n c.cameFrom) current
 
             else
-                aStarHelp
-                    (c.neighbours current
+                aStarHelp config
+                    (config.neighbours current
                         |> List.map (\( neighbour, weight ) -> ( neighbour, currentGScore + weight ))
-                        |> updateNeighbours current c.h { c | open = Dict.remove current c.open }
+                        |> updateNeighbours current config.cost { c | open = Dict.remove current c.open }
                     )
 
 
-updateNeighbours current costHeuristic =
+updateNeighbours current costHeuristicToGoalFrom =
     List.foldl
         (\( neighbour, tentativeGScore ) acc ->
             let
@@ -536,7 +538,7 @@ updateNeighbours current costHeuristic =
                     | open =
                         Dict.insert neighbour
                             { gScore = tentativeGScore
-                            , fScore = tentativeGScore + costHeuristic neighbour
+                            , fScore = tentativeGScore + costHeuristicToGoalFrom neighbour
                             }
                             acc.open
                     , cameFrom = Dict.insert neighbour current acc.cameFrom
