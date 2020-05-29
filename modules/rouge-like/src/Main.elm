@@ -520,7 +520,7 @@ updateNeighbours :
     -> Float
     -> AStarAcc comparable
     -> AStarAcc comparable
-updateNeighbours config current currentGScore =
+updateNeighbours config current currentGScore acc0 =
     config.neighbours current
         |> List.foldl
             (\( neighbour, weight ) acc ->
@@ -554,6 +554,7 @@ updateNeighbours config current currentGScore =
                 else
                     acc
             )
+            acc0
 
 
 viewPathGrid model =
