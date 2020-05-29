@@ -470,7 +470,7 @@ aStar :
     -> List comparable
 aStar neighbours h start goal =
     aStarHelp
-        { open = Dict.singleton start ( 0, h start )
+        { open = Dict.singleton start (AStarNode 0 (h start) Nothing)
         , cameFrom = Dict.empty
         , neighbours = neighbours
         , h = h
@@ -478,8 +478,15 @@ aStar neighbours h start goal =
         }
 
 
+type alias AStarNode comparable =
+    { gScore : Float
+    , fScore : Float
+    , cameFrom : Maybe comparable
+    }
+
+
 type alias AStartContext comparable =
-    { open : Dict comparable ( Float, Float )
+    { open : Dict comparable (AStarNode comparable)
     , cameFrom : Dict comparable comparable
     , neighbours : comparable -> List ( comparable, Float )
     , h : comparable -> Float
@@ -492,7 +499,7 @@ aStarHelp c =
     case
         c.open
             |> Dict.toList
-            |> List.minimumBy (\( _, ( _, f ) ) -> f)
+            |> List.minimumBy (\( _, n ) -> n.fScore)
     of
         Nothing ->
             []
@@ -504,36 +511,40 @@ aStarHelp c =
             else
                 aStarHelp
                     (c.neighbours current
-                        |> updateNeighbours current currentGScore { c | open = Dict.remove current c.open }
+                        |> List.map (\( neighbour, weight ) -> ( neighbour, currentGScore + weight ))
+                        |> updateNeighbours current { c | open = Dict.remove current c.open }
                     )
 
 
-updateNeighbours current currentGScore =
+updateNeighbours current =
     List.foldl
-        (\( n, w ) acc ->
+        (\( neighbour, tentativeGScore ) acc ->
             let
-                tentativeNGScore =
-                    currentGScore + w
+                shouldUpdate =
+                    case Dict.get neighbour acc.open of
+                        Nothing ->
+                            True
 
-                foo =
-                    { acc
-                        | open = Dict.insert n ( tentativeNGScore, tentativeNGScore + acc.h n ) acc.open
-                        , cameFrom = Dict.insert n current acc.cameFrom
-                    }
+                        Just node ->
+                            if tentativeGScore < node.gScore then
+                                True
 
-                bar =
-                    acc
+                            else
+                                False
             in
-            case Dict.get n acc.open of
-                Nothing ->
-                    foo
+            if shouldUpdate then
+                { acc
+                    | open =
+                        Dict.insert neighbour
+                            { gScore = tentativeGScore
+                            , fScore = tentativeGScore + acc.h neighbour
+                            , cameFrom = Just current
+                            }
+                            acc.open
+                }
 
-                Just ( nGScore, _ ) ->
-                    if tentativeNGScore < nGScore then
-                        foo
-
-                    else
-                        bar
+            else
+                acc
         )
 
 
