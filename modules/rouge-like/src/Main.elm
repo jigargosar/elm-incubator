@@ -513,11 +513,11 @@ aStarHelp config acc =
                 aStarHelp config
                     (config.neighbours current
                         |> List.map (\( neighbour, weight ) -> ( neighbour, currentGScore + weight ))
-                        |> updateNeighbours current config.cost { acc | open = Dict.remove current acc.open }
+                        |> updateNeighbours config current { acc | open = Dict.remove current acc.open }
                     )
 
 
-updateNeighbours current costHeuristicToGoalFrom =
+updateNeighbours config current =
     List.foldl
         (\( neighbour, tentativeGScore ) acc ->
             let
@@ -538,7 +538,7 @@ updateNeighbours current costHeuristicToGoalFrom =
                     | open =
                         Dict.insert neighbour
                             { gScore = tentativeGScore
-                            , fScore = tentativeGScore + costHeuristicToGoalFrom neighbour
+                            , fScore = tentativeGScore + config.cost neighbour
                             }
                             acc.open
                     , cameFrom = Dict.insert neighbour current acc.cameFrom
