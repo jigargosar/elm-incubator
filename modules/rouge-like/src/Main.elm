@@ -470,7 +470,7 @@ aStar :
     -> List comparable
 aStar neighbours h start goal =
     aStarHelp
-        { open = Dict.singleton start (AStarNode 0 (h start) Nothing)
+        { open = Dict.singleton start (AStarNode 0 (h start))
         , cameFrom = Dict.empty
         , neighbours = neighbours
         , h = h
@@ -478,15 +478,14 @@ aStar neighbours h start goal =
         }
 
 
-type alias AStarNode comparable =
+type alias AStarNode =
     { gScore : Float
     , fScore : Float
-    , cameFrom : Maybe comparable
     }
 
 
 type alias AStartContext comparable =
-    { open : Dict comparable (AStarNode comparable)
+    { open : Dict comparable AStarNode
     , cameFrom : Dict comparable comparable
     , neighbours : comparable -> List ( comparable, Float )
     , h : comparable -> Float
@@ -538,9 +537,9 @@ updateNeighbours current costHeuristic =
                         Dict.insert neighbour
                             { gScore = tentativeGScore
                             , fScore = tentativeGScore + costHeuristic neighbour
-                            , cameFrom = Just current
                             }
                             acc.open
+                    , cameFrom = Dict.insert neighbour current acc.cameFrom
                 }
 
             else
