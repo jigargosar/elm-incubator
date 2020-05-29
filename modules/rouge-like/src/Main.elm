@@ -504,11 +504,11 @@ aStarHelp c =
             else
                 aStarHelp
                     (c.neighbours current
-                        |> foo___ current currentGScore { c | open = Dict.remove current c.open }
+                        |> updateNeighbours current currentGScore { c | open = Dict.remove current c.open }
                     )
 
 
-foo___ current currentGScore =
+updateNeighbours current currentGScore =
     List.foldl
         (\( n, w ) c ->
             let
