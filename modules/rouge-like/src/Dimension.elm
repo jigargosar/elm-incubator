@@ -1,4 +1,4 @@
-module Dimension exposing (Dimension, member, new, toPositions, toRows)
+module Dimension exposing (Dimension, maxPosition, member, new, toPositions, toRows)
 
 import Index
 import Position exposing (Position)
@@ -37,3 +37,8 @@ member position dimension =
     in
     Index.memberOf dimension.rows row
         && Index.memberOf dimension.columns column
+
+
+maxPosition : Dimension -> Position
+maxPosition dimension =
+    Position.new (dimension.rows - 1) (dimension.columns - 1)

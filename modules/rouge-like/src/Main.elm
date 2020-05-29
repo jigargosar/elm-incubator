@@ -460,6 +460,17 @@ view model =
         ]
 
 
+findPath :
+    { next : Position -> List Position
+    , cost : Position -> Position -> Float
+    }
+    -> Position
+    -> Position
+    -> List Position
+findPath nf s e =
+    []
+
+
 viewPathGrid model =
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
