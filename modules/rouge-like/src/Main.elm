@@ -512,11 +512,11 @@ aStarHelp c =
                 aStarHelp
                     (c.neighbours current
                         |> List.map (\( neighbour, weight ) -> ( neighbour, currentGScore + weight ))
-                        |> updateNeighbours current { c | open = Dict.remove current c.open }
+                        |> updateNeighbours current c.h { c | open = Dict.remove current c.open }
                     )
 
 
-updateNeighbours current =
+updateNeighbours current costHeuristic =
     List.foldl
         (\( neighbour, tentativeGScore ) acc ->
             let
@@ -537,7 +537,7 @@ updateNeighbours current =
                     | open =
                         Dict.insert neighbour
                             { gScore = tentativeGScore
-                            , fScore = tentativeGScore + acc.h neighbour
+                            , fScore = tentativeGScore + costHeuristic neighbour
                             , cameFrom = Just current
                             }
                             acc.open
