@@ -456,7 +456,22 @@ view model =
             , viewOverlay model
             ]
         , div [ class "pv3 f3" ] [ text "A* Path finding Debug" ]
+        , viewPathGrid model
         ]
+
+
+viewPathGrid model =
+    div []
+        (Dimension.toRows model.dimension
+            |> List.map
+                (\rowPositions ->
+                    div [ class "flex" ]
+                        (List.map
+                            (\_ -> div [ class "ba b--transparent" ] [ div [ class "w1 h1 bg-red" ] [] ])
+                            rowPositions
+                        )
+                )
+        )
 
 
 viewOverlay : Model -> HM
