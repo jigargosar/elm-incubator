@@ -489,16 +489,16 @@ type alias AStarNode =
     }
 
 
-type alias AStartContext comparable =
+type alias AStarAcc comparable =
     { open : Dict comparable AStarNode
     , cameFrom : Dict comparable comparable
     }
 
 
-aStarHelp : AStarConfig comparable -> AStartContext comparable -> List comparable
-aStarHelp config c =
+aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable
+aStarHelp config acc =
     case
-        c.open
+        acc.open
             |> Dict.toList
             |> List.minimumBy (\( _, n ) -> n.fScore)
     of
@@ -507,13 +507,13 @@ aStarHelp config c =
 
         Just ( current, ( currentGScore, _ ) ) ->
             if current == config.goal then
-                List.iterate (\n -> Dict.get n c.cameFrom) current
+                List.iterate (\n -> Dict.get n acc.cameFrom) current
 
             else
                 aStarHelp config
                     (config.neighbours current
                         |> List.map (\( neighbour, weight ) -> ( neighbour, currentGScore + weight ))
-                        |> updateNeighbours current config.cost { c | open = Dict.remove current c.open }
+                        |> updateNeighbours current config.cost { acc | open = Dict.remove current acc.open }
                     )
 
 
