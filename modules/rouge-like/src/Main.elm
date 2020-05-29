@@ -14,8 +14,6 @@ import Position exposing (Position)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
-import Set exposing (Set)
-import Tuple exposing (pair)
 
 
 type Uid
@@ -522,7 +520,7 @@ updateNeighbours :
     -> Float
     -> AStarAcc comparable
     -> AStarAcc comparable
-updateNeighbours config current currentGScore acc0 =
+updateNeighbours config current currentGScore =
     config.neighbours current
         |> List.foldl
             (\( neighbour, weight ) acc ->
@@ -556,7 +554,6 @@ updateNeighbours config current currentGScore acc0 =
                 else
                     acc
             )
-            acc0
 
 
 viewPathGrid model =
