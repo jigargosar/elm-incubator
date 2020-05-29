@@ -511,42 +511,52 @@ aStarHelp config acc =
 
             else
                 aStarHelp config
-                    (config.neighbours current
-                        |> List.map (\( neighbour, weight ) -> ( neighbour, currentGScore + weight ))
-                        |> updateNeighbours config current { acc | open = Dict.remove current acc.open }
+                    ({ acc | open = Dict.remove current acc.open }
+                        |> updateNeighbours config current currentGScore
                     )
 
 
-updateNeighbours config current =
-    List.foldl
-        (\( neighbour, tentativeGScore ) acc ->
-            let
-                shouldUpdate =
-                    case Dict.get neighbour acc.open of
-                        Nothing ->
-                            True
+updateNeighbours :
+    AStarConfig comparable
+    -> comparable
+    -> Float
+    -> AStarAcc comparable
+    -> AStarAcc comparable
+updateNeighbours config current currentGScore acc0 =
+    config.neighbours current
+        |> List.foldl
+            (\( neighbour, weight ) acc ->
+                let
+                    tentativeGScore =
+                        currentGScore + weight
 
-                        Just node ->
-                            if tentativeGScore < node.gScore then
+                    shouldUpdate =
+                        case Dict.get neighbour acc.open of
+                            Nothing ->
                                 True
 
-                            else
-                                False
-            in
-            if shouldUpdate then
-                { acc
-                    | open =
-                        Dict.insert neighbour
-                            { gScore = tentativeGScore
-                            , fScore = tentativeGScore + config.cost neighbour
-                            }
-                            acc.open
-                    , cameFrom = Dict.insert neighbour current acc.cameFrom
-                }
+                            Just node ->
+                                if tentativeGScore < node.gScore then
+                                    True
 
-            else
-                acc
-        )
+                                else
+                                    False
+                in
+                if shouldUpdate then
+                    { acc
+                        | open =
+                            Dict.insert neighbour
+                                { gScore = tentativeGScore
+                                , fScore = tentativeGScore + config.cost neighbour
+                                }
+                                acc.open
+                        , cameFrom = Dict.insert neighbour current acc.cameFrom
+                    }
+
+                else
+                    acc
+            )
+            acc0
 
 
 viewPathGrid model =
