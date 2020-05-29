@@ -489,10 +489,6 @@ type alias AStartContext comparable =
 
 aStarHelp : AStartContext comparable -> List comparable
 aStarHelp c =
-    let
-        _ =
-            List.minimumBy
-    in
     case
         c.open
             |> Dict.toList
