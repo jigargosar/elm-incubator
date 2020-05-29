@@ -4,6 +4,7 @@ import Basics.Extra exposing (..)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
+import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
@@ -13,6 +14,7 @@ import Position exposing (Position)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
+import Set exposing (Set)
 import Tuple exposing (pair)
 
 
@@ -460,15 +462,51 @@ view model =
         ]
 
 
-findPath :
-    { next : Position -> List Position
-    , cost : Position -> Position -> Float
+aStar :
+    (comparable -> List ( comparable, Float ))
+    -> (comparable -> Float)
+    -> comparable
+    -> comparable
+    -> List comparable
+aStar neighbours h start goal =
+    aStarHelp
+        { open = List.singleton start
+        , gScore = Dict.singleton start 0
+        , fScore = Dict.singleton start (h start)
+        , cameFrom = Dict.empty
+        , neighbours = neighbours
+        , h = h
+        , goal = goal
+        }
+
+
+type alias AStartContext comparable =
+    { open : List comparable
+    , gScore : Dict comparable Float
+    , fScore : Dict comparable Float
+    , cameFrom : Dict comparable comparable
+    , neighbours : comparable -> List ( comparable, Float )
+    , h : comparable -> Float
+    , goal : comparable
     }
-    -> Position
-    -> Position
-    -> List Position
-findPath nf s e =
-    []
+
+
+aStarHelp : AStartContext comparable -> List comparable
+aStarHelp c =
+    case
+        List.minimumBy
+            (\n -> Dict.get n c.fScore |> Maybe.withDefault maxSafeInteger)
+            c.open
+    of
+        Nothing ->
+            []
+
+        Just current ->
+            if current == c.goal then
+                List.iterate (\n -> Dict.get n c.cameFrom) current
+
+            else
+                Debug.todo "impl"
 
 
 viewPathGrid model =
