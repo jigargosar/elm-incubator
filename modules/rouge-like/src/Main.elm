@@ -455,6 +455,7 @@ view model =
             [ viewGrid model
             , viewOverlay model
             ]
+        , div [ class "pv3 f3" ] [ text "A* Path finding Debug" ]
         ]
 
 
@@ -491,8 +492,8 @@ viewOverlay model =
             [ class "absolute w-100 h-100 flex items-center justify-center"
             ]
             [ div [ class "bg-white-50 black pa3 br3" ]
-                [ div [ class "f1 tc" ] [ text subTitle ]
-                , div [ class "f2 tc" ] [ text "Ctrl+R to restart" ]
+                [ div [ class "f2 tc" ] [ text subTitle ]
+                , div [ class "f3 tc" ] [ text "Ctrl+R to restart" ]
                 ]
             ]
 
@@ -523,7 +524,7 @@ viewGrid model =
                 Empty ->
                     '.'
     in
-    div [ class "code f1 bg-black white pa3 br3" ]
+    div [ class "code f2 bg-black white pa3 br3" ]
         (Dimension.toRows model.dimension
             |> List.map
                 (List.filterMap
