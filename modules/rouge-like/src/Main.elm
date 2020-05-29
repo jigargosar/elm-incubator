@@ -470,9 +470,7 @@ aStar :
     -> List comparable
 aStar neighbours h start goal =
     aStarHelp
-        { open = List.singleton start
-        , gScore = Dict.singleton start 0
-        , fScore = Dict.singleton start (h start)
+        { open = Dict.singleton start ( 0, h start )
         , cameFrom = Dict.empty
         , neighbours = neighbours
         , h = h
@@ -481,9 +479,7 @@ aStar neighbours h start goal =
 
 
 type alias AStartContext comparable =
-    { open : List comparable
-    , gScore : Dict comparable Float
-    , fScore : Dict comparable Float
+    { open : Dict comparable ( Float, Float )
     , cameFrom : Dict comparable comparable
     , neighbours : comparable -> List ( comparable, Float )
     , h : comparable -> Float
@@ -493,20 +489,56 @@ type alias AStartContext comparable =
 
 aStarHelp : AStartContext comparable -> List comparable
 aStarHelp c =
+    let
+        _ =
+            List.minimumBy
+    in
     case
-        List.minimumBy
-            (\n -> Dict.get n c.fScore |> Maybe.withDefault maxSafeInteger)
-            c.open
+        c.open
+            |> Dict.toList
+            |> List.minimumBy (\( _, ( _, f ) ) -> f)
     of
         Nothing ->
             []
 
-        Just current ->
+        Just ( current, ( currentGScore, _ ) ) ->
             if current == c.goal then
                 List.iterate (\n -> Dict.get n c.cameFrom) current
 
             else
-                Debug.todo "impl"
+                aStarHelp
+                    (c.neighbours current
+                        |> foo___ current currentGScore { c | open = Dict.remove current c.open }
+                    )
+
+
+foo___ current currentGScore =
+    List.foldl
+        (\( n, w ) c ->
+            let
+                tentativeNGScore =
+                    currentGScore + w
+
+                foo =
+                    { c
+                        | open = Dict.insert n ( tentativeNGScore, tentativeNGScore + c.h n ) c.open
+                        , cameFrom = Dict.insert n current c.cameFrom
+                    }
+
+                bar =
+                    c
+            in
+            case Dict.get n c.open of
+                Nothing ->
+                    foo
+
+                Just ( nGScore, _ ) ->
+                    if tentativeNGScore < nGScore then
+                        foo
+
+                    else
+                        bar
+        )
 
 
 viewPathGrid model =
