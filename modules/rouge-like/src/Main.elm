@@ -481,16 +481,21 @@ type alias AStarAcc comparable =
     }
 
 
-{-| Find Path from start to goal using a hueristic function
+{-| Finds Path from start to goal using a hueristic function
 
     A* (pronounced "A-star") is a graph traversal and path search algorithm,
     which is often used in computer science due to its completeness, optimality, and optimal efficiency
         -- [Wikipedia] : <https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode>
 
-@parm neighbours : A function that maps a node to its outgoing nodes and corresponding weight.
-@parm cost : A heuristic function that never over estimates the cost from a given node to goal
-@parm start: Any comparable value can be used as start and goal
-@parm goal: See above line.
+    @parm neighbours : A function that maps a node to its outgoing nodes and corresponding weight.
+    @parm cost : A heuristic function that never over estimates the cost from a given node to goal
+    @parm start: Any comparable value can be used as start and goal
+    @parm goal: See above line.
+
+    @returns: List of nodes from start (exclusive) to goal (inclusive).
+        i.e. the shortest weighted path.
+
+    Empty list signifies absence of any valid path
 
 -}
 aStar :
