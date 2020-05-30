@@ -538,42 +538,42 @@ updateNeighbours :
     -> AStarAcc comparable
     -> AStarAcc comparable
 updateNeighbours config current currentGScore acc0 =
-    current
-        |> config.neighbours
-        |> List.foldl
-            (\( neighbour, weight ) acc ->
-                let
-                    tentativeGScore =
-                        currentGScore + weight
+    let
+        reducer ( neighbour, weight ) acc =
+            let
+                tentativeGScore =
+                    currentGScore + weight
 
-                    shouldUpdate =
-                        case Dict.get neighbour acc.open of
-                            Nothing ->
+                shouldUpdate =
+                    case Dict.get neighbour acc.open of
+                        Nothing ->
+                            True
+
+                        Just node ->
+                            if tentativeGScore < node.gScore then
                                 True
 
-                            Just node ->
-                                if tentativeGScore < node.gScore then
-                                    True
+                            else
+                                False
+            in
+            if shouldUpdate then
+                { acc
+                    | open =
+                        Dict.insert neighbour
+                            { gScore = tentativeGScore
+                            , fScore = tentativeGScore + config.cost neighbour
+                            , value = neighbour
+                            }
+                            acc.open
+                    , cameFrom = Dict.insert neighbour current acc.cameFrom
+                }
 
-                                else
-                                    False
-                in
-                if shouldUpdate then
-                    { acc
-                        | open =
-                            Dict.insert neighbour
-                                { gScore = tentativeGScore
-                                , fScore = tentativeGScore + config.cost neighbour
-                                , value = neighbour
-                                }
-                                acc.open
-                        , cameFrom = Dict.insert neighbour current acc.cameFrom
-                    }
-
-                else
-                    acc
-            )
-            acc0
+            else
+                acc
+    in
+    current
+        |> config.neighbours
+        |> List.foldl reducer acc0
 
 
 viewPathGrid model =
