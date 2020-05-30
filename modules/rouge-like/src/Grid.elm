@@ -124,12 +124,12 @@ map f =
         )
 
 
-fillWhenEmpty : List Position -> Slot a -> Grid a -> Grid a
+fillWhenEmpty : List Position -> b -> Grid b -> Grid b
 fillWhenEmpty positions a grid =
     List.foldl (flip setWhenEmpty a) grid positions
 
 
-setWhenEmpty : Position -> Slot a -> Grid a -> Grid a
+setWhenEmpty : Position -> b -> Grid b -> Grid b
 setWhenEmpty position a =
     mapDict
         (Dict.update (Position.toTuple position)
@@ -140,7 +140,7 @@ setWhenEmpty position a =
                             slot
 
                         Empty ->
-                            a
+                            Filled a
                 )
             )
         )
