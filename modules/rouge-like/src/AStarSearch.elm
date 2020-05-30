@@ -75,9 +75,7 @@ aStarHelp config acc =
             { acc | openSet = Set.remove current acc.openSet }
                 |> updateNeighbours config current
     in
-    case
-        findNextNode acc.openSet
-    of
+    case findNextNode acc.openSet of
         Nothing ->
             []
 
