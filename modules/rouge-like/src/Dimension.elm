@@ -1,4 +1,11 @@
-module Dimension exposing (Dimension, maxPosition, member, new, toPositions, toRows)
+module Dimension exposing
+    ( Dimension
+    , maxPosition
+    , member
+    , new
+    , toPositions
+    , toRows
+    )
 
 import Index
 import Position exposing (Position)
