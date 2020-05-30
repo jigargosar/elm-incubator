@@ -1,9 +1,8 @@
 module RCGrid exposing (Grid, Slot(..), adjacentSlotEntries, empty, fill, filledWith, set, setAll, toEntryRows)
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (flip)
 import Dict
 import Dimension exposing (Dimension)
-import Maybe.Extra exposing (unwrap)
 import Position exposing (Position)
 import RC exposing (RC)
 import Tuple exposing (pair)
