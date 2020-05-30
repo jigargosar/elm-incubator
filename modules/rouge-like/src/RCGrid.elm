@@ -1,10 +1,12 @@
-module RCGrid exposing (Grid, Slot(..), adjacent, empty, fill, filledWith, set, setAll, toEntryRows)
+module RCGrid exposing (Grid, Slot(..), adjacentSlotEntries, empty, fill, filledWith, set, setAll, toEntryRows)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict
 import Dimension exposing (Dimension)
+import Maybe.Extra exposing (unwrap)
 import Position exposing (Position)
 import RC exposing (RC)
+import Tuple exposing (pair)
 
 
 type alias Dict a =
@@ -46,12 +48,17 @@ set rc a =
 
 setAll : List ( RC, a ) -> Grid a -> Grid a
 setAll list g =
-    List.foldl (uncurry set) g list
+    List.foldl setEntry g list
 
 
 setEntry : ( RC, a ) -> Grid a -> Grid a
 setEntry ( rc, a ) grid =
     set rc a grid
+
+
+slotEntryAt : RC -> Grid a -> Maybe ( RC, Slot a )
+slotEntryAt rc (Grid _ d) =
+    Dict.get rc d |> Maybe.map (pair rc)
 
 
 mapDict : (Dict a -> Dict a) -> Grid a -> Grid a
@@ -64,19 +71,10 @@ fill rcList a grid =
     List.foldl (\p -> set p a) grid rcList
 
 
-adjacent : RC -> Grid a -> List ( RC, Slot a )
-adjacent rc (Grid _ d) =
+adjacentSlotEntries : RC -> Grid a -> List ( RC, Slot a )
+adjacentSlotEntries rc g =
     RC.adjacent rc
-        |> List.foldl
-            (\adjRC acc ->
-                case Dict.get adjRC d of
-                    Nothing ->
-                        acc
-
-                    Just a ->
-                        ( adjRC, a ) :: acc
-            )
-            []
+        |> List.filterMap (flip slotEntryAt g)
 
 
 toEntryRows : Grid a -> List (List ( Position, Slot a ))
