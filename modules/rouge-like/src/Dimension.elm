@@ -17,6 +17,7 @@ type alias Dimension =
     }
 
 
+new : Int -> Int -> Dimension
 new =
     Dimension
 
