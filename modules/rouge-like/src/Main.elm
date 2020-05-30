@@ -483,6 +483,7 @@ viewPathGrid model =
         end =
             model.dimension
                 |> Dimension.maxPosition
+                |> always (Position.new 0 2)
                 |> Position.toTuple
 
         cost : Int2 -> Float

@@ -77,8 +77,21 @@ aStarHelp config acc =
 
 buildPath : AStarNode comparable -> AStarAcc comparable -> List comparable
 buildPath node acc =
-    node.value
-        |> List.iterate (\n -> Dict.get n acc.cameFrom)
+    foo acc.cameFrom node.value []
+
+
+foo cameFrom x xs =
+    if List.length xs > 10 then
+        xs
+            |> Debug.log "debug"
+
+    else
+        case Dict.get x cameFrom of
+            Just pv ->
+                foo cameFrom pv (x :: xs)
+
+            Nothing ->
+                x :: xs
 
 
 updateNeighbours :
