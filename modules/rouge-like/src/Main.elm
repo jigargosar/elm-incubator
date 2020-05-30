@@ -522,7 +522,8 @@ updateNeighbours :
     -> AStarAcc comparable
     -> AStarAcc comparable
 updateNeighbours config current currentGScore acc0 =
-    config.neighbours current
+    current
+        |> config.neighbours
         |> List.foldl
             (\( neighbour, weight ) acc ->
                 let
