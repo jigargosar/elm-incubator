@@ -104,16 +104,16 @@ updateNeighbours :
     -> comparable
     -> AStarAcc comparable
     -> AStarAcc comparable
-updateNeighbours config current acc0 =
+updateNeighbours config current acc =
     let
         currentGScore =
-            getGScoreOrMax current acc0
+            getGScoreOrMax current acc
     in
     let
         neighbours =
             config.neighbours current
     in
-    List.foldl (updateNeighbourReducer config current currentGScore) acc0 neighbours
+    List.foldl (updateNeighbourReducer config current currentGScore) acc neighbours
 
 
 updateNeighbourReducer :
