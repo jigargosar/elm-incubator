@@ -59,11 +59,15 @@ aStar neighbours cost start goal =
 
 aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable
 aStarHelp config acc =
+    let
+        findNextNode openSet =
+            openSet
+                |> Dict.values
+                |> List.filterNot .closed
+                |> List.minimumBy .fScore
+    in
     case
-        acc.openSet
-            |> Dict.values
-            |> List.filterNot .closed
-            |> List.minimumBy .fScore
+        findNextNode acc.openSet
     of
         Nothing ->
             []
