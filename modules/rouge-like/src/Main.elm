@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import AStarSearch
 import Basics.Extra exposing (..)
 import Basics.More exposing (..)
 import Browser
@@ -460,7 +461,44 @@ view model =
         ]
 
 
+type alias Int2 =
+    ( Int, Int )
+
+
 viewPathGrid model =
+    let
+        neighbours : Int2 -> List ( Int2, Float )
+        neighbours pt =
+            Position.fromTuple pt
+                |> Position.adjacent
+                |> List.filter (\p -> Dimension.member p model.dimension)
+                |> List.map (\p -> ( Position.toTuple p, 1 ))
+
+        start : Int2
+        start =
+            Position.new 0 0
+                |> Position.toTuple
+
+        end : Int2
+        end =
+            model.dimension
+                |> Dimension.maxPosition
+                |> Position.toTuple
+
+        cost : Int2 -> Float
+        cost ( row, column ) =
+            let
+                ( er, ec ) =
+                    end
+            in
+            (abs (row - er) + abs (column - ec))
+                |> toFloat
+
+        foo : List Position
+        foo =
+            AStarSearch.aStar neighbours cost start end
+                |> List.map Position.fromTuple
+    in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
             (Dimension.toRows model.dimension
