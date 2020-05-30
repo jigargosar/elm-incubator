@@ -1,6 +1,6 @@
-module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, filled, map, mapSlots, set, setAll, slotAt, toEntryRows, toRows)
+module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, fillWhenEmpty, filled, map, mapSlots, set, setAll, setWhenEmpty, slotAt, toEntryRows, toRows)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Dict
 import Dimension exposing (Dimension)
 import Position exposing (Position)
@@ -109,16 +109,38 @@ mapSlots f =
     mapDict (Dict.map (\i2 -> f (Position.fromTuple i2)))
 
 
-map : (Position -> a -> Slot b) -> Grid a -> Grid b
+map : (Position -> a -> b) -> Grid a -> Grid b
 map f =
     mapDict
         (Dict.map
             (\i2 slot ->
                 case slot of
                     Filled a ->
-                        f (Position.fromTuple i2) a
+                        Filled (f (Position.fromTuple i2) a)
 
                     Empty ->
                         Empty
+            )
+        )
+
+
+fillWhenEmpty : List Position -> Slot a -> Grid a -> Grid a
+fillWhenEmpty positions a grid =
+    List.foldl (flip setWhenEmpty a) grid positions
+
+
+setWhenEmpty : Position -> Slot a -> Grid a -> Grid a
+setWhenEmpty position a =
+    mapDict
+        (Dict.update (Position.toTuple position)
+            (Maybe.map
+                (\slot ->
+                    case slot of
+                        Filled _ ->
+                            slot
+
+                        Empty ->
+                            a
+                )
             )
         )
