@@ -1,7 +1,9 @@
 module AStarSearch exposing (aStar)
 
+import Basics.Extra exposing (maxSafeInteger)
 import Dict exposing (Dict)
 import List.Extra as List
+import Set exposing (Set)
 
 
 type alias AStarConfig comparable =
@@ -12,16 +14,10 @@ type alias AStarConfig comparable =
     }
 
 
-type alias AStarNode comparable =
-    { gScore : Float
-    , fScore : Float
-    , value : comparable
-    , closed : Bool
-    }
-
-
 type alias AStarAcc comparable =
-    { openSet : Dict comparable (AStarNode comparable)
+    { openSet : Set comparable
+    , gScores : Dict comparable Float
+    , fScores : Dict comparable Float
     , cameFrom : Dict comparable comparable
     }
 
@@ -50,9 +46,21 @@ aStar :
     -> List comparable
 aStar neighbours cost start goal =
     aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
-        { openSet = Dict.singleton start (AStarNode 0 (cost start) start False)
+        { openSet = Set.singleton start
+        , gScores = Dict.singleton start 0
+        , fScores = Dict.singleton start (cost start)
         , cameFrom = Dict.empty
         }
+
+
+getFScoreOrMax current acc =
+    Dict.get current acc.fScores
+        |> Maybe.withDefault maxSafeInteger
+
+
+getGScoreOrMax current acc =
+    Dict.get current acc.gScores
+        |> Maybe.withDefault maxSafeInteger
 
 
 aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable
@@ -60,18 +68,12 @@ aStarHelp config acc =
     let
         findNextNode openSet =
             openSet
-                |> Dict.values
-                |> List.filterNot .closed
-                |> List.minimumBy .fScore
+                |> Set.toList
+                |> List.minimumBy (\n -> getFScoreOrMax n acc)
 
-        stepNeighbours currentNode =
-            { acc
-                | openSet =
-                    Dict.update currentNode.value
-                        (Maybe.map (\n -> { n | closed = True }))
-                        acc.openSet
-            }
-                |> updateNeighbours config currentNode
+        stepNeighbours current =
+            { acc | openSet = Set.remove current acc.openSet }
+                |> updateNeighbours config current
     in
     case
         findNextNode acc.openSet
@@ -79,12 +81,12 @@ aStarHelp config acc =
         Nothing ->
             []
 
-        Just currentNode ->
-            if currentNode.value == config.goal then
-                buildPath acc.cameFrom currentNode.value []
+        Just current ->
+            if current == config.goal then
+                buildPath acc.cameFrom current []
 
             else
-                aStarHelp config (stepNeighbours currentNode)
+                aStarHelp config (stepNeighbours current)
 
 
 buildPath : Dict comparable comparable -> comparable -> List comparable -> List comparable
@@ -99,60 +101,40 @@ buildPath cameFrom x xs =
 
 updateNeighbours :
     AStarConfig comparable
-    -> AStarNode comparable
+    -> comparable
     -> AStarAcc comparable
     -> AStarAcc comparable
-updateNeighbours config currentNode acc0 =
+updateNeighbours config current acc0 =
     let
-        reducer : ( comparable, Float ) -> AStarAcc comparable -> AStarAcc comparable
-        reducer ( neighbour, weight ) acc =
-            updateNeighbourReducer config currentNode neighbour weight acc
-                |> Maybe.withDefault acc
+        currentGScore =
+            getGScoreOrMax current acc0
     in
     let
         neighbours =
-            config.neighbours currentNode.value
+            config.neighbours current
     in
-    List.foldl reducer acc0 neighbours
+    List.foldl (updateNeighbourReducer config current currentGScore) acc0 neighbours
 
 
 updateNeighbourReducer :
     AStarConfig comparable
-    -> AStarNode comparable
     -> comparable
     -> Float
+    -> ( comparable, Float )
     -> AStarAcc comparable
-    -> Maybe (AStarAcc comparable)
-updateNeighbourReducer config currentNode neighbourValue weight acc =
+    -> AStarAcc comparable
+updateNeighbourReducer config current currentGScore ( neighbour, weight ) acc =
     let
         tentativeGScore =
-            currentNode.gScore + weight
-
-        shouldUpdate =
-            case Dict.get neighbourValue acc.openSet of
-                Nothing ->
-                    True
-
-                Just node ->
-                    if tentativeGScore < node.gScore then
-                        True
-
-                    else
-                        False
+            currentGScore + weight
     in
-    if shouldUpdate then
-        Just
-            { acc
-                | openSet =
-                    Dict.insert neighbourValue
-                        { gScore = tentativeGScore
-                        , fScore = tentativeGScore + config.cost neighbourValue
-                        , value = neighbourValue
-                        , closed = False
-                        }
-                        acc.openSet
-                , cameFrom = Dict.insert neighbourValue currentNode.value acc.cameFrom
-            }
+    if tentativeGScore < getGScoreOrMax neighbour acc then
+        { acc
+            | openSet = Set.insert neighbour acc.openSet
+            , gScores = Dict.insert neighbour tentativeGScore acc.gScores
+            , fScores = Dict.insert neighbour (tentativeGScore + config.cost neighbour) acc.fScores
+            , cameFrom = Dict.insert neighbour current acc.cameFrom
+        }
 
     else
-        Nothing
+        acc
