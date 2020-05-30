@@ -483,7 +483,7 @@ viewPathGrid model =
         end =
             model.dimension
                 |> Dimension.maxPosition
-                |> always (Position.new 0 2)
+                --|> always (Position.new 1 1)
                 |> Position.toTuple
 
         cost : Int2 -> Float
@@ -495,10 +495,14 @@ viewPathGrid model =
             (abs (row - er) + abs (column - ec))
                 |> toFloat
 
-        foo : List Position
-        foo =
+        path : List Position
+        path =
             AStarSearch.aStar neighbours cost start end
                 |> List.map Position.fromTuple
+                |> Debug.log "debug"
+
+        isInPath p =
+            List.member p path
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
@@ -507,10 +511,14 @@ viewPathGrid model =
                     (\rowPositions ->
                         div [ class "flex" ]
                             (List.map
-                                (\_ ->
+                                (\p ->
                                     div
                                         [ class "w1 h1"
-                                        , class "bg-black"
+                                        , if isInPath p then
+                                            class "bg-green"
+
+                                          else
+                                            class "bg-black"
                                         ]
                                         []
                                 )

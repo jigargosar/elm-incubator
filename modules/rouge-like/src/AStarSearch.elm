@@ -16,6 +16,7 @@ type alias AStarNode comparable =
     { gScore : Float
     , fScore : Float
     , value : comparable
+    , closed : Bool
     }
 
 
@@ -49,7 +50,7 @@ aStar :
     -> List comparable
 aStar neighbours cost start goal =
     aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
-        { openSet = Dict.singleton start (AStarNode 0 (cost start) start)
+        { openSet = Dict.singleton start (AStarNode 0 (cost start) start False)
         , cameFrom = Dict.empty
         }
 
@@ -59,6 +60,7 @@ aStarHelp config acc =
     case
         acc.openSet
             |> Dict.values
+            |> List.filterNot .closed
             |> List.minimumBy .fScore
     of
         Nothing ->
@@ -70,7 +72,7 @@ aStarHelp config acc =
 
             else
                 aStarHelp config
-                    ({ acc | openSet = Dict.remove currentNode.value acc.openSet }
+                    ({ acc | openSet = Dict.update currentNode.value (Maybe.map (\n -> { n | closed = True })) acc.openSet }
                         |> updateNeighbours config currentNode
                     )
 
@@ -81,9 +83,9 @@ buildPath node acc =
 
 
 foo cameFrom x xs =
-    if List.length xs > 10 then
+    if List.length xs > 100 then
         xs
-            |> Debug.log "debug"
+            |> Debug.log "Infinite Loop Detected"
 
     else
         case Dict.get x cameFrom of
@@ -143,6 +145,7 @@ updateNeighbourReducer config currentNode neighbourValue weight acc =
                         { gScore = tentativeGScore
                         , fScore = tentativeGScore + config.cost neighbourValue
                         , value = neighbourValue
+                        , closed = False
                         }
                         acc.openSet
                 , cameFrom = Dict.insert neighbourValue currentNode.value acc.cameFrom
