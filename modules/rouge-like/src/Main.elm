@@ -564,33 +564,21 @@ viewPathGrid grid =
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
-            (Grid.toEntryRows grid
+            (Grid.toEntryRows g2
                 |> List.map
                     (\rowEntries ->
                         div [ class "flex" ]
                             (rowEntries
                                 |> List.map
-                                    (\( position, slot ) ->
+                                    (\( _, slot ) ->
                                         div
                                             [ class "w1 h1"
                                             , case slot of
-                                                Grid.Filled entity ->
-                                                    case entity of
-                                                        Player ->
-                                                            class "bg-blue"
-
-                                                        Enemy_ _ ->
-                                                            class "bg-red"
-
-                                                        Wall ->
-                                                            class "bg-gray"
+                                                Grid.Filled attr ->
+                                                    attr
 
                                                 Grid.Empty ->
-                                                    if isInPath position then
-                                                        class "bg-green"
-
-                                                    else
-                                                        class "bg-white"
+                                                    class "bg-white"
                                             ]
                                             []
                                     )

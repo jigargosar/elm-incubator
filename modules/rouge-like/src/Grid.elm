@@ -1,4 +1,4 @@
-module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, filled, mapSlots, set, setAll, slotAt, toEntryRows, toRows)
+module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, filled, map, mapSlots, set, setAll, slotAt, toEntryRows, toRows)
 
 import Basics.Extra exposing (uncurry)
 import Dict
@@ -107,3 +107,18 @@ dimension (Grid dimension_ _) =
 mapSlots : (Position -> Slot a -> Slot b) -> Grid a -> Grid b
 mapSlots f =
     mapDict (Dict.map (\i2 -> f (Position.fromTuple i2)))
+
+
+map : (Position -> a -> Slot b) -> Grid a -> Grid b
+map f =
+    mapDict
+        (Dict.map
+            (\i2 slot ->
+                case slot of
+                    Filled a ->
+                        f (Position.fromTuple i2) a
+
+                    Empty ->
+                        Empty
+            )
+        )
