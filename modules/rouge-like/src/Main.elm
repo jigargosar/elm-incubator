@@ -225,7 +225,7 @@ update message model =
 stepPlayerInDirection : Direction -> Model -> Maybe Model
 stepPlayerInDirection direction model =
     model
-        |> computePlayerMove direction
+        |> computePlayerMove direction (toGrid model)
         |> Maybe.map
             ((\playerMove -> movePlayer playerMove model)
                 >> stepEnemies
@@ -248,27 +248,29 @@ type PlayerMove
     | PlayerAttackEnemy Enemy
 
 
-computePlayerMove : Direction -> Model -> Maybe PlayerMove
-computePlayerMove direction model =
+computePlayerMove : Direction -> Grid.Grid Entity -> Model -> Maybe PlayerMove
+computePlayerMove direction grid model =
     let
         position =
             stepPositionInDirection direction model.player
     in
-    position
-        |> classifyPosition model
+    grid
+        |> Grid.slotAt position
         |> Maybe.andThen
-            (\entity ->
-                case entity of
-                    Player ->
-                        Nothing
+            (\slot ->
+                case slot of
+                    Grid.Filled entity ->
+                        case entity of
+                            Player ->
+                                Nothing
 
-                    Enemy_ enemy ->
-                        Just (PlayerAttackEnemy enemy)
+                            Enemy_ enemy ->
+                                Just (PlayerAttackEnemy enemy)
 
-                    Wall ->
-                        Nothing
+                            Wall ->
+                                Nothing
 
-                    Empty ->
+                    Grid.Empty ->
                         Just (PlayerSetPosition position)
             )
 
@@ -314,32 +316,32 @@ type Entity
     = Player
     | Enemy_ Enemy
     | Wall
-    | Empty
 
 
-classifyPosition : Model -> Position -> Maybe Entity
-classifyPosition model position =
-    if Dimension.containsPosition position model.dimension then
-        Just
-            -- Is Player
-            (if model.player == position then
-                Player
-                -- Is Wall
 
-             else if List.member position model.walls then
-                Wall
-
-             else
-                case enemiesFindAtPosition position model.enemies of
-                    Nothing ->
-                        Empty
-
-                    Just enemy ->
-                        Enemy_ enemy
-            )
-
-    else
-        Nothing
+--classifyPosition : Model -> Position -> Maybe Entity
+--classifyPosition model position =
+--    if Dimension.containsPosition position model.dimension then
+--        Just
+--            -- Is Player
+--            (if model.player == position then
+--                Player
+--                -- Is Wall
+--
+--             else if List.member position model.walls then
+--                Wall
+--
+--             else
+--                case enemiesFindAtPosition position model.enemies of
+--                    Nothing ->
+--                        Empty
+--
+--                    Just enemy ->
+--                        Enemy_ enemy
+--            )
+--
+--    else
+--        Nothing
 
 
 computeEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
@@ -368,27 +370,29 @@ plausibleEnemyMoves uid model =
         |> Maybe.map
             (\enemy ->
                 Position.adjacent enemy.position
-                    |> List.filterMap (toEnemyMove model)
+                    |> List.filterMap (flip toEnemyMove (toGrid model))
             )
         |> Maybe.withDefault []
 
 
-toEnemyMove : Model -> Position -> Maybe EnemyMove
-toEnemyMove model position =
-    classifyPosition model position
+toEnemyMove : Position -> Grid.Grid Entity -> Maybe EnemyMove
+toEnemyMove position grid =
+    Grid.slotAt position grid
         |> Maybe.andThen
-            (\entity ->
-                case entity of
-                    Player ->
-                        Just EnemyAttackPlayer
+            (\slot ->
+                case slot of
+                    Grid.Filled entity ->
+                        case entity of
+                            Player ->
+                                Just EnemyAttackPlayer
 
-                    Enemy_ e ->
-                        Just (EnemyAttackEnemy e)
+                            Enemy_ e ->
+                                Just (EnemyAttackEnemy e)
 
-                    Wall ->
-                        Nothing
+                            Wall ->
+                                Nothing
 
-                    Empty ->
+                    Grid.Empty ->
                         Just (EnemySetPosition position)
             )
 
@@ -451,10 +455,14 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
+    let
+        grid =
+            toGrid model
+    in
     div [ class "measure center" ]
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
         , div [ class "flex relative" ]
-            [ viewGrid model
+            [ viewGrid grid model
             , viewOverlay model
             ]
         , div [ class "pv3 f3" ] [ text "A* Path finding Debug" ]
@@ -466,43 +474,40 @@ type alias Int2 =
     ( Int, Int )
 
 
+toGrid : Model -> Grid.Grid Entity
+toGrid model =
+    Grid.empty model.dimension
+        |> Grid.fill model.walls Wall
+        |> Grid.setAll (List.map (\e -> ( e.position, Enemy_ e )) model.enemies)
+        |> Grid.set model.player Player
+
+
 viewPathGrid : Model -> HM
 viewPathGrid model =
     let
-        grid : Grid.Grid Entity
         grid =
-            Grid.filled model.dimension Empty
-                |> Grid.fill model.walls Wall
-                |> Grid.setAll (List.map (\e -> ( e.position, Enemy_ e )) model.enemies)
-                |> Grid.set model.player Player
+            toGrid model
 
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
             grid
                 |> Grid.adjacent (Position.fromTuple pt)
                 |> List.filterMap
-                    (\( p, s ) ->
-                        let
-                            e =
-                                case s of
-                                    Grid.Empty ->
-                                        Empty
+                    (\( position, slot ) ->
+                        case slot of
+                            Grid.Filled entity ->
+                                case entity of
+                                    Player ->
+                                        Just position
 
-                                    Grid.Filled f ->
-                                        f
-                        in
-                        case e of
-                            Player ->
-                                Just p
+                                    Enemy_ _ ->
+                                        Just position
 
-                            Enemy_ _ ->
-                                Just p
+                                    Wall ->
+                                        Nothing
 
-                            Wall ->
-                                Nothing
-
-                            Empty ->
-                                Just p
+                            Grid.Empty ->
+                                Just position
                     )
                 |> List.map (\p -> ( Position.toTuple p, 1 ))
 
@@ -542,39 +547,31 @@ viewPathGrid model =
                 |> List.map
                     (\rowEntries ->
                         div [ class "flex" ]
-                            (List.map
-                                (\( p, s ) ->
-                                    let
-                                        e =
-                                            case s of
+                            (rowEntries
+                                |> List.map
+                                    (\( position, slot ) ->
+                                        div
+                                            [ case slot of
+                                                Grid.Filled entity ->
+                                                    case entity of
+                                                        Player ->
+                                                            class "bg-blue"
+
+                                                        Enemy_ _ ->
+                                                            class "bg-red"
+
+                                                        Wall ->
+                                                            class "bg-gray"
+
                                                 Grid.Empty ->
-                                                    Empty
+                                                    if isInPath position then
+                                                        class "bg-green"
 
-                                                Grid.Filled f ->
-                                                    f
-                                    in
-                                    div
-                                        [ class "w1 h1"
-                                        , case e of
-                                            Player ->
-                                                class "bg-blue"
-
-                                            Enemy_ _ ->
-                                                class "bg-red"
-
-                                            Wall ->
-                                                class "bg-gray"
-
-                                            Empty ->
-                                                if isInPath p then
-                                                    class "bg-green"
-
-                                                else
-                                                    class "bg-white"
-                                        ]
-                                        []
-                                )
-                                rowEntries
+                                                    else
+                                                        class "bg-white"
+                                            ]
+                                            []
+                                    )
                             )
                     )
             )
@@ -627,35 +624,36 @@ type alias HM =
     Html Msg
 
 
-viewGrid : Model -> HM
-viewGrid model =
+viewGrid : Grid.Grid Entity -> Model -> HM
+viewGrid grid model =
     let
-        entityToChar e =
-            case e of
-                Player ->
-                    String.fromInt (abs model.playerHp)
-                        |> String.toList
-                        |> headOr '3'
+        slotToChar slot =
+            case slot of
+                Grid.Filled entity ->
+                    case entity of
+                        Player ->
+                            String.fromInt (abs model.playerHp)
+                                |> String.toList
+                                |> headOr '3'
 
-                Enemy_ _ ->
-                    'e'
+                        Enemy_ _ ->
+                            'e'
 
-                Wall ->
-                    '#'
+                        Wall ->
+                            '#'
 
-                Empty ->
+                Grid.Empty ->
                     '.'
     in
     div [ class "code f2 bg-black white pa3 br3" ]
-        (Dimension.toPositionRows model.dimension
+        (grid
+            |> Grid.toRows
             |> List.map
-                (List.filterMap
-                    (classifyPosition model)
-                    >> List.map
-                        (entityToChar
-                            >> String.fromChar
-                            >> text
-                        )
+                (List.map
+                    (slotToChar
+                        >> String.fromChar
+                        >> text
+                    )
                     >> div []
                 )
         )

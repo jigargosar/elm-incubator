@@ -1,4 +1,4 @@
-module Grid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll, toEntryRows)
+module Grid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll, slotAt, toEntryRows, toRows)
 
 import Basics.Extra exposing (uncurry)
 import Dict
@@ -51,6 +51,11 @@ set position a =
         (Dict.update (Position.toTuple position) (Maybe.map (\_ -> Filled a)))
 
 
+slotAt : Position -> Grid a -> Maybe (Slot a)
+slotAt position (Grid _ d) =
+    Dict.get (Position.toTuple position) d
+
+
 fill : List Position -> a -> Grid a -> Grid a
 fill positions a grid =
     List.foldl (\p -> set p a) grid positions
@@ -79,5 +84,16 @@ toEntryRows (Grid dimension dict) =
                 (\p ->
                     Dict.get (Position.toTuple p) dict
                         |> Maybe.map (\a -> ( p, a ))
+                )
+            )
+
+
+toRows : Grid a -> List (List (Slot a))
+toRows (Grid dimension dict) =
+    Dimension.toPositionRows dimension
+        |> List.map
+            (List.filterMap
+                (\p ->
+                    Dict.get (Position.toTuple p) dict
                 )
             )
