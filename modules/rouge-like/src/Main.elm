@@ -551,7 +551,8 @@ viewPathGrid model =
                                 |> List.map
                                     (\( position, slot ) ->
                                         div
-                                            [ case slot of
+                                            [ class "w1 h1"
+                                            , case slot of
                                                 Grid.Filled entity ->
                                                     case entity of
                                                         Player ->
