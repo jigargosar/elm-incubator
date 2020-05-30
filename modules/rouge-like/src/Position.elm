@@ -1,4 +1,14 @@
-module Position exposing (Position, adjacent, down, fromTuple, left, new, right, toTuple, up)
+module Position exposing
+    ( Position
+    , adjacent
+    , down
+    , fromTuple
+    , left
+    , new
+    , right
+    , toTuple
+    , up
+    )
 
 
 type alias Position =
