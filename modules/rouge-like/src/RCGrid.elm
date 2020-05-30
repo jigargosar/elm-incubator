@@ -22,16 +22,16 @@ type Grid a
 
 filledWith : Dimension -> a -> Grid a
 filledWith dimension a =
-    fromSlot dimension (Filled a)
+    filledWithSlot dimension (Filled a)
 
 
 empty : Dimension -> Grid a
 empty dimension =
-    fromSlot dimension Empty
+    filledWithSlot dimension Empty
 
 
-fromSlot : Dimension -> Slot a -> Grid a
-fromSlot dimension slot =
+filledWithSlot : Dimension -> Slot a -> Grid a
+filledWithSlot dimension slot =
     Dimension.toPositions dimension
         |> List.map Position.toTuple
         |> List.foldl (flip Dict.insert slot) Dict.empty
