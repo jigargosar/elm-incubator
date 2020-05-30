@@ -468,14 +468,15 @@ type alias AStarConfig comparable =
     }
 
 
-type alias AStarNode =
+type alias AStarNode comparable =
     { gScore : Float
     , fScore : Float
+    , value : comparable
     }
 
 
 type alias AStarAcc comparable =
-    { open : Dict comparable AStarNode
+    { open : Dict comparable (AStarNode comparable)
     , cameFrom : Dict comparable comparable
     }
 
@@ -488,7 +489,7 @@ aStar :
     -> List comparable
 aStar neighbours cost start goal =
     aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
-        { open = Dict.singleton start (AStarNode 0 (cost start))
+        { open = Dict.singleton start (AStarNode 0 (cost start) start)
         , cameFrom = Dict.empty
         }
 
@@ -546,6 +547,7 @@ updateNeighbours config current currentGScore acc0 =
                             Dict.insert neighbour
                                 { gScore = tentativeGScore
                                 , fScore = tentativeGScore + config.cost neighbour
+                                , value = neighbour
                                 }
                                 acc.open
                         , cameFrom = Dict.insert neighbour current acc.cameFrom
