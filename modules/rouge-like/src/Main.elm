@@ -460,19 +460,6 @@ view model =
         ]
 
 
-aStar :
-    (comparable -> List ( comparable, Float ))
-    -> (comparable -> Float)
-    -> comparable
-    -> comparable
-    -> List comparable
-aStar neighbours cost start goal =
-    aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
-        { open = Dict.singleton start (AStarNode 0 (cost start))
-        , cameFrom = Dict.empty
-        }
-
-
 type alias AStarConfig comparable =
     { neighbours : comparable -> List ( comparable, Float )
     , cost : comparable -> Float
@@ -491,6 +478,19 @@ type alias AStarAcc comparable =
     { open : Dict comparable AStarNode
     , cameFrom : Dict comparable comparable
     }
+
+
+aStar :
+    (comparable -> List ( comparable, Float ))
+    -> (comparable -> Float)
+    -> comparable
+    -> comparable
+    -> List comparable
+aStar neighbours cost start goal =
+    aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
+        { open = Dict.singleton start (AStarNode 0 (cost start))
+        , cameFrom = Dict.empty
+        }
 
 
 aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable
