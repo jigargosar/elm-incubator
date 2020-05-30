@@ -51,7 +51,6 @@ aStar :
 aStar neighbours cost start goal =
     aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
         { openSet = Dict.singleton start (AStarNode 0 (cost start) start False)
-        , neighboursCache = Dict.empty
         , cameFrom = Dict.empty
         }
 
