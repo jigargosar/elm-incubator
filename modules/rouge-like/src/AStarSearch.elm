@@ -44,13 +44,17 @@ aStar :
     -> comparable
     -> comparable
     -> List comparable
-aStar neighbours cost start goal =
-    aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
-        { openSet = Set.singleton start
-        , gScores = Dict.singleton start 0
-        , fScores = Dict.singleton start (cost start)
-        , cameFrom = Dict.empty
-        }
+aStar neighbours cost start =
+    let
+        aStar_ goal =
+            aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
+                { openSet = Set.singleton start
+                , gScores = Dict.singleton start 0
+                , fScores = Dict.singleton start (cost start)
+                , cameFrom = Dict.empty
+                }
+    in
+    aStar_
 
 
 getOrMaxSafeInteger k =
