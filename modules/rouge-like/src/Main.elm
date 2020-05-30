@@ -503,14 +503,14 @@ aStarHelp config acc =
         Nothing ->
             []
 
-        Just ( current, ( currentGScore, _ ) ) ->
+        Just ( current, currentNode ) ->
             if current == config.goal then
                 List.iterate (\n -> Dict.get n acc.cameFrom) current
 
             else
                 aStarHelp config
                     ({ acc | open = Dict.remove current acc.open }
-                        |> updateNeighbours config current currentGScore
+                        |> updateNeighbours config current currentNode.gScore
                     )
 
 
