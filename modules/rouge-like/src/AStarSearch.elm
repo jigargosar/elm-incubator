@@ -22,7 +22,6 @@ type alias AStarNode comparable =
 
 type alias AStarAcc comparable =
     { openSet : Dict comparable (AStarNode comparable)
-    , neighboursCache : Dict comparable (List ( comparable, Float ))
     , cameFrom : Dict comparable comparable
     }
 
@@ -111,19 +110,13 @@ updateNeighbours config currentNode acc0 =
             updateNeighbourReducer config currentNode neighbour weight acc
                 |> Maybe.withDefault acc
     in
-    case Dict.get currentNode.value acc0.neighboursCache of
-        Just neighbours ->
-            neighbours
-                |> List.foldl reducer acc0
-
-        Nothing ->
-            let
-                neighbours =
-                    config.neighbours currentNode.value
-            in
-            neighbours
-                |> List.foldl reducer
-                    { acc0 | neighboursCache = Dict.insert currentNode.value neighbours acc0.neighboursCache }
+    let
+        neighbours =
+            config.neighbours currentNode.value
+    in
+    neighbours
+        |> List.foldl reducer
+            { acc0 | neighboursCache = Dict.insert currentNode.value neighbours acc0.neighboursCache }
 
 
 updateNeighbourReducer :
