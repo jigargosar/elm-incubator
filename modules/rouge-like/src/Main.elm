@@ -532,7 +532,7 @@ viewPathGrid grid =
         path =
             pathFromGrid grid
 
-        g2 =
+        attrGrid =
             grid
                 |> Grid.map
                     (\_ entity ->
@@ -550,7 +550,7 @@ viewPathGrid grid =
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
-            (Grid.toEntryRows g2
+            (Grid.toEntryRows attrGrid
                 |> List.map
                     (\rowEntries ->
                         div [ class "flex" ]
