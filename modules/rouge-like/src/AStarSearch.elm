@@ -53,14 +53,8 @@ aStar neighbours cost start goal =
         }
 
 
-getFScoreOrMax current acc =
-    Dict.get current acc.fScores
-        |> Maybe.withDefault maxSafeInteger
-
-
-getGScoreOrMax current acc =
-    Dict.get current acc.gScores
-        |> Maybe.withDefault maxSafeInteger
+getOrMaxSafeInteger k =
+    Dict.get k >> Maybe.withDefault maxSafeInteger
 
 
 aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable
@@ -69,7 +63,7 @@ aStarHelp config acc =
         findNextNode openSet =
             openSet
                 |> Set.toList
-                |> List.minimumBy (\n -> getFScoreOrMax n acc)
+                |> List.minimumBy (\n -> getOrMaxSafeInteger n acc.fScores)
 
         stepNeighbours current =
             { acc | openSet = Set.remove current acc.openSet }
@@ -105,7 +99,7 @@ updateNeighbours :
 updateNeighbours config current acc =
     let
         currentGScore =
-            getGScoreOrMax current acc
+            getOrMaxSafeInteger current acc.gScores
     in
     let
         neighbours =
@@ -126,7 +120,7 @@ updateNeighbourReducer config current currentGScore ( neighbour, weight ) acc =
         tentativeGScore =
             currentGScore + weight
     in
-    if tentativeGScore < getGScoreOrMax neighbour acc then
+    if tentativeGScore < getOrMaxSafeInteger neighbour acc.gScores then
         { acc
             | openSet = Set.insert neighbour acc.openSet
             , gScores = Dict.insert neighbour tentativeGScore acc.gScores
