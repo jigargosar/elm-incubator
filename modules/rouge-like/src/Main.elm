@@ -7,6 +7,7 @@ import Browser
 import Browser.Events
 import Dict exposing (Dict)
 import Dimension exposing (Dimension)
+import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
@@ -465,8 +466,16 @@ type alias Int2 =
     ( Int, Int )
 
 
+viewPathGrid : Model -> HM
 viewPathGrid model =
     let
+        grid : Grid.Grid Entity
+        grid =
+            Grid.filled model.dimension Empty
+                |> Grid.fill model.walls Wall
+                |> Grid.setAll (List.map (\e -> ( e.position, Enemy_ e )) model.enemies)
+                |> Grid.set model.player Player
+
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
             Position.fromTuple pt
