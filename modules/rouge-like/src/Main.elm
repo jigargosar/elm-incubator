@@ -534,6 +534,33 @@ viewPathGrid grid =
 
         isInPath p =
             List.member p path
+
+        g2 =
+            grid
+                |> Grid.mapSlots
+                    (\position slot ->
+                        (case slot of
+                            Grid.Filled entity ->
+                                case entity of
+                                    Player ->
+                                        class "bg-blue"
+
+                                    Enemy_ _ ->
+                                        class "bg-red"
+
+                                    Wall ->
+                                        class "bg-gray"
+
+                            Grid.Empty ->
+                                if isInPath position then
+                                    class "bg-green"
+
+                                else
+                                    class "bg-white"
+                        )
+                            |> Grid.Filled
+                    )
+                |> Grid.fill path (class "bg-green")
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
