@@ -540,6 +540,13 @@ updateNeighbours config current currentGScore acc0 =
 
                                 else
                                     False
+
+                    newNeighbourNode : AStarNode comparable
+                    newNeighbourNode =
+                        { gScore = tentativeGScore
+                        , fScore = tentativeGScore + config.cost neighbour
+                        , value = neighbour
+                        }
                 in
                 if shouldUpdate then
                     { acc
