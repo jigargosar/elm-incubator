@@ -1,4 +1,4 @@
-module RCGrid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll, toEntryRows)
+module RCGrid exposing (Grid, Slot(..), adjacent, empty, fill, filledWith, set, setAll, toEntryRows)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict
@@ -20,8 +20,8 @@ type Grid a
     = Grid Dimension (Dict a)
 
 
-filled : Dimension -> a -> Grid a
-filled dimension a =
+filledWith : Dimension -> a -> Grid a
+filledWith dimension a =
     fromSlot dimension (Filled a)
 
 
