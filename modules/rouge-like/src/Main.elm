@@ -471,7 +471,25 @@ viewPathGrid model =
         neighbours pt =
             Position.fromTuple pt
                 |> Position.adjacent
-                |> List.filter (\p -> Dimension.member p model.dimension)
+                |> List.filterMap
+                    (\p ->
+                        classifyPosition model p
+                            |> Maybe.andThen
+                                (\e ->
+                                    case e of
+                                        Player ->
+                                            Just p
+
+                                        Enemy_ _ ->
+                                            Just p
+
+                                        Wall ->
+                                            Nothing
+
+                                        Empty ->
+                                            Just p
+                                )
+                    )
                 |> List.map (\p -> ( Position.toTuple p, 1 ))
 
         start : Int2
@@ -514,11 +532,27 @@ viewPathGrid model =
                                 (\p ->
                                     div
                                         [ class "w1 h1"
-                                        , if isInPath p then
-                                            class "bg-green"
+                                        , classifyPosition model p
+                                            |> Maybe.map
+                                                (\e ->
+                                                    case e of
+                                                        Player ->
+                                                            class "bg-blue"
 
-                                          else
-                                            class "bg-black"
+                                                        Enemy_ enemy ->
+                                                            class "bg-red"
+
+                                                        Wall ->
+                                                            class "bg-gray"
+
+                                                        Empty ->
+                                                            if isInPath p then
+                                                                class "bg-green"
+
+                                                            else
+                                                                class "bg-white"
+                                                )
+                                            |> Maybe.withDefault (class "")
                                         ]
                                         []
                                 )
