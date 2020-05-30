@@ -3,6 +3,7 @@ module Dimension exposing
     , containsPosition
     , containsRC
     , maxPosition
+    , maxRC
     , new
     , toPositionRows
     , toPositions
