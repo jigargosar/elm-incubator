@@ -113,9 +113,7 @@ updateNeighbours config currentNode acc0 =
         neighbours =
             config.neighbours currentNode.value
     in
-    neighbours
-        |> List.foldl reducer
-            { acc0 | neighboursCache = Dict.insert currentNode.value neighbours acc0.neighboursCache }
+    List.foldl reducer acc0 neighbours
 
 
 updateNeighbourReducer :
