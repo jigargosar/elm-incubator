@@ -74,7 +74,12 @@ aStarHelp config acc =
 
             else
                 aStarHelp config
-                    ({ acc | openSet = Dict.update currentNode.value (Maybe.map (\n -> { n | closed = True })) acc.openSet }
+                    ({ acc
+                        | openSet =
+                            Dict.update currentNode.value
+                                (Maybe.map (\n -> { n | closed = True }))
+                                acc.openSet
+                     }
                         |> updateNeighbours config currentNode
                     )
 
