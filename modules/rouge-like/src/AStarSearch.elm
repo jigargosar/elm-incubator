@@ -65,6 +65,15 @@ aStarHelp config acc =
                 |> Dict.values
                 |> List.filterNot .closed
                 |> List.minimumBy .fScore
+
+        stepNeighbours currentNode =
+            { acc
+                | openSet =
+                    Dict.update currentNode.value
+                        (Maybe.map (\n -> { n | closed = True }))
+                        acc.openSet
+            }
+                |> updateNeighbours config currentNode
     in
     case
         findNextNode acc.openSet
@@ -77,15 +86,7 @@ aStarHelp config acc =
                 buildPath acc.cameFrom currentNode.value []
 
             else
-                aStarHelp config
-                    ({ acc
-                        | openSet =
-                            Dict.update currentNode.value
-                                (Maybe.map (\n -> { n | closed = True }))
-                                acc.openSet
-                     }
-                        |> updateNeighbours config currentNode
-                    )
+                aStarHelp config (stepNeighbours currentNode)
 
 
 buildPath : Dict comparable comparable -> comparable -> List comparable -> List comparable
