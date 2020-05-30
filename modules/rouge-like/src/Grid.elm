@@ -1,4 +1,4 @@
-module Grid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll)
+module Grid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll, toEntryRows)
 
 import Basics.Extra exposing (uncurry)
 import Dict
@@ -16,7 +16,7 @@ type Slot a
 
 
 type Grid a
-    = Grid (Dict a)
+    = Grid Dimension (Dict a)
 
 
 filled : Dimension -> a -> Grid a
@@ -24,7 +24,7 @@ filled dimension a =
     Dimension.toPositions dimension
         |> List.map Position.toTuple
         |> List.foldl (\p -> Dict.insert p (Filled a)) Dict.empty
-        |> Grid
+        |> Grid dimension
 
 
 empty : Dimension -> Grid a
@@ -32,7 +32,7 @@ empty dimension =
     Dimension.toPositions dimension
         |> List.map Position.toTuple
         |> List.foldl (\p -> Dict.insert p Empty) Dict.empty
-        |> Grid
+        |> Grid dimension
 
 
 setAll : List ( Position, a ) -> Grid a -> Grid a
@@ -40,11 +40,15 @@ setAll list g =
     List.foldl (uncurry set) g list
 
 
+mapDict : (Dict a -> Dict a) -> Grid a -> Grid a
+mapDict f (Grid dimension dict) =
+    Grid dimension (f dict)
+
+
 set : Position -> a -> Grid a -> Grid a
-set position a (Grid d) =
-    d
-        |> Dict.update (Position.toTuple position) (Maybe.map (\_ -> Filled a))
-        |> Grid
+set position a =
+    mapDict
+        (Dict.update (Position.toTuple position) (Maybe.map (\_ -> Filled a)))
 
 
 fill : List Position -> a -> Grid a -> Grid a
@@ -53,7 +57,7 @@ fill positions a grid =
 
 
 adjacent : Position -> Grid a -> List ( Position, Slot a )
-adjacent position (Grid d) =
+adjacent position (Grid _ d) =
     Position.adjacent position
         |> List.foldl
             (\p acc ->
@@ -65,3 +69,15 @@ adjacent position (Grid d) =
                         ( p, a ) :: acc
             )
             []
+
+
+toEntryRows : Grid a -> List (List ( Position, Slot a ))
+toEntryRows (Grid dimension dict) =
+    Dimension.toRows dimension
+        |> List.map
+            (List.filterMap
+                (\p ->
+                    Dict.get (Position.toTuple p) dict
+                        |> Maybe.map (\a -> ( p, a ))
+                )
+            )

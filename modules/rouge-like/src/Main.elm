@@ -478,26 +478,31 @@ viewPathGrid model =
 
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
-            Position.fromTuple pt
-                |> Position.adjacent
+            grid
+                |> Grid.adjacent (Position.fromTuple pt)
                 |> List.filterMap
-                    (\p ->
-                        classifyPosition model p
-                            |> Maybe.andThen
-                                (\e ->
-                                    case e of
-                                        Player ->
-                                            Just p
+                    (\( p, s ) ->
+                        let
+                            e =
+                                case s of
+                                    Grid.Empty ->
+                                        Empty
 
-                                        Enemy_ _ ->
-                                            Just p
+                                    Grid.Filled f ->
+                                        f
+                        in
+                        case e of
+                            Player ->
+                                Just p
 
-                                        Wall ->
-                                            Nothing
+                            Enemy_ _ ->
+                                Just p
 
-                                        Empty ->
-                                            Just p
-                                )
+                            Wall ->
+                                Nothing
+
+                            Empty ->
+                                Just p
                     )
                 |> List.map (\p -> ( Position.toTuple p, 1 ))
 
@@ -533,39 +538,43 @@ viewPathGrid model =
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
-            (Dimension.toRows model.dimension
+            (Grid.toEntryRows grid
                 |> List.map
-                    (\rowPositions ->
+                    (\rowEntries ->
                         div [ class "flex" ]
                             (List.map
-                                (\p ->
+                                (\( p, s ) ->
+                                    let
+                                        e =
+                                            case s of
+                                                Grid.Empty ->
+                                                    Empty
+
+                                                Grid.Filled f ->
+                                                    f
+                                    in
                                     div
                                         [ class "w1 h1"
-                                        , classifyPosition model p
-                                            |> Maybe.map
-                                                (\e ->
-                                                    case e of
-                                                        Player ->
-                                                            class "bg-blue"
+                                        , case e of
+                                            Player ->
+                                                class "bg-blue"
 
-                                                        Enemy_ enemy ->
-                                                            class "bg-red"
+                                            Enemy_ _ ->
+                                                class "bg-red"
 
-                                                        Wall ->
-                                                            class "bg-gray"
+                                            Wall ->
+                                                class "bg-gray"
 
-                                                        Empty ->
-                                                            if isInPath p then
-                                                                class "bg-green"
+                                            Empty ->
+                                                if isInPath p then
+                                                    class "bg-green"
 
-                                                            else
-                                                                class "bg-white"
-                                                )
-                                            |> Maybe.withDefault (class "")
+                                                else
+                                                    class "bg-white"
                                         ]
                                         []
                                 )
-                                rowPositions
+                                rowEntries
                             )
                     )
             )
