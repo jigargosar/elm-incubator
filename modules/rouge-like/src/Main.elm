@@ -494,8 +494,7 @@ type alias AStarAcc comparable =
 
     @returns: List of nodes from start (exclusive) to goal (inclusive).
         i.e. the shortest weighted path.
-
-    Empty list signifies absence of any valid path
+        Empty list signifies absence of any valid path
 
 -}
 aStar :
