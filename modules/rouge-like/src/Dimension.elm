@@ -1,6 +1,7 @@
 module Dimension exposing
     ( Dimension
     , containsPosition
+    , containsRC
     , maxPosition
     , new
     , toPositions
