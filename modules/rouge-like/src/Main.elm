@@ -551,11 +551,8 @@ updateNeighbours config current currentGScore acc0 =
                 if shouldUpdate then
                     { acc
                         | open =
-                            Dict.insert neighbour
-                                { gScore = tentativeGScore
-                                , fScore = tentativeGScore + config.cost neighbour
-                                , value = neighbour
-                                }
+                            Dict.insert newNeighbourNode.value
+                                newNeighbourNode
                                 acc.open
                         , cameFrom = Dict.insert neighbour current acc.cameFrom
                     }
