@@ -522,13 +522,19 @@ aStarHelp config acc =
 
         Just currentNode ->
             if currentNode.value == config.goal then
-                List.iterate (\n -> Dict.get n acc.cameFrom) currentNode.value
+                buildPath currentNode acc
 
             else
                 aStarHelp config
                     ({ acc | open = Dict.remove currentNode.value acc.open }
                         |> updateNeighbours config currentNode
                     )
+
+
+buildPath : AStarNode comparable -> AStarAcc comparable -> List comparable
+buildPath node acc =
+    node.value
+        |> List.iterate (\n -> Dict.get n acc.cameFrom)
 
 
 updateNeighbours :
