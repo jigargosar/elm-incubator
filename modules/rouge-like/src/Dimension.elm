@@ -47,6 +47,11 @@ toRCRows d =
     Index.range2 d.rows d.columns
 
 
+maxRC : Dimension -> RC
+maxRC d =
+    RC.new (d.rows - 1) (d.columns - 1)
+
+
 containsPosition : Position -> Dimension -> Bool
 containsPosition position dimension =
     let
