@@ -1,4 +1,4 @@
-module Grid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll, slotAt, toEntryRows, toRows)
+module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, filled, set, setAll, slotAt, toEntryRows, toRows)
 
 import Basics.Extra exposing (uncurry)
 import Dict
@@ -20,19 +20,19 @@ type Grid a
 
 
 filled : Dimension -> a -> Grid a
-filled dimension a =
-    Dimension.toPositions dimension
+filled dimension_ a =
+    Dimension.toPositions dimension_
         |> List.map Position.toTuple
         |> List.foldl (\p -> Dict.insert p (Filled a)) Dict.empty
-        |> Grid dimension
+        |> Grid dimension_
 
 
 empty : Dimension -> Grid a
-empty dimension =
-    Dimension.toPositions dimension
+empty dimension_ =
+    Dimension.toPositions dimension_
         |> List.map Position.toTuple
         |> List.foldl (\p -> Dict.insert p Empty) Dict.empty
-        |> Grid dimension
+        |> Grid dimension_
 
 
 setAll : List ( Position, a ) -> Grid a -> Grid a
@@ -41,8 +41,8 @@ setAll list g =
 
 
 mapDict : (Dict a -> Dict a) -> Grid a -> Grid a
-mapDict f (Grid dimension dict) =
-    Grid dimension (f dict)
+mapDict f (Grid dimension_ dict) =
+    Grid dimension_ (f dict)
 
 
 set : Position -> a -> Grid a -> Grid a
@@ -77,8 +77,8 @@ adjacent position (Grid _ d) =
 
 
 toEntryRows : Grid a -> List (List ( Position, Slot a ))
-toEntryRows (Grid dimension dict) =
-    Dimension.toPositionRows dimension
+toEntryRows (Grid dimension_ dict) =
+    Dimension.toPositionRows dimension_
         |> List.map
             (List.filterMap
                 (\p ->
@@ -89,11 +89,16 @@ toEntryRows (Grid dimension dict) =
 
 
 toRows : Grid a -> List (List (Slot a))
-toRows (Grid dimension dict) =
-    Dimension.toPositionRows dimension
+toRows (Grid dimension_ dict) =
+    Dimension.toPositionRows dimension_
         |> List.map
             (List.filterMap
                 (\p ->
                     Dict.get (Position.toTuple p) dict
                 )
             )
+
+
+dimension : Grid a -> Dimension
+dimension (Grid dimension_ _) =
+    dimension_

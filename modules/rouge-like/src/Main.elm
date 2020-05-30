@@ -466,7 +466,7 @@ view model =
             , viewOverlay model
             ]
         , div [ class "pv3 f3" ] [ text "A* Path finding Debug" ]
-        , viewPathGrid model
+        , viewPathGrid grid
         ]
 
 
@@ -482,12 +482,9 @@ toGrid model =
         |> Grid.set model.player Player
 
 
-viewPathGrid : Model -> HM
-viewPathGrid model =
+pathFromGrid : Grid.Grid Entity -> List Position
+pathFromGrid grid =
     let
-        grid =
-            toGrid model
-
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
             grid
@@ -518,7 +515,7 @@ viewPathGrid model =
 
         end : Int2
         end =
-            model.dimension
+            Grid.dimension grid
                 |> Dimension.maxPosition
                 --|> always (Position.new 1 1)
                 |> Position.toTuple
@@ -531,12 +528,17 @@ viewPathGrid model =
             in
             (abs (row - er) + abs (column - ec))
                 |> toFloat
+    in
+    AStarSearch.aStar neighbours cost start end
+        |> List.map Position.fromTuple
 
+
+viewPathGrid : Grid.Grid Entity -> Html msg
+viewPathGrid grid =
+    let
         path : List Position
         path =
-            AStarSearch.aStar neighbours cost start end
-                |> List.map Position.fromTuple
-                |> Debug.log "debug"
+            pathFromGrid grid
 
         isInPath p =
             List.member p path
