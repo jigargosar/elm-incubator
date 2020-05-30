@@ -21,9 +21,14 @@ fromTuple ( r, c ) =
     new r c
 
 
+adjacentFS : List (Position -> Position)
+adjacentFS =
+    [ up, right, down, left ]
+
+
 adjacent : Position -> List Position
 adjacent position =
-    [ up, right, down, left ]
+    adjacentFS
         |> List.map (\f -> f position)
 
 
