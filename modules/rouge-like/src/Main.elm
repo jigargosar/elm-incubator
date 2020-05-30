@@ -492,18 +492,10 @@ pathFromGrid grid =
                 |> List.filterMap
                     (\( position, slot ) ->
                         case slot of
-                            Grid.Filled entity ->
-                                case entity of
-                                    Player ->
-                                        Just position
+                            Grid.Filled Wall ->
+                                Nothing
 
-                                    Enemy_ _ ->
-                                        Just position
-
-                                    Wall ->
-                                        Nothing
-
-                            Grid.Empty ->
+                            _ ->
                                 Just position
                     )
                 |> List.map (\p -> ( Position.toTuple p, 1 ))
