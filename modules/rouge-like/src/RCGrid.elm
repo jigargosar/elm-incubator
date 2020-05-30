@@ -1,4 +1,14 @@
-module RCGrid exposing (Grid, Slot(..), adjacentSlotEntries, empty, fill, filledWith, set, setAll, toEntryRows)
+module RCGrid exposing
+    ( Grid
+    , Slot(..)
+    , adjacentSlotEntries
+    , empty
+    , fill
+    , filledWith
+    , set
+    , setAll
+    , toEntryRows
+    )
 
 import Basics.Extra exposing (flip)
 import Dict
