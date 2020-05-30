@@ -514,66 +514,79 @@ aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable
 aStarHelp config acc =
     case
         acc.open
-            |> Dict.toList
-            |> List.minimumBy (\( _, n ) -> n.fScore)
+            |> Dict.values
+            |> List.minimumBy .fScore
     of
         Nothing ->
             []
 
-        Just ( current, currentNode ) ->
-            if current == config.goal then
-                List.iterate (\n -> Dict.get n acc.cameFrom) current
+        Just currentNode ->
+            if currentNode.value == config.goal then
+                List.iterate (\n -> Dict.get n acc.cameFrom) currentNode.value
 
             else
                 aStarHelp config
-                    ({ acc | open = Dict.remove current acc.open }
-                        |> updateNeighbours config current currentNode.gScore
+                    ({ acc | open = Dict.remove currentNode.value acc.open }
+                        |> updateNeighbours config currentNode
                     )
 
 
 updateNeighbours :
     AStarConfig comparable
+    -> AStarNode comparable
+    -> AStarAcc comparable
+    -> AStarAcc comparable
+updateNeighbours config currentNode acc0 =
+    let
+        reducer : ( comparable, Float ) -> AStarAcc comparable -> AStarAcc comparable
+        reducer ( neighbour, weight ) acc =
+            updateNeighbourReducer config currentNode neighbour weight acc
+                |> Maybe.withDefault acc
+    in
+    currentNode.value
+        |> config.neighbours
+        |> List.foldl reducer acc0
+
+
+updateNeighbourReducer :
+    AStarConfig comparable
+    -> AStarNode comparable
     -> comparable
     -> Float
     -> AStarAcc comparable
-    -> AStarAcc comparable
-updateNeighbours config current currentGScore acc0 =
+    -> Maybe (AStarAcc comparable)
+updateNeighbourReducer config currentNode neighbourValue weight acc =
     let
-        reducer ( neighbour, weight ) acc =
-            let
-                tentativeGScore =
-                    currentGScore + weight
+        tentativeGScore =
+            currentNode.gScore + weight
 
-                shouldUpdate =
-                    case Dict.get neighbour acc.open of
-                        Nothing ->
-                            True
+        shouldUpdate =
+            case Dict.get neighbourValue acc.open of
+                Nothing ->
+                    True
 
-                        Just node ->
-                            if tentativeGScore < node.gScore then
-                                True
+                Just node ->
+                    if tentativeGScore < node.gScore then
+                        True
 
-                            else
-                                False
-            in
-            if shouldUpdate then
-                { acc
-                    | open =
-                        Dict.insert neighbour
-                            { gScore = tentativeGScore
-                            , fScore = tentativeGScore + config.cost neighbour
-                            , value = neighbour
-                            }
-                            acc.open
-                    , cameFrom = Dict.insert neighbour current acc.cameFrom
-                }
-
-            else
-                acc
+                    else
+                        False
     in
-    current
-        |> config.neighbours
-        |> List.foldl reducer acc0
+    if shouldUpdate then
+        Just
+            { acc
+                | open =
+                    Dict.insert neighbourValue
+                        { gScore = tentativeGScore
+                        , fScore = tentativeGScore + config.cost neighbourValue
+                        , value = neighbourValue
+                        }
+                        acc.open
+                , cameFrom = Dict.insert neighbourValue currentNode.value acc.cameFrom
+            }
+
+    else
+        Nothing
 
 
 viewPathGrid model =
