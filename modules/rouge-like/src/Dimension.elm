@@ -1,7 +1,7 @@
 module Dimension exposing
     ( Dimension
+    , containsPosition
     , maxPosition
-    , member
     , new
     , toPositions
     , toRows
@@ -9,6 +9,7 @@ module Dimension exposing
 
 import Index
 import Position exposing (Position)
+import RC exposing (RC)
 
 
 type alias Dimension =
@@ -37,8 +38,14 @@ toPositions =
     toRows >> List.concat
 
 
-member : Position -> Dimension -> Bool
-member position dimension =
+containsRC : RC -> Dimension -> Bool
+containsRC ( r, c ) d =
+    (r < 0 || c < 0 || r >= d.rows || c >= d.columns)
+        |> not
+
+
+containsPosition : Position -> Dimension -> Bool
+containsPosition position dimension =
     let
         ( row, column ) =
             Position.toTuple position

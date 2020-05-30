@@ -319,7 +319,7 @@ type Entity
 
 classifyPosition : Model -> Position -> Maybe Entity
 classifyPosition model position =
-    if Dimension.member position model.dimension then
+    if Dimension.containsPosition position model.dimension then
         Just
             -- Is Player
             (if model.player == position then
