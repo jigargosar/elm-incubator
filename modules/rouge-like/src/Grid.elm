@@ -73,7 +73,7 @@ adjacent position (Grid _ d) =
 
 toEntryRows : Grid a -> List (List ( Position, Slot a ))
 toEntryRows (Grid dimension dict) =
-    Dimension.toRows dimension
+    Dimension.toPositionRows dimension
         |> List.map
             (List.filterMap
                 (\p ->

@@ -647,7 +647,7 @@ viewGrid model =
                     '.'
     in
     div [ class "code f2 bg-black white pa3 br3" ]
-        (Dimension.toRows model.dimension
+        (Dimension.toPositionRows model.dimension
             |> List.map
                 (List.filterMap
                     (classifyPosition model)

@@ -4,8 +4,8 @@ module Dimension exposing
     , containsRC
     , maxPosition
     , new
+    , toPositionRows
     , toPositions
-    , toRows
     )
 
 import Index
@@ -24,25 +24,26 @@ new =
     Dimension
 
 
-toRows : Dimension -> List (List Position)
-toRows d =
-    Index.range d.rows
-        |> List.map
-            (\r ->
-                Index.range d.columns
-                    |> List.map (\c -> Position.new r c)
-            )
+toPositionRows : Dimension -> List (List Position)
+toPositionRows d =
+    Index.range2 d.rows d.columns
+        |> List.map (List.map Position.fromTuple)
 
 
 toPositions : Dimension -> List Position
 toPositions =
-    toRows >> List.concat
+    toPositionRows >> List.concat
 
 
 containsRC : RC -> Dimension -> Bool
 containsRC ( r, c ) d =
     (r < 0 || c < 0 || r >= d.rows || c >= d.columns)
         |> not
+
+
+toRCRows : Dimension -> List (List RC)
+toRCRows d =
+    Index.range2 d.rows d.columns
 
 
 containsPosition : Position -> Dimension -> Bool
