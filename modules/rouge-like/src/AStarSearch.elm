@@ -22,6 +22,7 @@ type alias AStarNode comparable =
 
 type alias AStarAcc comparable =
     { openSet : Dict comparable (AStarNode comparable)
+    , neighboursCache : Dict comparable (List ( comparable, Float ))
     , cameFrom : Dict comparable comparable
     }
 
@@ -51,6 +52,7 @@ aStar :
 aStar neighbours cost start goal =
     aStarHelp { neighbours = neighbours, cost = cost, start = start, goal = goal }
         { openSet = Dict.singleton start (AStarNode 0 (cost start) start False)
+        , neighboursCache = Dict.empty
         , cameFrom = Dict.empty
         }
 
@@ -68,7 +70,7 @@ aStarHelp config acc =
 
         Just currentNode ->
             if currentNode.value == config.goal then
-                buildPath currentNode acc
+                buildPath acc.cameFrom currentNode.value []
 
             else
                 aStarHelp config
@@ -77,23 +79,14 @@ aStarHelp config acc =
                     )
 
 
-buildPath : AStarNode comparable -> AStarAcc comparable -> List comparable
-buildPath node acc =
-    foo acc.cameFrom node.value []
+buildPath : Dict comparable comparable -> comparable -> List comparable -> List comparable
+buildPath cameFrom x xs =
+    case Dict.get x cameFrom of
+        Just pv ->
+            buildPath cameFrom pv (x :: xs)
 
-
-foo cameFrom x xs =
-    if List.length xs > 100 then
-        xs
-            |> Debug.log "Infinite Loop Detected"
-
-    else
-        case Dict.get x cameFrom of
-            Just pv ->
-                foo cameFrom pv (x :: xs)
-
-            Nothing ->
-                x :: xs
+        Nothing ->
+            x :: xs
 
 
 updateNeighbours :
