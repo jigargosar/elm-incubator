@@ -38,9 +38,20 @@ filledWithSlot dimension slot =
         |> Grid dimension
 
 
-setAll : List ( Position, a ) -> Grid a -> Grid a
+set : RC -> a -> Grid a -> Grid a
+set rc a =
+    mapDict
+        (Dict.update rc (Maybe.map (\_ -> Filled a)))
+
+
+setAll : List ( RC, a ) -> Grid a -> Grid a
 setAll list g =
     List.foldl (uncurry set) g list
+
+
+setEntry : ( RC, a ) -> Grid a -> Grid a
+setEntry ( rc, a ) grid =
+    set rc a grid
 
 
 mapDict : (Dict a -> Dict a) -> Grid a -> Grid a
@@ -48,28 +59,22 @@ mapDict f (Grid dimension dict) =
     Grid dimension (f dict)
 
 
-set : Position -> a -> Grid a -> Grid a
-set position a =
-    mapDict
-        (Dict.update (Position.toTuple position) (Maybe.map (\_ -> Filled a)))
+fill : List RC -> a -> Grid a -> Grid a
+fill rcList a grid =
+    List.foldl (\p -> set p a) grid rcList
 
 
-fill : List Position -> a -> Grid a -> Grid a
-fill positions a grid =
-    List.foldl (\p -> set p a) grid positions
-
-
-adjacent : Position -> Grid a -> List ( Position, Slot a )
-adjacent position (Grid _ d) =
-    Position.adjacent position
+adjacent : RC -> Grid a -> List ( RC, Slot a )
+adjacent rc (Grid _ d) =
+    RC.adjacent rc
         |> List.foldl
-            (\p acc ->
-                case Dict.get (Position.toTuple p) d of
+            (\adjRC acc ->
+                case Dict.get adjRC d of
                     Nothing ->
                         acc
 
                     Just a ->
-                        ( p, a ) :: acc
+                        ( adjRC, a ) :: acc
             )
             []
 
