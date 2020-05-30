@@ -1,6 +1,6 @@
 module RCGrid exposing (Grid, Slot(..), adjacent, empty, fill, filled, set, setAll, toEntryRows)
 
-import Basics.Extra exposing (uncurry)
+import Basics.Extra exposing (flip, uncurry)
 import Dict
 import Dimension exposing (Dimension)
 import Position exposing (Position)
@@ -22,17 +22,19 @@ type Grid a
 
 filled : Dimension -> a -> Grid a
 filled dimension a =
-    Dimension.toRCRows dimension
-        |> List.concat
-        |> List.foldl (\rc -> Dict.insert rc (Filled a)) Dict.empty
-        |> Grid dimension
+    fromSlot dimension (Filled a)
 
 
 empty : Dimension -> Grid a
 empty dimension =
+    fromSlot dimension Empty
+
+
+fromSlot : Dimension -> Slot a -> Grid a
+fromSlot dimension slot =
     Dimension.toPositions dimension
         |> List.map Position.toTuple
-        |> List.foldl (\p -> Dict.insert p Empty) Dict.empty
+        |> List.foldl (flip Dict.insert slot) Dict.empty
         |> Grid dimension
 
 
