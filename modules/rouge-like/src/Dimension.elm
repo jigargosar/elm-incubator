@@ -6,6 +6,7 @@ module Dimension exposing
     , new
     , toPositionRows
     , toPositions
+    , toRCRows
     )
 
 import Index
