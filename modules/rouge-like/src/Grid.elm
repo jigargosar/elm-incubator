@@ -8,13 +8,11 @@ module Grid exposing
     , fillWhenEmpty
     , filled
     , map
-    , mapSlots
     , set
     , setAll
     , setWhenEmpty
     , slotAt
     , toEntryRows
-    , toRows
     , viewRows
     )
 
@@ -116,25 +114,9 @@ viewRows rf ef =
             )
 
 
-toRows : Grid a -> List (List (Slot a))
-toRows (Grid dimension_ dict) =
-    Dimension.toPositionRows dimension_
-        |> List.map
-            (List.filterMap
-                (\p ->
-                    Dict.get (Position.toTuple p) dict
-                )
-            )
-
-
 dimension : Grid a -> Dimension
 dimension (Grid dimension_ _) =
     dimension_
-
-
-mapSlots : (Position -> Slot a -> Slot b) -> Grid a -> Grid b
-mapSlots f =
-    mapDict (Dict.map (\i2 -> f (Position.fromTuple i2)))
 
 
 map : (Position -> a -> b) -> Grid a -> Grid b
