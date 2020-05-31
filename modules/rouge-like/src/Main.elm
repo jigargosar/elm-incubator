@@ -274,16 +274,16 @@ stepEnemies model0 =
         |> List.foldl
             (\uid model ->
                 stepEnemy uid model
+                    |> Maybe.map (moveEnemy uid)
                     |> Maybe.withDefault model
             )
             model0
 
 
-stepEnemy : Uid -> Model -> Maybe Model
+stepEnemy : Uid -> Model -> Maybe ( EnemyMove, Model )
 stepEnemy uid model =
     computeRandomEnemyMove uid model
         |> always (computeEnemyMoveTowardsPlayer uid model)
-        |> Maybe.map (moveEnemy uid)
 
 
 moveEnemy : Uid -> ( EnemyMove, Model ) -> Model
