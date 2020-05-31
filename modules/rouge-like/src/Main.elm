@@ -117,7 +117,7 @@ newWorldBuilder dimension =
 
 enemiesGenerator : WorldBuilder -> Generator WorldBuilder
 enemiesGenerator acc =
-    shuffleSplit 18 acc.empty
+    shuffleSplit 8 acc.empty
         |> Random.andThen
             (\( enemyLocations, empty ) ->
                 enemyLocations
