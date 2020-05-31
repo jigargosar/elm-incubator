@@ -474,6 +474,20 @@ pathFromGrid grid =
                     )
                 |> List.map (\l -> ( Location.toTuple l, 1 ))
 
+        neighbours2 : Int2 -> List ( Int2, Float )
+        neighbours2 pt =
+            grid
+                |> MGrid.adjacent2 pt
+                |> List.filterMap
+                    (\( location, slot ) ->
+                        case slot of
+                            MGrid.Filled Wall ->
+                                Nothing
+
+                            _ ->
+                                Just ( location, 1 )
+                    )
+
         start : Int2
         start =
             Location.new 0 0
