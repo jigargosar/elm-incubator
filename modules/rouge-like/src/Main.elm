@@ -311,7 +311,7 @@ computeEnemyMoveTowardsPlayer uid model =
                 in
                 case pathFromTo enemy.location model.player model of
                     _ :: el :: _ ->
-                        toEnemyMove el grid
+                        toEnemyMove el model
                             |> Maybe.map (pairTo model)
 
                     _ ->
@@ -387,31 +387,26 @@ plausibleEnemyMoves uid model =
         |> Maybe.map
             (\enemy ->
                 Location.adjacent enemy.location
-                    |> List.filterMap (flip toEnemyMove (toGrid model))
+                    |> List.filterMap (\location -> toEnemyMove location model)
             )
         |> Maybe.withDefault []
 
 
-toEnemyMove : Location -> MGrid.MGrid Entity -> Maybe EnemyMove
-toEnemyMove location grid =
-    MGrid.slotAt location grid
-        |> Maybe.andThen
-            (\slot ->
-                case slot of
-                    MGrid.Filled entity ->
-                        case entity of
-                            Player ->
-                                Just EnemyAttackPlayer
+toEnemyMove : Location -> Model -> Maybe EnemyMove
+toEnemyMove location model =
+    if isInvalidOrWall location model then
+        Nothing
 
-                            Enemy_ e ->
-                                Just (EnemyAttackEnemy e)
+    else if model.player == location then
+        Just EnemyAttackPlayer
 
-                            Wall ->
-                                Nothing
+    else
+        case List.find (enemyLocationEq location) model.enemies of
+            Just enemy ->
+                Just (EnemyAttackEnemy enemy)
 
-                    MGrid.Empty ->
-                        Just (EnemySetLocation location)
-            )
+            Nothing ->
+                Just (EnemySetLocation location)
 
 
 stepLocationInDirection : Direction -> Location -> Location
