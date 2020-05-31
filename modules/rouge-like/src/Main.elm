@@ -268,10 +268,15 @@ mapEnemies f model =
 
 
 stepEnemies : Model -> Model
-stepEnemies model =
-    model.enemies
+stepEnemies model0 =
+    model0.enemies
         |> List.map .uid
-        |> List.foldl (ignoreNothing2 stepEnemy) model
+        |> List.foldl
+            (\uid model ->
+                stepEnemy uid model
+                    |> Maybe.withDefault model
+            )
+            model0
 
 
 stepEnemy : Uid -> Model -> Maybe Model
