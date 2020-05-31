@@ -48,10 +48,9 @@ newEnemy location =
             )
 
 
-
---enemyLocationEq : Location -> Enemy -> Bool
---enemyLocationEq location enemy =
---    enemy.location == location
+enemyLocationEq : Location -> Enemy -> Bool
+enemyLocationEq location enemy =
+    enemy.location == location
 
 
 enemySetLocation : Location -> Enemy -> Enemy
@@ -241,31 +240,26 @@ type PlayerMove
 computePlayerMove : Direction -> Model -> Maybe PlayerMove
 computePlayerMove direction model =
     let
-        grid =
-            toGrid model
-
         location =
             stepLocationInDirection direction model.player
+
+        invalidLocation =
+            Dimension.containsLocation location model.dimension
+                |> not
+
+        walled =
+            List.member location model.walls
     in
-    grid
-        |> MGrid.slotAt location
-        |> Maybe.andThen
-            (\slot ->
-                case slot of
-                    MGrid.Filled entity ->
-                        case entity of
-                            Player ->
-                                Nothing
+    if invalidLocation || walled || model.player == location then
+        Nothing
 
-                            Enemy_ enemy ->
-                                Just (PlayerAttackEnemy enemy)
+    else
+        case List.find (enemyLocationEq location) model.enemies of
+            Just enemy ->
+                Just (PlayerAttackEnemy enemy)
 
-                            Wall ->
-                                Nothing
-
-                    MGrid.Empty ->
-                        Just (PlayerSetLocation location)
-            )
+            Nothing ->
+                Just (PlayerSetLocation location)
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
