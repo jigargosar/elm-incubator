@@ -18,7 +18,7 @@ module Grid exposing
 import Basics.Extra exposing (flip, uncurry)
 import Dict
 import Dimension exposing (Dimension)
-import Position exposing (Position)
+import Location exposing (Location)
 
 
 type alias Dict a =
@@ -37,12 +37,12 @@ type Grid a
 empty : Dimension -> Grid a
 empty dimension_ =
     Dimension.toPositions dimension_
-        |> List.map Position.toTuple
+        |> List.map Location.toTuple
         |> List.foldl (\p -> Dict.insert p Empty) Dict.empty
         |> Grid dimension_
 
 
-setAll : List ( Position, a ) -> Grid a -> Grid a
+setAll : List ( Location, a ) -> Grid a -> Grid a
 setAll list g =
     List.foldl (uncurry set) g list
 
@@ -52,18 +52,18 @@ mapDict f (Grid dimension_ dict) =
     Grid dimension_ (f dict)
 
 
-set : Position -> a -> Grid a -> Grid a
+set : Location -> a -> Grid a -> Grid a
 set position a =
     mapDict
-        (Dict.update (Position.toTuple position) (Maybe.map (\_ -> Filled a)))
+        (Dict.update (Location.toTuple position) (Maybe.map (\_ -> Filled a)))
 
 
-slotAt : Position -> Grid a -> Maybe (Slot a)
+slotAt : Location -> Grid a -> Maybe (Slot a)
 slotAt position (Grid _ d) =
-    Dict.get (Position.toTuple position) d
+    Dict.get (Location.toTuple position) d
 
 
-maybeFilledAt : Position -> Grid a -> Maybe (Maybe a)
+maybeFilledAt : Location -> Grid a -> Maybe (Maybe a)
 maybeFilledAt position g =
     slotAt position g
         |> Maybe.map
@@ -77,17 +77,17 @@ maybeFilledAt position g =
             )
 
 
-fill : List Position -> a -> Grid a -> Grid a
+fill : List Location -> a -> Grid a -> Grid a
 fill positions a grid =
     List.foldl (\p -> set p a) grid positions
 
 
-adjacent : Position -> Grid a -> List ( Position, Slot a )
+adjacent : Location -> Grid a -> List ( Location, Slot a )
 adjacent position (Grid _ d) =
-    Position.adjacent position
+    Location.adjacent position
         |> List.foldl
             (\p acc ->
-                case Dict.get (Position.toTuple p) d of
+                case Dict.get (Location.toTuple p) d of
                     Nothing ->
                         acc
 
@@ -97,19 +97,19 @@ adjacent position (Grid _ d) =
             []
 
 
-toEntryRows : Grid a -> List (List ( Position, Slot a ))
+toEntryRows : Grid a -> List (List ( Location, Slot a ))
 toEntryRows (Grid dimension_ dict) =
     Dimension.toPositionRows dimension_
         |> List.map
             (List.filterMap
                 (\p ->
-                    Dict.get (Position.toTuple p) dict
+                    Dict.get (Location.toTuple p) dict
                         |> Maybe.map (\a -> ( p, a ))
                 )
             )
 
 
-viewRows : (Int -> List a -> b) -> (Position -> Slot c -> a) -> Grid c -> List b
+viewRows : (Int -> List a -> b) -> (Location -> Slot c -> a) -> Grid c -> List b
 viewRows rf ef =
     toEntryRows
         >> List.indexedMap
@@ -124,14 +124,14 @@ dimension (Grid dimension_ _) =
     dimension_
 
 
-map : (Position -> a -> b) -> Grid a -> Grid b
+map : (Location -> a -> b) -> Grid a -> Grid b
 map f =
     mapDict
         (Dict.map
             (\i2 slot ->
                 case slot of
                     Filled a ->
-                        Filled (f (Position.fromTuple i2) a)
+                        Filled (f (Location.fromTuple i2) a)
 
                     Empty ->
                         Empty
@@ -139,15 +139,15 @@ map f =
         )
 
 
-fillWhenEmpty : List Position -> b -> Grid b -> Grid b
+fillWhenEmpty : List Location -> b -> Grid b -> Grid b
 fillWhenEmpty positions a grid =
     List.foldl (flip setWhenEmpty a) grid positions
 
 
-setWhenEmpty : Position -> b -> Grid b -> Grid b
+setWhenEmpty : Location -> b -> Grid b -> Grid b
 setWhenEmpty position a =
     mapDict
-        (Dict.update (Position.toTuple position)
+        (Dict.update (Location.toTuple position)
             (Maybe.map
                 (\slot ->
                     case slot of

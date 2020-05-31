@@ -8,7 +8,7 @@ module Dimension exposing
     )
 
 import Index
-import Position exposing (Position)
+import Location exposing (Location)
 
 
 type alias Dimension =
@@ -22,27 +22,27 @@ new =
     Dimension
 
 
-toPositionRows : Dimension -> List (List Position)
+toPositionRows : Dimension -> List (List Location)
 toPositionRows d =
     Index.range2 d.rows d.columns
-        |> List.map (List.map Position.fromTuple)
+        |> List.map (List.map Location.fromTuple)
 
 
-toPositions : Dimension -> List Position
+toPositions : Dimension -> List Location
 toPositions =
     toPositionRows >> List.concat
 
 
-containsPosition : Position -> Dimension -> Bool
+containsPosition : Location -> Dimension -> Bool
 containsPosition position dimension =
     let
         ( row, column ) =
-            Position.toTuple position
+            Location.toTuple position
     in
     Index.memberOf dimension.rows row
         && Index.memberOf dimension.columns column
 
 
-maxPosition : Dimension -> Position
+maxPosition : Dimension -> Location
 maxPosition dimension =
-    Position.new (dimension.rows - 1) (dimension.columns - 1)
+    Location.new (dimension.rows - 1) (dimension.columns - 1)

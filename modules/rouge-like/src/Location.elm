@@ -1,5 +1,5 @@
-module Position exposing
-    ( Position
+module Location exposing
+    ( Location
     , adjacent
     , down
     , fromTuple
@@ -11,63 +11,63 @@ module Position exposing
     )
 
 
-type alias Position =
+type alias Location =
     { row : Int
     , column : Int
     }
 
 
 new =
-    Position
+    Location
 
 
-toTuple : Position -> ( Int, Int )
+toTuple : Location -> ( Int, Int )
 toTuple p =
     ( p.row, p.column )
 
 
-fromTuple : ( Int, Int ) -> Position
+fromTuple : ( Int, Int ) -> Location
 fromTuple ( r, c ) =
     new r c
 
 
-adjacentFS : List (Position -> Position)
+adjacentFS : List (Location -> Location)
 adjacentFS =
     [ up, right, down, left ]
 
 
-adjacent : Position -> List Position
+adjacent : Location -> List Location
 adjacent position =
     adjacentFS
         |> List.map (\f -> f position)
 
 
-left : Position -> Position
+left : Location -> Location
 left =
     mapColumn (add -1)
 
 
-right : Position -> Position
+right : Location -> Location
 right =
     mapColumn (add 1)
 
 
-up : Position -> Position
+up : Location -> Location
 up =
     mapRow (add -1)
 
 
-down : Position -> Position
+down : Location -> Location
 down =
     mapRow (add 1)
 
 
-mapColumn : (Int -> Int) -> Position -> Position
+mapColumn : (Int -> Int) -> Location -> Location
 mapColumn f model =
     { model | column = f model.column }
 
 
-mapRow : (Int -> Int) -> Position -> Position
+mapRow : (Int -> Int) -> Location -> Location
 mapRow f model =
     { model | row = f model.row }
 

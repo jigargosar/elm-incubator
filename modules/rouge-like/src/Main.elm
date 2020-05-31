@@ -12,7 +12,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
 import List.Extra as List
-import Position exposing (Position)
+import Location exposing (Location)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -34,11 +34,11 @@ newUid =
 
 type alias Enemy =
     { uid : Uid
-    , position : Position
+    , position : Location
     }
 
 
-newEnemy : Position -> Generator Enemy
+newEnemy : Location -> Generator Enemy
 newEnemy position =
     newUid
         |> Random.map
@@ -49,12 +49,12 @@ newEnemy position =
             )
 
 
-enemyPositionEq : Position -> Enemy -> Bool
+enemyPositionEq : Location -> Enemy -> Bool
 enemyPositionEq position enemy =
     enemy.position == position
 
 
-enemySetPosition : Position -> Enemy -> Enemy
+enemySetPosition : Location -> Enemy -> Enemy
 enemySetPosition position enemy =
     { enemy | position = position }
 
@@ -68,7 +68,7 @@ enemyIdEq uid enemy =
 -- Enemies
 
 
-enemiesRemoveAtPosition : Position -> List Enemy -> List Enemy
+enemiesRemoveAtPosition : Location -> List Enemy -> List Enemy
 enemiesRemoveAtPosition position =
     List.filterNot (enemyPositionEq position)
 
@@ -88,7 +88,7 @@ enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
 
 
-enemiesFindAtPosition : Position -> List Enemy -> Maybe Enemy
+enemiesFindAtPosition : Location -> List Enemy -> Maybe Enemy
 enemiesFindAtPosition position =
     List.find (enemyPositionEq position)
 
@@ -98,9 +98,9 @@ enemiesFindAtPosition position =
 
 
 type alias WorldBuilder =
-    { empty : List Position
-    , player : Position
-    , walls : List Position
+    { empty : List Location
+    , player : Location
+    , walls : List Location
     , enemies : List Enemy
     }
 
@@ -120,7 +120,7 @@ newWorldBuilder dimension =
             }
 
         playerPosition =
-            Position.new 5 5
+            Location.new 5 5
     in
     wallsGenerator acc
         |> Random.andThen enemiesGenerator
@@ -163,9 +163,9 @@ shuffleSplit n xs =
 
 type alias Model =
     { dimension : Dimension
-    , player : Position
+    , player : Location
     , playerHp : Int
-    , walls : List Position
+    , walls : List Location
     , enemies : List Enemy
     , seed : Seed
     }
@@ -244,7 +244,7 @@ movePlayer playerMove model =
 
 
 type PlayerMove
-    = PlayerSetPosition Position
+    = PlayerSetPosition Location
     | PlayerAttackEnemy Enemy
 
 
@@ -333,7 +333,7 @@ computeEnemyMove uid model =
 
 
 type EnemyMove
-    = EnemySetPosition Position
+    = EnemySetPosition Location
     | EnemyAttackPlayer
     | EnemyAttackEnemy Enemy
 
@@ -343,13 +343,13 @@ plausibleEnemyMoves uid model =
     enemiesFind uid model.enemies
         |> Maybe.map
             (\enemy ->
-                Position.adjacent enemy.position
+                Location.adjacent enemy.position
                     |> List.filterMap (flip toEnemyMove (toGrid model))
             )
         |> Maybe.withDefault []
 
 
-toEnemyMove : Position -> Grid.Grid Entity -> Maybe EnemyMove
+toEnemyMove : Location -> Grid.Grid Entity -> Maybe EnemyMove
 toEnemyMove position grid =
     Grid.maybeFilledAt position grid
         |> Maybe.andThen
@@ -371,20 +371,20 @@ toEnemyMove position grid =
             )
 
 
-stepPositionInDirection : Direction -> Position -> Position
+stepPositionInDirection : Direction -> Location -> Location
 stepPositionInDirection direction =
     case direction of
         Left ->
-            Position.left
+            Location.left
 
         Right ->
-            Position.right
+            Location.right
 
         Up ->
-            Position.up
+            Location.up
 
         Down ->
-            Position.down
+            Location.down
 
 
 directionFromKey : String -> Maybe Direction
@@ -456,13 +456,13 @@ toGrid model =
         |> Grid.set model.player Player
 
 
-pathFromGrid : Grid.Grid Entity -> List Position
+pathFromGrid : Grid.Grid Entity -> List Location
 pathFromGrid grid =
     let
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
             grid
-                |> Grid.adjacent (Position.fromTuple pt)
+                |> Grid.adjacent (Location.fromTuple pt)
                 |> List.filterMap
                     (\( position, slot ) ->
                         case slot of
@@ -472,19 +472,19 @@ pathFromGrid grid =
                             _ ->
                                 Just position
                     )
-                |> List.map (\p -> ( Position.toTuple p, 1 ))
+                |> List.map (\p -> ( Location.toTuple p, 1 ))
 
         start : Int2
         start =
-            Position.new 0 0
-                |> Position.toTuple
+            Location.new 0 0
+                |> Location.toTuple
 
         end : Int2
         end =
             Grid.dimension grid
                 |> Dimension.maxPosition
-                --|> always (Position.new 1 1)
-                |> Position.toTuple
+                --|> always (Location.new 1 1)
+                |> Location.toTuple
 
         cost : Int2 -> Float
         cost ( row, column ) =
@@ -496,13 +496,13 @@ pathFromGrid grid =
                 |> toFloat
     in
     AStarSearch.aStar neighbours cost start end
-        |> List.map Position.fromTuple
+        |> List.map Location.fromTuple
 
 
 viewPathGrid : Grid.Grid Entity -> Html msg
 viewPathGrid grid =
     let
-        path : List Position
+        path : List Location
         path =
             pathFromGrid grid
 
