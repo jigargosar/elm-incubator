@@ -15,7 +15,7 @@ import MGrid
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
-import Set
+import Set exposing (Set)
 
 
 type Uid
@@ -243,15 +243,8 @@ computePlayerMove direction model =
     let
         location =
             stepLocationInDirection direction model.player
-
-        invalidLocation =
-            Dimension.containsLocation location model.dimension
-                |> not
-
-        walled =
-            List.member location model.walls
     in
-    if invalidLocation || walled || model.player == location then
+    if isInvalidOrWall location model || model.player == location then
         Nothing
 
     else
@@ -277,8 +270,8 @@ stepEnemies model =
 
 stepEnemy : Uid -> Model -> Maybe Model
 stepEnemy uid model =
-    --computeRandomEnemyMove uid model
-    computeEnemyMoveTowardsPlayer uid model
+    computeRandomEnemyMove uid model
+        |> always (computeEnemyMoveTowardsPlayer uid model)
         |> Maybe.map (moveEnemy uid)
 
 
@@ -326,23 +319,21 @@ computeEnemyMoveTowardsPlayer uid model =
             )
 
 
+isInvalidOrWall l model =
+    not (Dimension.containsLocation l model.dimension)
+        || List.member l model.walls
+
+
 pathFromTo : Location -> Location -> Model -> List Location
 pathFromTo from to model =
     let
-        wallSet =
-            Set.fromList (model.walls |> List.map Location.toTuple)
-
-        isInvalidOrWall l =
-            not (Dimension.containsLocation l model.dimension)
-                || Set.member (Location.toTuple l) wallSet
-
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
             Location.fromTuple pt
                 |> Location.adjacent
                 |> List.filterMap
                     (\location ->
-                        if isInvalidOrWall location then
+                        if isInvalidOrWall location model then
                             Nothing
 
                         else
