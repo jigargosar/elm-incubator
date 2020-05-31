@@ -515,7 +515,7 @@ type alias HM =
     Html Msg
 
 
-type Entity
+type Cell
     = Player
     | Enemy_ Enemy
     | Wall
