@@ -1,7 +1,6 @@
 module Dimension exposing
     ( Dimension
     , containsLocation
-    , maxLocation
     , new
     , toLocationRows
     , toLocations
@@ -41,8 +40,3 @@ containsLocation location dimension =
     in
     Index.memberOf dimension.rows row
         && Index.memberOf dimension.columns column
-
-
-maxLocation : Dimension -> Location
-maxLocation dimension =
-    Location.new (dimension.rows - 1) (dimension.columns - 1)
