@@ -339,21 +339,16 @@ pathFromTo from to grid =
                                 Nothing
 
                             _ ->
-                                Just location
+                                Just ( Location.toTuple location, 1 )
                     )
-                |> List.map (\l -> ( Location.toTuple l, 1 ))
 
         start : Int2
         start =
-            from
-                |> Location.toTuple
+            Location.toTuple from
 
         end : Int2
         end =
-            to
-                --|> Dimension.maxLocation
-                --|> always (Location.new 1 1)
-                |> Location.toTuple
+            Location.toTuple to
 
         cost : Int2 -> Float
         cost ( row, column ) =
