@@ -7,12 +7,12 @@ import Browser
 import Browser.Events
 import Dict exposing (Dict)
 import Dimension exposing (Dimension)
-import Grid
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
+import MGrid
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -248,14 +248,14 @@ type PlayerMove
     | PlayerAttackEnemy Enemy
 
 
-computePlayerMove : Direction -> Grid.Grid Entity -> Model -> Maybe PlayerMove
+computePlayerMove : Direction -> MGrid.MGrid Entity -> Model -> Maybe PlayerMove
 computePlayerMove direction grid model =
     let
         position =
             stepPositionInDirection direction model.player
     in
     grid
-        |> Grid.maybeFilledAt position
+        |> MGrid.maybeFilledAt position
         |> Maybe.andThen
             (\maybeFilled ->
                 case maybeFilled of
@@ -349,9 +349,9 @@ plausibleEnemyMoves uid model =
         |> Maybe.withDefault []
 
 
-toEnemyMove : Location -> Grid.Grid Entity -> Maybe EnemyMove
+toEnemyMove : Location -> MGrid.MGrid Entity -> Maybe EnemyMove
 toEnemyMove position grid =
-    Grid.maybeFilledAt position grid
+    MGrid.maybeFilledAt position grid
         |> Maybe.andThen
             (\maybeFilled ->
                 case maybeFilled of
@@ -448,25 +448,25 @@ type alias Int2 =
     ( Int, Int )
 
 
-toGrid : Model -> Grid.Grid Entity
+toGrid : Model -> MGrid.MGrid Entity
 toGrid model =
-    Grid.empty model.dimension
-        |> Grid.fill model.walls Wall
-        |> Grid.setAll (List.map (\e -> ( e.position, Enemy_ e )) model.enemies)
-        |> Grid.set model.player Player
+    MGrid.empty model.dimension
+        |> MGrid.fill model.walls Wall
+        |> MGrid.setAll (List.map (\e -> ( e.position, Enemy_ e )) model.enemies)
+        |> MGrid.set model.player Player
 
 
-pathFromGrid : Grid.Grid Entity -> List Location
+pathFromGrid : MGrid.MGrid Entity -> List Location
 pathFromGrid grid =
     let
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
             grid
-                |> Grid.adjacent (Location.fromTuple pt)
+                |> MGrid.adjacent (Location.fromTuple pt)
                 |> List.filterMap
                     (\( position, slot ) ->
                         case slot of
-                            Grid.Filled Wall ->
+                            MGrid.Filled Wall ->
                                 Nothing
 
                             _ ->
@@ -481,7 +481,7 @@ pathFromGrid grid =
 
         end : Int2
         end =
-            Grid.dimension grid
+            MGrid.dimension grid
                 |> Dimension.maxPosition
                 --|> always (Location.new 1 1)
                 |> Location.toTuple
@@ -499,7 +499,7 @@ pathFromGrid grid =
         |> List.map Location.fromTuple
 
 
-viewPathGrid : Grid.Grid Entity -> Html msg
+viewPathGrid : MGrid.MGrid Entity -> Html msg
 viewPathGrid grid =
     let
         path : List Location
@@ -508,7 +508,7 @@ viewPathGrid grid =
 
         attrGrid =
             grid
-                |> Grid.map
+                |> MGrid.map
                     (\_ entity ->
                         case entity of
                             Player ->
@@ -520,20 +520,20 @@ viewPathGrid grid =
                             Wall ->
                                 class "bg-gray"
                     )
-                |> Grid.fillWhenEmpty path (class "bg-green")
+                |> MGrid.fillWhenEmpty path (class "bg-green")
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
             (attrGrid
-                |> Grid.viewRows (\_ -> div [ class "flex" ])
+                |> MGrid.viewRows (\_ -> div [ class "flex" ])
                     (\_ slot ->
                         div
                             [ class "w1 h1"
                             , case slot of
-                                Grid.Filled attr ->
+                                MGrid.Filled attr ->
                                     attr
 
-                                Grid.Empty ->
+                                MGrid.Empty ->
                                     class "bg-white"
                             ]
                             []
@@ -588,12 +588,12 @@ type alias HM =
     Html Msg
 
 
-viewGrid : Grid.Grid Entity -> Model -> HM
+viewGrid : MGrid.MGrid Entity -> Model -> HM
 viewGrid grid model =
     let
         slotToChar slot =
             case slot of
-                Grid.Filled entity ->
+                MGrid.Filled entity ->
                     case entity of
                         Player ->
                             String.fromInt (abs model.playerHp)
@@ -606,12 +606,12 @@ viewGrid grid model =
                         Wall ->
                             '#'
 
-                Grid.Empty ->
+                MGrid.Empty ->
                     '.'
     in
     div [ class "code f2 bg-black white pa3 br3" ]
         (grid
-            |> Grid.viewRows (\_ -> div [])
+            |> MGrid.viewRows (\_ -> div [])
                 (\_ slot ->
                     slot
                         |> slotToChar
