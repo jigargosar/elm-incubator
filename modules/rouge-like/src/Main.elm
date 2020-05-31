@@ -637,14 +637,12 @@ viewGrid grid model =
     in
     div [ class "code f2 bg-black white pa3 br3" ]
         (grid
-            |> Grid.toRows
-            |> List.map
-                (List.map
-                    (slotToChar
-                        >> String.fromChar
-                        >> text
-                    )
-                    >> div []
+            |> Grid.viewRows (\_ -> div [])
+                (\_ slot ->
+                    slot
+                        |> slotToChar
+                        |> String.fromChar
+                        |> text
                 )
         )
 
