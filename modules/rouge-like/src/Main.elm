@@ -492,8 +492,6 @@ view model =
             [ viewGrid grid model
             , viewOverlay model
             ]
-        , div [ class "pv3 f3" ] [ text "A* Path finding Debug" ]
-        , viewPathGrid grid
         ]
 
 
@@ -507,92 +505,6 @@ toGrid model =
         |> MGrid.fill model.walls Wall
         |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
         |> MGrid.set model.player Player
-
-
-pathFromGrid : MGrid.MGrid Entity -> List Location
-pathFromGrid grid =
-    let
-        neighbours : Int2 -> List ( Int2, Float )
-        neighbours pt =
-            grid
-                |> MGrid.adjacent (Location.fromTuple pt)
-                |> List.filterMap
-                    (\( location, slot ) ->
-                        case slot of
-                            MGrid.Filled Wall ->
-                                Nothing
-
-                            _ ->
-                                Just location
-                    )
-                |> List.map (\l -> ( Location.toTuple l, 1 ))
-
-        start : Int2
-        start =
-            Location.new 0 0
-                |> Location.toTuple
-
-        end : Int2
-        end =
-            MGrid.dimension grid
-                |> Dimension.maxLocation
-                --|> always (Location.new 1 1)
-                |> Location.toTuple
-
-        cost : Int2 -> Float
-        cost ( row, column ) =
-            let
-                ( er, ec ) =
-                    end
-            in
-            (abs (row - er) + abs (column - ec))
-                |> toFloat
-    in
-    AStarSearch.aStar neighbours cost start end
-        |> List.map Location.fromTuple
-
-
-viewPathGrid : MGrid.MGrid Entity -> Html msg
-viewPathGrid grid =
-    let
-        path : List Location
-        path =
-            pathFromGrid grid
-
-        attrGrid =
-            grid
-                |> MGrid.map
-                    (\_ entity ->
-                        case entity of
-                            Player ->
-                                class "bg-blue"
-
-                            Enemy_ _ ->
-                                class "bg-red"
-
-                            Wall ->
-                                class "bg-gray"
-                    )
-                |> MGrid.fillWhenEmpty path (class "bg-green")
-    in
-    div [ class "flex items-center justify-center" ]
-        [ div [ class "debug-white" ]
-            (attrGrid
-                |> MGrid.viewRows (\_ -> div [ class "flex" ])
-                    (\_ slot ->
-                        div
-                            [ class "w1 h1"
-                            , case slot of
-                                MGrid.Filled attr ->
-                                    attr
-
-                                MGrid.Empty ->
-                                    class "bg-white"
-                            ]
-                            []
-                    )
-            )
-        ]
 
 
 viewOverlay : Model -> HM
