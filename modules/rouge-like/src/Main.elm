@@ -48,9 +48,10 @@ newEnemy location =
             )
 
 
-enemyLocationEq : Location -> Enemy -> Bool
-enemyLocationEq location enemy =
-    enemy.location == location
+
+--enemyLocationEq : Location -> Enemy -> Bool
+--enemyLocationEq location enemy =
+--    enemy.location == location
 
 
 enemySetLocation : Location -> Enemy -> Enemy
@@ -278,7 +279,8 @@ stepEnemies model =
 
 stepEnemy : Uid -> Model -> Maybe Model
 stepEnemy uid model =
-    computeRandomEnemyMove uid model
+    --computeRandomEnemyMove uid model
+    computeEnemyMoveTowardsPlayer uid model
         |> Maybe.map (moveEnemy uid)
 
 
@@ -305,6 +307,68 @@ type Entity
     = Player
     | Enemy_ Enemy
     | Wall
+
+
+computeEnemyMoveTowardsPlayer : Uid -> Model -> Maybe ( EnemyMove, Model )
+computeEnemyMoveTowardsPlayer uid model =
+    enemiesFind uid model.enemies
+        |> Maybe.andThen
+            (\enemy ->
+                let
+                    grid =
+                        toGrid model
+                in
+                case pathFromTo enemy.location model.player grid of
+                    _ :: el :: _ ->
+                        toEnemyMove el grid
+                            |> Maybe.map (pairTo model)
+
+                    _ ->
+                        Nothing
+            )
+
+
+pathFromTo : Location -> Location -> MGrid.MGrid Entity -> List Location
+pathFromTo from to grid =
+    let
+        neighbours : Int2 -> List ( Int2, Float )
+        neighbours pt =
+            grid
+                |> MGrid.adjacent (Location.fromTuple pt)
+                |> List.filterMap
+                    (\( location, slot ) ->
+                        case slot of
+                            MGrid.Filled Wall ->
+                                Nothing
+
+                            _ ->
+                                Just location
+                    )
+                |> List.map (\l -> ( Location.toTuple l, 1 ))
+
+        start : Int2
+        start =
+            from
+                |> Location.toTuple
+
+        end : Int2
+        end =
+            to
+                --|> Dimension.maxLocation
+                --|> always (Location.new 1 1)
+                |> Location.toTuple
+
+        cost : Int2 -> Float
+        cost ( row, column ) =
+            let
+                ( er, ec ) =
+                    end
+            in
+            (abs (row - er) + abs (column - ec))
+                |> toFloat
+    in
+    AStarSearch.aStar neighbours cost start end
+        |> List.map Location.fromTuple
 
 
 computeRandomEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
@@ -598,7 +662,7 @@ viewGrid grid model =
                 MGrid.Empty ->
                     '.'
     in
-    div [ class "code f2 bg-black white pa3 br3" ]
+    div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
             |> MGrid.viewRows (\_ -> div [])
                 (\_ slot ->
