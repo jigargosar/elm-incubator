@@ -15,7 +15,6 @@ import MGrid
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
-import Set exposing (Set)
 
 
 type Uid
@@ -305,10 +304,6 @@ computeEnemyMoveTowardsPlayer uid model =
     enemiesFind uid model.enemies
         |> Maybe.andThen
             (\enemy ->
-                let
-                    grid =
-                        toGrid model
-                in
                 case pathFromTo enemy.location model.player model of
                     _ :: el :: _ ->
                         toEnemyMove el model
