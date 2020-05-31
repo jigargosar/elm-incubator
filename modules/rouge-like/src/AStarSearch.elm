@@ -125,12 +125,50 @@ updateNeighbourReducer config current currentGScore ( neighbour, weight ) acc =
             currentGScore + weight
     in
     if tentativeGScore < getOrMaxSafeInteger neighbour acc.gScores then
-        { acc
-            | openSet = Set.insert neighbour acc.openSet
-            , gScores = Dict.insert neighbour tentativeGScore acc.gScores
-            , fScores = Dict.insert neighbour (tentativeGScore + config.cost neighbour) acc.fScores
-            , cameFrom = Dict.insert neighbour current acc.cameFrom
+        { openSet = Set.insert neighbour acc.openSet
+        , gScores = Dict.insert neighbour tentativeGScore acc.gScores
+        , fScores = Dict.insert neighbour (tentativeGScore + config.cost neighbour) acc.fScores
+        , cameFrom = Dict.insert neighbour current acc.cameFrom
         }
 
     else
         acc
+
+
+
+{-
+
+
+   updateNeighbourReducer :
+       AStarConfig comparable
+       -> comparable
+       -> Float
+       -> ( comparable, Float )
+       -> AStarAcc comparable
+       -> AStarAcc comparable
+   updateNeighbourReducer config current currentGScore ( neighbour, weight ) acc =
+       let
+           tentativeGScore =
+               currentGScore + weight
+
+           doUpdate _ =
+               { acc
+                   | openSet = Set.insert neighbour acc.openSet
+                   , gScores = Dict.insert neighbour tentativeGScore acc.gScores
+                   , fScores = Dict.insert neighbour (tentativeGScore + config.cost neighbour) acc.fScores
+                   , cameFrom = Dict.insert neighbour current acc.cameFrom
+               }
+       in
+       case Dict.get neighbour acc.gScores of
+           Just oldGScore ->
+               if tentativeGScore < oldGScore then
+                   doUpdate ()
+
+               else
+                   acc
+
+           Nothing ->
+               doUpdate ()
+
+
+-}
