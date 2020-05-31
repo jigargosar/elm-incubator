@@ -472,7 +472,7 @@ pathFromGrid grid =
                             _ ->
                                 Just location
                     )
-                |> List.map (\p -> ( Location.toTuple p, 1 ))
+                |> List.map (\l -> ( Location.toTuple l, 1 ))
 
         start : Int2
         start =
