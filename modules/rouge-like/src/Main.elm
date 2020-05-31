@@ -5,7 +5,6 @@ import Basics.Extra exposing (..)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
-import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
@@ -473,20 +472,6 @@ pathFromGrid grid =
                                 Just location
                     )
                 |> List.map (\l -> ( Location.toTuple l, 1 ))
-
-        neighbours2 : Int2 -> List ( Int2, Float )
-        neighbours2 pt =
-            grid
-                |> MGrid.adjacent2 pt
-                |> List.filterMap
-                    (\( location, slot ) ->
-                        case slot of
-                            MGrid.Filled Wall ->
-                                Nothing
-
-                            _ ->
-                                Just ( location, 1 )
-                    )
 
         start : Int2
         start =

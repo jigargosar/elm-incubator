@@ -2,7 +2,6 @@ module MGrid exposing
     ( MGrid
     , Slot(..)
     , adjacent
-    , adjacent2
     , dimension
     , empty
     , fill
@@ -96,39 +95,6 @@ adjacent location (MGrid _ d) =
                         ( p, a ) :: acc
             )
             []
-
-
-adjacent2 : ( Int, Int ) -> MGrid a -> List ( ( Int, Int ), Slot a )
-adjacent2 location (MGrid _ dict) =
-    let
-        ( r, c ) =
-            location
-
-        top =
-            ( r - 1, c )
-
-        bottom =
-            ( r + 1, c )
-
-        left =
-            ( r, c - 1 )
-
-        right =
-            ( r, c + 1 )
-
-        --isValid (r_, c_) =
-        --    (r_ < 0 || c_ < 0 || r_ >= dim.rows || c_ >= dim.columns)
-        --        |> not
-        getHelp l =
-            case Dict.get l dict of
-                Just a ->
-                    Just ( l, a )
-
-                Nothing ->
-                    Nothing
-    in
-    [ top, right, bottom, left ]
-        |> List.filterMap getHelp
 
 
 toEntryRows : MGrid a -> List (List ( Location, Slot a ))
