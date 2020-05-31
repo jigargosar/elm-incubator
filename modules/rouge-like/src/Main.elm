@@ -278,7 +278,7 @@ stepEnemies model =
 
 stepEnemy : Uid -> Model -> Maybe Model
 stepEnemy uid model =
-    computeEnemyMove uid model
+    computeRandomEnemyMove uid model
         |> Maybe.map (moveEnemy uid)
 
 
@@ -307,8 +307,8 @@ type Entity
     | Wall
 
 
-computeEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
-computeEnemyMove uid model =
+computeRandomEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
+computeRandomEnemyMove uid model =
     case
         plausibleEnemyMoves uid model
             |> Random.sample
