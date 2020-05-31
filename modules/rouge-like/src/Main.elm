@@ -67,11 +67,6 @@ enemyIdEq uid enemy =
 -- Enemies
 
 
-enemiesRemoveAtLocation : Location -> List Enemy -> List Enemy
-enemiesRemoveAtLocation location =
-    List.filterNot (enemyLocationEq location)
-
-
 enemiesRemove : Uid -> List Enemy -> List Enemy
 enemiesRemove uid =
     List.filterNot (enemyIdEq uid)
@@ -85,11 +80,6 @@ enemiesUpdate id =
 enemiesFind : Uid -> List Enemy -> Maybe Enemy
 enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
-
-
-enemiesFindAtLocation : Location -> List Enemy -> Maybe Enemy
-enemiesFindAtLocation location =
-    List.find (enemyLocationEq location)
 
 
 
