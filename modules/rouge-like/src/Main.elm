@@ -318,32 +318,6 @@ type Entity
     | Wall
 
 
-
---classifyPosition : Model -> Position -> Maybe Entity
---classifyPosition model position =
---    if Dimension.containsPosition position model.dimension then
---        Just
---            -- Is Player
---            (if model.player == position then
---                Player
---                -- Is Wall
---
---             else if List.member position model.walls then
---                Wall
---
---             else
---                case enemiesFindAtPosition position model.enemies of
---                    Nothing ->
---                        Empty
---
---                    Just enemy ->
---                        Enemy_ enemy
---            )
---
---    else
---        Nothing
-
-
 computeEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
 computeEnemyMove uid model =
     case
