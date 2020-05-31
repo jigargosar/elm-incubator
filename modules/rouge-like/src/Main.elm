@@ -293,12 +293,6 @@ moveEnemy uid ( enemyMove, model ) =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
-type Entity
-    = Player
-    | Enemy_ Enemy
-    | Wall
-
-
 computeEnemyMoveTowardsPlayer : Uid -> Model -> Maybe ( EnemyMove, Model )
 computeEnemyMoveTowardsPlayer uid model =
     enemiesFind uid model.enemies
@@ -519,6 +513,12 @@ viewOverlay model =
 
 type alias HM =
     Html Msg
+
+
+type Entity
+    = Player
+    | Enemy_ Enemy
+    | Wall
 
 
 viewGrid : Model -> HM
