@@ -12,7 +12,6 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Json.Decode as JD
 import List.Extra as List
-import Maybe.Extra as Maybe
 import Position exposing (Position)
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
@@ -256,21 +255,23 @@ computePlayerMove direction grid model =
             stepPositionInDirection direction model.player
     in
     grid
-        |> Grid.maybeFilledAt position
+        |> Grid.slotAt position
         |> Maybe.andThen
-            (Maybe.map
-                (\entity ->
-                    case entity of
-                        Player ->
-                            Nothing
+            (\slot ->
+                case slot of
+                    Grid.Filled entity ->
+                        case entity of
+                            Player ->
+                                Nothing
 
-                        Enemy_ enemy ->
-                            Just (PlayerAttackEnemy enemy)
+                            Enemy_ enemy ->
+                                Just (PlayerAttackEnemy enemy)
 
-                        Wall ->
-                            Nothing
-                )
-                >> Maybe.withDefault (Just (PlayerSetPosition position))
+                            Wall ->
+                                Nothing
+
+                    Grid.Empty ->
+                        Just (PlayerSetPosition position)
             )
 
 
