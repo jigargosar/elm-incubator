@@ -462,14 +462,10 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    let
-        grid =
-            toGrid model
-    in
     div [ class "measure center" ]
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
         , div [ class "flex relative" ]
-            [ viewGrid grid model
+            [ viewGrid model
             , viewOverlay model
             ]
         ]
@@ -477,14 +473,6 @@ view model =
 
 type alias Int2 =
     ( Int, Int )
-
-
-toGrid : Model -> MGrid.MGrid Entity
-toGrid model =
-    MGrid.empty model.dimension
-        |> MGrid.fill model.walls Wall
-        |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
-        |> MGrid.set model.player Player
 
 
 viewOverlay : Model -> HM
@@ -533,9 +521,15 @@ type alias HM =
     Html Msg
 
 
-viewGrid : MGrid.MGrid Entity -> Model -> HM
-viewGrid grid model =
+viewGrid : Model -> HM
+viewGrid model =
     let
+        grid =
+            MGrid.empty model.dimension
+                |> MGrid.fill model.walls Wall
+                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
+                |> MGrid.set model.player Player
+
         slotToChar slot =
             case slot of
                 MGrid.Filled entity ->
