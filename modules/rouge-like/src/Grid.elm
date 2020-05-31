@@ -7,6 +7,7 @@ module Grid exposing
     , fill
     , fillWhenEmpty
     , map
+    , maybeFilledAt
     , set
     , setAll
     , setWhenEmpty
@@ -60,6 +61,20 @@ set position a =
 slotAt : Position -> Grid a -> Maybe (Slot a)
 slotAt position (Grid _ d) =
     Dict.get (Position.toTuple position) d
+
+
+maybeFilledAt : Position -> Grid a -> Maybe (Maybe a)
+maybeFilledAt position g =
+    slotAt position g
+        |> Maybe.map
+            (\slot ->
+                case slot of
+                    Filled a ->
+                        Just a
+
+                    Empty ->
+                        Nothing
+            )
 
 
 fill : List Position -> a -> Grid a -> Grid a
