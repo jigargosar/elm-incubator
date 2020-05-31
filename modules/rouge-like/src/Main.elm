@@ -351,11 +351,11 @@ plausibleEnemyMoves uid model =
 
 toEnemyMove : Position -> Grid.Grid Entity -> Maybe EnemyMove
 toEnemyMove position grid =
-    Grid.slotAt position grid
+    Grid.maybeFilledAt position grid
         |> Maybe.andThen
-            (\slot ->
-                case slot of
-                    Grid.Filled entity ->
+            (\maybeFilled ->
+                case maybeFilled of
+                    Just entity ->
                         case entity of
                             Player ->
                                 Just EnemyAttackPlayer
@@ -366,7 +366,7 @@ toEnemyMove position grid =
                             Wall ->
                                 Nothing
 
-                    Grid.Empty ->
+                    Nothing ->
                         Just (EnemySetPosition position)
             )
 
