@@ -15,6 +15,7 @@ import MGrid
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
+import Set
 
 
 type Uid
@@ -315,7 +316,7 @@ computeEnemyMoveTowardsPlayer uid model =
                     grid =
                         toGrid model
                 in
-                case pathFromTo enemy.location model.player grid of
+                case pathFromTo enemy.location model.player model of
                     _ :: el :: _ ->
                         toEnemyMove el grid
                             |> Maybe.map (pairTo model)
@@ -325,21 +326,27 @@ computeEnemyMoveTowardsPlayer uid model =
             )
 
 
-pathFromTo : Location -> Location -> MGrid.MGrid Entity -> List Location
-pathFromTo from to grid =
+pathFromTo : Location -> Location -> Model -> List Location
+pathFromTo from to model =
     let
+        wallSet =
+            Set.fromList (model.walls |> List.map Location.toTuple)
+
+        isInvalidOrWall l =
+            not (Dimension.containsLocation l model.dimension)
+                || Set.member (Location.toTuple l) wallSet
+
         neighbours : Int2 -> List ( Int2, Float )
         neighbours pt =
-            grid
-                |> MGrid.adjacent (Location.fromTuple pt)
+            Location.fromTuple pt
+                |> Location.adjacent
                 |> List.filterMap
-                    (\( location, slot ) ->
-                        case slot of
-                            MGrid.Filled Wall ->
-                                Nothing
+                    (\location ->
+                        if isInvalidOrWall location then
+                            Nothing
 
-                            _ ->
-                                Just ( Location.toTuple location, 1 )
+                        else
+                            Just ( Location.toTuple location, 1 )
                     )
 
         start : Int2
