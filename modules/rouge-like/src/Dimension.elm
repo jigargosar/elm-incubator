@@ -1,18 +1,14 @@
 module Dimension exposing
     ( Dimension
     , containsPosition
-    , containsRC
     , maxPosition
-    , maxRC
     , new
     , toPositionRows
     , toPositions
-    , toRCRows
     )
 
 import Index
 import Position exposing (Position)
-import RC exposing (RC)
 
 
 type alias Dimension =
@@ -35,22 +31,6 @@ toPositionRows d =
 toPositions : Dimension -> List Position
 toPositions =
     toPositionRows >> List.concat
-
-
-containsRC : RC -> Dimension -> Bool
-containsRC ( r, c ) d =
-    (r < 0 || c < 0 || r >= d.rows || c >= d.columns)
-        |> not
-
-
-toRCRows : Dimension -> List (List RC)
-toRCRows d =
-    Index.range2 d.rows d.columns
-
-
-maxRC : Dimension -> RC
-maxRC d =
-    RC.new (d.rows - 1) (d.columns - 1)
 
 
 containsPosition : Position -> Dimension -> Bool
