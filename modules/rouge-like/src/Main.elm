@@ -550,25 +550,19 @@ viewPathGrid grid =
     in
     div [ class "flex items-center justify-center" ]
         [ div [ class "debug-white" ]
-            (Grid.toEntryRows attrGrid
-                |> List.map
-                    (\rowEntries ->
-                        div [ class "flex" ]
-                            (rowEntries
-                                |> List.map
-                                    (\( _, slot ) ->
-                                        div
-                                            [ class "w1 h1"
-                                            , case slot of
-                                                Grid.Filled attr ->
-                                                    attr
+            (attrGrid
+                |> Grid.viewRows (\_ -> div [ class "flex" ])
+                    (\_ slot ->
+                        div
+                            [ class "w1 h1"
+                            , case slot of
+                                Grid.Filled attr ->
+                                    attr
 
-                                                Grid.Empty ->
-                                                    class "bg-white"
-                                            ]
-                                            []
-                                    )
-                            )
+                                Grid.Empty ->
+                                    class "bg-white"
+                            ]
+                            []
                     )
             )
         ]

@@ -1,4 +1,4 @@
-module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, fillWhenEmpty, filled, map, mapSlots, set, setAll, setWhenEmpty, slotAt, toEntryRows, toRows)
+module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, fillWhenEmpty, filled, map, mapSlots, set, setAll, setWhenEmpty, slotAt, toEntryRows, toRows, viewRows)
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict
@@ -85,6 +85,16 @@ toEntryRows (Grid dimension_ dict) =
                     Dict.get (Position.toTuple p) dict
                         |> Maybe.map (\a -> ( p, a ))
                 )
+            )
+
+
+viewRows : (Int -> List a -> b) -> (Position -> Slot c -> a) -> Grid c -> List b
+viewRows rf ef =
+    toEntryRows
+        >> List.indexedMap
+            (\row rowEntries ->
+                List.map (\( p, s ) -> ef p s) rowEntries
+                    |> rf row
             )
 
 
