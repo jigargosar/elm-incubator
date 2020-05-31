@@ -255,11 +255,11 @@ computePlayerMove direction grid model =
             stepPositionInDirection direction model.player
     in
     grid
-        |> Grid.slotAt position
+        |> Grid.maybeFilledAt position
         |> Maybe.andThen
-            (\slot ->
-                case slot of
-                    Grid.Filled entity ->
+            (\maybeFilled ->
+                case maybeFilled of
+                    Just entity ->
                         case entity of
                             Player ->
                                 Nothing
@@ -270,7 +270,7 @@ computePlayerMove direction grid model =
                             Wall ->
                                 Nothing
 
-                    Grid.Empty ->
+                    Nothing ->
                         Just (PlayerSetPosition position)
             )
 
