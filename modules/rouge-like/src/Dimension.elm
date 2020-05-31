@@ -1,10 +1,10 @@
 module Dimension exposing
     ( Dimension
-    , containsPosition
-    , maxPosition
+    , containsLocation
+    , maxLocation
     , new
-    , toPositionRows
-    , toPositions
+    , toLocationRows
+    , toLocations
     )
 
 import Index
@@ -22,27 +22,27 @@ new =
     Dimension
 
 
-toPositionRows : Dimension -> List (List Location)
-toPositionRows d =
+toLocationRows : Dimension -> List (List Location)
+toLocationRows d =
     Index.range2 d.rows d.columns
         |> List.map (List.map Location.fromTuple)
 
 
-toPositions : Dimension -> List Location
-toPositions =
-    toPositionRows >> List.concat
+toLocations : Dimension -> List Location
+toLocations =
+    toLocationRows >> List.concat
 
 
-containsPosition : Location -> Dimension -> Bool
-containsPosition position dimension =
+containsLocation : Location -> Dimension -> Bool
+containsLocation location dimension =
     let
         ( row, column ) =
-            Location.toTuple position
+            Location.toTuple location
     in
     Index.memberOf dimension.rows row
         && Index.memberOf dimension.columns column
 
 
-maxPosition : Dimension -> Location
-maxPosition dimension =
+maxLocation : Dimension -> Location
+maxLocation dimension =
     Location.new (dimension.rows - 1) (dimension.columns - 1)

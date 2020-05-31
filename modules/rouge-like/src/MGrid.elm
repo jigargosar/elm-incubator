@@ -36,7 +36,7 @@ type MGrid a
 
 empty : Dimension -> MGrid a
 empty dimension_ =
-    Dimension.toPositions dimension_
+    Dimension.toLocations dimension_
         |> List.map Location.toTuple
         |> List.foldl (\p -> Dict.insert p Empty) Dict.empty
         |> MGrid dimension_
@@ -53,19 +53,19 @@ mapDict f (MGrid dimension_ dict) =
 
 
 set : Location -> a -> MGrid a -> MGrid a
-set position a =
+set location a =
     mapDict
-        (Dict.update (Location.toTuple position) (Maybe.map (\_ -> Filled a)))
+        (Dict.update (Location.toTuple location) (Maybe.map (\_ -> Filled a)))
 
 
 slotAt : Location -> MGrid a -> Maybe (Slot a)
-slotAt position (MGrid _ d) =
-    Dict.get (Location.toTuple position) d
+slotAt location (MGrid _ d) =
+    Dict.get (Location.toTuple location) d
 
 
 maybeFilledAt : Location -> MGrid a -> Maybe (Maybe a)
-maybeFilledAt position g =
-    slotAt position g
+maybeFilledAt location g =
+    slotAt location g
         |> Maybe.map
             (\slot ->
                 case slot of
@@ -78,13 +78,13 @@ maybeFilledAt position g =
 
 
 fill : List Location -> a -> MGrid a -> MGrid a
-fill positions a grid =
-    List.foldl (\p -> set p a) grid positions
+fill locations a grid =
+    List.foldl (\p -> set p a) grid locations
 
 
 adjacent : Location -> MGrid a -> List ( Location, Slot a )
-adjacent position (MGrid _ d) =
-    Location.adjacent position
+adjacent location (MGrid _ d) =
+    Location.adjacent location
         |> List.foldl
             (\p acc ->
                 case Dict.get (Location.toTuple p) d of
@@ -99,7 +99,7 @@ adjacent position (MGrid _ d) =
 
 toEntryRows : MGrid a -> List (List ( Location, Slot a ))
 toEntryRows (MGrid dimension_ dict) =
-    Dimension.toPositionRows dimension_
+    Dimension.toLocationRows dimension_
         |> List.map
             (List.filterMap
                 (\p ->
@@ -140,14 +140,14 @@ map f =
 
 
 fillWhenEmpty : List Location -> b -> MGrid b -> MGrid b
-fillWhenEmpty positions a grid =
-    List.foldl (flip setWhenEmpty a) grid positions
+fillWhenEmpty locations a grid =
+    List.foldl (flip setWhenEmpty a) grid locations
 
 
 setWhenEmpty : Location -> b -> MGrid b -> MGrid b
-setWhenEmpty position a =
+setWhenEmpty location a =
     mapDict
-        (Dict.update (Location.toTuple position)
+        (Dict.update (Location.toTuple location)
             (Maybe.map
                 (\slot ->
                     case slot of

@@ -34,29 +34,29 @@ newUid =
 
 type alias Enemy =
     { uid : Uid
-    , position : Location
+    , location : Location
     }
 
 
 newEnemy : Location -> Generator Enemy
-newEnemy position =
+newEnemy location =
     newUid
         |> Random.map
             (\uid ->
                 { uid = uid
-                , position = position
+                , location = location
                 }
             )
 
 
-enemyPositionEq : Location -> Enemy -> Bool
-enemyPositionEq position enemy =
-    enemy.position == position
+enemyLocationEq : Location -> Enemy -> Bool
+enemyLocationEq location enemy =
+    enemy.location == location
 
 
-enemySetPosition : Location -> Enemy -> Enemy
-enemySetPosition position enemy =
-    { enemy | position = position }
+enemySetLocation : Location -> Enemy -> Enemy
+enemySetLocation location enemy =
+    { enemy | location = location }
 
 
 enemyIdEq : Uid -> Enemy -> Bool
@@ -68,9 +68,9 @@ enemyIdEq uid enemy =
 -- Enemies
 
 
-enemiesRemoveAtPosition : Location -> List Enemy -> List Enemy
-enemiesRemoveAtPosition position =
-    List.filterNot (enemyPositionEq position)
+enemiesRemoveAtLocation : Location -> List Enemy -> List Enemy
+enemiesRemoveAtLocation location =
+    List.filterNot (enemyLocationEq location)
 
 
 enemiesRemove : Uid -> List Enemy -> List Enemy
@@ -88,9 +88,9 @@ enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
 
 
-enemiesFindAtPosition : Location -> List Enemy -> Maybe Enemy
-enemiesFindAtPosition position =
-    List.find (enemyPositionEq position)
+enemiesFindAtLocation : Location -> List Enemy -> Maybe Enemy
+enemiesFindAtLocation location =
+    List.find (enemyLocationEq location)
 
 
 
@@ -112,14 +112,14 @@ newWorldBuilder dimension =
         acc =
             { empty =
                 dimension
-                    |> Dimension.toPositions
-                    |> List.remove playerPosition
-            , player = playerPosition
+                    |> Dimension.toLocations
+                    |> List.remove playerLocation
+            , player = playerLocation
             , walls = []
             , enemies = []
             }
 
-        playerPosition =
+        playerLocation =
             Location.new 5 5
     in
     wallsGenerator acc
@@ -130,8 +130,8 @@ enemiesGenerator : WorldBuilder -> Generator WorldBuilder
 enemiesGenerator acc =
     shuffleSplit 18 acc.empty
         |> Random.andThen
-            (\( enemyPositions, empty ) ->
-                enemyPositions
+            (\( enemyLocations, empty ) ->
+                enemyLocations
                     |> List.map newEnemy
                     |> Random.combine
                     |> Random.map
@@ -235,27 +235,27 @@ stepPlayerInDirection direction model =
 movePlayer : PlayerMove -> Model -> Model
 movePlayer playerMove model =
     case playerMove of
-        PlayerSetPosition position ->
-            { model | player = position }
+        PlayerSetLocation location ->
+            { model | player = location }
 
         PlayerAttackEnemy enemy ->
-            { model | player = enemy.position }
+            { model | player = enemy.location }
                 |> mapEnemies (enemiesRemove enemy.uid)
 
 
 type PlayerMove
-    = PlayerSetPosition Location
+    = PlayerSetLocation Location
     | PlayerAttackEnemy Enemy
 
 
 computePlayerMove : Direction -> MGrid.MGrid Entity -> Model -> Maybe PlayerMove
 computePlayerMove direction grid model =
     let
-        position =
-            stepPositionInDirection direction model.player
+        location =
+            stepLocationInDirection direction model.player
     in
     grid
-        |> MGrid.maybeFilledAt position
+        |> MGrid.maybeFilledAt location
         |> Maybe.andThen
             (\maybeFilled ->
                 case maybeFilled of
@@ -271,7 +271,7 @@ computePlayerMove direction grid model =
                                 Nothing
 
                     Nothing ->
-                        Just (PlayerSetPosition position)
+                        Just (PlayerSetLocation location)
             )
 
 
@@ -307,9 +307,9 @@ moveEnemy uid ( enemyMove, model ) =
             model
                 |> mapEnemies (enemiesRemove victim.uid)
 
-        EnemySetPosition position ->
+        EnemySetLocation location ->
             model
-                |> mapEnemies (enemiesUpdate uid (enemySetPosition position))
+                |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
 type Entity
@@ -333,7 +333,7 @@ computeEnemyMove uid model =
 
 
 type EnemyMove
-    = EnemySetPosition Location
+    = EnemySetLocation Location
     | EnemyAttackPlayer
     | EnemyAttackEnemy Enemy
 
@@ -343,15 +343,15 @@ plausibleEnemyMoves uid model =
     enemiesFind uid model.enemies
         |> Maybe.map
             (\enemy ->
-                Location.adjacent enemy.position
+                Location.adjacent enemy.location
                     |> List.filterMap (flip toEnemyMove (toGrid model))
             )
         |> Maybe.withDefault []
 
 
 toEnemyMove : Location -> MGrid.MGrid Entity -> Maybe EnemyMove
-toEnemyMove position grid =
-    MGrid.maybeFilledAt position grid
+toEnemyMove location grid =
+    MGrid.maybeFilledAt location grid
         |> Maybe.andThen
             (\maybeFilled ->
                 case maybeFilled of
@@ -367,12 +367,12 @@ toEnemyMove position grid =
                                 Nothing
 
                     Nothing ->
-                        Just (EnemySetPosition position)
+                        Just (EnemySetLocation location)
             )
 
 
-stepPositionInDirection : Direction -> Location -> Location
-stepPositionInDirection direction =
+stepLocationInDirection : Direction -> Location -> Location
+stepLocationInDirection direction =
     case direction of
         Left ->
             Location.left
@@ -452,7 +452,7 @@ toGrid : Model -> MGrid.MGrid Entity
 toGrid model =
     MGrid.empty model.dimension
         |> MGrid.fill model.walls Wall
-        |> MGrid.setAll (List.map (\e -> ( e.position, Enemy_ e )) model.enemies)
+        |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
         |> MGrid.set model.player Player
 
 
@@ -464,13 +464,13 @@ pathFromGrid grid =
             grid
                 |> MGrid.adjacent (Location.fromTuple pt)
                 |> List.filterMap
-                    (\( position, slot ) ->
+                    (\( location, slot ) ->
                         case slot of
                             MGrid.Filled Wall ->
                                 Nothing
 
                             _ ->
-                                Just position
+                                Just location
                     )
                 |> List.map (\p -> ( Location.toTuple p, 1 ))
 
@@ -482,7 +482,7 @@ pathFromGrid grid =
         end : Int2
         end =
             MGrid.dimension grid
-                |> Dimension.maxPosition
+                |> Dimension.maxLocation
                 --|> always (Location.new 1 1)
                 |> Location.toTuple
 
