@@ -1,4 +1,22 @@
-module Grid exposing (Grid, Slot(..), adjacent, dimension, empty, fill, fillWhenEmpty, filled, map, mapSlots, set, setAll, setWhenEmpty, slotAt, toEntryRows, toRows, viewRows)
+module Grid exposing
+    ( Grid
+    , Slot(..)
+    , adjacent
+    , dimension
+    , empty
+    , fill
+    , fillWhenEmpty
+    , filled
+    , map
+    , mapSlots
+    , set
+    , setAll
+    , setWhenEmpty
+    , slotAt
+    , toEntryRows
+    , toRows
+    , viewRows
+    )
 
 import Basics.Extra exposing (flip, uncurry)
 import Dict
