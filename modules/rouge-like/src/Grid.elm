@@ -12,7 +12,6 @@ module Grid exposing
     , setAll
     , setWhenEmpty
     , slotAt
-    , toEntryRows
     , viewRows
     )
 
