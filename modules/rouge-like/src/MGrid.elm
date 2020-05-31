@@ -7,7 +7,6 @@ module MGrid exposing
     , fill
     , fillWhenEmpty
     , map
-    , maybeFilledAt
     , set
     , setAll
     , setWhenEmpty
@@ -61,20 +60,6 @@ set location a =
 slotAt : Location -> MGrid a -> Maybe (Slot a)
 slotAt location (MGrid _ d) =
     Dict.get (Location.toTuple location) d
-
-
-maybeFilledAt : Location -> MGrid a -> Maybe (Maybe a)
-maybeFilledAt location g =
-    slotAt location g
-        |> Maybe.map
-            (\slot ->
-                case slot of
-                    Filled a ->
-                        Just a
-
-                    Empty ->
-                        Nothing
-            )
 
 
 fill : List Location -> a -> MGrid a -> MGrid a

@@ -215,7 +215,7 @@ update message model =
 stepPlayerInDirection : Direction -> Model -> Maybe Model
 stepPlayerInDirection direction model =
     model
-        |> computePlayerMove direction (toGrid model)
+        |> computePlayerMove direction
         |> Maybe.map
             ((\playerMove -> movePlayer playerMove model)
                 >> stepEnemies
@@ -238,18 +238,21 @@ type PlayerMove
     | PlayerAttackEnemy Enemy
 
 
-computePlayerMove : Direction -> MGrid.MGrid Entity -> Model -> Maybe PlayerMove
-computePlayerMove direction grid model =
+computePlayerMove : Direction -> Model -> Maybe PlayerMove
+computePlayerMove direction model =
     let
+        grid =
+            toGrid model
+
         location =
             stepLocationInDirection direction model.player
     in
     grid
-        |> MGrid.maybeFilledAt location
+        |> MGrid.slotAt location
         |> Maybe.andThen
-            (\maybeFilled ->
-                case maybeFilled of
-                    Just entity ->
+            (\slot ->
+                case slot of
+                    MGrid.Filled entity ->
                         case entity of
                             Player ->
                                 Nothing
@@ -260,7 +263,7 @@ computePlayerMove direction grid model =
                             Wall ->
                                 Nothing
 
-                    Nothing ->
+                    MGrid.Empty ->
                         Just (PlayerSetLocation location)
             )
 
@@ -404,11 +407,11 @@ plausibleEnemyMoves uid model =
 
 toEnemyMove : Location -> MGrid.MGrid Entity -> Maybe EnemyMove
 toEnemyMove location grid =
-    MGrid.maybeFilledAt location grid
+    MGrid.slotAt location grid
         |> Maybe.andThen
-            (\maybeFilled ->
-                case maybeFilled of
-                    Just entity ->
+            (\slot ->
+                case slot of
+                    MGrid.Filled entity ->
                         case entity of
                             Player ->
                                 Just EnemyAttackPlayer
@@ -419,7 +422,7 @@ toEnemyMove location grid =
                             Wall ->
                                 Nothing
 
-                    Nothing ->
+                    MGrid.Empty ->
                         Just (EnemySetLocation location)
             )
 
