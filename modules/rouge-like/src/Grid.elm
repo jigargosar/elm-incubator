@@ -6,7 +6,6 @@ module Grid exposing
     , empty
     , fill
     , fillWhenEmpty
-    , filled
     , map
     , set
     , setAll
@@ -32,14 +31,6 @@ type Slot a
 
 type Grid a
     = Grid Dimension (Dict a)
-
-
-filled : Dimension -> a -> Grid a
-filled dimension_ a =
-    Dimension.toPositions dimension_
-        |> List.map Position.toTuple
-        |> List.foldl (\p -> Dict.insert p (Filled a)) Dict.empty
-        |> Grid dimension_
 
 
 empty : Dimension -> Grid a
