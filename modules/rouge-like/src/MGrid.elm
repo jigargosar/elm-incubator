@@ -1,20 +1,14 @@
 module MGrid exposing
     ( MGrid
     , Slot(..)
-    , adjacent
-    , dimension
     , empty
     , fill
-    , fillWhenEmpty
-    , map
     , set
     , setAll
-    , setWhenEmpty
-    , slotAt
     , viewRows
     )
 
-import Basics.Extra exposing (flip, uncurry)
+import Basics.Extra exposing (uncurry)
 import Dict
 import Dimension exposing (Dimension)
 import Location exposing (Location)
@@ -57,29 +51,9 @@ set location a =
         (Dict.update (Location.toTuple location) (Maybe.map (\_ -> Filled a)))
 
 
-slotAt : Location -> MGrid a -> Maybe (Slot a)
-slotAt location (MGrid _ d) =
-    Dict.get (Location.toTuple location) d
-
-
 fill : List Location -> a -> MGrid a -> MGrid a
 fill locations a grid =
     List.foldl (\p -> set p a) grid locations
-
-
-adjacent : Location -> MGrid a -> List ( Location, Slot a )
-adjacent location (MGrid _ d) =
-    Location.adjacent location
-        |> List.foldl
-            (\p acc ->
-                case Dict.get (Location.toTuple p) d of
-                    Nothing ->
-                        acc
-
-                    Just a ->
-                        ( p, a ) :: acc
-            )
-            []
 
 
 toEntryRows : MGrid a -> List (List ( Location, Slot a ))
@@ -102,45 +76,3 @@ viewRows rf ef =
                 List.map (\( p, s ) -> ef p s) rowEntries
                     |> rf row
             )
-
-
-dimension : MGrid a -> Dimension
-dimension (MGrid dimension_ _) =
-    dimension_
-
-
-map : (Location -> a -> b) -> MGrid a -> MGrid b
-map f =
-    mapDict
-        (Dict.map
-            (\i2 slot ->
-                case slot of
-                    Filled a ->
-                        Filled (f (Location.fromTuple i2) a)
-
-                    Empty ->
-                        Empty
-            )
-        )
-
-
-fillWhenEmpty : List Location -> b -> MGrid b -> MGrid b
-fillWhenEmpty locations a grid =
-    List.foldl (flip setWhenEmpty a) grid locations
-
-
-setWhenEmpty : Location -> b -> MGrid b -> MGrid b
-setWhenEmpty location a =
-    mapDict
-        (Dict.update (Location.toTuple location)
-            (Maybe.map
-                (\slot ->
-                    case slot of
-                        Filled _ ->
-                            slot
-
-                        Empty ->
-                            Filled a
-                )
-            )
-        )
