@@ -164,6 +164,11 @@ type alias Model =
     }
 
 
+mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
+mapEnemies f model =
+    { model | enemies = f model.enemies }
+
+
 type alias Flags =
     { now : Int }
 
@@ -260,11 +265,6 @@ computePlayerMove direction model =
 
             Nothing ->
                 Just (PlayerSetLocation location)
-
-
-mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
-mapEnemies f model =
-    { model | enemies = f model.enemies }
 
 
 stepEnemies : Model -> Model
