@@ -329,8 +329,8 @@ stepEnemiesGenerator model0 =
                                         enemyMoveMaybeGenerator enemy model
                                     )
                         of
-                            Just emMoveTupleGenerator ->
-                                emMoveTupleGenerator
+                            Just emGen ->
+                                emGen
                                     |> Random.map (\em -> moveEnemy uid em model)
 
                             Nothing ->
