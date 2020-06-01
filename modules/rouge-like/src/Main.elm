@@ -320,18 +320,18 @@ computePlayerMove direction model =
 
 
 stepEnemiesGenerator : Model -> Generator Model
-stepEnemiesGenerator model =
-    model.enemies
+stepEnemiesGenerator model0 =
+    model0.enemies
         |> List.map .uid
         |> List.foldl
-            (stepEnemyGeneratorByUid >> Random.andThen)
-            (Random.constant model)
-
-
-stepEnemyGeneratorByUid : Uid -> Model -> Generator Model
-stepEnemyGeneratorByUid uid model =
-    stepEnemyMaybeGeneratorByUid uid model
-        |> Maybe.withDefault (Random.constant model)
+            (\uid ->
+                Random.andThen
+                    (\model ->
+                        stepEnemyMaybeGeneratorByUid uid model
+                            |> Maybe.withDefault (Random.constant model)
+                    )
+            )
+            (Random.constant model0)
 
 
 stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
