@@ -339,12 +339,12 @@ stepEnemyGenerator uid model =
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGenerator enemy model =
     case
-        [ if isPlayerInRangeOfEnemy enemy model then
-            computeMaybeEnemyMoveTowardsPlayer enemy model
-                |> Maybe.map Random.constant
+        [ if isPlayerOutOfEnemyRange enemy model then
+            randomEnemyMoveMaybeGenerator enemy model
 
           else
-            randomEnemyMoveMaybeGenerator enemy model
+            computeMaybeEnemyMoveTowardsPlayer enemy model
+                |> Maybe.map Random.constant
         ]
             |> List.filterMap identity
     of
@@ -357,8 +357,8 @@ stepEnemyMaybeGenerator enemy model =
             Nothing
 
 
-isPlayerInRangeOfEnemy : Enemy -> Model -> Bool
-isPlayerInRangeOfEnemy enemy model =
+isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
+isPlayerOutOfEnemyRange enemy model =
     let
         ( pr, pc ) =
             Location.toTuple model.player
@@ -367,7 +367,7 @@ isPlayerInRangeOfEnemy enemy model =
             Location.toTuple enemy.location
 
         inRange d =
-            abs d <= 5
+            abs d >= 5
 
         ( dr, dc ) =
             ( pr - er, pc - ec )
