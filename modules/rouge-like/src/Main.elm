@@ -359,6 +359,9 @@ stepEnemyGenerator uid model =
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGenerator enemy model =
     let
+        performEnemyMoveHelp em =
+            performEnemyMove enemy.uid em model
+
         enemyMoves : List EnemyMove
         enemyMoves =
             if isPlayerOutOfEnemyRange enemy model then
@@ -367,9 +370,14 @@ stepEnemyMaybeGenerator enemy model =
             else
                 betterEnemyMovesToWardsPlayer enemy model
     in
-    enemyMoves
-        |> maybeUniformGenerator
-        |> Maybe.map (Random.map (\em -> performEnemyMove enemy.uid em model))
+    case enemyMoves of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            Random.uniform x xs
+                |> Random.map performEnemyMoveHelp
+                |> Just
 
 
 isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
