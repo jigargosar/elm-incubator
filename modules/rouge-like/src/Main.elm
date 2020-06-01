@@ -376,6 +376,16 @@ computeRandomEnemyMove uid model =
             Just ( enemyMove, { model | seed = seed } )
 
 
+randomEnemyMoveGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
+randomEnemyMoveGenerator uid model =
+    case plausibleEnemyMoves uid model of
+        [] ->
+            Nothing
+
+        h :: t ->
+            Just (Random.uniform h t)
+
+
 type EnemyMove
     = EnemySetLocation Location
     | EnemyAttackPlayer
