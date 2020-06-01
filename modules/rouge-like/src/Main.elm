@@ -320,6 +320,20 @@ computeEnemyMoveTowardsPlayer uid model =
             )
 
 
+enemyMoveTowardsPlayer : Uid -> Model -> Maybe EnemyMove
+enemyMoveTowardsPlayer uid model =
+    enemiesFind uid model.enemies
+        |> Maybe.andThen
+            (\enemy ->
+                case pathFromTo enemy.location model.player model of
+                    _ :: el :: _ ->
+                        toEnemyMove el model
+
+                    _ ->
+                        Nothing
+            )
+
+
 isInvalidOrWall l model =
     not (Dimension.containsLocation l model.dimension)
         || List.member l model.walls
