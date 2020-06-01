@@ -276,6 +276,12 @@ stepPlayerInDirection direction model =
                 |> Just
 
 
+stepEnemies : Model -> Model
+stepEnemies model0 =
+    Random.step (stepEnemiesGenerator model0) model0.seed
+        |> (\( model, seed ) -> { model | seed = seed })
+
+
 movePlayer : PlayerMove -> Model -> Model
 movePlayer playerMove model =
     case playerMove of
@@ -308,12 +314,6 @@ computePlayerMove direction model =
 
             Nothing ->
                 Just (PlayerSetLocation location)
-
-
-stepEnemies : Model -> Model
-stepEnemies model0 =
-    Random.step (stepEnemiesGenerator model0) model0.seed
-        |> (\( model, seed ) -> { model | seed = seed })
 
 
 stepEnemiesGenerator : Model -> Generator Model
