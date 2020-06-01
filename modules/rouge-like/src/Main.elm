@@ -258,14 +258,41 @@ update message model =
 
         KeyDown key ->
             ( if model.playerHp > 0 then
-                directionFromKey key
-                    |> Maybe.andThen (\direction -> stepPlayerInDirection direction model)
+                toPlayerInput key
+                    |> Maybe.map (\playerInput -> updatedPlayerInput playerInput model)
                     |> Maybe.withDefault model
 
               else
                 model
             , Cmd.none
             )
+
+
+type PlayerInput
+    = StepInDirection Direction
+    | StayPut
+
+
+toPlayerInput : String -> Maybe PlayerInput
+toPlayerInput key =
+    case key of
+        " " ->
+            Just StayPut
+
+        _ ->
+            directionFromKey key
+                |> Maybe.map StepInDirection
+
+
+updatedPlayerInput : PlayerInput -> Model -> Model
+updatedPlayerInput playerInput model =
+    case playerInput of
+        StepInDirection direction ->
+            stepPlayerInDirection direction model
+                |> Maybe.withDefault model
+
+        StayPut ->
+            stepEnemies model
 
 
 stepPlayerInDirection : Direction -> Model -> Maybe Model
