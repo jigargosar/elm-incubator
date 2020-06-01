@@ -265,15 +265,13 @@ update message model =
 
 stepPlayerInDirection : Direction -> Model -> Maybe Model
 stepPlayerInDirection direction model =
-    case computePlayerMove direction model of
-        Nothing ->
-            Nothing
-
-        Just playerMove ->
-            model
-                |> movePlayer playerMove
-                |> stepEnemies
-                |> Just
+    computePlayerMove direction model
+        |> Maybe.map
+            (\playerMove ->
+                model
+                    |> movePlayer playerMove
+                    |> stepEnemies
+            )
 
 
 stepEnemies : Model -> Model
