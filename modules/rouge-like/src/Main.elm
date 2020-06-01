@@ -325,10 +325,6 @@ stepEnemiesGenerator model =
             (Random.constant model)
 
 
-toGeneratorOrConstant f x =
-    f x |> Maybe.withDefault (Random.constant x)
-
-
 stepEnemyMaybeGenerator : Uid -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGenerator uid model =
     enemiesFind uid model.enemies

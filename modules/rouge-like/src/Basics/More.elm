@@ -1,5 +1,7 @@
 module Basics.More exposing (..)
 
+import Random
+
 
 type alias Int2 =
     ( Int, Int )
@@ -41,3 +43,8 @@ pair =
 headOr : a -> List a -> a
 headOr default =
     List.head >> Maybe.withDefault default
+
+
+toGeneratorOrConstant : (b -> Maybe (Random.Generator b)) -> b -> Random.Generator b
+toGeneratorOrConstant f x =
+    f x |> Maybe.withDefault (Random.constant x)
