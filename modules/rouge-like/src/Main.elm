@@ -315,14 +315,14 @@ computePlayerMove direction model =
 
 
 stepEnemiesGenerator : Model -> Generator Model
-stepEnemiesGenerator model0 =
-    model0.enemies
+stepEnemiesGenerator model =
+    model.enemies
         |> List.map .uid
         |> List.foldl
             (\uid ->
                 Random.andThen (toGeneratorOrConstant (stepEnemyMaybeGenerator uid))
             )
-            (Random.constant model0)
+            (Random.constant model)
 
 
 toGeneratorOrConstant f x =
