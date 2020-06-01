@@ -354,23 +354,6 @@ stepEnemyMaybeGenerator enemy model =
             Nothing
 
 
-enemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
-enemyMoveMaybeGenerator enemy model =
-    case
-        [ randomEnemyMoveMaybeGenerator enemy model
-        , computeMaybeEnemyMoveTowardsPlayer enemy model
-            |> Maybe.map Random.constant
-        ]
-            |> List.filterMap identity
-    of
-        g :: gs ->
-            Random.choices g gs
-                |> Just
-
-        [] ->
-            Nothing
-
-
 performEnemyMove : Uid -> EnemyMove -> Model -> Model
 performEnemyMove uid enemyMove model =
     case enemyMove of
