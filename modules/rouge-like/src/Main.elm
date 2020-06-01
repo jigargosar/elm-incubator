@@ -334,8 +334,18 @@ with f1 f2 x =
     f2 (f1 x) x
 
 
+withMaybeAndThen f1 f2 x =
+    f1 x
+        |> Maybe.andThen (\a -> f2 a x)
+
+
 stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGeneratorByUid uid model =
+    let
+        fff =
+            withMaybeAndThen (.enemies >> enemiesFind uid)
+                stepEnemyMaybeGenerator
+    in
     enemiesFind uid model.enemies
         |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
 
