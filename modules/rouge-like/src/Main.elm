@@ -328,15 +328,15 @@ stepEnemiesGenerator model =
             (Random.constant model)
 
 
-stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGeneratorByUid uid =
-    withMaybeAndThen (.enemies >> enemiesFind uid) stepEnemyMaybeGenerator
-
-
 stepEnemyGeneratorByUid : Uid -> Model -> Generator Model
 stepEnemyGeneratorByUid uid model =
     stepEnemyMaybeGeneratorByUid uid model
         |> Maybe.withDefault (Random.constant model)
+
+
+stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
+stepEnemyMaybeGeneratorByUid uid =
+    withMaybeAndThen (.enemies >> enemiesFind uid) stepEnemyMaybeGenerator
 
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
