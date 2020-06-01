@@ -358,17 +358,14 @@ stepEnemyByUid uid model =
 
 stepEnemy : Enemy -> Model -> Generator Model
 stepEnemy enemy model =
-    let
-        performEM em =
-            performEnemyMove enemy.uid em model
-    in
     case computeEnemyMoves enemy model of
         [] ->
             Random.constant model
 
         x :: xs ->
             Random.uniform x xs
-                |> Random.map performEM
+                |> Random.map
+                    (\em -> performEnemyMove enemy.uid em model)
 
 
 computeEnemyMoves : Enemy -> Model -> List EnemyMove
