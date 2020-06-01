@@ -327,7 +327,9 @@ stepEnemiesGenerator model0 =
                                 (\enemy ->
                                     enemyMoveMaybeGenerator enemy model
                                         |> Maybe.map
-                                            (Random.map (\em -> moveEnemy uid em model))
+                                            (Random.map
+                                                (\em -> moveEnemy uid em model)
+                                            )
                                 )
                             |> Maybe.withDefault (Random.constant model)
                     )
