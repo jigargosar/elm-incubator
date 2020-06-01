@@ -316,21 +316,22 @@ stepEnemies model0 =
         |> List.map .uid
         |> List.foldl
             (\uid model ->
-                stepEnemy uid model
-                    |> Maybe.map (moveEnemy uid)
-                    |> Maybe.withDefault model
+                case enemyMoveMaybeGenerator uid model of
+                    Just emGen ->
+                        let
+                            ( em, seed ) =
+                                Random.step emGen model.seed
+                        in
+                        moveEnemy uid ( em, { model | seed = seed } )
+
+                    Nothing ->
+                        model
             )
             model0
 
 
-stepEnemy : Uid -> Model -> Maybe ( EnemyMove, Model )
-stepEnemy uid model =
-    computeRandomEnemyMove uid model
-        |> always (computeEnemyMoveTowardsPlayer uid model)
-
-
-stepEnemyGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
-stepEnemyGenerator uid model =
+enemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
+enemyMoveMaybeGenerator uid model =
     case ( maybeRandomEnemyMoveGenerator uid model, enemyMoveTowardsPlayer uid model ) of
         ( Just randomEm, Just em ) ->
             Random.choices randomEm [ Random.constant em ]
@@ -365,21 +366,6 @@ moveEnemy uid ( enemyMove, model ) =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
-computeEnemyMoveTowardsPlayer : Uid -> Model -> Maybe ( EnemyMove, Model )
-computeEnemyMoveTowardsPlayer uid model =
-    enemiesFind uid model.enemies
-        |> Maybe.andThen
-            (\enemy ->
-                case pathFromTo enemy.location model.player model of
-                    _ :: el :: _ ->
-                        toEnemyMove el model
-                            |> Maybe.map (pairTo model)
-
-                    _ ->
-                        Nothing
-            )
-
-
 enemyMoveTowardsPlayer : Uid -> Model -> Maybe EnemyMove
 enemyMoveTowardsPlayer uid model =
     enemiesFind uid model.enemies
@@ -392,20 +378,6 @@ enemyMoveTowardsPlayer uid model =
                     _ ->
                         Nothing
             )
-
-
-computeRandomEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
-computeRandomEnemyMove uid model =
-    case
-        maybeRandomEnemyMoveGenerator uid model
-    of
-        Nothing ->
-            Nothing
-
-        Just gen ->
-            Random.step gen model.seed
-                |> (\( em, seed ) -> ( em, { model | seed = seed } ))
-                |> Just
 
 
 maybeRandomEnemyMoveGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
