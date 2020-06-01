@@ -312,22 +312,23 @@ computePlayerMove direction model =
 
 stepEnemies : Model -> Model
 stepEnemies model0 =
+    Random.step (stepEnemiesGenerator model0) model0.seed
+        |> (\( model, seed ) -> { model | seed = seed })
+
+
+stepEnemiesGenerator : Model -> Generator Model
+stepEnemiesGenerator model0 =
     model0.enemies
         |> List.map .uid
         |> List.foldl
-            (\uid model ->
-                case stepEnemyMaybeGenerator uid model of
-                    Just mGen ->
-                        let
-                            ( model1, seed ) =
-                                Random.step mGen model.seed
-                        in
-                        { model1 | seed = seed }
-
-                    Nothing ->
-                        model
+            (\uid ->
+                Random.andThen
+                    (\model ->
+                        stepEnemyMaybeGenerator uid model
+                            |> Maybe.withDefault (Random.constant model)
+                    )
             )
-            model0
+            (Random.constant model0)
 
 
 stepEnemyMaybeGenerator : Uid -> Model -> Maybe (Generator Model)
