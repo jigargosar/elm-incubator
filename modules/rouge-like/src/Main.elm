@@ -358,24 +358,18 @@ stepEnemyGenerator uid model =
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGenerator enemy model =
-    case
-        [ if isPlayerOutOfEnemyRange enemy model then
-            plausibleEnemyMoves enemy model
-                |> maybeUniformGenerator
+    let
+        enemyMoves : List EnemyMove
+        enemyMoves =
+            if isPlayerOutOfEnemyRange enemy model then
+                plausibleEnemyMoves enemy model
 
-          else
-            betterEnemyMovesToWardsPlayer enemy model
-                |> maybeUniformGenerator
-        ]
-            |> List.filterMap identity
-    of
-        g :: gs ->
-            Random.choices g gs
-                |> Random.map (\em -> performEnemyMove enemy.uid em model)
-                |> Just
-
-        [] ->
-            Nothing
+            else
+                betterEnemyMovesToWardsPlayer enemy model
+    in
+    enemyMoves
+        |> maybeUniformGenerator
+        |> Maybe.map (Random.map (\em -> performEnemyMove enemy.uid em model))
 
 
 isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
