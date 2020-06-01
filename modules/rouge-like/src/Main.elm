@@ -350,19 +350,22 @@ stepEnemiesGenerator model =
 
 stepEnemyByUid : Uid -> Model -> Generator Model
 stepEnemyByUid uid model =
-    case enemiesFind uid model.enemies of
-        Nothing ->
-            Random.constant model
+    enemiesFind uid model.enemies
+        |> Maybe.andThen (\enemy -> stepEnemy enemy model)
+        |> Maybe.withDefault (Random.constant model)
 
-        Just enemy ->
-            case computeEnemyMoves enemy model of
-                [] ->
-                    Random.constant model
 
-                x :: xs ->
-                    Random.uniform x xs
-                        |> Random.map
-                            (\em -> performEnemyMove enemy.uid em model)
+stepEnemy : Enemy -> Model -> Maybe (Generator Model)
+stepEnemy enemy model =
+    case computeEnemyMoves enemy model of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            Random.uniform x xs
+                |> Random.map
+                    (\em -> performEnemyMove enemy.uid em model)
+                |> Just
 
 
 computeEnemyMoves : Enemy -> Model -> List EnemyMove
