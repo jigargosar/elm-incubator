@@ -387,7 +387,7 @@ enemyMoveTowardsPlayer uid model =
 
 randomEnemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
 randomEnemyMoveMaybeGenerator uid model =
-    case plausibleEnemyMoves uid model of
+    case plausibleEnemyMovesByUid uid model of
         [] ->
             Nothing
 
@@ -401,15 +401,17 @@ type EnemyMove
     | EnemyAttackEnemy Enemy
 
 
-plausibleEnemyMoves : Uid -> Model -> List EnemyMove
-plausibleEnemyMoves uid model =
+plausibleEnemyMovesByUid : Uid -> Model -> List EnemyMove
+plausibleEnemyMovesByUid uid model =
     enemiesFind uid model.enemies
-        |> Maybe.map
-            (\enemy ->
-                Location.adjacent enemy.location
-                    |> List.filterMap (\location -> toEnemyMove location model)
-            )
+        |> Maybe.map (\enemy -> plausibleEnemyMoves enemy model)
         |> Maybe.withDefault []
+
+
+plausibleEnemyMoves : Enemy -> Model -> List EnemyMove
+plausibleEnemyMoves enemy model =
+    Location.adjacent enemy.location
+        |> List.filterMap (\location -> toEnemyMove location model)
 
 
 toEnemyMove : Location -> Model -> Maybe EnemyMove
