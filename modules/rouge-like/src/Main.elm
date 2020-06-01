@@ -410,13 +410,6 @@ betterEnemyMovesToWardsPlayerMaybeGenerator enemy model =
     betterEnemyMovesToWardsPlayer enemy model |> maybeUniformGenerator
 
 
-
---computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
---computeMaybeEnemyMoveTowardsPlayer enemy model =
---    computeNextEnemyLocationToWardsPlayer enemy model
---        |> Maybe.andThen (\loc -> toEnemyMove loc model)
-
-
 betterEnemyMovesToWardsPlayer : Enemy -> Model -> List EnemyMove
 betterEnemyMovesToWardsPlayer enemy model =
     let
@@ -438,6 +431,10 @@ betterEnemyMovesToWardsPlayer enemy model =
 
 
 
+--computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
+--computeMaybeEnemyMoveTowardsPlayer enemy model =
+--    computeNextEnemyLocationToWardsPlayer enemy model
+--        |> Maybe.andThen (\loc -> toEnemyMove loc model)
 --computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
 --computeNextEnemyLocationToWardsPlayer enemy model =
 --    case pathFromTo enemy.location model.player model of
