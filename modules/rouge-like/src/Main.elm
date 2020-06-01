@@ -365,15 +365,15 @@ pathFromTo from to model =
 computeRandomEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
 computeRandomEnemyMove uid model =
     case
-        plausibleEnemyMoves uid model
-            |> Random.sample
-            |> (\g -> Random.step g model.seed)
+        randomEnemyMoveGenerator uid model
     of
-        ( Nothing, _ ) ->
+        Nothing ->
             Nothing
 
-        ( Just enemyMove, seed ) ->
-            Just ( enemyMove, { model | seed = seed } )
+        Just gen ->
+            Random.step gen model.seed
+                |> (\( em, seed ) -> ( em, { model | seed = seed } ))
+                |> Just
 
 
 randomEnemyMoveGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
