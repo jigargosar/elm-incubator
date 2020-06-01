@@ -337,7 +337,7 @@ stepEnemyMaybeGenerator uid model =
                 enemyMoveMaybeGenerator enemy model
                     |> Maybe.map
                         (Random.map
-                            (\em -> moveEnemy uid em model)
+                            (\em -> performEnemyMove uid em model)
                         )
             )
 
@@ -359,8 +359,8 @@ enemyMoveMaybeGenerator enemy model =
             Nothing
 
 
-moveEnemy : Uid -> EnemyMove -> Model -> Model
-moveEnemy uid enemyMove model =
+performEnemyMove : Uid -> EnemyMove -> Model -> Model
+performEnemyMove uid enemyMove model =
     case enemyMove of
         EnemyAttackPlayer ->
             model
