@@ -454,16 +454,6 @@ randomEnemyMoveMaybeGenerator enemy model =
         |> maybeUniformGenerator
 
 
-maybeUniformGenerator : List a -> Maybe (Generator a)
-maybeUniformGenerator l =
-    case l of
-        [] ->
-            Nothing
-
-        x :: xs ->
-            Random.uniform x xs |> Just
-
-
 type EnemyMove
     = EnemySetLocation Location
     | EnemyAttackPlayer

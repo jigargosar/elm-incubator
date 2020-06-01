@@ -156,3 +156,13 @@ sub =
 
 absDiff a b =
     a - b |> abs
+
+
+maybeUniformGenerator : List a -> Maybe (Random.Generator a)
+maybeUniformGenerator l =
+    case l of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            Random.uniform x xs |> Just
