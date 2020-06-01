@@ -344,7 +344,7 @@ stepEnemyMaybeGenerator enemy model =
 
           else
             computeMaybeEnemyMoveTowardsPlayer enemy model
-                |> Maybe.map Random.constant
+                |> Maybe.map (\em -> Random.uniform em [ EnemyStays ])
         ]
             |> List.filterMap identity
     of
