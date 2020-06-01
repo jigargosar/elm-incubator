@@ -324,22 +324,33 @@ stepEnemiesGenerator model =
         |> List.map .uid
         |> List.foldl
             (\uid ->
-                Random.andThen (toGeneratorOrConstant (stepEnemyMaybeGenerator uid))
+                Random.andThen (toGeneratorOrConstant (stepEnemyMaybeGeneratorByUid uid))
             )
             (Random.constant model)
 
 
-stepEnemyMaybeGenerator : Uid -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGenerator uid model =
+stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
+stepEnemyMaybeGeneratorByUid uid model =
     enemiesFind uid model.enemies
-        |> Maybe.andThen
-            (\enemy ->
-                enemyMoveMaybeGenerator enemy model
-                    |> Maybe.map
-                        (Random.map
-                            (\em -> performEnemyMove uid em model)
-                        )
-            )
+        |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
+
+
+stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
+stepEnemyMaybeGenerator enemy model =
+    case
+        [ randomEnemyMoveMaybeGenerator enemy model
+        , computeMaybeEnemyMoveTowardsPlayer enemy model
+            |> Maybe.map Random.constant
+        ]
+            |> List.filterMap identity
+    of
+        g :: gs ->
+            Random.choices g gs
+                |> Random.map (\em -> performEnemyMove enemy.uid em model)
+                |> Just
+
+        [] ->
+            Nothing
 
 
 enemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
