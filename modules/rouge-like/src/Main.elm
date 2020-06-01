@@ -329,6 +329,23 @@ stepEnemy uid model =
         |> always (computeEnemyMoveTowardsPlayer uid model)
 
 
+stepEnemyGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
+stepEnemyGenerator uid model =
+    case ( maybeRandomEnemyMoveGenerator uid model, enemyMoveTowardsPlayer uid model ) of
+        ( Just randomEm, Just em ) ->
+            Random.choices randomEm [ Random.constant em ]
+                |> Just
+
+        ( Just randomEm, Nothing ) ->
+            Just randomEm
+
+        ( Nothing, Just em ) ->
+            Just (Random.constant em)
+
+        ( Nothing, Nothing ) ->
+            Nothing
+
+
 moveEnemy : Uid -> ( EnemyMove, Model ) -> Model
 moveEnemy uid ( enemyMove, model ) =
     case enemyMove of
@@ -380,7 +397,7 @@ enemyMoveTowardsPlayer uid model =
 computeRandomEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
 computeRandomEnemyMove uid model =
     case
-        randomEnemyMoveGenerator uid model
+        maybeRandomEnemyMoveGenerator uid model
     of
         Nothing ->
             Nothing
@@ -391,8 +408,8 @@ computeRandomEnemyMove uid model =
                 |> Just
 
 
-randomEnemyMoveGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
-randomEnemyMoveGenerator uid model =
+maybeRandomEnemyMoveGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
+maybeRandomEnemyMoveGenerator uid model =
     case plausibleEnemyMoves uid model of
         [] ->
             Nothing
