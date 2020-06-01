@@ -394,9 +394,15 @@ performEnemyMove uid enemyMove model =
 
 computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
 computeMaybeEnemyMoveTowardsPlayer enemy model =
+    computeNextEnemyLocationToWardsPlayer enemy model
+        |> Maybe.andThen (\loc -> toEnemyMove loc model)
+
+
+computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
+computeNextEnemyLocationToWardsPlayer enemy model =
     case pathFromTo enemy.location model.player model of
         _ :: loc :: _ ->
-            toEnemyMove loc model
+            Just loc
 
         _ ->
             Nothing
