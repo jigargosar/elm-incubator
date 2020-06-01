@@ -322,16 +322,19 @@ stepEnemiesGenerator model0 =
             (\uid ->
                 Random.andThen
                     (\model ->
-                        enemyMoveMaybeGenerator uid model
-                            |> Maybe.map
-                                (Random.map (\em -> moveEnemy uid em model))
-                            |> Maybe.withDefault (Random.constant model)
+                        case enemyMoveMaybeGenerator uid model of
+                            Just g ->
+                                g
+                                    |> Random.map (flip moveEnemy model)
+
+                            Nothing ->
+                                Random.constant model
                     )
             )
             (Random.constant model0)
 
 
-enemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
+enemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator ( Uid, EnemyMove ))
 enemyMoveMaybeGenerator uid model =
     case
         [ maybeRandomEnemyMoveGenerator uid model
@@ -342,14 +345,15 @@ enemyMoveMaybeGenerator uid model =
     of
         g :: gs ->
             Random.choices g gs
+                |> Random.map (pair uid)
                 |> Just
 
         [] ->
             Nothing
 
 
-moveEnemy : Uid -> EnemyMove -> Model -> Model
-moveEnemy uid enemyMove model =
+moveEnemy : ( Uid, EnemyMove ) -> Model -> Model
+moveEnemy ( uid, enemyMove ) model =
     case enemyMove of
         EnemyAttackPlayer ->
             { model

@@ -34,6 +34,10 @@ pairTo b a =
     Tuple.pair a b
 
 
+pair =
+    Tuple.pair
+
+
 headOr : a -> List a -> a
 headOr default =
     List.head >> Maybe.withDefault default
