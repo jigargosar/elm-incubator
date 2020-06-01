@@ -11,6 +11,7 @@ import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
 import MGrid
+import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -329,7 +330,6 @@ stepEnemiesGenerator model =
             (Random.constant model)
 
 
-with : (c -> a) -> (a -> c -> b) -> c -> b
 with f1 f2 x =
     f2 (f1 x) x
 
@@ -338,6 +338,10 @@ stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGeneratorByUid uid model =
     enemiesFind uid model.enemies
         |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
+
+
+applyTo x f =
+    f x
 
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
