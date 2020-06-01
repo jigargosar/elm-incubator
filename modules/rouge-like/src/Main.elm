@@ -448,6 +448,7 @@ betterEnemyMovesToWardsPlayer enemy model =
                 else
                     Nothing
             )
+        |> Debug.log "debug"
 
 
 computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
