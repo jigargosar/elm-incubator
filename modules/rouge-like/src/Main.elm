@@ -395,8 +395,8 @@ performEnemyMove uid enemyMove model =
 computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
 computeMaybeEnemyMoveTowardsPlayer enemy model =
     case pathFromTo enemy.location model.player model of
-        _ :: el :: _ ->
-            toEnemyMove el model
+        _ :: loc :: _ ->
+            toEnemyMove loc model
 
         _ ->
             Nothing
