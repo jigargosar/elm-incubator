@@ -323,8 +323,8 @@ stepEnemiesGenerator model0 =
                 Random.andThen
                     (\model ->
                         case enemyMoveMaybeGenerator uid model of
-                            Just g ->
-                                g
+                            Just emMoveTupleGenerator ->
+                                emMoveTupleGenerator
                                     |> Random.map (flip moveEnemy model)
 
                             Nothing ->
