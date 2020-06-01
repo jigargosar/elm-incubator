@@ -357,15 +357,9 @@ stepEnemyByUid uid model =
 
 stepEnemy : Enemy -> Model -> Maybe (Generator Model)
 stepEnemy enemy model =
-    case computeEnemyMoves enemy model of
-        [] ->
-            Nothing
-
-        x :: xs ->
-            Random.uniform x xs
-                |> Random.map
-                    (\em -> performEnemyMove enemy.uid em model)
-                |> Just
+    computeEnemyMoves enemy model
+        |> maybeUniformGenerator
+        |> Maybe.map (Random.map (\em -> performEnemyMove enemy.uid em model))
 
 
 computeEnemyMoves : Enemy -> Model -> List EnemyMove
