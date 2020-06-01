@@ -366,10 +366,6 @@ stepEnemy enemy model =
         [] ->
             Random.constant model
 
-        x :: [] ->
-            performEM x
-                |> Random.constant
-
         x :: xs ->
             Random.uniform x xs
                 |> Random.map performEM
