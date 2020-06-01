@@ -1,5 +1,6 @@
 module AStarSearch exposing (aStar)
 
+import Basics.More exposing (..)
 import Dict exposing (Dict)
 import List.Extra as List
 import Set exposing (Set)
