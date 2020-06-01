@@ -386,16 +386,10 @@ stepEnemyMaybeGenerator enemy model =
 isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
 isPlayerOutOfEnemyRange enemy model =
     let
-        ( pr, pc ) =
-            Location.toTuple model.player
-
-        ( er, ec ) =
-            Location.toTuple enemy.location
-
         outOfRange d =
             abs d >= 5
     in
-    Location.map2 absDiff model.player enemy.location
+    Location.map2 sub model.player enemy.location
         |> Location.any outOfRange
 
 
