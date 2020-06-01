@@ -316,18 +316,30 @@ stepEnemies model0 =
         |> List.map .uid
         |> List.foldl
             (\uid model ->
-                case enemyMoveMaybeGenerator uid model of
-                    Just emGen ->
+                case stepEnemyMaybeGenerator uid model of
+                    Just mGen ->
                         let
-                            ( em, seed ) =
-                                Random.step emGen model.seed
+                            ( model1, seed ) =
+                                Random.step mGen model.seed
                         in
-                        moveEnemy uid ( em, { model | seed = seed } )
+                        { model1 | seed = seed }
 
                     Nothing ->
                         model
             )
             model0
+
+
+stepEnemyMaybeGenerator : Uid -> Model -> Maybe (Generator Model)
+stepEnemyMaybeGenerator uid model =
+    case enemyMoveMaybeGenerator uid model of
+        Nothing ->
+            Nothing
+
+        Just emGen ->
+            emGen
+                |> Random.map (\em -> moveEnemy uid ( em, model ))
+                |> Just
 
 
 enemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
