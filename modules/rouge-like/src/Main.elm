@@ -336,27 +336,15 @@ stepEnemiesGenerator model0 =
 
 enemyMoveMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator ( Uid, EnemyMove ))
 enemyMoveMaybeGeneratorByUid uid model =
-    case
-        [ randomEnemyMoveMaybeGeneratorByUid uid model
-        , computeMaybeEnemyMoveTowardsPlayerByUid uid model
-            |> Maybe.map Random.constant
-        ]
-            |> List.filterMap identity
-    of
-        g :: gs ->
-            Random.choices g gs
-                |> Random.map (pair uid)
-                |> Just
-
-        [] ->
-            Nothing
+    enemiesFind uid model.enemies
+        |> Maybe.andThen (\enemy -> enemyMoveMaybeGenerator enemy model)
 
 
 enemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator ( Uid, EnemyMove ))
 enemyMoveMaybeGenerator enemy model =
     case
         [ randomEnemyMoveMaybeGenerator enemy model
-        , computeMaybeEnemyMoveTowardsPlayerByUid enemy.uid model
+        , computeMaybeEnemyMoveTowardsPlayer enemy model
             |> Maybe.map Random.constant
         ]
             |> List.filterMap identity
