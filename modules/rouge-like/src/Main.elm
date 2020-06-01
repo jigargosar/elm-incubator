@@ -359,28 +359,29 @@ stepEnemyByUid uid model =
 stepEnemy : Enemy -> Model -> Generator Model
 stepEnemy enemy model =
     let
-        performEnemyMoveHelp em =
+        performEM em =
             performEnemyMove enemy.uid em model
-
-        enemyMoves : List EnemyMove
-        enemyMoves =
-            if isPlayerOutOfEnemyRange enemy model then
-                plausibleEnemyMoves enemy model
-
-            else
-                betterEnemyMovesToWardsPlayer enemy model
     in
-    case enemyMoves of
+    case computeEnemyMoves enemy model of
         [] ->
             Random.constant model
 
         x :: [] ->
-            performEnemyMoveHelp x
+            performEM x
                 |> Random.constant
 
         x :: xs ->
             Random.uniform x xs
-                |> Random.map performEnemyMoveHelp
+                |> Random.map performEM
+
+
+computeEnemyMoves : Enemy -> Model -> List EnemyMove
+computeEnemyMoves enemy model =
+    if isPlayerOutOfEnemyRange enemy model then
+        plausibleEnemyMoves enemy model
+
+    else
+        betterEnemyMovesToWardsPlayer enemy model
 
 
 isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
