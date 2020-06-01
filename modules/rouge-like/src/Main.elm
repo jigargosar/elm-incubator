@@ -287,21 +287,16 @@ stepPlayerInput : PlayerInput -> Model -> Maybe Model
 stepPlayerInput playerInput model =
     case playerInput of
         StepInDirection direction ->
-            stepPlayerInDirection direction model
+            computePlayerMove direction model
+                |> Maybe.map
+                    (\playerMove ->
+                        model
+                            |> performPlayerMove playerMove
+                            |> stepEnemies
+                    )
 
         StayPut ->
             stepEnemies model |> Just
-
-
-stepPlayerInDirection : Direction -> Model -> Maybe Model
-stepPlayerInDirection direction model =
-    computePlayerMove direction model
-        |> Maybe.map
-            (\playerMove ->
-                model
-                    |> movePlayer playerMove
-                    |> stepEnemies
-            )
 
 
 stepEnemies : Model -> Model
@@ -310,8 +305,8 @@ stepEnemies model0 =
         |> (\( model, seed ) -> { model | seed = seed })
 
 
-movePlayer : PlayerMove -> Model -> Model
-movePlayer playerMove model =
+performPlayerMove : PlayerMove -> Model -> Model
+performPlayerMove playerMove model =
     case playerMove of
         PlayerSetLocation location ->
             { model | player = location }
