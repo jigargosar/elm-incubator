@@ -391,6 +391,9 @@ performEnemyMove uid enemyMove model =
             model
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
+        EnemyStays ->
+            model
+
 
 computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
 computeMaybeEnemyMoveTowardsPlayer enemy model =
@@ -422,6 +425,7 @@ type EnemyMove
     = EnemySetLocation Location
     | EnemyAttackPlayer
     | EnemyAttackEnemy Enemy
+    | EnemyStays
 
 
 plausibleEnemyMoves : Enemy -> Model -> List EnemyMove
