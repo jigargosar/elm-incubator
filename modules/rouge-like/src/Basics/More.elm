@@ -1,6 +1,10 @@
 module Basics.More exposing (..)
 
 
+type alias Int2 =
+    ( Int, Int )
+
+
 allPass : List (a -> Bool) -> a -> Bool
 allPass fs v =
     List.all ((|>) v) fs

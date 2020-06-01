@@ -477,10 +477,6 @@ view model =
         ]
 
 
-type alias Int2 =
-    ( Int, Int )
-
-
 viewOverlay : Model -> HM
 viewOverlay model =
     let
