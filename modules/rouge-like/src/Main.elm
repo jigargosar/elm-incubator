@@ -258,7 +258,7 @@ update message model =
         KeyDown key ->
             ( if model.playerHp > 0 then
                 toPlayerInput key
-                    |> Maybe.andThen (\playerInput -> updatedWithPlayerInput playerInput model)
+                    |> Maybe.andThen (\playerInput -> stepPlayerInput playerInput model)
                     |> Maybe.withDefault model
 
               else
@@ -283,8 +283,8 @@ toPlayerInput key =
                 |> Maybe.map StepInDirection
 
 
-updatedWithPlayerInput : PlayerInput -> Model -> Maybe Model
-updatedWithPlayerInput playerInput model =
+stepPlayerInput : PlayerInput -> Model -> Maybe Model
+stepPlayerInput playerInput model =
     case playerInput of
         StepInDirection direction ->
             stepPlayerInDirection direction model
