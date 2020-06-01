@@ -327,18 +327,13 @@ stepEnemiesGenerator model0 =
             (\uid ->
                 Random.andThen
                     (\model ->
-                        stepEnemyMaybeGeneratorByUid uid model
+                        model.enemies
+                            |> enemiesFind uid
+                            |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
                             |> Maybe.withDefault (Random.constant model)
                     )
             )
             (Random.constant model0)
-
-
-stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGeneratorByUid uid model =
-    model.enemies
-        |> enemiesFind uid
-        |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
 
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
