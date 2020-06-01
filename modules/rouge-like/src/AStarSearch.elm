@@ -1,6 +1,5 @@
 module AStarSearch exposing (aStar)
 
-import Basics.Extra exposing (maxSafeInteger)
 import Dict exposing (Dict)
 import List.Extra as List
 import Set exposing (Set)
@@ -58,7 +57,7 @@ aStar neighbours cost start =
 
 
 getOrMaxSafeInteger k =
-    Dict.get k >> Maybe.withDefault maxSafeInteger
+    Dict.get k >> Maybe.withDefault maxNum
 
 
 aStarHelp : AStarConfig comparable -> AStarAcc comparable -> List comparable

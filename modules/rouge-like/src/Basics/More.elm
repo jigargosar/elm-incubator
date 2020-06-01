@@ -48,3 +48,90 @@ headOr default =
 toGeneratorOrConstant : (b -> Maybe (Random.Generator b)) -> b -> Random.Generator b
 toGeneratorOrConstant f x =
     f x |> Maybe.withDefault (Random.constant x)
+
+
+dec =
+    add -1
+
+
+add =
+    (+)
+
+
+{-| Defines an upper bound for a variable.
+
+    42 |> atMost 0 --> 0
+
+    -42 |> atMost 0 --> -42
+
+-}
+atMost : comparable -> comparable -> comparable
+atMost =
+    min
+
+
+{-| Defines a lower bound for a variable.
+
+    -42 |> atLeast 0 --> 0
+
+    42 |> atLeast 0 --> 42
+
+-}
+atLeast : comparable -> comparable -> comparable
+atLeast =
+    max
+
+
+{-| The maximum _safe_ value for an integer, defined as `2^53 - 1`. Anything
+larger than that and behaviour becomes mathematically unsound.
+
+    maxSafeInteger + 1 --> maxSafeInteger + 2
+
+-}
+maxNum : number
+maxNum =
+    2 ^ 53 - 1
+
+
+{-| The minimum _safe_ value for an integer, defined as `-(2^53 - 1)`. Anything
+smaller than that, and behaviour becomes mathematically unsound.
+
+    minSafeInteger - 1 --> minSafeInteger - 2
+
+-}
+minNum : number
+minNum =
+    -maxNum
+
+
+{-| Swaps the elements in a pair.
+
+    swap ( 1, 2 ) --> ( 2, 1 )
+
+-}
+swap : ( a, b ) -> ( b, a )
+swap ( a, b ) =
+    ( b, a )
+
+
+{-| Flip the order of the first two arguments to a function.
+-}
+flip : (a -> b -> c) -> (b -> a -> c)
+flip f b a =
+    f a b
+
+
+{-| Change how arguments are passed to a function.
+This splits paired arguments into two separate arguments.
+-}
+curry : (( a, b ) -> c) -> a -> b -> c
+curry f a b =
+    f ( a, b )
+
+
+{-| Change how arguments are passed to a function.
+This combines two arguments into a single pair.
+-}
+uncurry : (a -> b -> c) -> ( a, b ) -> c
+uncurry f ( a, b ) =
+    f a b

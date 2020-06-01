@@ -1,7 +1,6 @@
 module Main exposing (main)
 
 import AStarSearch
-import Basics.Extra exposing (..)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
@@ -167,6 +166,11 @@ type alias Model =
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
 mapEnemies f model =
     { model | enemies = f model.enemies }
+
+
+mapPlayerHp : (Int -> Int) -> Model -> Model
+mapPlayerHp f model =
+    { model | playerHp = f model.playerHp }
 
 
 isInvalidOrWall : Location -> Model -> Bool
@@ -359,10 +363,8 @@ moveEnemy : Uid -> EnemyMove -> Model -> Model
 moveEnemy uid enemyMove model =
     case enemyMove of
         EnemyAttackPlayer ->
-            { model
-                | playerHp =
-                    model.playerHp - 1 |> atLeast 0
-            }
+            model
+                |> mapPlayerHp (dec >> atLeast 0)
                 |> mapEnemies (enemiesRemove uid)
 
         EnemyAttackEnemy victim ->
