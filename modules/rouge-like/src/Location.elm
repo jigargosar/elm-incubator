@@ -1,10 +1,13 @@
 module Location exposing
     ( Location
     , adjacent
+    , any
     , down
     , fromTuple
     , left
     , manhattanDistance
+    , map
+    , map2
     , new
     , right
     , toTuple
@@ -25,6 +28,21 @@ new =
 toTuple : Location -> ( Int, Int )
 toTuple p =
     ( p.row, p.column )
+
+
+map : (Int -> Int) -> Location -> Location
+map f l =
+    new (f l.row) (f l.column)
+
+
+map2 : (Int -> Int -> Int) -> Location -> Location -> Location
+map2 f a b =
+    new (f a.row b.row) (f a.column b.column)
+
+
+any : (Int -> Bool) -> Location -> Bool
+any f x =
+    f x.row || f x.column
 
 
 fromTuple : ( Int, Int ) -> Location

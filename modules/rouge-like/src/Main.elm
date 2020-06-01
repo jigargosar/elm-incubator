@@ -392,13 +392,11 @@ isPlayerOutOfEnemyRange enemy model =
         ( er, ec ) =
             Location.toTuple enemy.location
 
-        inRange d =
+        outOfRange d =
             abs d >= 5
-
-        ( dr, dc ) =
-            ( pr - er, pc - ec )
     in
-    inRange dr || inRange dc
+    Location.map2 absDiff model.player enemy.location
+        |> Location.any outOfRange
 
 
 performEnemyMove : Uid -> EnemyMove -> Model -> Model

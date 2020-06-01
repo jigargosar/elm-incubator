@@ -148,3 +148,11 @@ withMaybeAndThen f1 f2 x =
 
 applyTo x f =
     f x
+
+
+sub =
+    (-)
+
+
+absDiff a b =
+    a - b |> abs
