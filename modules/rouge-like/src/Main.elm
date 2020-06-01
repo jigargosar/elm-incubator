@@ -324,23 +324,13 @@ stepEnemiesGenerator model0 =
             (\uid ->
                 Random.andThen
                     (\model ->
-                        stepEnemyMaybeGenerator uid model
+                        enemyMoveMaybeGenerator uid model
+                            |> Maybe.map
+                                (Random.map (\em -> moveEnemy uid ( em, model )))
                             |> Maybe.withDefault (Random.constant model)
                     )
             )
             (Random.constant model0)
-
-
-stepEnemyMaybeGenerator : Uid -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGenerator uid model =
-    case enemyMoveMaybeGenerator uid model of
-        Nothing ->
-            Nothing
-
-        Just emGen ->
-            emGen
-                |> Random.map (\em -> moveEnemy uid ( em, model ))
-                |> Just
 
 
 enemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
