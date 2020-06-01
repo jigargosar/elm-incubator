@@ -169,6 +169,49 @@ mapEnemies f model =
     { model | enemies = f model.enemies }
 
 
+isInvalidOrWall : Location -> Model -> Bool
+isInvalidOrWall l model =
+    not (Dimension.containsLocation l model.dimension)
+        || List.member l model.walls
+
+
+pathFromTo : Location -> Location -> Model -> List Location
+pathFromTo from to model =
+    let
+        neighbours : Int2 -> List ( Int2, Float )
+        neighbours pt =
+            Location.fromTuple pt
+                |> Location.adjacent
+                |> List.filterMap
+                    (\location ->
+                        if isInvalidOrWall location model then
+                            Nothing
+
+                        else
+                            Just ( Location.toTuple location, 1 )
+                    )
+
+        start : Int2
+        start =
+            Location.toTuple from
+
+        end : Int2
+        end =
+            Location.toTuple to
+
+        cost : Int2 -> Float
+        cost ( row, column ) =
+            let
+                ( er, ec ) =
+                    end
+            in
+            (abs (row - er) + abs (column - ec))
+                |> toFloat
+    in
+    AStarSearch.aStar neighbours cost start end
+        |> List.map Location.fromTuple
+
+
 type alias Flags =
     { now : Int }
 
@@ -332,48 +375,6 @@ enemyMoveTowardsPlayer uid model =
                     _ ->
                         Nothing
             )
-
-
-isInvalidOrWall l model =
-    not (Dimension.containsLocation l model.dimension)
-        || List.member l model.walls
-
-
-pathFromTo : Location -> Location -> Model -> List Location
-pathFromTo from to model =
-    let
-        neighbours : Int2 -> List ( Int2, Float )
-        neighbours pt =
-            Location.fromTuple pt
-                |> Location.adjacent
-                |> List.filterMap
-                    (\location ->
-                        if isInvalidOrWall location model then
-                            Nothing
-
-                        else
-                            Just ( Location.toTuple location, 1 )
-                    )
-
-        start : Int2
-        start =
-            Location.toTuple from
-
-        end : Int2
-        end =
-            Location.toTuple to
-
-        cost : Int2 -> Float
-        cost ( row, column ) =
-            let
-                ( er, ec ) =
-                    end
-            in
-            (abs (row - er) + abs (column - ec))
-                |> toFloat
-    in
-    AStarSearch.aStar neighbours cost start end
-        |> List.map Location.fromTuple
 
 
 computeRandomEnemyMove : Uid -> Model -> Maybe ( EnemyMove, Model )
