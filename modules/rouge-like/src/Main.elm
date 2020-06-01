@@ -330,19 +330,6 @@ stepEnemiesGenerator model =
             (Random.constant model)
 
 
-with f1 f2 x =
-    f2 (f1 x) x
-
-
-withMaybeAndThen f1 f2 x =
-    f1 x
-        |> Maybe.andThen (\a -> f2 a x)
-
-
-applyTo x f =
-    f x
-
-
 stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGeneratorByUid uid =
     withMaybeAndThen (.enemies >> enemiesFind uid)

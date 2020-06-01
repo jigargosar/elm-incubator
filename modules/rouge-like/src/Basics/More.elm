@@ -135,3 +135,16 @@ This combines two arguments into a single pair.
 uncurry : (a -> b -> c) -> ( a, b ) -> c
 uncurry f ( a, b ) =
     f a b
+
+
+with f1 f2 x =
+    f2 (f1 x) x
+
+
+withMaybeAndThen f1 f2 x =
+    f1 x
+        |> Maybe.andThen (\a -> f2 a x)
+
+
+applyTo x f =
+    f x
