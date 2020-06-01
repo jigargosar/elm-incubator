@@ -340,12 +340,11 @@ stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGenerator enemy model =
     case
         [ if isPlayerInRangeOfEnemy enemy model then
-            randomEnemyMoveMaybeGenerator enemy model
+            computeMaybeEnemyMoveTowardsPlayer enemy model
+                |> Maybe.map Random.constant
 
           else
-            Nothing
-        , computeMaybeEnemyMoveTowardsPlayer enemy model
-            |> Maybe.map Random.constant
+            randomEnemyMoveMaybeGenerator enemy model
         ]
             |> List.filterMap identity
     of
