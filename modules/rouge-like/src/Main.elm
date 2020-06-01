@@ -337,7 +337,7 @@ stepEnemiesGenerator model0 =
 enemyMoveMaybeGenerator : Uid -> Model -> Maybe (Generator ( Uid, EnemyMove ))
 enemyMoveMaybeGenerator uid model =
     case
-        [ maybeRandomEnemyMoveGenerator uid model
+        [ randomEnemyMoveMabeGenerator uid model
         , enemyMoveTowardsPlayer uid model
             |> Maybe.map Random.constant
         ]
@@ -385,8 +385,8 @@ enemyMoveTowardsPlayer uid model =
             )
 
 
-maybeRandomEnemyMoveGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
-maybeRandomEnemyMoveGenerator uid model =
+randomEnemyMoveMabeGenerator : Uid -> Model -> Maybe (Generator EnemyMove)
+randomEnemyMoveMabeGenerator uid model =
     case plausibleEnemyMoves uid model of
         [] ->
             Nothing
