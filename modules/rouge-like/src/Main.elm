@@ -335,8 +335,10 @@ stepEnemyGeneratorByUid uid model =
 
 
 stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGeneratorByUid uid =
-    withMaybeAndThen (.enemies >> enemiesFind uid) stepEnemyMaybeGenerator
+stepEnemyMaybeGeneratorByUid uid model =
+    model.enemies
+        |> enemiesFind uid
+        |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
 
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
