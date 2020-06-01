@@ -322,10 +322,16 @@ stepEnemiesGenerator model0 =
             (\uid ->
                 Random.andThen
                     (\model ->
-                        case enemyMoveMaybeGeneratorByUid uid model of
+                        case
+                            enemiesFind uid model.enemies
+                                |> Maybe.andThen
+                                    (\enemy ->
+                                        enemyMoveMaybeGenerator enemy model
+                                    )
+                        of
                             Just emMoveTupleGenerator ->
                                 emMoveTupleGenerator
-                                    |> Random.map (flip moveEnemy model)
+                                    |> Random.map (\em -> moveEnemy uid em model)
 
                             Nothing ->
                                 Random.constant model
@@ -334,13 +340,7 @@ stepEnemiesGenerator model0 =
             (Random.constant model0)
 
 
-enemyMoveMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator ( Uid, EnemyMove ))
-enemyMoveMaybeGeneratorByUid uid model =
-    enemiesFind uid model.enemies
-        |> Maybe.andThen (\enemy -> enemyMoveMaybeGenerator enemy model)
-
-
-enemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator ( Uid, EnemyMove ))
+enemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
 enemyMoveMaybeGenerator enemy model =
     case
         [ randomEnemyMoveMaybeGenerator enemy model
@@ -351,15 +351,14 @@ enemyMoveMaybeGenerator enemy model =
     of
         g :: gs ->
             Random.choices g gs
-                |> Random.map (pair enemy.uid)
                 |> Just
 
         [] ->
             Nothing
 
 
-moveEnemy : ( Uid, EnemyMove ) -> Model -> Model
-moveEnemy ( uid, enemyMove ) model =
+moveEnemy : Uid -> EnemyMove -> Model -> Model
+moveEnemy uid enemyMove model =
     case enemyMove of
         EnemyAttackPlayer ->
             { model
@@ -377,20 +376,6 @@ moveEnemy ( uid, enemyMove ) model =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
-computeMaybeEnemyMoveTowardsPlayerByUid : Uid -> Model -> Maybe EnemyMove
-computeMaybeEnemyMoveTowardsPlayerByUid uid model =
-    enemiesFind uid model.enemies
-        |> Maybe.andThen
-            (\enemy ->
-                case pathFromTo enemy.location model.player model of
-                    _ :: el :: _ ->
-                        toEnemyMove el model
-
-                    _ ->
-                        Nothing
-            )
-
-
 computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
 computeMaybeEnemyMoveTowardsPlayer enemy model =
     case pathFromTo enemy.location model.player model of
@@ -399,16 +384,6 @@ computeMaybeEnemyMoveTowardsPlayer enemy model =
 
         _ ->
             Nothing
-
-
-randomEnemyMoveMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator EnemyMove)
-randomEnemyMoveMaybeGeneratorByUid uid model =
-    case plausibleEnemyMovesByUid uid model of
-        [] ->
-            Nothing
-
-        h :: t ->
-            Just (Random.uniform h t)
 
 
 randomEnemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
@@ -425,13 +400,6 @@ type EnemyMove
     = EnemySetLocation Location
     | EnemyAttackPlayer
     | EnemyAttackEnemy Enemy
-
-
-plausibleEnemyMovesByUid : Uid -> Model -> List EnemyMove
-plausibleEnemyMovesByUid uid model =
-    enemiesFind uid model.enemies
-        |> Maybe.map (\enemy -> plausibleEnemyMoves enemy model)
-        |> Maybe.withDefault []
 
 
 plausibleEnemyMoves : Enemy -> Model -> List EnemyMove
