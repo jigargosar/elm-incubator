@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import AStarSearch
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
@@ -11,7 +10,6 @@ import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
 import MGrid
-import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -180,41 +178,42 @@ isInvalidOrWall l model =
         || List.member l model.walls
 
 
-pathFromTo : Location -> Location -> Model -> List Location
-pathFromTo from to model =
-    let
-        neighbours : Int2 -> List ( Int2, Float )
-        neighbours pt =
-            Location.fromTuple pt
-                |> Location.adjacent
-                |> List.filterMap
-                    (\location ->
-                        if isInvalidOrWall location model then
-                            Nothing
 
-                        else
-                            Just ( Location.toTuple location, 1 )
-                    )
-
-        start : Int2
-        start =
-            Location.toTuple from
-
-        end : Int2
-        end =
-            Location.toTuple to
-
-        cost : Int2 -> Float
-        cost ( row, column ) =
-            let
-                ( er, ec ) =
-                    end
-            in
-            (abs (row - er) + abs (column - ec))
-                |> toFloat
-    in
-    AStarSearch.aStar neighbours cost start end
-        |> List.map Location.fromTuple
+--pathFromTo : Location -> Location -> Model -> List Location
+--pathFromTo from to model =
+--    let
+--        neighbours : Int2 -> List ( Int2, Float )
+--        neighbours pt =
+--            Location.fromTuple pt
+--                |> Location.adjacent
+--                |> List.filterMap
+--                    (\location ->
+--                        if isInvalidOrWall location model then
+--                            Nothing
+--
+--                        else
+--                            Just ( Location.toTuple location, 1 )
+--                    )
+--
+--        start : Int2
+--        start =
+--            Location.toTuple from
+--
+--        end : Int2
+--        end =
+--            Location.toTuple to
+--
+--        cost : Int2 -> Float
+--        cost ( row, column ) =
+--            let
+--                ( er, ec ) =
+--                    end
+--            in
+--            (abs (row - er) + abs (column - ec))
+--                |> toFloat
+--    in
+--    AStarSearch.aStar neighbours cost start end
+--        |> List.map Location.fromTuple
 
 
 type alias Flags =
@@ -424,10 +423,11 @@ betterEnemyMovesToWardsPlayerMaybeGenerator enemy model =
     betterEnemyMovesToWardsPlayer enemy model |> maybeUniformGenerator
 
 
-computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
-computeMaybeEnemyMoveTowardsPlayer enemy model =
-    computeNextEnemyLocationToWardsPlayer enemy model
-        |> Maybe.andThen (\loc -> toEnemyMove loc model)
+
+--computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
+--computeMaybeEnemyMoveTowardsPlayer enemy model =
+--    computeNextEnemyLocationToWardsPlayer enemy model
+--        |> Maybe.andThen (\loc -> toEnemyMove loc model)
 
 
 betterEnemyMovesToWardsPlayer : Enemy -> Model -> List EnemyMove
@@ -448,17 +448,17 @@ betterEnemyMovesToWardsPlayer enemy model =
                 else
                     Nothing
             )
-        |> Debug.log "debug"
 
 
-computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
-computeNextEnemyLocationToWardsPlayer enemy model =
-    case pathFromTo enemy.location model.player model of
-        _ :: loc :: _ ->
-            Just loc
 
-        _ ->
-            Nothing
+--computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
+--computeNextEnemyLocationToWardsPlayer enemy model =
+--    case pathFromTo enemy.location model.player model of
+--        _ :: loc :: _ ->
+--            Just loc
+--
+--        _ ->
+--            Nothing
 
 
 randomEnemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
