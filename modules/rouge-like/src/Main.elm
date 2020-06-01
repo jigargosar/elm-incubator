@@ -329,6 +329,11 @@ stepEnemiesGenerator model =
             (Random.constant model)
 
 
+with : (c -> a) -> (a -> c -> b) -> c -> b
+with f1 f2 x =
+    f2 (f1 x) x
+
+
 stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGeneratorByUid uid model =
     enemiesFind uid model.enemies
