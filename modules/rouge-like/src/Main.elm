@@ -344,20 +344,20 @@ stepEnemiesGenerator model =
     model.enemies
         |> List.map .uid
         |> List.foldl
-            (\uid -> Random.andThen (stepEnemyGenerator uid))
+            (\uid -> Random.andThen (stepEnemyByUid uid))
             (Random.constant model)
 
 
-stepEnemyGenerator : Uid -> Model -> Generator Model
-stepEnemyGenerator uid model =
+stepEnemyByUid : Uid -> Model -> Generator Model
+stepEnemyByUid uid model =
     model.enemies
         |> enemiesFind uid
-        |> Maybe.andThen (\enemy -> stepEnemyMaybeGenerator enemy model)
+        |> Maybe.map (\enemy -> stepEnemy enemy model)
         |> Maybe.withDefault (Random.constant model)
 
 
-stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGenerator enemy model =
+stepEnemy : Enemy -> Model -> Generator Model
+stepEnemy enemy model =
     let
         performEnemyMoveHelp em =
             performEnemyMove enemy.uid em model
@@ -372,12 +372,15 @@ stepEnemyMaybeGenerator enemy model =
     in
     case enemyMoves of
         [] ->
-            Nothing
+            Random.constant model
+
+        x :: [] ->
+            performEnemyMoveHelp x
+                |> Random.constant
 
         x :: xs ->
             Random.uniform x xs
                 |> Random.map performEnemyMoveHelp
-                |> Just
 
 
 isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
