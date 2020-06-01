@@ -360,12 +360,12 @@ stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGenerator enemy model =
     case
         [ if isPlayerOutOfEnemyRange enemy model then
-            randomEnemyMoveMaybeGenerator enemy model
+            plausibleEnemyMoves enemy model
+                |> maybeUniformGenerator
 
           else
-            --computeMaybeEnemyMoveTowardsPlayer enemy model
-            --    |> Maybe.map Random.constant
-            betterEnemyMovesToWardsPlayerMaybeGenerator enemy model
+            betterEnemyMovesToWardsPlayer enemy model
+                |> maybeUniformGenerator
         ]
             |> List.filterMap identity
     of
@@ -405,11 +405,6 @@ performEnemyMove uid enemyMove model =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
-betterEnemyMovesToWardsPlayerMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
-betterEnemyMovesToWardsPlayerMaybeGenerator enemy model =
-    betterEnemyMovesToWardsPlayer enemy model |> maybeUniformGenerator
-
-
 betterEnemyMovesToWardsPlayer : Enemy -> Model -> List EnemyMove
 betterEnemyMovesToWardsPlayer enemy model =
     let
@@ -443,12 +438,6 @@ betterEnemyMovesToWardsPlayer enemy model =
 --
 --        _ ->
 --            Nothing
-
-
-randomEnemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
-randomEnemyMoveMaybeGenerator enemy model =
-    plausibleEnemyMoves enemy model
-        |> maybeUniformGenerator
 
 
 type EnemyMove
