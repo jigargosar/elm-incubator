@@ -338,7 +338,7 @@ enemyMoveMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator ( Uid, EnemyMove
 enemyMoveMaybeGeneratorByUid uid model =
     case
         [ randomEnemyMoveMaybeGeneratorByUid uid model
-        , enemyMoveTowardsPlayer uid model
+        , computeMaybeEnemyMoveTowardsPlayerByUid uid model
             |> Maybe.map Random.constant
         ]
             |> List.filterMap identity
@@ -346,6 +346,24 @@ enemyMoveMaybeGeneratorByUid uid model =
         g :: gs ->
             Random.choices g gs
                 |> Random.map (pair uid)
+                |> Just
+
+        [] ->
+            Nothing
+
+
+enemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator ( Uid, EnemyMove ))
+enemyMoveMaybeGenerator enemy model =
+    case
+        [ randomEnemyMoveMaybeGenerator enemy model
+        , computeMaybeEnemyMoveTowardsPlayerByUid enemy.uid model
+            |> Maybe.map Random.constant
+        ]
+            |> List.filterMap identity
+    of
+        g :: gs ->
+            Random.choices g gs
+                |> Random.map (pair enemy.uid)
                 |> Just
 
         [] ->
@@ -371,8 +389,8 @@ moveEnemy ( uid, enemyMove ) model =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
-enemyMoveTowardsPlayer : Uid -> Model -> Maybe EnemyMove
-enemyMoveTowardsPlayer uid model =
+computeMaybeEnemyMoveTowardsPlayerByUid : Uid -> Model -> Maybe EnemyMove
+computeMaybeEnemyMoveTowardsPlayerByUid uid model =
     enemiesFind uid model.enemies
         |> Maybe.andThen
             (\enemy ->
@@ -385,6 +403,16 @@ enemyMoveTowardsPlayer uid model =
             )
 
 
+computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
+computeMaybeEnemyMoveTowardsPlayer enemy model =
+    case pathFromTo enemy.location model.player model of
+        _ :: el :: _ ->
+            toEnemyMove el model
+
+        _ ->
+            Nothing
+
+
 randomEnemyMoveMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator EnemyMove)
 randomEnemyMoveMaybeGeneratorByUid uid model =
     case plausibleEnemyMovesByUid uid model of
@@ -395,8 +423,8 @@ randomEnemyMoveMaybeGeneratorByUid uid model =
             Just (Random.uniform h t)
 
 
-randomEnemyMoveGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
-randomEnemyMoveGenerator enemy model =
+randomEnemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
+randomEnemyMoveMaybeGenerator enemy model =
     case plausibleEnemyMoves enemy model of
         [] ->
             Nothing
