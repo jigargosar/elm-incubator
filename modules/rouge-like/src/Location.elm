@@ -4,6 +4,7 @@ module Location exposing
     , down
     , fromTuple
     , left
+    , manhattanDistance
     , new
     , right
     , toTuple
@@ -74,3 +75,15 @@ mapRow f model =
 
 add =
     (+)
+
+
+manhattanDistance : Location -> Location -> Int
+manhattanDistance a b =
+    let
+        ( r, c ) =
+            toTuple a
+
+        ( r2, c2 ) =
+            toTuple b
+    in
+    abs (r2 - r) + abs (c2 - c)

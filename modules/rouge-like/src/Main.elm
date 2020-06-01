@@ -369,8 +369,9 @@ stepEnemyMaybeGenerator enemy model =
             randomEnemyMoveMaybeGenerator enemy model
 
           else
-            computeMaybeEnemyMoveTowardsPlayer enemy model
-                |> Maybe.map Random.constant
+            --computeMaybeEnemyMoveTowardsPlayer enemy model
+            --    |> Maybe.map Random.constant
+            betterEnemyMovesToWardsPlayerMaybeGenerator enemy model
         ]
             |> List.filterMap identity
     of
@@ -418,10 +419,35 @@ performEnemyMove uid enemyMove model =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
+betterEnemyMovesToWardsPlayerMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
+betterEnemyMovesToWardsPlayerMaybeGenerator enemy model =
+    betterEnemyMovesToWardsPlayer enemy model |> maybeUniformGenerator
+
+
 computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
 computeMaybeEnemyMoveTowardsPlayer enemy model =
     computeNextEnemyLocationToWardsPlayer enemy model
         |> Maybe.andThen (\loc -> toEnemyMove loc model)
+
+
+betterEnemyMovesToWardsPlayer : Enemy -> Model -> List EnemyMove
+betterEnemyMovesToWardsPlayer enemy model =
+    let
+        currentDistance =
+            Location.manhattanDistance enemy.location model.player
+
+        isBetter newLocation =
+            Location.manhattanDistance newLocation model.player < currentDistance
+    in
+    Location.adjacent enemy.location
+        |> List.filterMap
+            (\location ->
+                if isBetter location then
+                    toEnemyMove location model
+
+                else
+                    Nothing
+            )
 
 
 computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
@@ -436,7 +462,13 @@ computeNextEnemyLocationToWardsPlayer enemy model =
 
 randomEnemyMoveMaybeGenerator : Enemy -> Model -> Maybe (Generator EnemyMove)
 randomEnemyMoveMaybeGenerator enemy model =
-    case plausibleEnemyMoves enemy model of
+    plausibleEnemyMoves enemy model
+        |> maybeUniformGenerator
+
+
+maybeUniformGenerator : List a -> Maybe (Generator a)
+maybeUniformGenerator l =
+    case l of
         [] ->
             Nothing
 
