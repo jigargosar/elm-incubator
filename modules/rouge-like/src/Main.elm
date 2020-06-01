@@ -325,14 +325,14 @@ stepEnemiesGenerator model =
         |> List.map .uid
         |> List.foldl
             (\uid ->
-                Random.andThen (toGeneratorOrConstant (stepEnemyMaybeGeneratorByUid uid))
+                Random.andThen
+                    (withMaybeAndThen
+                        (.enemies >> enemiesFind uid)
+                        stepEnemyMaybeGenerator
+                        |> toGeneratorOrConstant
+                    )
             )
             (Random.constant model)
-
-
-stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
-stepEnemyMaybeGeneratorByUid uid =
-    withMaybeAndThen (.enemies >> enemiesFind uid) stepEnemyMaybeGenerator
 
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
