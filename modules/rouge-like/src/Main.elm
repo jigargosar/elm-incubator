@@ -332,8 +332,7 @@ stepEnemiesGenerator model =
 
 stepEnemyMaybeGeneratorByUid : Uid -> Model -> Maybe (Generator Model)
 stepEnemyMaybeGeneratorByUid uid =
-    withMaybeAndThen (.enemies >> enemiesFind uid)
-        stepEnemyMaybeGenerator
+    withMaybeAndThen (.enemies >> enemiesFind uid) stepEnemyMaybeGenerator
 
 
 stepEnemyMaybeGenerator : Enemy -> Model -> Maybe (Generator Model)
