@@ -299,27 +299,27 @@ update message model =
                 PlayerTurn ->
                     ( model, Cmd.none )
 
-                EnemyTurn et ->
-                    ( if et.elapsed >= et.target then
-                        case et.status of
+                EnemyTurn etm ->
+                    ( if etm.elapsed >= etm.target then
+                        case etm.status of
                             EnemyStarting ->
-                                { model | turn = EnemyTurn (etmSetStatus EnemyMoving et) }
+                                { model | turn = EnemyTurn (etmSetStatus EnemyMoving etm) }
 
                             EnemyMoving ->
-                                case stepEnemy et.current model of
+                                case stepEnemy etm.current model of
                                     Nothing ->
-                                        selectNextEnemy et model
+                                        selectNextEnemy etm model
 
                                     Just gen ->
                                         model
                                             |> generate gen
-                                            |> setEnemyTurn (etmSetStatus EnemyEnding et)
+                                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
 
                             EnemyEnding ->
-                                selectNextEnemy et model
+                                selectNextEnemy etm model
 
                       else
-                        { model | turn = EnemyTurn { et | elapsed = et.elapsed + 1 } }
+                        { model | turn = EnemyTurn { etm | elapsed = etm.elapsed + 1 } }
                     , Cmd.none
                     )
 
