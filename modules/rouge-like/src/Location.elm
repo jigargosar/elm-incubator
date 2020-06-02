@@ -16,8 +16,8 @@ module Location exposing
 
 
 type alias Location =
-    { row : Int
-    , column : Int
+    { y : Int
+    , x : Int
     }
 
 
@@ -27,22 +27,22 @@ new =
 
 toTuple : Location -> ( Int, Int )
 toTuple p =
-    ( p.row, p.column )
+    ( p.y, p.x )
 
 
 map : (Int -> Int) -> Location -> Location
 map f l =
-    new (f l.row) (f l.column)
+    new (f l.y) (f l.x)
 
 
 map2 : (Int -> Int -> Int) -> Location -> Location -> Location
 map2 f a b =
-    new (f a.row b.row) (f a.column b.column)
+    new (f a.y b.y) (f a.x b.x)
 
 
 any : (Int -> Bool) -> Location -> Bool
 any f x =
-    f x.row || f x.column
+    f x.y || f x.x
 
 
 fromTuple : ( Int, Int ) -> Location
@@ -83,12 +83,12 @@ down =
 
 mapColumn : (Int -> Int) -> Location -> Location
 mapColumn f model =
-    { model | column = f model.column }
+    { model | x = f model.x }
 
 
 mapRow : (Int -> Int) -> Location -> Location
 mapRow f model =
-    { model | row = f model.row }
+    { model | y = f model.y }
 
 
 add =
