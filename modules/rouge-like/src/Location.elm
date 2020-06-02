@@ -37,9 +37,14 @@ toTuple (Loc p) =
     p
 
 
+mapAsInternal : (Int2 -> Int2) -> Location -> Location
+mapAsInternal f =
+    toTuple >> f >> fromTuple
+
+
 map : (Int -> Int) -> Location -> Location
 map f =
-    toTuple >> Tuple.map f >> fromTuple
+    mapAsInternal (Tuple.map f)
 
 
 map2 : (Int -> Int -> Int) -> Location -> Location -> Location

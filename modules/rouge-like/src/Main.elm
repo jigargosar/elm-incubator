@@ -693,18 +693,14 @@ viewSlot slot =
                     let
                         styles =
                             case maybeES of
-                                Just ( EnemyMoving ( from, to ), counter ) ->
+                                Just ( EnemyMoving fromTo, counter ) ->
                                     let
-                                        _ =
-                                            counter
-                                                |> counterProgress
+                                        ( from, to ) =
+                                            Tuple.map Location.toTuple fromTo
 
                                         ( dx, dy ) =
-                                            Location.map2 sub to from
-                                                |> Debug.log "debug"
-                                                |> Location.map (mul -32)
-                                                |> Location.toTuple
-                                                |> Tuple.map (toFloat >> mul (counterProgress counter))
+                                            Tuple.map2 sub to from
+                                                |> Tuple.map (toFloatScaled (-32 * counterProgress counter))
                                     in
                                     [ style "transform" ("translate(" ++ String.fromFloat dx ++ "px," ++ String.fromFloat dy ++ "px)") ]
 
