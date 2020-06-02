@@ -5,7 +5,7 @@ import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
@@ -685,25 +685,33 @@ viewSlot slot =
 
                 Enemy_ maybeES ->
                     let
-                        _ =
+                        styles =
                             case maybeES of
                                 Just (EnemyMoving ( from, to )) ->
-                                    []
+                                    let
+                                        ( dy, dx ) =
+                                            Location.map2 sub to from
+                                                |> Location.map ((*) 32)
+                                                |> Location.toTuple
+                                    in
+                                    [ style "transform" ("translate(" ++ String.fromInt dx ++ "px," ++ String.fromInt dy ++ "px)") ]
 
                                 _ ->
                                     []
                     in
                     div [ commonStyles, class "relative" ]
                         [ div
-                            [ commonStyles
-                            , class "absolute"
-                            , case maybeES of
+                            ([ commonStyles
+                             , class "absolute"
+                             , case maybeES of
                                 Just _ ->
                                     class "outline"
 
                                 Nothing ->
                                     class ""
-                            ]
+                             ]
+                                ++ styles
+                            )
                             [ text "e" ]
                         ]
 
