@@ -262,15 +262,17 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( if model.playerHp > 0 then
-                toPlayerInput key
-                    |> Maybe.andThen (\playerInput -> stepPlayerInput playerInput model)
-                    |> Maybe.withDefault model
+            case model.turn of
+                PlayerTurn ->
+                    ( if model.playerHp > 0 then
+                        toPlayerInput key
+                            |> Maybe.andThen (\playerInput -> stepPlayerInput playerInput model)
+                            |> Maybe.withDefault model
 
-              else
-                model
-            , Cmd.none
-            )
+                      else
+                        model
+                    , Cmd.none
+                    )
 
 
 type PlayerInput
