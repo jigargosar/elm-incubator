@@ -648,7 +648,7 @@ type alias HM =
 
 type Cell
     = Player Bool Int
-    | Enemy_ Bool
+    | Enemy_ (Maybe EnemyMove)
     | Wall
 
 
@@ -673,14 +673,15 @@ viewSlot slot =
                         [ text (String.fromInt hp)
                         ]
 
-                Enemy_ isSelected ->
+                Enemy_ maybeEM ->
                     div
                         [ commonStyles
-                        , if isSelected then
-                            class "outline"
+                        , case maybeEM of
+                            Just _ ->
+                                class "outline"
 
-                          else
-                            class ""
+                            Nothing ->
+                                class ""
                         ]
                         [ text "e" ]
 
@@ -702,18 +703,27 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
-        isEnemySelected uid =
+        toEM uid =
             case model.turn of
                 PlayerTurn ->
-                    False
+                    Nothing
 
                 EnemyTurn et ->
-                    et.current.uid == uid
+                    if et.current.uid == uid then
+                        case et.status of
+                            EnemyMoving em ->
+                                Just em
+
+                            _ ->
+                                Nothing
+
+                    else
+                        Nothing
 
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
-                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ (isEnemySelected e.uid) )) model.enemies)
+                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ (toEM e.uid) )) model.enemies)
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
