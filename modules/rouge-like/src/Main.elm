@@ -178,8 +178,9 @@ type alias EnemyTurnModel =
 
 
 type EnemyStatus
-    = EnemySelected
+    = EnemyStart
     | EnemyMoving
+    | EnemyEnd
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -301,14 +302,23 @@ update message model =
                 EnemyTurn et ->
                     ( if et.elapsed >= et.target then
                         case et.status of
-                            EnemySelected ->
+                            EnemyStart ->
                                 { model | turn = EnemyTurn { et | status = EnemyMoving, elapsed = 0, target = 10 } }
 
                             EnemyMoving ->
-                                stepEnemy et.current model
-                                    |> Maybe.map (\gen -> generate gen model)
-                                    |> Maybe.withDefault model
-                                    |> selectNextEnemy et
+                                case stepEnemy et.current model of
+                                    Nothing ->
+                                        selectNextEnemy et model
+
+                                    Just gen ->
+                                        let
+                                            nm =
+                                                generate gen model
+                                        in
+                                        { nm | turn = EnemyTurn { et | status = EnemyEnd, elapsed = 0, target = 10 } }
+
+                            EnemyEnd ->
+                                selectNextEnemy et model
 
                       else
                         { model | turn = EnemyTurn { et | elapsed = et.elapsed + 1 } }
@@ -327,7 +337,7 @@ selectNextEnemy et model =
                 | turn =
                     EnemyTurn
                         { current = current
-                        , status = EnemySelected
+                        , status = EnemyStart
                         , pendingIds = pendingEnemies
                         , target = 10
                         , elapsed = 0
@@ -400,7 +410,7 @@ initEnemyTurn model =
                 | turn =
                     EnemyTurn
                         { current = current
-                        , status = EnemySelected
+                        , status = EnemyStart
                         , pendingIds = List.map .uid pending
                         , target = 0
                         , elapsed = 0
