@@ -172,13 +172,14 @@ type alias EnemyTurnModel =
     { current : Enemy
     , status : EnemyStatus
     , pendingIds : List Uid
-    , ticks : Int
+    , target : Int
+    , elapsed : Int
     }
 
 
 type EnemyStatus
     = EnemySelected
-    | EnemyMoved
+    | EnemyMoving
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -298,14 +299,19 @@ update message model =
                     ( model, Cmd.none )
 
                 EnemyTurn et ->
-                    ( if et.ticks >= 20 then
-                        stepEnemy et.current model
-                            |> Maybe.map (\gen -> generate gen model)
-                            |> Maybe.withDefault model
-                            |> selectNextEnemy et
+                    ( if et.elapsed >= et.target then
+                        case et.status of
+                            EnemySelected ->
+                                { model | turn = EnemyTurn { et | status = EnemyMoving, elapsed = 0, target = 10 } }
+
+                            EnemyMoving ->
+                                stepEnemy et.current model
+                                    |> Maybe.map (\gen -> generate gen model)
+                                    |> Maybe.withDefault model
+                                    |> selectNextEnemy et
 
                       else
-                        { model | turn = EnemyTurn { et | ticks = et.ticks + 1 } }
+                        { model | turn = EnemyTurn { et | elapsed = et.elapsed + 1 } }
                     , Cmd.none
                     )
 
@@ -323,7 +329,8 @@ selectNextEnemy et model =
                         { current = current
                         , status = EnemySelected
                         , pendingIds = pendingEnemies
-                        , ticks = 0
+                        , target = 10
+                        , elapsed = 0
                         }
             }
 
@@ -395,7 +402,8 @@ initEnemyTurn model =
                         { current = current
                         , status = EnemySelected
                         , pendingIds = List.map .uid pending
-                        , ticks = 0
+                        , target = 0
+                        , elapsed = 0
                         }
             }
 
