@@ -19,16 +19,17 @@ import Tuple.More as Tuple
 
 
 type Location
-    = Loc Int Int
+    = Loc Int2
 
 
+new : Int -> Int -> Location
 new x y =
-    Loc x y
+    Loc (pair x y)
 
 
 toTuple : Location -> Int2
-toTuple (Loc x y) =
-    ( x, y )
+toTuple (Loc p) =
+    p
 
 
 map : (Int -> Int) -> Location -> Location
