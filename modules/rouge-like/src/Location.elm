@@ -84,13 +84,13 @@ down =
 
 
 mapX : (Int -> Int) -> Location -> Location
-mapX f model =
-    { model | x = f model.x }
+mapX f location =
+    { location | x = f location.x }
 
 
 mapY : (Int -> Int) -> Location -> Location
-mapY f model =
-    { model | y = f model.y }
+mapY f location =
+    { location | y = f location.y }
 
 
 manhattanDistance : Location -> Location -> Int
