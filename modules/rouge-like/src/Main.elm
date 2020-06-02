@@ -170,7 +170,7 @@ type Turn
 
 type alias EnemyTurnModel =
     { current : Enemy
-    , pending : List Uid
+    , pendingIds : List Uid
     , ticks : Int
     }
 
@@ -306,12 +306,12 @@ update message model =
 
 selectNextEnemy : EnemyTurnModel -> Model -> Model
 selectNextEnemy et model =
-    case enemiesFindFirst et.pending model.enemies of
+    case enemiesFindFirst et.pendingIds model.enemies of
         Nothing ->
             { model | turn = PlayerTurn }
 
         Just ( current, pending ) ->
-            { model | turn = EnemyTurn { current = current, pending = pending, ticks = 0 } }
+            { model | turn = EnemyTurn { current = current, pendingIds = pending, ticks = 0 } }
 
 
 enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
@@ -378,7 +378,10 @@ initEnemyTurn model =
             { model
                 | turn =
                     EnemyTurn
-                        { current = current, pending = List.map .uid pending, ticks = 0 }
+                        { current = current
+                        , pendingIds = List.map .uid pending
+                        , ticks = 0
+                        }
             }
 
 
