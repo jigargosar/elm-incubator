@@ -11,19 +11,19 @@ import Location exposing (Location)
 
 
 type alias Dimension =
-    { rows : Int
-    , columns : Int
+    { width : Int
+    , height : Int
     }
 
 
 new : Int -> Int -> Dimension
-new =
-    Dimension
+new w h =
+    Dimension w h
 
 
 toLocationRows : Dimension -> List (List Location)
 toLocationRows d =
-    Index.range2 d.rows d.columns
+    Index.range2 d.height d.width
         |> List.map (List.map (\( y, x ) -> Location.new x y))
 
 
@@ -38,5 +38,5 @@ containsLocation location dimension =
         ( x, y ) =
             Location.toTuple location
     in
-    Index.memberOf dimension.rows y
-        && Index.memberOf dimension.columns x
+    Index.memberOf dimension.width y
+        && Index.memberOf dimension.height x

@@ -238,7 +238,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         dimension =
-            Dimension.new 16 12
+            Dimension.new 12 16
 
         ( acc, seed ) =
             Random.step (newWorldBuilder dimension) (Random.initialSeed flags.now)
