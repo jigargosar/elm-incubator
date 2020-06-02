@@ -303,7 +303,8 @@ update message model =
                     ( if etm.elapsed >= etm.target then
                         case etm.status of
                             EnemyStarting ->
-                                { model | turn = EnemyTurn (etmSetStatus EnemyMoving etm) }
+                                model
+                                    |> setEnemyTurn (etmSetStatus EnemyMoving etm)
 
                             EnemyMoving ->
                                 case stepEnemy etm.current model of
