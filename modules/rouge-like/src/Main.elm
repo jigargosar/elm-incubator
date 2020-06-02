@@ -204,7 +204,7 @@ counterIsDone c =
 
 type EnemyStatus
     = EnemyStarting
-    | EnemyMoving
+    | EnemyMoving EnemyMove
     | EnemyEnding
 
 
@@ -290,8 +290,6 @@ update message model =
                     ( if counterIsDone etm.counter then
                         case etm.status of
                             EnemyStarting ->
-                                --model
-                                --    |> setEnemyTurn (etmSetStatus EnemyMoving etm)
                                 case
                                     computeEnemyMoves etm.current model
                                         |> maybeUniformGenerator
@@ -307,25 +305,10 @@ update message model =
                                         in
                                         { model | seed = seed }
                                             |> performEnemyMove etm.current.uid em
-                                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
+                                            |> setEnemyTurn (etmSetStatus (EnemyMoving em) etm)
 
-                            EnemyMoving ->
-                                case
-                                    computeEnemyMoves etm.current model
-                                        |> maybeUniformGenerator
-                                of
-                                    Nothing ->
-                                        model
-                                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
-
-                                    Just emGen ->
-                                        let
-                                            ( em, seed ) =
-                                                Random.step emGen model.seed
-                                        in
-                                        { model | seed = seed }
-                                            |> performEnemyMove etm.current.uid em
-                                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
+                            EnemyMoving _ ->
+                                model |> setEnemyTurn (etmSetStatus EnemyEnding etm)
 
                             EnemyEnding ->
                                 etmSelectNextEnemy model.enemies etm
