@@ -172,9 +172,34 @@ type alias EnemyTurnModel =
     { current : Enemy
     , status : EnemyStatus
     , pendingIds : List Uid
-    , target : Int
-    , elapsed : Int
+    , counter : Counter
     }
+
+
+type alias Counter =
+    { elapsed : Float
+    , target : Float
+    }
+
+
+counterInit : Float -> Counter
+counterInit target =
+    { elapsed = 0, target = target }
+
+
+counterReset : Counter -> Counter
+counterReset c =
+    { c | elapsed = 0 }
+
+
+counterTick : Counter -> Counter
+counterTick c =
+    { c | elapsed = c.elapsed + 1 }
+
+
+counterIsDone : Counter -> Bool
+counterIsDone c =
+    c.elapsed >= c.target
 
 
 type EnemyStatus
@@ -262,7 +287,7 @@ update message model =
                     ( model, Cmd.none )
 
                 EnemyTurn etm ->
-                    ( if etm.elapsed >= etm.target then
+                    ( if counterIsDone etm.counter then
                         case etm.status of
                             EnemyStarting ->
                                 model
@@ -292,7 +317,7 @@ update message model =
                                     |> Maybe.withDefault { model | turn = PlayerTurn }
 
                       else
-                        model |> setEnemyTurn { etm | elapsed = etm.elapsed + 1 }
+                        model |> setEnemyTurn { etm | counter = counterTick etm.counter }
                     , Cmd.none
                     )
 
@@ -304,7 +329,7 @@ setEnemyTurn etm model =
 
 etmSetStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
 etmSetStatus status etm =
-    { etm | status = status, elapsed = 0, target = 10 }
+    { etm | status = status, counter = counterReset etm.counter }
 
 
 etmInit : Enemy -> List Uid -> EnemyTurnModel
@@ -312,8 +337,7 @@ etmInit current pendingIds =
     { current = current
     , status = EnemyStarting
     , pendingIds = pendingIds
-    , target = 10
-    , elapsed = 0
+    , counter = counterInit 10
     }
 
 
