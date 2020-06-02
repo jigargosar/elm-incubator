@@ -170,9 +170,15 @@ type Turn
 
 type alias EnemyTurnModel =
     { current : Enemy
+    , status : EnemyStatus
     , pendingIds : List Uid
     , ticks : Int
     }
+
+
+type EnemyStatus
+    = EnemySelected
+    | EnemyMoved
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -310,8 +316,16 @@ selectNextEnemy et model =
         Nothing ->
             { model | turn = PlayerTurn }
 
-        Just ( current, pending ) ->
-            { model | turn = EnemyTurn { current = current, pendingIds = pending, ticks = 0 } }
+        Just ( current, pendingEnemies ) ->
+            { model
+                | turn =
+                    EnemyTurn
+                        { current = current
+                        , status = EnemySelected
+                        , pendingIds = pendingEnemies
+                        , ticks = 0
+                        }
+            }
 
 
 enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
@@ -379,6 +393,7 @@ initEnemyTurn model =
                 | turn =
                     EnemyTurn
                         { current = current
+                        , status = EnemySelected
                         , pendingIds = List.map .uid pending
                         , ticks = 0
                         }
