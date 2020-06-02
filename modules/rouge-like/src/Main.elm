@@ -229,7 +229,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         dimension =
-            Dimension.new 10 18
+            Dimension.new 18 10
 
         ( acc, seed ) =
             Random.step (newWorldBuilder dimension) (Random.initialSeed flags.now)
@@ -587,23 +587,28 @@ type Cell
     | Wall
 
 
+viewSlot : MGrid.Slot Cell -> HM
 viewSlot slot =
+    let
+        wrap =
+            div [ class "w2 h2" ]
+    in
     case slot of
         MGrid.Filled entity ->
             case entity of
                 Player isSelected hp ->
-                    String.fromInt hp
-                        |> String.toList
-                        |> headOr '3'
+                    wrap
+                        [ text (String.fromInt hp)
+                        ]
 
                 Enemy_ _ ->
-                    'e'
+                    wrap [ text "e" ]
 
                 Wall ->
-                    '#'
+                    wrap [ text "#" ]
 
         MGrid.Empty ->
-            '.'
+            wrap [ text "." ]
 
 
 viewGrid : Model -> HM
@@ -640,13 +645,8 @@ viewGrid model =
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
-            |> MGrid.viewRows (\_ -> div [])
-                (\_ slot ->
-                    slot
-                        |> slotToChar
-                        |> String.fromChar
-                        |> text
-                )
+            |> MGrid.viewRows (\_ -> div [ class "flex" ])
+                (\_ slot -> viewSlot slot)
         )
 
 
