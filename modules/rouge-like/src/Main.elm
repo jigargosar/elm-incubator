@@ -582,9 +582,28 @@ type alias HM =
 
 
 type Cell
-    = Player Bool
+    = Player Bool Int
     | Enemy_ Enemy
     | Wall
+
+
+viewSlot slot =
+    case slot of
+        MGrid.Filled entity ->
+            case entity of
+                Player isSelected hp ->
+                    String.fromInt hp
+                        |> String.toList
+                        |> headOr '3'
+
+                Enemy_ _ ->
+                    'e'
+
+                Wall ->
+                    '#'
+
+        MGrid.Empty ->
+            '.'
 
 
 viewGrid : Model -> HM
@@ -599,14 +618,14 @@ viewGrid model =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
                 |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
-                |> MGrid.set model.player (Player isPlayerSelected)
+                |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
 
         slotToChar slot =
             case slot of
                 MGrid.Filled entity ->
                     case entity of
-                        Player isSelected ->
-                            String.fromInt (abs model.playerHp)
+                        Player isSelected hp ->
+                            String.fromInt hp
                                 |> String.toList
                                 |> headOr '3'
 
