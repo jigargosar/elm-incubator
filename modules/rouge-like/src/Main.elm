@@ -295,8 +295,18 @@ update message model =
                         |> Maybe.andThen (\enemy -> stepEnemy enemy model)
                         |> Maybe.map (\gen -> generate gen model)
                         |> Maybe.withDefault model
+                        |> stepEt et
                     , Cmd.none
                     )
+
+
+stepEt et model =
+    case et.pending of
+        [] ->
+            { model | turn = PlayerTurn }
+
+        current :: pending ->
+            { model | turn = EnemyTurn { current = current, pending = pending } }
 
 
 generate gen model0 =
