@@ -26,7 +26,7 @@ new x y =
     Loc x y
 
 
-toTuple : Location -> ( Int, Int )
+toTuple : Location -> Int2
 toTuple (Loc x y) =
     ( x, y )
 
