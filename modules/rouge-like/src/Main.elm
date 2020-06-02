@@ -13,6 +13,7 @@ import MGrid
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
+import Tuple.More as Tuple
 
 
 
@@ -187,6 +188,11 @@ counterInit target =
     { elapsed = 0, target = target }
 
 
+counterProgress : Counter -> Float
+counterProgress c =
+    clamp 0 c.target c.elapsed / c.target
+
+
 counterReset : Counter -> Counter
 counterReset c =
     { c | elapsed = 0 }
@@ -346,7 +352,7 @@ etmInit current pendingIds =
     { current = current
     , status = EnemyStarting
     , pendingIds = pendingIds
-    , counter = counterInit 20
+    , counter = counterInit 40
     }
 
 
@@ -658,7 +664,7 @@ type alias HM =
 
 type Cell
     = Player Bool Int
-    | Enemy_ (Maybe EnemyStatus)
+    | Enemy_ (Maybe ( EnemyStatus, Counter ))
     | Wall
 
 
@@ -687,14 +693,20 @@ viewSlot slot =
                     let
                         styles =
                             case maybeES of
-                                Just (EnemyMoving ( from, to )) ->
+                                Just ( EnemyMoving ( from, to ), counter ) ->
                                     let
+                                        _ =
+                                            counter
+                                                |> counterProgress
+
                                         ( dy, dx ) =
                                             Location.map2 sub to from
-                                                |> Location.map ((*) 32)
+                                                |> Debug.log "debug"
+                                                |> Location.map ((*) -32)
                                                 |> Location.toTuple
+                                                |> Tuple.map (toFloat >> (*) (counterProgress counter))
                                     in
-                                    [ style "transform" ("translate(" ++ String.fromInt dx ++ "px," ++ String.fromInt dy ++ "px)") ]
+                                    [ style "transform" ("translate(" ++ String.fromFloat dx ++ "px," ++ String.fromFloat dy ++ "px)") ]
 
                                 _ ->
                                     []
@@ -740,7 +752,7 @@ viewGrid model =
 
                 EnemyTurn et ->
                     if et.current.uid == uid then
-                        Just et.status
+                        Just ( et.status, et.counter )
 
                     else
                         Nothing
