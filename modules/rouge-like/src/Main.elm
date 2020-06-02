@@ -158,8 +158,13 @@ type alias Model =
     , playerHp : Int
     , walls : List Location
     , enemies : List Enemy
+    , turn : Turn
     , seed : Seed
     }
+
+
+type Turn
+    = PlayerTurn
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -234,6 +239,7 @@ init flags =
       , playerHp = 3
       , walls = acc.walls
       , enemies = acc.enemies
+      , turn = PlayerTurn
       , seed = seed
       }
     , Cmd.none
@@ -576,7 +582,7 @@ type alias HM =
 
 
 type Cell
-    = Player
+    = Player Bool
     | Enemy_ Enemy
     | Wall
 
@@ -584,17 +590,22 @@ type Cell
 viewGrid : Model -> HM
 viewGrid model =
     let
+        isPlayerSelected =
+            case model.turn of
+                PlayerTurn ->
+                    True
+
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
                 |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
-                |> MGrid.set model.player Player
+                |> MGrid.set model.player (Player isPlayerSelected)
 
         slotToChar slot =
             case slot of
                 MGrid.Filled entity ->
                     case entity of
-                        Player ->
+                        Player isSelected ->
                             String.fromInt (abs model.playerHp)
                                 |> String.toList
                                 |> headOr '3'
