@@ -693,17 +693,19 @@ viewSlot slot =
                                 _ ->
                                     []
                     in
-                    div
-                        [ commonStyles
-                        , class ""
-                        , case maybeES of
-                            Just _ ->
-                                class "outline"
+                    div [ commonStyles, class "relative" ]
+                        [ div
+                            [ commonStyles
+                            , class "absolute"
+                            , case maybeES of
+                                Just _ ->
+                                    class "outline"
 
-                            Nothing ->
-                                class ""
+                                Nothing ->
+                                    class ""
+                            ]
+                            [ text "e" ]
                         ]
-                        [ text "e" ]
 
                 Wall ->
                     div [ commonStyles ] [ text "#" ]
