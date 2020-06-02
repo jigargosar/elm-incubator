@@ -171,6 +171,7 @@ type Turn
 type alias EnemyTurnModel =
     { current : Uid
     , pending : List Uid
+    , ticks : Int
     }
 
 
@@ -291,22 +292,27 @@ update message model =
                     ( model, Cmd.none )
 
                 EnemyTurn et ->
-                    ( enemiesFind et.current model.enemies
-                        |> Maybe.andThen (\enemy -> stepEnemy enemy model)
-                        |> Maybe.map (\gen -> generate gen model)
-                        |> Maybe.withDefault model
-                        |> stepEt et
+                    ( if et.ticks >= 10 then
+                        enemiesFind et.current model.enemies
+                            |> Maybe.andThen (\enemy -> stepEnemy enemy model)
+                            |> Maybe.map (\gen -> generate gen model)
+                            |> Maybe.withDefault model
+                            |> stepEt et
+
+                      else
+                        { model | turn = EnemyTurn { et | ticks = et.ticks + 1 } }
                     , Cmd.none
                     )
 
 
+stepEt : EnemyTurnModel -> Model -> Model
 stepEt et model =
     case et.pending of
         [] ->
             { model | turn = PlayerTurn }
 
         current :: pending ->
-            { model | turn = EnemyTurn { current = current, pending = pending } }
+            { model | turn = EnemyTurn { current = current, pending = pending, ticks = 0 } }
 
 
 generate gen model0 =
@@ -355,7 +361,7 @@ initEnemyTurn model =
             model
 
         current :: pending ->
-            { model | turn = EnemyTurn { current = current, pending = pending } }
+            { model | turn = EnemyTurn { current = current, pending = pending, ticks = 0 } }
 
 
 stepEnemies : Model -> Model
