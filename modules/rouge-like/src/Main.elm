@@ -269,12 +269,8 @@ update message model =
                                     |> setEnemyTurn (etmSetStatus EnemyMoving etm)
 
                             EnemyMoving ->
-                                let
-                                    enemy =
-                                        etm.current
-                                in
                                 case
-                                    computeEnemyMoves enemy model
+                                    computeEnemyMoves etm.current model
                                         |> maybeUniformGenerator
                                 of
                                     Nothing ->
@@ -287,7 +283,7 @@ update message model =
                                                 Random.step emGen model.seed
                                         in
                                         { model | seed = seed }
-                                            |> performEnemyMove enemy.uid em
+                                            |> performEnemyMove etm.current.uid em
                                             |> setEnemyTurn (etmSetStatus EnemyEnding etm)
 
                             EnemyEnding ->
