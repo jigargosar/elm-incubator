@@ -335,7 +335,7 @@ stepPlayerInput playerInput model =
     case playerInput of
         StepInDirection direction ->
             computePlayerMove direction model
-                |> Maybe.andThen
+                |> Maybe.map
                     (\playerMove ->
                         model
                             |> performPlayerMove playerMove
@@ -345,18 +345,17 @@ stepPlayerInput playerInput model =
 
         StayPut ->
             --stepEnemies model |> Just
-            initEnemyTurn model
+            initEnemyTurn model |> Just
 
 
-initEnemyTurn : Model -> Maybe Model
+initEnemyTurn : Model -> Model
 initEnemyTurn model =
     case model.enemies |> List.map .uid of
         [] ->
-            Nothing
+            model
 
         current :: pending ->
             { model | turn = EnemyTurn { current = current, pending = pending } }
-                |> Just
 
 
 stepEnemies : Model -> Model
@@ -628,8 +627,8 @@ viewOverlay model =
             [ class "absolute w-100 h-100 flex items-center justify-center"
             ]
             [ div [ class "bg-white-50 black pa3 br3" ]
-                [ div [ class "f2 tc" ] [ text subTitle ]
-                , div [ class "f3 tc" ] [ text "Ctrl+R to restart" ]
+                [ div [ class "code f2 tc" ] [ text subTitle ]
+                , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
                 ]
             ]
 
@@ -668,8 +667,16 @@ viewSlot slot =
                         [ text (String.fromInt hp)
                         ]
 
-                Enemy_ _ ->
-                    div [ commonStyles ] [ text "e" ]
+                Enemy_ isSelected ->
+                    div
+                        [ commonStyles
+                        , if isSelected then
+                            class "outline"
+
+                          else
+                            class ""
+                        ]
+                        [ text "e" ]
 
                 Wall ->
                     div [ commonStyles ] [ text "#" ]
