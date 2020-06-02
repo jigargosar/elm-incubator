@@ -165,6 +165,11 @@ type alias Model =
 
 type Turn
     = PlayerTurn
+    | EnemyTurn EnemyTurnModel
+
+
+type alias EnemyTurnModel =
+    {}
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -273,6 +278,9 @@ update message model =
                         model
                     , Cmd.none
                     )
+
+                EnemyTurn _ ->
+                    ( model, Cmd.none )
 
 
 type PlayerInput
@@ -627,6 +635,9 @@ viewGrid model =
             case model.turn of
                 PlayerTurn ->
                     True
+
+                EnemyTurn _ ->
+                    False
 
         grid =
             MGrid.empty model.dimension
