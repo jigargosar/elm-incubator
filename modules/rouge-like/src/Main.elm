@@ -169,7 +169,7 @@ type Turn
 
 
 type alias EnemyTurnModel =
-    { current : Uid
+    { current : Enemy
     , pending : List Uid
     , ticks : Int
     }
@@ -293,11 +293,10 @@ update message model =
 
                 EnemyTurn et ->
                     ( if et.ticks >= 20 then
-                        enemiesFind et.current model.enemies
-                            |> Maybe.andThen (\enemy -> stepEnemy enemy model)
+                        stepEnemy et.current model
                             |> Maybe.map (\gen -> generate gen model)
                             |> Maybe.withDefault model
-                            |> stepEt et
+                            |> selectNextEnemy et
 
                       else
                         { model | turn = EnemyTurn { et | ticks = et.ticks + 1 } }
@@ -305,14 +304,29 @@ update message model =
                     )
 
 
-stepEt : EnemyTurnModel -> Model -> Model
-stepEt et model =
-    case et.pending of
-        [] ->
+selectNextEnemy : EnemyTurnModel -> Model -> Model
+selectNextEnemy et model =
+    case enemiesFindFirst et.pending model.enemies of
+        Nothing ->
             { model | turn = PlayerTurn }
 
-        current :: pending ->
+        Just ( current, pending ) ->
             { model | turn = EnemyTurn { current = current, pending = pending, ticks = 0 } }
+
+
+enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
+enemiesFindFirst uidList enemies =
+    case uidList of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            case enemiesFind x enemies of
+                Just enemy ->
+                    Just ( enemy, xs )
+
+                Nothing ->
+                    enemiesFindFirst xs enemies
 
 
 generate gen model0 =
@@ -356,12 +370,16 @@ stepPlayerInput playerInput model =
 
 initEnemyTurn : Model -> Model
 initEnemyTurn model =
-    case model.enemies |> List.map .uid of
-        [] ->
+    case model.enemies |> List.uncons of
+        Nothing ->
             model
 
-        current :: pending ->
-            { model | turn = EnemyTurn { current = current, pending = pending, ticks = 0 } }
+        Just ( current, pending ) ->
+            { model
+                | turn =
+                    EnemyTurn
+                        { current = current, pending = List.map .uid pending, ticks = 0 }
+            }
 
 
 stepEnemies : Model -> Model
@@ -708,7 +726,7 @@ viewGrid model =
                     False
 
                 EnemyTurn et ->
-                    et.current == uid
+                    et.current.uid == uid
 
         grid =
             MGrid.empty model.dimension
