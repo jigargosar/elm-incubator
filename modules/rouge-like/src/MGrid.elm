@@ -31,7 +31,7 @@ empty : Dimension -> MGrid a
 empty dimension_ =
     Dimension.toLocations dimension_
         |> List.map Location.toTuple
-        |> List.foldl (\p -> Dict.insert p Empty) Dict.empty
+        |> List.foldl (\k -> Dict.insert k Empty) Dict.empty
         |> MGrid dimension_
 
 

@@ -699,7 +699,7 @@ viewSlot slot =
                                             counter
                                                 |> counterProgress
 
-                                        ( dy, dx ) =
+                                        ( dx, dy ) =
                                             Location.map2 sub to from
                                                 |> Debug.log "debug"
                                                 |> Location.map (mul -32)

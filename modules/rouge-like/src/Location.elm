@@ -14,30 +14,32 @@ module Location exposing
     , up
     )
 
+import Basics.More exposing (..)
+
 
 type alias Location =
-    { y : Int
-    , x : Int
+    { x : Int
+    , y : Int
     }
 
 
-new =
-    Location
+new x y =
+    Location x y
 
 
 toTuple : Location -> ( Int, Int )
 toTuple p =
-    ( p.y, p.x )
+    ( p.x, p.y )
 
 
 map : (Int -> Int) -> Location -> Location
 map f l =
-    new (f l.y) (f l.x)
+    new (f l.x) (f l.y)
 
 
 map2 : (Int -> Int -> Int) -> Location -> Location -> Location
 map2 f a b =
-    new (f a.y b.y) (f a.x b.x)
+    new (f a.x b.x) (f a.y b.y)
 
 
 any : (Int -> Bool) -> Location -> Bool
@@ -46,8 +48,8 @@ any f x =
 
 
 fromTuple : ( Int, Int ) -> Location
-fromTuple ( r, c ) =
-    new r c
+fromTuple ( x, y ) =
+    new x y
 
 
 adjacentFS : List (Location -> Location)
@@ -56,9 +58,9 @@ adjacentFS =
 
 
 adjacent : Location -> List Location
-adjacent position =
+adjacent location =
     adjacentFS
-        |> List.map (\f -> f position)
+        |> List.map (\f -> f location)
 
 
 left : Location -> Location
@@ -91,17 +93,13 @@ mapRow f model =
     { model | y = f model.y }
 
 
-add =
-    (+)
-
-
 manhattanDistance : Location -> Location -> Int
 manhattanDistance a b =
     let
-        ( r, c ) =
+        ( x, y ) =
             toTuple a
 
-        ( r2, c2 ) =
+        ( x2, y2 ) =
             toTuple b
     in
-    abs (r2 - r) + abs (c2 - c)
+    abs (y2 - y) + abs (x2 - x)
