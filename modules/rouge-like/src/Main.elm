@@ -169,7 +169,9 @@ type Turn
 
 
 type alias EnemyTurnModel =
-    {}
+    { current : Uid
+    , pending : List Uid
+    }
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -304,15 +306,28 @@ stepPlayerInput playerInput model =
     case playerInput of
         StepInDirection direction ->
             computePlayerMove direction model
-                |> Maybe.map
+                |> Maybe.andThen
                     (\playerMove ->
                         model
                             |> performPlayerMove playerMove
-                            |> stepEnemies
+                            --|> stepEnemies
+                            |> initEnemyTurn
                     )
 
         StayPut ->
-            stepEnemies model |> Just
+            --stepEnemies model |> Just
+            initEnemyTurn model
+
+
+initEnemyTurn : Model -> Maybe Model
+initEnemyTurn model =
+    case model.enemies |> List.map .uid of
+        [] ->
+            Nothing
+
+        current :: pending ->
+            { model | turn = EnemyTurn { current = current, pending = pending } }
+                |> Just
 
 
 stepEnemies : Model -> Model
