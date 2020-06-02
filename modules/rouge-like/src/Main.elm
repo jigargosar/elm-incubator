@@ -355,14 +355,18 @@ selectNextEnemy et model =
         Just ( current, pendingEnemies ) ->
             { model
                 | turn =
-                    EnemyTurn
-                        { current = current
-                        , status = EnemyStarting
-                        , pendingIds = pendingEnemies
-                        , target = 10
-                        , elapsed = 0
-                        }
+                    EnemyTurn (etmInit current pendingEnemies)
             }
+
+
+etmInit : Enemy -> List Uid -> EnemyTurnModel
+etmInit current pendingIds =
+    { current = current
+    , status = EnemyStarting
+    , pendingIds = pendingIds
+    , target = 10
+    , elapsed = 0
+    }
 
 
 enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
@@ -425,16 +429,10 @@ initEnemyTurn model =
         Nothing ->
             model
 
-        Just ( current, pending ) ->
+        Just ( current, pendingEnemies ) ->
             { model
                 | turn =
-                    EnemyTurn
-                        { current = current
-                        , status = EnemyStarting
-                        , pendingIds = List.map .uid pending
-                        , target = 0
-                        , elapsed = 0
-                        }
+                    EnemyTurn (etmInit current (List.map .uid pendingEnemies))
             }
 
 
