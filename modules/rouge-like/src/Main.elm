@@ -199,44 +199,6 @@ isInvalidOrWall l model =
         || List.member l model.walls
 
 
-
---pathFromTo : Location -> Location -> Model -> List Location
---pathFromTo from to model =
---    let
---        neighbours : Int2 -> List ( Int2, Float )
---        neighbours pt =
---            Location.fromTuple pt
---                |> Location.adjacent
---                |> List.filterMap
---                    (\location ->
---                        if isInvalidOrWall location model then
---                            Nothing
---
---                        else
---                            Just ( Location.toTuple location, 1 )
---                    )
---
---        start : Int2
---        start =
---            Location.toTuple from
---
---        end : Int2
---        end =
---            Location.toTuple to
---
---        cost : Int2 -> Float
---        cost ( row, column ) =
---            let
---                ( er, ec ) =
---                    end
---            in
---            (abs (row - er) + abs (column - ec))
---                |> toFloat
---    in
---    AStarSearch.aStar neighbours cost start end
---        |> List.map Location.fromTuple
-
-
 type alias Flags =
     { now : Int }
 
@@ -385,11 +347,6 @@ enemiesFindFirst uidList enemies =
                     enemiesFindFirst xs enemies
 
 
-generate gen model0 =
-    Random.step gen model0.seed
-        |> (\( model, seed ) -> { model | seed = seed })
-
-
 type PlayerInput
     = StepInDirection Direction
     | StayPut
@@ -437,12 +394,6 @@ initEnemyTurn model =
             }
 
 
-stepEnemies : Model -> Model
-stepEnemies model0 =
-    Random.step (stepEnemiesGenerator model0) model0.seed
-        |> (\( model, seed ) -> { model | seed = seed })
-
-
 performPlayerMove : PlayerMove -> Model -> Model
 performPlayerMove playerMove model =
     case playerMove of
@@ -475,29 +426,6 @@ computePlayerMove direction model =
 
             Nothing ->
                 Just (PlayerSetLocation location)
-
-
-stepEnemiesGenerator : Model -> Generator Model
-stepEnemiesGenerator model =
-    model.enemies
-        |> List.map .uid
-        |> List.foldl
-            (\uid -> Random.andThen (stepEnemyByUid uid))
-            (Random.constant model)
-
-
-stepEnemyByUid : Uid -> Model -> Generator Model
-stepEnemyByUid uid model =
-    enemiesFind uid model.enemies
-        |> Maybe.andThen (\enemy -> stepEnemy enemy model)
-        |> Maybe.withDefault (Random.constant model)
-
-
-stepEnemy : Enemy -> Model -> Maybe (Generator Model)
-stepEnemy enemy model =
-    computeEnemyMoves enemy model
-        |> maybeUniformGenerator
-        |> Maybe.map (Random.map (\em -> performEnemyMove enemy.uid em model))
 
 
 computeEnemyMoves : Enemy -> Model -> List EnemyMove
@@ -554,21 +482,6 @@ betterEnemyMovesToWardsPlayer enemy model =
                 else
                     Nothing
             )
-
-
-
---computeMaybeEnemyMoveTowardsPlayer : Enemy -> Model -> Maybe EnemyMove
---computeMaybeEnemyMoveTowardsPlayer enemy model =
---    computeNextEnemyLocationToWardsPlayer enemy model
---        |> Maybe.andThen (\loc -> toEnemyMove loc model)
---computeNextEnemyLocationToWardsPlayer : Enemy -> Model -> Maybe Location
---computeNextEnemyLocationToWardsPlayer enemy model =
---    case pathFromTo enemy.location model.player model of
---        _ :: loc :: _ ->
---            Just loc
---
---        _ ->
---            Nothing
 
 
 type EnemyMove
