@@ -590,25 +590,32 @@ type Cell
 viewSlot : MGrid.Slot Cell -> HM
 viewSlot slot =
     let
-        wrap =
-            div [ class "w2 h2" ]
+        commonStyles =
+            class "w2 h2 flex items-center justify-center"
     in
     case slot of
         MGrid.Filled entity ->
             case entity of
                 Player isSelected hp ->
-                    wrap
+                    div
+                        [ commonStyles
+                        , if isSelected then
+                            class "outline"
+
+                          else
+                            class ""
+                        ]
                         [ text (String.fromInt hp)
                         ]
 
                 Enemy_ _ ->
-                    wrap [ text "e" ]
+                    div [ commonStyles ] [ text "e" ]
 
                 Wall ->
-                    wrap [ text "#" ]
+                    div [ commonStyles ] [ text "#" ]
 
         MGrid.Empty ->
-            wrap [ text "." ]
+            div [ commonStyles ] [ text "." ]
 
 
 viewGrid : Model -> HM
