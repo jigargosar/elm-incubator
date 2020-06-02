@@ -643,7 +643,7 @@ type alias HM =
 
 type Cell
     = Player Bool Int
-    | Enemy_ Enemy
+    | Enemy_ Bool
     | Wall
 
 
@@ -689,10 +689,18 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
+        isEnemySelected uid =
+            case model.turn of
+                PlayerTurn ->
+                    False
+
+                EnemyTurn et ->
+                    et.current == uid
+
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
-                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
+                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ (isEnemySelected e.uid) )) model.enemies)
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
