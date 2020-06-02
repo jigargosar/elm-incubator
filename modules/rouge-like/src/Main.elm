@@ -204,7 +204,7 @@ counterIsDone c =
 
 type EnemyStatus
     = EnemyStarting
-    | EnemyMoving EnemyMove
+    | EnemyMoving ( Location, Location )
     | EnemyEnding
 
 
@@ -305,7 +305,17 @@ update message model =
                                         in
                                         { model | seed = seed }
                                             |> performEnemyMove etm.current.uid em
-                                            |> setEnemyTurn (etmSetStatus (EnemyMoving em) etm)
+                                            |> setEnemyTurn
+                                                (etmSetStatus
+                                                    (case em of
+                                                        EnemySetLocation to ->
+                                                            EnemyMoving ( etm.current.location, to )
+
+                                                        _ ->
+                                                            EnemyEnding
+                                                    )
+                                                    etm
+                                                )
 
                             EnemyMoving _ ->
                                 model |> setEnemyTurn (etmSetStatus EnemyEnding etm)
@@ -648,7 +658,7 @@ type alias HM =
 
 type Cell
     = Player Bool Int
-    | Enemy_ (Maybe EnemyMove)
+    | Enemy_ (Maybe EnemyStatus)
     | Wall
 
 
@@ -703,19 +713,14 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
-        toEM uid =
+        toETMStatus uid =
             case model.turn of
                 PlayerTurn ->
                     Nothing
 
                 EnemyTurn et ->
                     if et.current.uid == uid then
-                        case et.status of
-                            EnemyMoving em ->
-                                Just em
-
-                            _ ->
-                                Nothing
+                        Just et.status
 
                     else
                         Nothing
@@ -723,7 +728,7 @@ viewGrid model =
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
-                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ (toEM e.uid) )) model.enemies)
+                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ (toETMStatus e.uid) )) model.enemies)
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
