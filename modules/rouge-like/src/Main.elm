@@ -702,9 +702,9 @@ viewSlot slot =
                                         ( dy, dx ) =
                                             Location.map2 sub to from
                                                 |> Debug.log "debug"
-                                                |> Location.map ((*) -32)
+                                                |> Location.map (mul -32)
                                                 |> Location.toTuple
-                                                |> Tuple.map (toFloat >> (*) (counterProgress counter))
+                                                |> Tuple.map (toFloat >> mul (counterProgress counter))
                                     in
                                     [ style "transform" ("translate(" ++ String.fromFloat dx ++ "px," ++ String.fromFloat dy ++ "px)") ]
 

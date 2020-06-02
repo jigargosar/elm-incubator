@@ -154,6 +154,15 @@ sub =
     (-)
 
 
+mul =
+    (*)
+
+
+toFloatScaled : Float -> Int -> Float
+toFloatScaled s i =
+    toFloat i * s
+
+
 absDiff a b =
     a - b |> abs
 
