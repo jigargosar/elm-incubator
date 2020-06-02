@@ -624,24 +624,6 @@ viewGrid model =
                 |> MGrid.fill model.walls Wall
                 |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ e )) model.enemies)
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
-
-        slotToChar slot =
-            case slot of
-                MGrid.Filled entity ->
-                    case entity of
-                        Player isSelected hp ->
-                            String.fromInt hp
-                                |> String.toList
-                                |> headOr '3'
-
-                        Enemy_ _ ->
-                            'e'
-
-                        Wall ->
-                            '#'
-
-                MGrid.Empty ->
-                    '.'
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
