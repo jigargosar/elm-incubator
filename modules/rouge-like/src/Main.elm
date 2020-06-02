@@ -337,7 +337,7 @@ etmInit current pendingIds =
     { current = current
     , status = EnemyStarting
     , pendingIds = pendingIds
-    , counter = counterInit 10
+    , counter = counterInit 20
     }
 
 
