@@ -303,7 +303,7 @@ update message model =
                     ( if et.elapsed >= et.target then
                         case et.status of
                             EnemyStarting ->
-                                { model | turn = EnemyTurn (enemyTurnModelStepStatus EnemyMoving et) }
+                                { model | turn = EnemyTurn (etmSetStatus EnemyMoving et) }
 
                             EnemyMoving ->
                                 case stepEnemy et.current model of
@@ -313,7 +313,7 @@ update message model =
                                     Just gen ->
                                         model
                                             |> generate gen
-                                            |> setEnemyTurn (enemyTurnModelStepStatus EnemyEnding et)
+                                            |> setEnemyTurn (etmSetStatus EnemyEnding et)
 
                             EnemyEnding ->
                                 selectNextEnemy et model
@@ -329,8 +329,8 @@ setEnemyTurn etm model =
     { model | turn = EnemyTurn etm }
 
 
-enemyTurnModelStepStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
-enemyTurnModelStepStatus status etm =
+etmSetStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
+etmSetStatus status etm =
     { etm | status = status, elapsed = 0, target = 10 }
 
 
