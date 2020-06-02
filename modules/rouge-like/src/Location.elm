@@ -23,8 +23,13 @@ type Location
 
 
 new : Int -> Int -> Location
-new x y =
-    Loc (pair x y)
+new =
+    curry fromTuple
+
+
+fromTuple : ( Int, Int ) -> Location
+fromTuple =
+    Loc
 
 
 toTuple : Location -> Int2
@@ -46,11 +51,6 @@ map2 f a b =
 any : (Int -> Bool) -> Location -> Bool
 any f =
     toTuple >> Tuple.any f
-
-
-fromTuple : ( Int, Int ) -> Location
-fromTuple ( x, y ) =
-    new x y
 
 
 adjacentFS : List (Location -> Location)
