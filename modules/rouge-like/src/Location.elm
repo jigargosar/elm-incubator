@@ -65,31 +65,31 @@ adjacent location =
 
 left : Location -> Location
 left =
-    mapColumn (add -1)
+    mapX (add -1)
 
 
 right : Location -> Location
 right =
-    mapColumn (add 1)
+    mapX (add 1)
 
 
 up : Location -> Location
 up =
-    mapRow (add -1)
+    mapY (add -1)
 
 
 down : Location -> Location
 down =
-    mapRow (add 1)
+    mapY (add 1)
 
 
-mapColumn : (Int -> Int) -> Location -> Location
-mapColumn f model =
+mapX : (Int -> Int) -> Location -> Location
+mapX f model =
     { model | x = f model.x }
 
 
-mapRow : (Int -> Int) -> Location -> Location
-mapRow f model =
+mapY : (Int -> Int) -> Location -> Location
+mapY f model =
     { model | y = f model.y }
 
 
