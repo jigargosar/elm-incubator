@@ -15,36 +15,36 @@ module Location exposing
     )
 
 import Basics.More exposing (..)
+import Tuple.More as Tuple
 
 
-type alias Location =
-    { x : Int
-    , y : Int
-    }
+type Location
+    = Loc Int Int
 
 
 new x y =
-    Location x y
+    Loc x y
 
 
 toTuple : Location -> ( Int, Int )
-toTuple p =
-    ( p.x, p.y )
+toTuple (Loc x y) =
+    ( x, y )
 
 
 map : (Int -> Int) -> Location -> Location
-map f l =
-    new (f l.x) (f l.y)
+map f =
+    toTuple >> Tuple.map f >> fromTuple
 
 
 map2 : (Int -> Int -> Int) -> Location -> Location -> Location
 map2 f a b =
-    new (f a.x b.x) (f a.y b.y)
+    Tuple.map2 f (toTuple a) (toTuple b)
+        |> fromTuple
 
 
 any : (Int -> Bool) -> Location -> Bool
-any f x =
-    f x.y || f x.x
+any f =
+    toTuple >> Tuple.any f
 
 
 fromTuple : ( Int, Int ) -> Location
@@ -84,13 +84,13 @@ down =
 
 
 mapX : (Int -> Int) -> Location -> Location
-mapX f location =
-    { location | x = f location.x }
+mapX f =
+    toTuple >> Tuple.mapFirst f >> fromTuple
 
 
 mapY : (Int -> Int) -> Location -> Location
-mapY f location =
-    { location | y = f location.y }
+mapY f =
+    toTuple >> Tuple.mapSecond f >> fromTuple
 
 
 manhattanDistance : Location -> Location -> Int
