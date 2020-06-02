@@ -348,15 +348,9 @@ etmSetStatus status etm =
 
 selectNextEnemy : EnemyTurnModel -> Model -> Model
 selectNextEnemy et model =
-    case enemiesFindFirst et.pendingIds model.enemies of
-        Nothing ->
-            { model | turn = PlayerTurn }
-
-        Just ( current, pendingEnemies ) ->
-            { model
-                | turn =
-                    EnemyTurn (etmInit current pendingEnemies)
-            }
+    etmSelectNextEnemy model.enemies et
+        |> Maybe.map (flip setEnemyTurn model)
+        |> Maybe.withDefault { model | turn = PlayerTurn }
 
 
 etmInit : Enemy -> List Uid -> EnemyTurnModel
@@ -367,6 +361,12 @@ etmInit current pendingIds =
     , target = 10
     , elapsed = 0
     }
+
+
+etmSelectNextEnemy : List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
+etmSelectNextEnemy enemies etm =
+    enemiesFindFirst etm.pendingIds enemies
+        |> Maybe.map (\( enemy, pendingIds ) -> etmInit enemy pendingIds)
 
 
 enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
