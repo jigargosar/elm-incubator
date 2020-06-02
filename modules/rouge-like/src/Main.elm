@@ -311,11 +311,9 @@ update message model =
                                         selectNextEnemy et model
 
                                     Just gen ->
-                                        let
-                                            nm =
-                                                generate gen model
-                                        in
-                                        { nm | turn = EnemyTurn (enemyTurnModelStepStatus EnemyEnding et) }
+                                        model
+                                            |> generate gen
+                                            |> setEnemyTurn (enemyTurnModelStepStatus EnemyEnding et)
 
                             EnemyEnding ->
                                 selectNextEnemy et model
@@ -324,6 +322,11 @@ update message model =
                         { model | turn = EnemyTurn { et | elapsed = et.elapsed + 1 } }
                     , Cmd.none
                     )
+
+
+setEnemyTurn : EnemyTurnModel -> Model -> Model
+setEnemyTurn etm model =
+    { model | turn = EnemyTurn etm }
 
 
 enemyTurnModelStepStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
