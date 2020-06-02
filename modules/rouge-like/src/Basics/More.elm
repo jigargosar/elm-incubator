@@ -7,6 +7,10 @@ type alias Int2 =
     ( Int, Int )
 
 
+type alias Float2 =
+    ( Float, Float )
+
+
 allPass : List (a -> Bool) -> a -> Bool
 allPass fs v =
     List.all ((|>) v) fs

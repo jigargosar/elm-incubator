@@ -1,6 +1,6 @@
-module Tuple.More exposing (andMap, any, apply, map, map2, sub)
+module Tuple.More exposing (andMap, any, apply, map, map2, sub, toFloatScaled)
 
-import Basics.More as Basics
+import Basics.More as Basics exposing (..)
 
 
 apply : (a -> b -> c) -> ( a, b ) -> c
@@ -16,6 +16,11 @@ any f ( a, b ) =
 map : (a -> x) -> ( a, a ) -> ( x, x )
 map f =
     Tuple.mapBoth f f
+
+
+toFloatScaled : Float -> Int2 -> Float2
+toFloatScaled s =
+    map (Basics.toFloatScaled s)
 
 
 map2 : (a -> b -> c) -> ( a, a ) -> ( b, b ) -> ( c, c )

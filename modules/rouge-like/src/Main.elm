@@ -700,7 +700,7 @@ viewSlot slot =
 
                                         ( dx, dy ) =
                                             Tuple.sub to from
-                                                |> Tuple.map (toFloatScaled (-32 * counterProgress counter))
+                                                |> Tuple.toFloatScaled (-32 * counterProgress counter)
                                     in
                                     [ style "transform" ("translate(" ++ String.fromFloat dx ++ "px," ++ String.fromFloat dy ++ "px)") ]
 
