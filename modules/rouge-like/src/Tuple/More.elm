@@ -1,11 +1,6 @@
-module Tuple.More exposing (andMap, any, apply, map, map2, sub, toFloatScaled)
+module Tuple.More exposing (andMap, any, fromFloat, join, map, map2, sub, toFloat, toFloatScaled)
 
 import Basics.More as Basics exposing (..)
-
-
-apply : (a -> b -> c) -> ( a, b ) -> c
-apply f ( a, b ) =
-    f a b
 
 
 any : (a -> Bool) -> ( a, a ) -> Bool
@@ -23,6 +18,16 @@ toFloatScaled s =
     map (Basics.toFloatScaled s)
 
 
+toFloat : ( Int, Int ) -> ( Float, Float )
+toFloat =
+    map Basics.toFloat
+
+
+fromFloat : ( Float, Float ) -> ( String, String )
+fromFloat =
+    map String.fromFloat
+
+
 map2 : (a -> b -> c) -> ( a, a ) -> ( b, b ) -> ( c, c )
 map2 f ( a1, a2 ) ( b1, b2 ) =
     ( f a1 b1, f a2 b2 )
@@ -36,3 +41,8 @@ sub =
 andMap : ( a, a ) -> ( a -> b, a -> b ) -> ( b, b )
 andMap =
     map2 (|>)
+
+
+join : appendable -> ( appendable, appendable ) -> appendable
+join sep ( a, b ) =
+    a ++ sep ++ b

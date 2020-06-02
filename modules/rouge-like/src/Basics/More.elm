@@ -179,3 +179,26 @@ maybeUniformGenerator l =
 
         x :: xs ->
             Random.uniform x xs |> Just
+
+
+appendWith : appendable -> appendable -> appendable
+appendWith b a =
+    a ++ b
+
+
+pxFromFloat : Float -> String
+pxFromFloat =
+    String.fromFloat >> appendWith "px"
+
+
+surround : appendable -> appendable -> appendable -> appendable
+surround a b x =
+    a ++ x ++ b
+
+
+paren =
+    surround "(" ")"
+
+
+append =
+    (++)
