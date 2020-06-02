@@ -278,8 +278,8 @@ update message model =
                                         |> maybeUniformGenerator
                                 of
                                     Nothing ->
-                                        selectNextEnemy etm model
-                                            |> Maybe.withDefault { model | turn = PlayerTurn }
+                                        model
+                                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
 
                                     Just emGen ->
                                         let
@@ -291,11 +291,12 @@ update message model =
                                             |> setEnemyTurn (etmSetStatus EnemyEnding etm)
 
                             EnemyEnding ->
-                                selectNextEnemy etm model
+                                etmSelectNextEnemy model.enemies etm
+                                    |> Maybe.map (flip setEnemyTurn model)
                                     |> Maybe.withDefault { model | turn = PlayerTurn }
 
                       else
-                        { model | turn = EnemyTurn { etm | elapsed = etm.elapsed + 1 } }
+                        model |> setEnemyTurn { etm | elapsed = etm.elapsed + 1 }
                     , Cmd.none
                     )
 
@@ -308,12 +309,6 @@ setEnemyTurn etm model =
 etmSetStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
 etmSetStatus status etm =
     { etm | status = status, elapsed = 0, target = 10 }
-
-
-selectNextEnemy : EnemyTurnModel -> Model -> Maybe Model
-selectNextEnemy et model =
-    etmSelectNextEnemy model.enemies et
-        |> Maybe.map (flip setEnemyTurn model)
 
 
 etmInit : Enemy -> List Uid -> EnemyTurnModel
