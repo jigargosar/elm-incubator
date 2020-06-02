@@ -292,7 +292,7 @@ update message model =
                     ( model, Cmd.none )
 
                 EnemyTurn et ->
-                    ( if et.ticks >= 10 then
+                    ( if et.ticks >= 20 then
                         enemiesFind et.current model.enemies
                             |> Maybe.andThen (\enemy -> stepEnemy enemy model)
                             |> Maybe.map (\gen -> generate gen model)
