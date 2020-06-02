@@ -178,9 +178,9 @@ type alias EnemyTurnModel =
 
 
 type EnemyStatus
-    = EnemyStart
+    = EnemyStarting
     | EnemyMoving
-    | EnemyEnd
+    | EnemyEnding
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -302,8 +302,8 @@ update message model =
                 EnemyTurn et ->
                     ( if et.elapsed >= et.target then
                         case et.status of
-                            EnemyStart ->
-                                { model | turn = EnemyTurn { et | status = EnemyMoving, elapsed = 0, target = 10 } }
+                            EnemyStarting ->
+                                { model | turn = EnemyTurn (enemyTurnModelStepStatus EnemyMoving et) }
 
                             EnemyMoving ->
                                 case stepEnemy et.current model of
@@ -315,15 +315,20 @@ update message model =
                                             nm =
                                                 generate gen model
                                         in
-                                        { nm | turn = EnemyTurn { et | status = EnemyEnd, elapsed = 0, target = 10 } }
+                                        { nm | turn = EnemyTurn (enemyTurnModelStepStatus EnemyEnding et) }
 
-                            EnemyEnd ->
+                            EnemyEnding ->
                                 selectNextEnemy et model
 
                       else
                         { model | turn = EnemyTurn { et | elapsed = et.elapsed + 1 } }
                     , Cmd.none
                     )
+
+
+enemyTurnModelStepStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
+enemyTurnModelStepStatus status etm =
+    { etm | status = status, elapsed = 0, target = 10 }
 
 
 selectNextEnemy : EnemyTurnModel -> Model -> Model
@@ -337,7 +342,7 @@ selectNextEnemy et model =
                 | turn =
                     EnemyTurn
                         { current = current
-                        , status = EnemyStart
+                        , status = EnemyStarting
                         , pendingIds = pendingEnemies
                         , target = 10
                         , elapsed = 0
@@ -410,7 +415,7 @@ initEnemyTurn model =
                 | turn =
                     EnemyTurn
                         { current = current
-                        , status = EnemyStart
+                        , status = EnemyStarting
                         , pendingIds = List.map .uid pending
                         , target = 0
                         , elapsed = 0
