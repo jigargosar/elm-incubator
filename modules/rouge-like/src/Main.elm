@@ -260,6 +260,7 @@ init flags =
 type Msg
     = NoOp
     | KeyDown String
+    | Tick
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -283,6 +284,24 @@ update message model =
 
                 EnemyTurn _ ->
                     ( model, Cmd.none )
+
+        Tick ->
+            case model.turn of
+                PlayerTurn ->
+                    ( model, Cmd.none )
+
+                EnemyTurn et ->
+                    ( enemiesFind et.current model.enemies
+                        |> Maybe.andThen (\enemy -> stepEnemy enemy model)
+                        |> Maybe.map (\gen -> generate gen model)
+                        |> Maybe.withDefault model
+                    , Cmd.none
+                    )
+
+
+generate gen model0 =
+    Random.step gen model0.seed
+        |> (\( model, seed ) -> { model | seed = seed })
 
 
 type PlayerInput
@@ -536,12 +555,18 @@ type Direction
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
+subscriptions model =
     Sub.batch
         [ Browser.Events.onKeyDown
             (JD.field "key" JD.string
                 |> JD.map KeyDown
             )
+        , case model.turn of
+            PlayerTurn ->
+                Sub.none
+
+            EnemyTurn _ ->
+                Browser.Events.onAnimationFrameDelta (always Tick)
         ]
 
 
