@@ -683,10 +683,20 @@ viewSlot slot =
                         [ text (String.fromInt hp)
                         ]
 
-                Enemy_ maybeEM ->
+                Enemy_ maybeES ->
+                    let
+                        _ =
+                            case maybeES of
+                                Just (EnemyMoving ( from, to )) ->
+                                    []
+
+                                _ ->
+                                    []
+                    in
                     div
                         [ commonStyles
-                        , case maybeEM of
+                        , class ""
+                        , case maybeES of
                             Just _ ->
                                 class "outline"
 
