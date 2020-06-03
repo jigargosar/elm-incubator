@@ -813,6 +813,19 @@ type Cell
     | Wall
 
 
+cssTranslate : ( Float, Float ) -> String
+cssTranslate dxy =
+    dxy
+        |> Tuple.map pxFromFloat
+        |> Tuple.join ","
+        |> paren
+        |> append "translate"
+
+
+cssTransform xs =
+    style "transform" (String.join ", " xs)
+
+
 viewSlot : Clock -> Location -> MGrid.Slot Cell -> HM
 viewSlot clock location slot =
     let
@@ -844,15 +857,8 @@ viewSlot clock location slot =
                                             Tuple.map Location.toTuple fromTo
                                                 |> uncurry Tuple.sub
                                                 |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
-
-                                        ts =
-                                            dxy
-                                                |> Tuple.map pxFromFloat
-                                                |> Tuple.join ","
-                                                |> paren
-                                                |> append "translate"
                                     in
-                                    [ style "transform" ts ]
+                                    [ cssTransform [ cssTranslate dxy ] ]
 
                                 _ ->
                                     []
