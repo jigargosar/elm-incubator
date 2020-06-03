@@ -157,6 +157,11 @@ type alias Enemy =
     }
 
 
+enemyToId : Enemy -> Uid
+enemyToId =
+    .id
+
+
 newEnemy : Location -> Generator Enemy
 newEnemy location =
     newUid
@@ -216,13 +221,23 @@ uidDictInsert uid =
     Dict.insert (uidToInt uid)
 
 
+uidDictInsertBy : (a -> Uid) -> a -> UidDict a -> UidDict a
+uidDictInsertBy f a =
+    uidDictInsert (f a) a
+
+
 type alias EnemyUidDict =
     UidDict Enemy
 
 
+enemyUidDictInsert : Enemy -> EnemyUidDict -> EnemyUidDict
+enemyUidDictInsert =
+    uidDictInsertBy enemyToId
+
+
 enemiesToIdDict : List Enemy -> EnemyUidDict
 enemiesToIdDict =
-    List.foldl (\e -> uidDictInsert e.id e) Dict.empty
+    List.foldl (uidDictInsertBy .id) Dict.empty
 
 
 
