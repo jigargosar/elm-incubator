@@ -440,8 +440,12 @@ etmInit clock current pendingIds =
     { current = current
     , status = EnemyStarting
     , pendingIds = pendingIds
-    , timer = timerInit clock 40
+    , timer = timerInit clock (ticksToMillis 40)
     }
+
+
+ticksToMillis =
+    mul (1000 / 60)
 
 
 etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
