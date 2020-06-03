@@ -17,6 +17,46 @@ import Tuple.More as Tuple
 
 
 
+-- Counter
+
+
+type alias Counter =
+    { elapsed : Float
+    , target : Float
+    }
+
+
+counterInit : Float -> Counter
+counterInit target =
+    { elapsed = 0, target = target }
+
+
+counterProgress : Counter -> Float
+counterProgress c =
+    clamp 0 c.target c.elapsed / c.target
+
+
+counterPendingProgress : Counter -> Float
+counterPendingProgress c =
+    1 - counterProgress c
+
+
+counterReset : Counter -> Counter
+counterReset c =
+    { c | elapsed = 0 }
+
+
+counterTick : Counter -> Counter
+counterTick c =
+    { c | elapsed = c.elapsed + 1 }
+
+
+counterIsDone : Counter -> Bool
+counterIsDone c =
+    c.elapsed >= c.target
+
+
+
 -- UID
 
 
@@ -175,42 +215,6 @@ type alias EnemyTurnModel =
     , pendingIds : List Uid
     , counter : Counter
     }
-
-
-type alias Counter =
-    { elapsed : Float
-    , target : Float
-    }
-
-
-counterInit : Float -> Counter
-counterInit target =
-    { elapsed = 0, target = target }
-
-
-counterProgress : Counter -> Float
-counterProgress c =
-    clamp 0 c.target c.elapsed / c.target
-
-
-counterPendingProgress : Counter -> Float
-counterPendingProgress c =
-    1 - counterProgress c
-
-
-counterReset : Counter -> Counter
-counterReset c =
-    { c | elapsed = 0 }
-
-
-counterTick : Counter -> Counter
-counterTick c =
-    { c | elapsed = c.elapsed + 1 }
-
-
-counterIsDone : Counter -> Bool
-counterIsDone c =
-    c.elapsed >= c.target
 
 
 type EnemyStatus
