@@ -211,6 +211,9 @@ type alias WorldBuilder =
 newWorldBuilder : Dimension -> Generator WorldBuilder
 newWorldBuilder dimension =
     let
+        playerLocation =
+            Location.new 5 5
+
         acc : WorldBuilder
         acc =
             { empty =
@@ -221,9 +224,6 @@ newWorldBuilder dimension =
             , walls = []
             , enemies = []
             }
-
-        playerLocation =
-            Location.new 5 5
     in
     wallsGenerator acc
         |> Random.andThen enemiesGenerator
