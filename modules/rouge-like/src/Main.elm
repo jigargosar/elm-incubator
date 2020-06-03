@@ -848,6 +848,7 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
+        toETMStatus : Uid -> Maybe ( EnemyStatus, Timer )
         toETMStatus uid =
             case model.turn of
                 PlayerTurn ->
