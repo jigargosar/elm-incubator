@@ -970,6 +970,7 @@ viewGrid model =
         [ div
             [ style "width" (String.fromInt (model.dimension.width * 32) ++ "px")
             , style "height" (String.fromInt (model.dimension.height * 32) ++ "px")
+            , class "relative"
             ]
             (grid
                 |> MGrid.viewRows (\_ -> div [ class "flex" ])
