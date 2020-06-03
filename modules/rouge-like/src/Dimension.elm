@@ -38,5 +38,5 @@ containsLocation location dimension =
         ( x, y ) =
             Location.toTuple location
     in
-    Index.memberOf dimension.width y
-        && Index.memberOf dimension.height x
+    Index.memberOf dimension.width x
+        && Index.memberOf dimension.height y
