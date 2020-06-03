@@ -249,6 +249,7 @@ type alias Model =
     , walls : List Location
     , enemies : List Enemy
     , turn : Turn
+    , clock : Clock
     , seed : Seed
     }
 
@@ -307,6 +308,7 @@ init flags =
       , walls = acc.walls
       , enemies = acc.enemies
       , turn = PlayerTurn
+      , clock = clockZero
       , seed = seed
       }
     , Cmd.none
