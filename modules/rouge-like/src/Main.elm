@@ -343,6 +343,46 @@ type alias EnemyTurnModel =
     }
 
 
+etmSetStatus : Clock -> EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
+etmSetStatus clock status etm =
+    { etm | status = status, timer = timerReset clock etm.timer }
+
+
+etmInit : Clock -> Enemy -> List Uid -> EnemyTurnModel
+etmInit clock enemy pendingIds =
+    { currentId = enemyToId enemy
+    , status = EnemyStarting enemy.location
+    , pendingIds = pendingIds
+    , timer = timerInit clock defaultAnimSpeed
+    }
+
+
+etmCurrentId : EnemyTurnModel -> Uid
+etmCurrentId =
+    .currentId
+
+
+etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
+etmSelectNextEnemy clock enemies etm =
+    enemiesFindFirst etm.pendingIds enemies
+        |> Maybe.map (\( enemy, pendingIds ) -> etmInit clock enemy pendingIds)
+
+
+enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
+enemiesFindFirst uidList enemies =
+    case uidList of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            case enemiesFind x enemies of
+                Just enemy ->
+                    Just ( enemy, xs )
+
+                Nothing ->
+                    enemiesFindFirst xs enemies
+
+
 type EnemyStatus
     = EnemyStarting Location
     | EnemyMoving ( Location, Location )
@@ -490,46 +530,6 @@ updateEnemyTurnOnTick etm model =
 setEnemyTurn : EnemyTurnModel -> Model -> Model
 setEnemyTurn etm model =
     { model | turn = EnemyTurn etm }
-
-
-etmSetStatus : Clock -> EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
-etmSetStatus clock status etm =
-    { etm | status = status, timer = timerReset clock etm.timer }
-
-
-etmInit : Clock -> Enemy -> List Uid -> EnemyTurnModel
-etmInit clock enemy pendingIds =
-    { currentId = enemyToId enemy
-    , status = EnemyStarting enemy.location
-    , pendingIds = pendingIds
-    , timer = timerInit clock defaultAnimSpeed
-    }
-
-
-etmCurrentId : EnemyTurnModel -> Uid
-etmCurrentId =
-    .currentId
-
-
-etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
-etmSelectNextEnemy clock enemies etm =
-    enemiesFindFirst etm.pendingIds enemies
-        |> Maybe.map (\( enemy, pendingIds ) -> etmInit clock enemy pendingIds)
-
-
-enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
-enemiesFindFirst uidList enemies =
-    case uidList of
-        [] ->
-            Nothing
-
-        x :: xs ->
-            case enemiesFind x enemies of
-                Just enemy ->
-                    Just ( enemy, xs )
-
-                Nothing ->
-                    enemiesFindFirst xs enemies
 
 
 type PlayerInput
