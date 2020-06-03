@@ -200,7 +200,7 @@ enemiesFind uid enemies =
 -- World Generator
 
 
-type alias WorldBuilder =
+type alias WorldLocations =
     { empty : List Location
     , player : Location
     , walls : List Location
@@ -208,10 +208,10 @@ type alias WorldBuilder =
     }
 
 
-newWorldBuilder : Dimension -> Generator WorldBuilder
-newWorldBuilder dimension =
+worldLocationsGenerator : Dimension -> Generator WorldLocations
+worldLocationsGenerator dimension =
     let
-        acc : Location -> WorldBuilder
+        acc : Location -> WorldLocations
         acc playerLocation =
             { empty =
                 dimension
@@ -235,7 +235,7 @@ playerGenerator dimension =
         |> Maybe.withDefault (Random.constant Location.zero)
 
 
-enemiesGenerator : WorldBuilder -> Generator WorldBuilder
+enemiesGenerator : WorldLocations -> Generator WorldLocations
 enemiesGenerator acc =
     shuffleSplit 8 acc.empty
         |> Random.andThen
@@ -250,7 +250,7 @@ enemiesGenerator acc =
             )
 
 
-wallsGenerator : WorldBuilder -> Generator WorldBuilder
+wallsGenerator : WorldLocations -> Generator WorldLocations
 wallsGenerator acc =
     shuffleSplit 20 acc.empty
         |> Random.map
@@ -328,7 +328,7 @@ init flags =
             Dimension.new 12 16
 
         ( acc, seed ) =
-            Random.step (newWorldBuilder dimension) (Random.initialSeed flags.now)
+            Random.step (worldLocationsGenerator dimension) (Random.initialSeed flags.now)
     in
     ( { dimension = dimension
       , player = acc.player
