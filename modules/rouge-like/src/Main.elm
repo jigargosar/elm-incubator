@@ -335,12 +335,22 @@ type Turn
     | EnemyTurn EnemyTurnModel
 
 
+
+-- EnemyTurnModel
+
+
 type alias EnemyTurnModel =
     { currentId : Uid
     , status : EnemyStatus
     , pendingIds : List Uid
     , timer : Timer
     }
+
+
+type EnemyStatus
+    = EnemyStarting Location
+    | EnemyMoving ( Location, Location )
+    | EnemyEnding
 
 
 etmSetStatus : Clock -> EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
@@ -381,12 +391,6 @@ enemiesFindFirst uidList enemies =
 
                 Nothing ->
                     enemiesFindFirst xs enemies
-
-
-type EnemyStatus
-    = EnemyStarting Location
-    | EnemyMoving ( Location, Location )
-    | EnemyEnding
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
