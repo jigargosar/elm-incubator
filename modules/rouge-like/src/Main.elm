@@ -698,7 +698,7 @@ viewSlot slot =
                                         dxy =
                                             Tuple.map Location.toTuple fromTo
                                                 |> uncurry Tuple.sub
-                                                |> Tuple.toFloatScaled (-32 * counterProgress counter)
+                                                |> Tuple.toFloatScaled (32 * (1 - counterProgress counter))
 
                                         ts =
                                             dxy
