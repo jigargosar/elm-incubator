@@ -12,6 +12,7 @@ module Location exposing
     , right
     , toTuple
     , up
+    , zero
     )
 
 import Basics.More exposing (..)
@@ -25,6 +26,11 @@ type Location
 new : Int -> Int -> Location
 new =
     curry fromTuple
+
+
+zero : Location
+zero =
+    new 0 0
 
 
 fromTuple : ( Int, Int ) -> Location
