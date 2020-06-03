@@ -152,7 +152,7 @@ uidToInt (Uid i) =
 
 
 type alias Enemy =
-    { uid : Uid
+    { id : Uid
     , location : Location
     }
 
@@ -162,7 +162,7 @@ newEnemy location =
     newUid
         |> Random.map
             (\uid ->
-                { uid = uid
+                { id = uid
                 , location = location
                 }
             )
@@ -180,7 +180,7 @@ enemySetLocation location enemy =
 
 enemyIdEq : Uid -> Enemy -> Bool
 enemyIdEq uid enemy =
-    enemy.uid == uid
+    enemy.id == uid
 
 
 
@@ -217,7 +217,7 @@ type alias EnemyUidDict =
 
 enemiesToIdDict : List Enemy -> EnemyUidDict
 enemiesToIdDict =
-    List.foldl (\e -> uidDictInsert e.uid e) Dict.empty
+    List.foldl (\e -> uidDictInsert e.id e) Dict.empty
 
 
 
@@ -438,7 +438,7 @@ updateEnemyTurnOnTick etm model =
                                 Random.step emGen model.seed
                         in
                         { model | seed = seed }
-                            |> performEnemyMove etm.current.uid em
+                            |> performEnemyMove etm.current.id em
                             |> setEnemyTurn
                                 (etmSetStatus model.clock
                                     (case em of
@@ -546,7 +546,7 @@ initEnemyTurn model =
         Just ( current, pendingEnemies ) ->
             { model
                 | turn =
-                    EnemyTurn (etmInit model.clock current (List.map .uid pendingEnemies))
+                    EnemyTurn (etmInit model.clock current (List.map .id pendingEnemies))
             }
 
 
@@ -558,7 +558,7 @@ performPlayerMove playerMove model =
 
         PlayerAttackEnemy enemy ->
             { model | player = enemy.location }
-                |> mapEnemies (enemiesRemove enemy.uid)
+                |> mapEnemies (enemiesRemove enemy.id)
 
 
 type PlayerMove
@@ -613,7 +613,7 @@ performEnemyMove uid enemyMove model =
 
         EnemyAttackEnemy victim ->
             model
-                |> mapEnemies (enemiesRemove victim.uid)
+                |> mapEnemies (enemiesRemove victim.id)
 
         EnemySetLocation location ->
             model
