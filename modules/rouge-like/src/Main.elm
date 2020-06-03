@@ -350,10 +350,14 @@ update message model =
         Tick delta ->
             case model.turn of
                 PlayerTurn ->
-                    ( model, Cmd.none )
+                    ( model
+                        |> stepClock delta
+                    , Cmd.none
+                    )
 
                 EnemyTurn etm ->
                     ( updateEnemyTurnOnTick etm model
+                        |> stepClock delta
                     , Cmd.none
                     )
 
