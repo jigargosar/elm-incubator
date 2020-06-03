@@ -757,7 +757,7 @@ view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
-        , div [ class "flex relative" ]
+        , div [ class "flex" ]
             [ viewGrid model
             , viewOverlay model
             ]
@@ -967,10 +967,15 @@ viewGrid model =
             toGridView model
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
-        (grid
-            |> MGrid.viewRows (\_ -> div [ class "flex" ])
-                (viewSlot model.clock)
-        )
+        [ div
+            [ style "width" (String.fromInt (model.dimension.width * 32) ++ "px")
+            , style "height" (String.fromInt (model.dimension.height * 32) ++ "px")
+            ]
+            (grid
+                |> MGrid.viewRows (\_ -> div [ class "flex" ])
+                    (viewSlot model.clock)
+            )
+        ]
 
 
 
