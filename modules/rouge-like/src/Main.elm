@@ -533,12 +533,10 @@ stepPlayerInput playerInput model =
                     (\playerMove ->
                         model
                             |> performPlayerMove playerMove
-                            --|> stepEnemies
                             |> initEnemyTurn
                     )
 
         StayPut ->
-            --stepEnemies model |> Just
             initEnemyTurn model |> Just
 
 
