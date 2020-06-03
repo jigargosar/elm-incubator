@@ -3,6 +3,7 @@ module Main exposing (main)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
+import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
@@ -141,6 +142,11 @@ newUid =
         |> Random.map Uid
 
 
+uidToInt : Uid -> Int
+uidToInt (Uid i) =
+    i
+
+
 
 --
 
@@ -194,6 +200,24 @@ enemiesUpdate id =
 enemiesFind : Uid -> List Enemy -> Maybe Enemy
 enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
+
+
+type alias UidDict a =
+    Dict Int a
+
+
+uidDictInsert : Uid -> a -> UidDict a -> UidDict a
+uidDictInsert uid =
+    Dict.insert (uidToInt uid)
+
+
+type alias EnemyUidDict =
+    UidDict Enemy
+
+
+enemiesToIdDict : List Enemy -> EnemyUidDict
+enemiesToIdDict =
+    List.foldl (\e -> uidDictInsert e.uid e) Dict.empty
 
 
 
