@@ -506,6 +506,11 @@ etmInit clock current pendingIds =
     }
 
 
+etmCurrentId : EnemyTurnModel -> Uid
+etmCurrentId =
+    .current >> .id
+
+
 etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
 etmSelectNextEnemy clock enemies etm =
     enemiesFindFirst etm.pendingIds enemies
@@ -879,11 +884,6 @@ viewSlot clock slot =
 
         MGrid.Empty ->
             div [ commonStyles ] [ text "." ]
-
-
-etmCurrentId : EnemyTurnModel -> Uid
-etmCurrentId =
-    .current >> .id
 
 
 viewGrid : Model -> HM
