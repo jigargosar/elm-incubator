@@ -211,8 +211,6 @@ type alias WorldBuilder =
 newWorldBuilder : Dimension -> Generator WorldBuilder
 newWorldBuilder dimension =
     let
-        --playerLocation =
-        --    Location.new 5 5
         acc : Location -> WorldBuilder
         acc playerLocation =
             { empty =
