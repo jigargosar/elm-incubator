@@ -813,8 +813,8 @@ type Cell
     | Wall
 
 
-viewSlot : Clock -> MGrid.Slot Cell -> HM
-viewSlot clock slot =
+viewSlot : Clock -> Location -> MGrid.Slot Cell -> HM
+viewSlot clock location slot =
     let
         commonStyles =
             class "w2 h2 flex items-center justify-center"
@@ -930,7 +930,7 @@ viewGrid model =
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
             |> MGrid.viewRows (\_ -> div [ class "flex" ])
-                (\_ slot -> viewSlot model.clock slot)
+                (viewSlot model.clock)
         )
 
 
