@@ -449,7 +449,7 @@ updateEnemyTurnOnTick etm model =
         case etm.status of
             EnemyStarting startLocation ->
                 case
-                    computeEnemyMoves etm.current model
+                    computeEnemyMoves startLocation model
                         |> maybeUniformGenerator
                 of
                     Nothing ->
@@ -609,22 +609,22 @@ computePlayerMove direction model =
                 Just (PlayerSetLocation location)
 
 
-computeEnemyMoves : Enemy -> Model -> List EnemyMove
-computeEnemyMoves enemy model =
-    if isPlayerOutOfEnemyRange enemy model then
-        plausibleEnemyMoves enemy model
+computeEnemyMoves : Location -> Model -> List EnemyMove
+computeEnemyMoves enemyLocation model =
+    if isPlayerOutOfEnemyRange enemyLocation model then
+        plausibleEnemyMoves enemyLocation model
 
     else
-        betterEnemyMovesToWardsPlayer enemy model
+        betterEnemyMovesToWardsPlayer enemyLocation model
 
 
-isPlayerOutOfEnemyRange : Enemy -> Model -> Bool
-isPlayerOutOfEnemyRange enemy model =
+isPlayerOutOfEnemyRange : Location -> Model -> Bool
+isPlayerOutOfEnemyRange enemyLocation model =
     let
         outOfRange diff =
             abs diff >= 5
     in
-    Location.map2 sub model.player enemy.location
+    Location.map2 sub model.player enemyLocation
         |> Location.any outOfRange
 
 
@@ -645,16 +645,16 @@ performEnemyMove uid enemyMove model =
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
 
-betterEnemyMovesToWardsPlayer : Enemy -> Model -> List EnemyMove
-betterEnemyMovesToWardsPlayer enemy model =
+betterEnemyMovesToWardsPlayer : Location -> Model -> List EnemyMove
+betterEnemyMovesToWardsPlayer enemyLocation model =
     let
         currentDistance =
-            Location.manhattanDistance enemy.location model.player
+            Location.manhattanDistance enemyLocation model.player
 
         isBetter newLocation =
             Location.manhattanDistance newLocation model.player < currentDistance
     in
-    Location.adjacent enemy.location
+    Location.adjacent enemyLocation
         |> List.filterMap
             (\location ->
                 if isBetter location then
@@ -671,9 +671,9 @@ type EnemyMove
     | EnemyAttackEnemy Enemy
 
 
-plausibleEnemyMoves : Enemy -> Model -> List EnemyMove
-plausibleEnemyMoves enemy model =
-    Location.adjacent enemy.location
+plausibleEnemyMoves : Location -> Model -> List EnemyMove
+plausibleEnemyMoves enemyLocation model =
+    Location.adjacent enemyLocation
         |> List.filterMap (\location -> toEnemyMove location model)
 
 
