@@ -756,7 +756,7 @@ view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
-        , div [ class "flex" ]
+        , div [ class "flex relative" ]
             [ viewGrid model
             , viewOverlay model
             ]
