@@ -921,12 +921,15 @@ viewGrid model =
         initEnemyCellEntry enemy =
             ( enemy.location, Enemy_ Nothing )
 
+        setEnemies =
+            MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
+                >> setCurrentEnemy
+
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
-                |> MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
+                |> setEnemies
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
-                |> setCurrentEnemy
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
