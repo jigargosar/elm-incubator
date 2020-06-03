@@ -322,7 +322,7 @@ init flags =
 type Msg
     = NoOp
     | KeyDown String
-    | Tick
+    | Tick Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -347,7 +347,7 @@ update message model =
                 EnemyTurn _ ->
                     ( model, Cmd.none )
 
-        Tick ->
+        Tick delta ->
             case model.turn of
                 PlayerTurn ->
                     ( model, Cmd.none )
@@ -657,7 +657,7 @@ subscriptions model =
                 Sub.none
 
             EnemyTurn _ ->
-                Browser.Events.onAnimationFrameDelta (always Tick)
+                Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
