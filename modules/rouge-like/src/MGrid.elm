@@ -7,6 +7,7 @@ module MGrid exposing
     , setAll
     , setAllEntriesBy
     , setEntry
+    , setMaybeEntry
     , viewRows
     )
 
@@ -40,6 +41,16 @@ empty dimension_ =
 setAll : List ( Location, a ) -> MGrid a -> MGrid a
 setAll list g =
     List.foldl (uncurry set) g list
+
+
+setMaybeEntry : Maybe ( Location, a ) -> MGrid a -> MGrid a
+setMaybeEntry mx =
+    case mx of
+        Just x ->
+            setEntry x
+
+        Nothing ->
+            identity
 
 
 setAllEntriesBy : (a -> ( Location, b )) -> List a -> MGrid b -> MGrid b

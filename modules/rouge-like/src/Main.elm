@@ -27,45 +27,44 @@ ticksToMillis =
 
 
 -- Counter
+{-
+
+   type alias Counter =
+       { elapsed : Float
+       , target : Float
+       }
 
 
-type alias Counter =
-    { elapsed : Float
-    , target : Float
-    }
+   counterInit : Float -> Counter
+   counterInit target =
+       { elapsed = 0, target = target }
 
 
-counterInit : Float -> Counter
-counterInit target =
-    { elapsed = 0, target = target }
+   counterProgress : Counter -> Float
+   counterProgress c =
+       clamp 0 c.target c.elapsed / c.target
 
 
-counterProgress : Counter -> Float
-counterProgress c =
-    clamp 0 c.target c.elapsed / c.target
+   counterPendingProgress : Counter -> Float
+   counterPendingProgress c =
+       1 - counterProgress c
 
 
-counterPendingProgress : Counter -> Float
-counterPendingProgress c =
-    1 - counterProgress c
+   counterReset : Counter -> Counter
+   counterReset c =
+       { c | elapsed = 0 }
 
 
-counterReset : Counter -> Counter
-counterReset c =
-    { c | elapsed = 0 }
+   counterTick : Counter -> Counter
+   counterTick c =
+       { c | elapsed = c.elapsed + 1 }
 
 
-counterTick : Counter -> Counter
-counterTick c =
-    { c | elapsed = c.elapsed + 1 }
+   counterIsDone : Counter -> Bool
+   counterIsDone c =
+       c.elapsed >= c.target
 
-
-counterIsDone : Counter -> Bool
-counterIsDone c =
-    c.elapsed >= c.target
-
-
-
+-}
 -- Timer
 
 
@@ -212,39 +211,30 @@ enemiesToIds =
     List.map .id
 
 
-type alias UidDict a =
-    Dict Int a
 
-
-uidDictInsert : Uid -> a -> UidDict a -> UidDict a
-uidDictInsert uid =
-    Dict.insert (uidToInt uid)
-
-
-uidDictInsertBy : (a -> Uid) -> a -> UidDict a -> UidDict a
-uidDictInsertBy f a =
-    uidDictInsert (f a) a
-
-
-type alias EnemyUidDict =
-    UidDict Enemy
-
-
-enemyUidDictInsert : Enemy -> EnemyUidDict -> EnemyUidDict
-enemyUidDictInsert =
-    uidDictInsertBy enemyToId
-
-
-enemyUidDictGet id =
-    Dict.get (uidToInt id)
-
-
-enemiesToIdDict : List Enemy -> EnemyUidDict
-enemiesToIdDict =
-    List.foldl (uidDictInsertBy .id) Dict.empty
-
-
-
+--type alias UidDict a =
+--    Dict Int a
+--
+--uidDictInsert : Uid -> a -> UidDict a -> UidDict a
+--uidDictInsert uid =
+--    Dict.insert (uidToInt uid)
+--
+--
+--uidDictInsertBy : (a -> Uid) -> a -> UidDict a -> UidDict a
+--uidDictInsertBy f a =
+--    uidDictInsert (f a) a
+--type alias EnemyUidDict =
+--    UidDict Enemy
+--enemyUidDictInsert : Enemy -> EnemyUidDict -> EnemyUidDict
+--enemyUidDictInsert =
+--    uidDictInsertBy enemyToId
+--
+--
+--enemyUidDictGet id =
+--    Dict.get (uidToInt id)
+--enemiesToIdDict : List Enemy -> EnemyUidDict
+--enemiesToIdDict =
+--    List.foldl (uidDictInsertBy .id) Dict.empty
 -- World Generator
 
 
@@ -901,29 +891,26 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
-        enemyIdDict =
-            enemiesToIdDict model.enemies
-
-        setCurrentEnemy : MGrid.MGrid Cell -> MGrid.MGrid Cell
-        setCurrentEnemy =
+        currentEnemyCellEntry : Maybe ( Location, Cell )
+        currentEnemyCellEntry =
             case model.turn of
                 PlayerTurn ->
-                    identity
+                    Nothing
 
                 EnemyTurn etm ->
-                    case enemyUidDictGet (etmCurrentId etm) enemyIdDict of
+                    case enemiesFind etm.currentId model.enemies of
                         Nothing ->
-                            identity
+                            Nothing
 
                         Just enemy ->
-                            MGrid.set enemy.location (Enemy_ (Just ( etm.status, etm.timer )))
+                            Just ( enemy.location, Enemy_ (Just ( etm.status, etm.timer )) )
 
         initEnemyCellEntry enemy =
             ( enemy.location, Enemy_ Nothing )
 
         setEnemies =
             MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
-                >> setCurrentEnemy
+                >> MGrid.setMaybeEntry currentEnemyCellEntry
 
         grid =
             MGrid.empty model.dimension
