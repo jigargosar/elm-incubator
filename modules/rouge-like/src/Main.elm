@@ -409,8 +409,11 @@ init flags =
         dimension =
             Dimension.new 12 16
 
+        initialSeed =
+            Random.initialSeed (flags.now |> always 0)
+
         ( acc, seed ) =
-            Random.step (worldLocationsGenerator dimension) (Random.initialSeed flags.now)
+            Random.step (worldLocationsGenerator dimension) initialSeed
     in
     ( { dimension = dimension
       , player = acc.player
@@ -831,6 +834,10 @@ viewSlot clock location slot =
     let
         commonStyles =
             class "w2 h2 flex items-center justify-center"
+
+        locationDXY =
+            Location.toTuple location
+                |> Tuple.toFloatScaled 32
     in
     case slot of
         MGrid.Filled entity ->
@@ -862,6 +869,23 @@ viewSlot clock location slot =
 
                                 _ ->
                                     []
+
+                        finalDXY =
+                            case maybeES of
+                                Just ( EnemyMoving fromTo, timer ) ->
+                                    let
+                                        dxy =
+                                            Tuple.map Location.toTuple fromTo
+                                                |> uncurry Tuple.sub
+                                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
+                                    in
+                                    Tuple.map2 add locationDXY dxy
+
+                                _ ->
+                                    locationDXY
+
+                        styles2 =
+                            [ cssTransform [ cssTranslate finalDXY ] ]
                     in
                     div [ commonStyles, class "relative" ]
                         [ div
