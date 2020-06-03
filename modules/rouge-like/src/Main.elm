@@ -440,7 +440,7 @@ etmInit clock current pendingIds =
     { current = current
     , status = EnemyStarting
     , pendingIds = pendingIds
-    , timer = timerInit clock (ticksToMillis 10)
+    , timer = timerInit clock (ticksToMillis 15)
     }
 
 
