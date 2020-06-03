@@ -235,6 +235,10 @@ enemyUidDictInsert =
     uidDictInsertBy enemyToId
 
 
+enemyUidDictGet id =
+    Dict.get (uidToInt id)
+
+
 enemiesToIdDict : List Enemy -> EnemyUidDict
 enemiesToIdDict =
     List.foldl (uidDictInsertBy .id) Dict.empty
@@ -877,6 +881,11 @@ viewSlot clock slot =
             div [ commonStyles ] [ text "." ]
 
 
+etmCurrentId : EnemyTurnModel -> Uid
+etmCurrentId =
+    .current >> .id
+
+
 viewGrid : Model -> HM
 viewGrid model =
     let
@@ -888,24 +897,29 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
+        enemyIdDict =
+            enemiesToIdDict model.enemies
+
         setCurrentEnemy =
             case model.turn of
                 PlayerTurn ->
                     identity
 
-                EnemyTurn et ->
-                    MGrid.set et.current.location (Enemy_ (Just ( et.status, et.timer )))
+                EnemyTurn etm ->
+                    case enemyUidDictGet (etmCurrentId etm) enemyIdDict of
+                        Nothing ->
+                            identity
 
-        enemyCellEntry enemy =
+                        Just enemy ->
+                            MGrid.set enemy.location (Enemy_ (Just ( etm.status, etm.timer )))
+
+        initEnemyCellEntry enemy =
             ( enemy.location, Enemy_ Nothing )
-
-        enemyIdDict =
-            enemiesToIdDict model.enemies
 
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
-                |> MGrid.setAllEntriesBy enemyCellEntry model.enemies
+                |> MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
                 |> setCurrentEnemy
     in
