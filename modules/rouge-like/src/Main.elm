@@ -17,7 +17,7 @@ import Tuple.More as Tuple
 
 
 defaultAnimSpeed =
-    ticksToMillis 1
+    ticksToMillis 5
 
 
 ticksToMillis =
@@ -887,7 +887,6 @@ viewSlot clock location slot =
                     in
                     div
                         [ commonStyles
-                        , class "absolute"
                         , cssTransform [ cssTranslate locationDXY ]
                         ]
                         [ div
