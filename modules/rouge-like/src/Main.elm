@@ -861,10 +861,13 @@ viewGrid model =
                     else
                         Nothing
 
+        enemyCellEntry enemy =
+            ( enemy.location, Enemy_ Nothing )
+
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
-                |> MGrid.setAll (List.map (\e -> ( e.location, Enemy_ Nothing )) model.enemies)
+                |> MGrid.setAll (List.map enemyCellEntry model.enemies)
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
