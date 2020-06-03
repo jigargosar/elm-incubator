@@ -547,10 +547,8 @@ initEnemyTurn model =
             model
 
         Just ( current, pendingEnemies ) ->
-            { model
-                | turn =
-                    EnemyTurn (etmInit model.clock current (enemiesToIds pendingEnemies))
-            }
+            model
+                |> setEnemyTurn (etmInit model.clock current (enemiesToIds pendingEnemies))
 
 
 performPlayerMove : PlayerMove -> Model -> Model
