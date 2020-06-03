@@ -905,11 +905,11 @@ toGridView model =
                         Just enemy ->
                             Just ( enemy.location, Enemy_ (Just ( etm.status, etm.timer )) )
 
-        initEnemyCellEntry enemy =
+        enemyToCellEntry enemy =
             ( enemy.location, Enemy_ Nothing )
 
         setEnemies =
-            MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
+            MGrid.setAllEntriesBy enemyToCellEntry model.enemies
                 >> MGrid.setMaybeEntry currentEnemyCellEntry
 
         grid =
@@ -924,40 +924,8 @@ toGridView model =
 viewGrid : Model -> HM
 viewGrid model =
     let
-        isPlayerSelected =
-            case model.turn of
-                PlayerTurn ->
-                    True
-
-                EnemyTurn _ ->
-                    False
-
-        currentEnemyCellEntry : Maybe ( Location, Cell )
-        currentEnemyCellEntry =
-            case model.turn of
-                PlayerTurn ->
-                    Nothing
-
-                EnemyTurn etm ->
-                    case enemiesFind etm.currentId model.enemies of
-                        Nothing ->
-                            Nothing
-
-                        Just enemy ->
-                            Just ( enemy.location, Enemy_ (Just ( etm.status, etm.timer )) )
-
-        initEnemyCellEntry enemy =
-            ( enemy.location, Enemy_ Nothing )
-
-        setEnemies =
-            MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
-                >> MGrid.setMaybeEntry currentEnemyCellEntry
-
         grid =
-            MGrid.empty model.dimension
-                |> MGrid.fill model.walls Wall
-                |> setEnemies
-                |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
+            toGridView model
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
