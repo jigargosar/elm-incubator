@@ -16,6 +16,14 @@ import Random.List
 import Tuple.More as Tuple
 
 
+defaultAnimSpeed =
+    ticksToMillis 15
+
+
+ticksToMillis =
+    mul (1000 / 60)
+
+
 
 -- Counter
 
@@ -442,14 +450,6 @@ etmInit clock current pendingIds =
     , pendingIds = pendingIds
     , timer = timerInit clock defaultAnimSpeed
     }
-
-
-defaultAnimSpeed =
-    ticksToMillis 15
-
-
-ticksToMillis =
-    mul (1000 / 60)
 
 
 etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
