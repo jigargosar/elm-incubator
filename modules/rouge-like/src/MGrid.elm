@@ -8,6 +8,8 @@ module MGrid exposing
     , setAllEntriesBy
     , setEntry
     , setMaybeEntry
+    , toList
+    , viewList
     , viewRows
     )
 
@@ -77,6 +79,16 @@ setEntry ( location, a ) =
 fill : List Location -> a -> MGrid a -> MGrid a
 fill locations a grid =
     List.foldl (\p -> set p a) grid locations
+
+
+toList : MGrid a -> List ( Location, Slot a )
+toList (MGrid _ dict) =
+    Dict.toList dict |> List.map (Tuple.mapFirst Location.fromTuple)
+
+
+viewList : (Location -> Slot a -> b) -> MGrid a -> List b
+viewList f (MGrid _ dict) =
+    Dict.foldr (\k -> f (Location.fromTuple k) >> (::)) [] dict
 
 
 toEntryRows : MGrid a -> List (List ( Location, Slot a ))

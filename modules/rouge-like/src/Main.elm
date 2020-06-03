@@ -140,12 +140,10 @@ newUid =
         |> Random.map Uid
 
 
-uidToInt : Uid -> Int
-uidToInt (Uid i) =
-    i
 
-
-
+--uidToInt : Uid -> Int
+--uidToInt (Uid i) =
+--    i
 --
 
 
@@ -972,8 +970,7 @@ viewGrid model =
             , class "relative"
             ]
             (grid
-                |> MGrid.viewRows (\_ -> div [ class "flex" ])
-                    (viewSlot model.clock)
+                |> MGrid.viewList (viewSlot model.clock)
             )
         ]
 
