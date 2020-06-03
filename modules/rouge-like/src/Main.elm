@@ -337,8 +337,8 @@ type Turn
 
 type alias EnemyTurnModel =
     { currentId : Uid
-    , pendingIds : List Uid
     , status : EnemyStatus
+    , pendingIds : List Uid
     , timer : Timer
     }
 
