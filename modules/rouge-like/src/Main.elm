@@ -3,7 +3,6 @@ module Main exposing (main)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
-import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
@@ -18,7 +17,7 @@ import Tuple.More as Tuple
 
 
 defaultAnimSpeed =
-    ticksToMillis 15
+    ticksToMillis 1
 
 
 ticksToMillis =
