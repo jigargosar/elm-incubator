@@ -57,6 +57,31 @@ counterIsDone c =
 
 
 
+-- Timer
+
+
+type alias Clock =
+    { time : Float
+    }
+
+
+clockCurrentTime : Clock -> Float
+clockCurrentTime clock =
+    clock.time
+
+
+type alias Timer =
+    { startTime : Float
+    , target : Float
+    }
+
+
+timerInit : Clock -> Float -> Timer
+timerInit clock target =
+    { startTime = clockCurrentTime clock, target = target }
+
+
+
 -- UID
 
 
