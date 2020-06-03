@@ -900,6 +900,7 @@ viewGrid model =
         enemyIdDict =
             enemiesToIdDict model.enemies
 
+        setCurrentEnemy : MGrid.MGrid Cell -> MGrid.MGrid Cell
         setCurrentEnemy =
             case model.turn of
                 PlayerTurn ->
