@@ -5,6 +5,8 @@ module MGrid exposing
     , fill
     , set
     , setAll
+    , setAllEntriesBy
+    , setEntry
     , viewRows
     )
 
@@ -40,6 +42,11 @@ setAll list g =
     List.foldl (uncurry set) g list
 
 
+setAllEntriesBy : (a -> ( Location, b )) -> List a -> MGrid b -> MGrid b
+setAllEntriesBy f xs g =
+    List.foldl (f >> setEntry) g xs
+
+
 mapDict : (Dict a -> Dict b) -> MGrid a -> MGrid b
 mapDict f (MGrid dimension_ dict) =
     MGrid dimension_ (f dict)
@@ -49,6 +56,11 @@ set : Location -> a -> MGrid a -> MGrid a
 set location a =
     mapDict
         (Dict.update (Location.toTuple location) (Maybe.map (\_ -> Filled a)))
+
+
+setEntry : ( Location, a ) -> MGrid a -> MGrid a
+setEntry ( location, a ) =
+    set location a
 
 
 fill : List Location -> a -> MGrid a -> MGrid a
