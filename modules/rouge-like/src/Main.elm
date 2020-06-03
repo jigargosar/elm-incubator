@@ -880,6 +880,47 @@ viewSlot clock slot =
             div [ commonStyles ] [ text "." ]
 
 
+toGridView : Model -> MGrid.MGrid Cell
+toGridView model =
+    let
+        isPlayerSelected =
+            case model.turn of
+                PlayerTurn ->
+                    True
+
+                EnemyTurn _ ->
+                    False
+
+        currentEnemyCellEntry : Maybe ( Location, Cell )
+        currentEnemyCellEntry =
+            case model.turn of
+                PlayerTurn ->
+                    Nothing
+
+                EnemyTurn etm ->
+                    case enemiesFind etm.currentId model.enemies of
+                        Nothing ->
+                            Nothing
+
+                        Just enemy ->
+                            Just ( enemy.location, Enemy_ (Just ( etm.status, etm.timer )) )
+
+        initEnemyCellEntry enemy =
+            ( enemy.location, Enemy_ Nothing )
+
+        setEnemies =
+            MGrid.setAllEntriesBy initEnemyCellEntry model.enemies
+                >> MGrid.setMaybeEntry currentEnemyCellEntry
+
+        grid =
+            MGrid.empty model.dimension
+                |> MGrid.fill model.walls Wall
+                |> setEnemies
+                |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
+    in
+    grid
+
+
 viewGrid : Model -> HM
 viewGrid model =
     let
