@@ -353,48 +353,53 @@ update message model =
                     ( model, Cmd.none )
 
                 EnemyTurn etm ->
-                    ( if counterIsDone etm.counter then
-                        case etm.status of
-                            EnemyStarting ->
-                                case
-                                    computeEnemyMoves etm.current model
-                                        |> maybeUniformGenerator
-                                of
-                                    Nothing ->
-                                        model
-                                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
-
-                                    Just emGen ->
-                                        let
-                                            ( em, seed ) =
-                                                Random.step emGen model.seed
-                                        in
-                                        { model | seed = seed }
-                                            |> performEnemyMove etm.current.uid em
-                                            |> setEnemyTurn
-                                                (etmSetStatus
-                                                    (case em of
-                                                        EnemySetLocation to ->
-                                                            EnemyMoving ( etm.current.location, to )
-
-                                                        _ ->
-                                                            EnemyEnding
-                                                    )
-                                                    etm
-                                                )
-
-                            EnemyMoving _ ->
-                                model |> setEnemyTurn (etmSetStatus EnemyEnding etm)
-
-                            EnemyEnding ->
-                                etmSelectNextEnemy model.enemies etm
-                                    |> Maybe.map (flip setEnemyTurn model)
-                                    |> Maybe.withDefault { model | turn = PlayerTurn }
-
-                      else
-                        model |> setEnemyTurn { etm | counter = counterTick etm.counter }
+                    ( updateEnemyTurnOnTick etm model
                     , Cmd.none
                     )
+
+
+updateEnemyTurnOnTick : EnemyTurnModel -> Model -> Model
+updateEnemyTurnOnTick etm model =
+    if counterIsDone etm.counter then
+        case etm.status of
+            EnemyStarting ->
+                case
+                    computeEnemyMoves etm.current model
+                        |> maybeUniformGenerator
+                of
+                    Nothing ->
+                        model
+                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
+
+                    Just emGen ->
+                        let
+                            ( em, seed ) =
+                                Random.step emGen model.seed
+                        in
+                        { model | seed = seed }
+                            |> performEnemyMove etm.current.uid em
+                            |> setEnemyTurn
+                                (etmSetStatus
+                                    (case em of
+                                        EnemySetLocation to ->
+                                            EnemyMoving ( etm.current.location, to )
+
+                                        _ ->
+                                            EnemyEnding
+                                    )
+                                    etm
+                                )
+
+            EnemyMoving _ ->
+                model |> setEnemyTurn (etmSetStatus EnemyEnding etm)
+
+            EnemyEnding ->
+                etmSelectNextEnemy model.enemies etm
+                    |> Maybe.map (flip setEnemyTurn model)
+                    |> Maybe.withDefault { model | turn = PlayerTurn }
+
+    else
+        model |> setEnemyTurn { etm | counter = counterTick etm.counter }
 
 
 setEnemyTurn : EnemyTurnModel -> Model -> Model
