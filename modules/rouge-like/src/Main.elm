@@ -344,7 +344,7 @@ type alias EnemyTurnModel =
 
 
 type EnemyStatus
-    = EnemyStarting
+    = EnemyStarting Location
     | EnemyMoving ( Location, Location )
     | EnemyEnding
 
@@ -447,7 +447,7 @@ updateEnemyTurnOnTick : EnemyTurnModel -> Model -> Model
 updateEnemyTurnOnTick etm model =
     if timerIsDone model.clock etm.timer then
         case etm.status of
-            EnemyStarting ->
+            EnemyStarting startLocation ->
                 case
                     computeEnemyMoves etm.current model
                         |> maybeUniformGenerator
@@ -462,12 +462,12 @@ updateEnemyTurnOnTick etm model =
                                 Random.step emGen model.seed
                         in
                         { model | seed = seed }
-                            |> performEnemyMove etm.current.id em
+                            |> performEnemyMove (etmCurrentId etm) em
                             |> setEnemyTurn
                                 (etmSetStatus model.clock
                                     (case em of
                                         EnemySetLocation to ->
-                                            EnemyMoving ( etm.current.location, to )
+                                            EnemyMoving ( startLocation, to )
 
                                         _ ->
                                             EnemyEnding
@@ -500,7 +500,7 @@ etmSetStatus clock status etm =
 etmInit : Clock -> Enemy -> List Uid -> EnemyTurnModel
 etmInit clock current pendingIds =
     { current = current
-    , status = EnemyStarting
+    , status = EnemyStarting current.location
     , pendingIds = pendingIds
     , timer = timerInit clock defaultAnimSpeed
     }
