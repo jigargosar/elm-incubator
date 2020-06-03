@@ -358,6 +358,11 @@ update message model =
                     )
 
 
+stepClock : Float -> Model -> Model
+stepClock delta model =
+    { model | clock = clockStep delta model.clock }
+
+
 updateEnemyTurnOnTick : EnemyTurnModel -> Model -> Model
 updateEnemyTurnOnTick etm model =
     if counterIsDone etm.counter then
