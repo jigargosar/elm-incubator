@@ -77,13 +77,27 @@ clockCurrentTime clock =
 
 type alias Timer =
     { startTime : Float
-    , target : Float
+    , duration : Float
     }
 
 
 timerInit : Clock -> Float -> Timer
-timerInit clock target =
-    { startTime = clockCurrentTime clock, target = target }
+timerInit clock duration =
+    { startTime = clockCurrentTime clock, duration = duration }
+
+
+timerIsDone : Clock -> Timer -> Bool
+timerIsDone clock timer =
+    let
+        elapsed =
+            clockCurrentTime clock - timer.startTime
+    in
+    elapsed >= timer.duration
+
+
+timerReset : Clock -> Timer -> Timer
+timerReset clock timer =
+    { timer | startTime = clockCurrentTime clock }
 
 
 
