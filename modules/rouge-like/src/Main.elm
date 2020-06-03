@@ -193,6 +193,11 @@ counterProgress c =
     clamp 0 c.target c.elapsed / c.target
 
 
+counterPendingProgress : Counter -> Float
+counterPendingProgress c =
+    1 - counterProgress c
+
+
 counterReset : Counter -> Counter
 counterReset c =
     { c | elapsed = 0 }
@@ -698,7 +703,7 @@ viewSlot slot =
                                         dxy =
                                             Tuple.map Location.toTuple fromTo
                                                 |> uncurry Tuple.sub
-                                                |> Tuple.toFloatScaled (32 * (1 - counterProgress counter))
+                                                |> Tuple.toFloatScaled (32 * counterPendingProgress counter)
 
                                         ts =
                                             dxy
