@@ -848,18 +848,13 @@ viewGrid model =
                 EnemyTurn _ ->
                     False
 
-        toETMStatus : Uid -> Maybe ( EnemyStatus, Timer )
-        toETMStatus uid =
+        setCurrentEnemy =
             case model.turn of
                 PlayerTurn ->
-                    Nothing
+                    identity
 
                 EnemyTurn et ->
-                    if et.current.uid == uid then
-                        Just ( et.status, et.timer )
-
-                    else
-                        Nothing
+                    MGrid.set et.current.location (Enemy_ (Just ( et.status, et.timer )))
 
         enemyCellEntry enemy =
             ( enemy.location, Enemy_ Nothing )
@@ -869,6 +864,7 @@ viewGrid model =
                 |> MGrid.fill model.walls Wall
                 |> MGrid.setAllEntriesBy enemyCellEntry model.enemies
                 |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
+                |> setCurrentEnemy
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
