@@ -899,6 +899,9 @@ viewGrid model =
         enemyCellEntry enemy =
             ( enemy.location, Enemy_ Nothing )
 
+        enemyIdDict =
+            enemiesToIdDict model.enemies
+
         grid =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
