@@ -105,6 +105,20 @@ timerReset clock timer =
     { timer | startTime = clockCurrentTime clock }
 
 
+timerProgress : Clock -> Timer -> Float
+timerProgress clock timer =
+    let
+        elapsed =
+            clockCurrentTime clock - timer.startTime
+    in
+    clamp 0 timer.duration elapsed / timer.duration
+
+
+timerPendingProgress : Clock -> Timer -> Float
+timerPendingProgress clock timer =
+    1 - timerProgress clock timer
+
+
 
 -- UID
 
@@ -263,7 +277,7 @@ type alias EnemyTurnModel =
     { current : Enemy
     , status : EnemyStatus
     , pendingIds : List Uid
-    , counter : Counter
+    , timer : Timer
     }
 
 
@@ -369,7 +383,7 @@ stepClock delta model =
 
 updateEnemyTurnOnTick : EnemyTurnModel -> Model -> Model
 updateEnemyTurnOnTick etm model =
-    if counterIsDone etm.counter then
+    if timerIsDone model.clock etm.timer then
         case etm.status of
             EnemyStarting ->
                 case
@@ -378,7 +392,7 @@ updateEnemyTurnOnTick etm model =
                 of
                     Nothing ->
                         model
-                            |> setEnemyTurn (etmSetStatus EnemyEnding etm)
+                            |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
 
                     Just emGen ->
                         let
@@ -388,7 +402,7 @@ updateEnemyTurnOnTick etm model =
                         { model | seed = seed }
                             |> performEnemyMove etm.current.uid em
                             |> setEnemyTurn
-                                (etmSetStatus
+                                (etmSetStatus model.clock
                                     (case em of
                                         EnemySetLocation to ->
                                             EnemyMoving ( etm.current.location, to )
@@ -400,15 +414,15 @@ updateEnemyTurnOnTick etm model =
                                 )
 
             EnemyMoving _ ->
-                model |> setEnemyTurn (etmSetStatus EnemyEnding etm)
+                model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
 
             EnemyEnding ->
-                etmSelectNextEnemy model.enemies etm
+                etmSelectNextEnemy model.clock model.enemies etm
                     |> Maybe.map (flip setEnemyTurn model)
                     |> Maybe.withDefault { model | turn = PlayerTurn }
 
     else
-        model |> setEnemyTurn { etm | counter = counterTick etm.counter }
+        model
 
 
 setEnemyTurn : EnemyTurnModel -> Model -> Model
@@ -416,24 +430,24 @@ setEnemyTurn etm model =
     { model | turn = EnemyTurn etm }
 
 
-etmSetStatus : EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
-etmSetStatus status etm =
-    { etm | status = status, counter = counterReset etm.counter }
+etmSetStatus : Clock -> EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
+etmSetStatus clock status etm =
+    { etm | status = status, timer = timerReset clock etm.timer }
 
 
-etmInit : Enemy -> List Uid -> EnemyTurnModel
-etmInit current pendingIds =
+etmInit : Clock -> Enemy -> List Uid -> EnemyTurnModel
+etmInit clock current pendingIds =
     { current = current
     , status = EnemyStarting
     , pendingIds = pendingIds
-    , counter = counterInit 40
+    , timer = timerInit clock 40
     }
 
 
-etmSelectNextEnemy : List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
-etmSelectNextEnemy enemies etm =
+etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
+etmSelectNextEnemy clock enemies etm =
     enemiesFindFirst etm.pendingIds enemies
-        |> Maybe.map (\( enemy, pendingIds ) -> etmInit enemy pendingIds)
+        |> Maybe.map (\( enemy, pendingIds ) -> etmInit clock enemy pendingIds)
 
 
 enemiesFindFirst : List Uid -> List Enemy -> Maybe ( Enemy, List Uid )
@@ -494,7 +508,7 @@ initEnemyTurn model =
         Just ( current, pendingEnemies ) ->
             { model
                 | turn =
-                    EnemyTurn (etmInit current (List.map .uid pendingEnemies))
+                    EnemyTurn (etmInit model.clock current (List.map .uid pendingEnemies))
             }
 
 
@@ -738,12 +752,12 @@ type alias HM =
 
 type Cell
     = Player Bool Int
-    | Enemy_ (Maybe ( EnemyStatus, Counter ))
+    | Enemy_ (Maybe ( EnemyStatus, Timer ))
     | Wall
 
 
-viewSlot : MGrid.Slot Cell -> HM
-viewSlot slot =
+viewSlot : Clock -> MGrid.Slot Cell -> HM
+viewSlot clock slot =
     let
         commonStyles =
             class "w2 h2 flex items-center justify-center"
@@ -767,12 +781,12 @@ viewSlot slot =
                     let
                         styles =
                             case maybeES of
-                                Just ( EnemyMoving fromTo, counter ) ->
+                                Just ( EnemyMoving fromTo, timer ) ->
                                     let
                                         dxy =
                                             Tuple.map Location.toTuple fromTo
                                                 |> uncurry Tuple.sub
-                                                |> Tuple.toFloatScaled (32 * counterPendingProgress counter)
+                                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
 
                                         ts =
                                             dxy
@@ -827,7 +841,7 @@ viewGrid model =
 
                 EnemyTurn et ->
                     if et.current.uid == uid then
-                        Just ( et.status, et.counter )
+                        Just ( et.status, et.timer )
 
                     else
                         Nothing
@@ -841,7 +855,7 @@ viewGrid model =
     div [ class "center code f2 bg-black white pa3 br3" ]
         (grid
             |> MGrid.viewRows (\_ -> div [ class "flex" ])
-                (\_ slot -> viewSlot slot)
+                (\_ slot -> viewSlot model.clock slot)
         )
 
 
