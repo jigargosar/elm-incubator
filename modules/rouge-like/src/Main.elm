@@ -65,6 +65,11 @@ type alias Clock =
     }
 
 
+clockStep : Float -> Clock -> Clock
+clockStep delta clock =
+    { clock | time = clock.time + delta }
+
+
 clockCurrentTime : Clock -> Float
 clockCurrentTime clock =
     clock.time
