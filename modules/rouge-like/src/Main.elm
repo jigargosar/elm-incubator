@@ -202,6 +202,11 @@ enemiesFind uid enemies =
     List.find (enemyIdEq uid) enemies
 
 
+enemiesToIds : List Enemy -> List Uid
+enemiesToIds =
+    List.map .id
+
+
 type alias UidDict a =
     Dict Int a
 
@@ -546,7 +551,7 @@ initEnemyTurn model =
         Just ( current, pendingEnemies ) ->
             { model
                 | turn =
-                    EnemyTurn (etmInit model.clock current (List.map .id pendingEnemies))
+                    EnemyTurn (etmInit model.clock current (enemiesToIds pendingEnemies))
             }
 
 
