@@ -833,7 +833,7 @@ viewSlot : Clock -> Location -> MGrid.Slot Cell -> HM
 viewSlot clock location slot =
     let
         commonStyles =
-            class "w2 h2 flex items-center justify-center"
+            class "w2 h2 flex items-center justify-center absolute top-0 left-0"
 
         locationDXY =
             Location.toTuple location
@@ -845,6 +845,7 @@ viewSlot clock location slot =
                 Player isSelected hp ->
                     div
                         [ commonStyles
+                        , cssTransform [ cssTranslate locationDXY ]
                         , if isSelected then
                             class "outline"
 
@@ -887,7 +888,11 @@ viewSlot clock location slot =
                         styles2 =
                             [ cssTransform [ cssTranslate finalDXY ] ]
                     in
-                    div [ commonStyles, class "relative" ]
+                    div
+                        [ commonStyles
+                        , class "absolute"
+                        , cssTransform [ cssTranslate locationDXY ]
+                        ]
                         [ div
                             ([ commonStyles
                              , class "absolute"
@@ -904,10 +909,14 @@ viewSlot clock location slot =
                         ]
 
                 Wall ->
-                    div [ commonStyles ] [ text "#" ]
+                    div
+                        [ commonStyles
+                        , cssTransform [ cssTranslate locationDXY ]
+                        ]
+                        [ text "#" ]
 
         MGrid.Empty ->
-            div [ commonStyles ] [ text "." ]
+            div [ commonStyles, cssTransform [ cssTranslate locationDXY ] ] [ text "." ]
 
 
 toGridView : Model -> MGrid.MGrid Cell
