@@ -336,9 +336,9 @@ type Turn
 
 
 type alias EnemyTurnModel =
-    { current : Enemy
-    , status : EnemyStatus
+    { currentId : Uid
     , pendingIds : List Uid
+    , status : EnemyStatus
     , timer : Timer
     }
 
@@ -498,9 +498,9 @@ etmSetStatus clock status etm =
 
 
 etmInit : Clock -> Enemy -> List Uid -> EnemyTurnModel
-etmInit clock current pendingIds =
-    { current = current
-    , status = EnemyStarting current.location
+etmInit clock enemy pendingIds =
+    { currentId = enemyToId enemy
+    , status = EnemyStarting enemy.location
     , pendingIds = pendingIds
     , timer = timerInit clock defaultAnimSpeed
     }
@@ -508,7 +508,7 @@ etmInit clock current pendingIds =
 
 etmCurrentId : EnemyTurnModel -> Uid
 etmCurrentId =
-    .current >> .id
+    .currentId
 
 
 etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
