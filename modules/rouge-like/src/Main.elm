@@ -540,9 +540,14 @@ updateEnemyTurn etm model =
             model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
 
         EnemyEnding ->
-            etmSelectNextEnemy model.clock model.enemies etm
-                |> Maybe.map (flip setEnemyTurn model)
-                |> Maybe.withDefault { model | turn = WaitingForPlayerInput }
+            selectNextEnemy etm model
+
+
+selectNextEnemy : EnemyTurn -> Model -> Model
+selectNextEnemy etm model =
+    etmSelectNextEnemy model.clock model.enemies etm
+        |> Maybe.map (flip setEnemyTurn model)
+        |> Maybe.withDefault { model | turn = WaitingForPlayerInput }
 
 
 setEnemyTurn : EnemyTurn -> Model -> Model
