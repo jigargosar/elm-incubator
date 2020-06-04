@@ -868,9 +868,6 @@ viewSlot clock location slot =
 
                                 Nothing ->
                                     locationDXY
-
-                        styles2 =
-                            [ cssTransform [ cssTranslate finalDXY ] ]
                     in
                     div
                         [ commonStyles
