@@ -491,8 +491,13 @@ update message model =
                     )
 
                 EnemyTurn_ etm ->
-                    ( updateEnemyTurnOnTick etm model
-                        |> stepClock delta
+                    ( if timerIsDone model.clock etm.timer then
+                        updateEnemyTurn etm model
+                            |> stepClock delta
+
+                      else
+                        model
+                            |> stepClock delta
                     , Cmd.none
                     )
 
@@ -502,48 +507,44 @@ stepClock delta model =
     { model | clock = clockStep delta model.clock }
 
 
-updateEnemyTurnOnTick : EnemyTurn -> Model -> Model
-updateEnemyTurnOnTick etm model =
-    if timerIsDone model.clock etm.timer then
-        case etm.status of
-            EnemyStarting startLocation ->
-                case
-                    computeEnemyMoves startLocation model
-                        |> maybeUniformGenerator
-                of
-                    Nothing ->
-                        model
-                            |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
+updateEnemyTurn : EnemyTurn -> Model -> Model
+updateEnemyTurn etm model =
+    case etm.status of
+        EnemyStarting startLocation ->
+            case
+                computeEnemyMoves startLocation model
+                    |> maybeUniformGenerator
+            of
+                Nothing ->
+                    model
+                        |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
 
-                    Just emGen ->
-                        let
-                            ( em, seed ) =
-                                Random.step emGen model.seed
-                        in
-                        { model | seed = seed }
-                            |> performEnemyMove (etmCurrentId etm) em
-                            |> setEnemyTurn
-                                (etmSetStatus model.clock
-                                    (case em of
-                                        EnemySetLocation to ->
-                                            EnemyMoving ( startLocation, to )
+                Just emGen ->
+                    let
+                        ( em, seed ) =
+                            Random.step emGen model.seed
+                    in
+                    { model | seed = seed }
+                        |> performEnemyMove (etmCurrentId etm) em
+                        |> setEnemyTurn
+                            (etmSetStatus model.clock
+                                (case em of
+                                    EnemySetLocation to ->
+                                        EnemyMoving ( startLocation, to )
 
-                                        _ ->
-                                            EnemyEnding
-                                    )
-                                    etm
+                                    _ ->
+                                        EnemyEnding
                                 )
+                                etm
+                            )
 
-            EnemyMoving _ ->
-                model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
+        EnemyMoving _ ->
+            model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
 
-            EnemyEnding ->
-                etmSelectNextEnemy model.clock model.enemies etm
-                    |> Maybe.map (flip setEnemyTurn model)
-                    |> Maybe.withDefault { model | turn = WaitingForPlayerInput }
-
-    else
-        model
+        EnemyEnding ->
+            etmSelectNextEnemy model.clock model.enemies etm
+                |> Maybe.map (flip setEnemyTurn model)
+                |> Maybe.withDefault { model | turn = WaitingForPlayerInput }
 
 
 setEnemyTurn : EnemyTurn -> Model -> Model
