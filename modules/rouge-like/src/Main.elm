@@ -1009,7 +1009,10 @@ viewGrid model =
             , style "height" (String.fromInt (model.dimension.height * 32) ++ "px")
             , class "relative"
             ]
-            ([ MGrid.viewList (viewSlot model.clock) grid
+            ([ MGrid.empty model.dimension
+                |> MGrid.fill model.walls Wall
+                |> MGrid.viewList (viewSlot model.clock)
+             , MGrid.viewList (viewSlot model.clock) grid
              ]
                 |> List.concat
             )
