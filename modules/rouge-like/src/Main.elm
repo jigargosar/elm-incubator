@@ -475,6 +475,7 @@ update message model =
 
                       else
                         model
+                            |> stepClock delta
                     , Cmd.none
                     )
 
@@ -564,11 +565,21 @@ stepPlayerInput playerInput model =
                     (\playerMove ->
                         model
                             |> performPlayerMove playerMove
-                            |> initEnemyTurn
+                            |> initPlayerMoving model.player playerMove
                     )
 
         StayPut ->
             initEnemyTurn model |> Just
+
+
+initPlayerMoving : Location -> PlayerMove -> Model -> Model
+initPlayerMoving from playerMove model =
+    case playerMove of
+        PlayerSetLocation _ ->
+            { model | turn = PlayerMoving { from = from, timer = timerInit model.clock defaultAnimSpeed } }
+
+        PlayerAttackEnemy _ ->
+            model
 
 
 initEnemyTurn : Model -> Model
