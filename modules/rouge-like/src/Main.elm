@@ -871,18 +871,10 @@ viewSlot clock location slot =
                     in
                     div
                         [ commonStyles
-                        , cssTransform [ cssTranslate locationDXY ]
+                        , cssTransform [ cssTranslate finalDXY ]
+                        , attrMaybe maybeES (\_ -> class "outline")
                         ]
-                        [ div
-                            ([ [ commonStyles
-                               , class "absolute"
-                               , attrMaybe maybeES (\_ -> class "outline")
-                               , attrMaybe movingDXY (\dxy -> cssTransform [ cssTranslate dxy ])
-                               ]
-                             ]
-                                |> List.concat
-                            )
-                            [ text "e" ]
+                        [ text "e"
                         ]
 
                 Wall ->
