@@ -349,7 +349,7 @@ type alias EnemyTurn =
 type EnemyStatus
     = EnemyStarting Location
     | EnemyMoving ( Location, Location )
-    | EnemyEnding
+    | EnemyDying
 
 
 etmSetStatus : Clock -> EnemyStatus -> EnemyTurn -> EnemyTurn
@@ -514,8 +514,7 @@ updateEnemyTurn etm model =
                     |> maybeUniformGenerator
             of
                 Nothing ->
-                    model
-                        |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
+                    selectNextEnemy etm model
 
                 Just emGen ->
                     let
@@ -530,16 +529,19 @@ updateEnemyTurn etm model =
                                     EnemySetLocation to ->
                                         EnemyMoving ( startLocation, to )
 
-                                    _ ->
-                                        EnemyEnding
+                                    EnemyAttackPlayer ->
+                                        EnemyDying
+
+                                    EnemyAttackEnemy victim ->
+                                        EnemyMoving ( startLocation, victim.location )
                                 )
                                 etm
                             )
 
         EnemyMoving _ ->
-            model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
+            selectNextEnemy etm model
 
-        EnemyEnding ->
+        EnemyDying ->
             selectNextEnemy etm model
 
 
