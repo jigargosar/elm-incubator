@@ -872,7 +872,7 @@ cssTransform xs =
 
 
 commonStyles =
-    class "w2 h2 flex items-center justify-center absolute top-0 left-0"
+    class "w2 h2 flex items-center justify-center absolute top-0 left-0 bg-black-50"
 
 
 locationToDXY location =
