@@ -502,6 +502,27 @@ update message model =
                     )
 
 
+updateOnTick : Model -> Model
+updateOnTick model =
+    case model.turn of
+        WaitingForPlayerInput ->
+            model
+
+        PlayerTurn_ pm ->
+            if timerIsDone model.clock pm.timer then
+                initEnemyTurn model
+
+            else
+                model
+
+        EnemyTurn_ etm ->
+            if timerIsDone model.clock etm.timer then
+                updateEnemyTurn etm model
+
+            else
+                model
+
+
 stepClock : Float -> Model -> Model
 stepClock delta model =
     { model | clock = clockStep delta model.clock }
