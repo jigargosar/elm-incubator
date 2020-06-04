@@ -1020,14 +1020,25 @@ viewGrid model =
             , style "height" (String.fromInt (model.dimension.height * 32) ++ "px")
             , class "relative"
             ]
-            ([ MGrid.empty model.dimension
-                |> MGrid.fill model.walls Wall
-                |> MGrid.viewList (viewSlot model.clock)
+            ([ backgroundTiles model.dimension model.walls
              , MGrid.viewList (viewSlot model.clock) grid
              ]
                 |> List.concat
             )
         ]
+
+
+backgroundTiles : Dimension -> List Location -> List HM
+backgroundTiles dimension walls =
+    Dimension.toLocations dimension
+        |> List.map
+            (\location ->
+                if List.member location walls then
+                    viewWallTile location
+
+                else
+                    viewFloorTile location
+            )
 
 
 
