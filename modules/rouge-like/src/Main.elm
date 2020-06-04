@@ -944,14 +944,16 @@ viewSlot clock location slot =
                         [ text "e" ]
 
                 Wall ->
-                    div
-                        [ commonStyles
-                        , cssTransform [ cssTranslate locationDXY ]
-                        ]
-                        [ text "#" ]
+                    viewWallTile location
 
         MGrid.Empty ->
             viewFloorTile location
+
+
+viewWallTile location =
+    div
+        [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text "#" ]
 
 
 viewFloorTile location =
