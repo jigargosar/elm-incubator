@@ -835,7 +835,7 @@ type alias HM =
 
 
 type Cell
-    = Player Bool Int
+    = Player (Maybe { from : Location, timer : Timer }) Bool Int
     | Enemy_ (Maybe ( EnemyStatus, Timer ))
     | Wall
 
@@ -866,7 +866,19 @@ viewSlot clock location slot =
     case slot of
         MGrid.Filled entity ->
             case entity of
-                Player isSelected hp ->
+                Player maybePS isSelected hp ->
+                    let
+                        movingDXY =
+                            case maybePS of
+                                Just { from, timer } ->
+                                    ( from, location )
+                                        |> Tuple.map Location.toTuple
+                                        |> uncurry Tuple.sub
+                                        |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
+
+                                Nothing ->
+                                    Tuple.zero
+                    in
                     div
                         [ commonStyles
                         , cssTransform [ cssTranslate locationDXY ]
@@ -912,16 +924,16 @@ viewSlot clock location slot =
 toCellGrid : Model -> MGrid.MGrid Cell
 toCellGrid model =
     let
-        isPlayerSelected =
+        playerCell =
             case model.turn of
                 PlayerTurn ->
-                    True
+                    Player Nothing True model.playerHp
 
                 EnemyTurn _ ->
-                    False
+                    Player Nothing False model.playerHp
 
-                PlayerMoving _ ->
-                    True
+                PlayerMoving pm ->
+                    Player (Just pm) True model.playerHp
 
         currentEnemyCellEntry : Maybe ( Location, Cell )
         currentEnemyCellEntry =
@@ -951,7 +963,7 @@ toCellGrid model =
             MGrid.empty model.dimension
                 |> MGrid.fill model.walls Wall
                 |> setEnemies
-                |> MGrid.set model.player (Player isPlayerSelected model.playerHp)
+                |> MGrid.set model.player playerCell
     in
     grid
 
