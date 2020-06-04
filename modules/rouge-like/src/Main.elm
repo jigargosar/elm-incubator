@@ -882,8 +882,8 @@ viewSlot clock location slot =
                 [ text "." ]
 
 
-toGridView : Model -> MGrid.MGrid Cell
-toGridView model =
+toCellGrid : Model -> MGrid.MGrid Cell
+toCellGrid model =
     let
         isPlayerSelected =
             case model.turn of
@@ -927,7 +927,7 @@ viewGrid : Model -> HM
 viewGrid model =
     let
         grid =
-            toGridView model
+            toCellGrid model
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         [ div
