@@ -849,7 +849,6 @@ type alias HM =
 type Cell
     = Player (Maybe PlayerTurn) Bool Int
     | Enemy_ (Maybe ( EnemyStatus, Timer ))
-    | Wall
 
 
 cssTranslate : ( Float, Float ) -> String
@@ -887,8 +886,8 @@ viewSlot clock location slot =
             locationToDXY location
     in
     case slot of
-        MGrid.Filled entity ->
-            case entity of
+        MGrid.Filled cell ->
+            case cell of
                 Player maybePS isSelected hp ->
                     let
                         movingDXY =
@@ -943,11 +942,8 @@ viewSlot clock location slot =
                         ]
                         [ text "e" ]
 
-                Wall ->
-                    viewWallTile location
-
         MGrid.Empty ->
-            viewFloorTile location
+            text ""
 
 
 viewWallTile location =
@@ -1001,7 +997,6 @@ toCellGrid model =
 
         grid =
             MGrid.empty model.dimension
-                |> MGrid.fill model.walls Wall
                 |> setEnemies
                 |> MGrid.set model.player playerCell
     in
