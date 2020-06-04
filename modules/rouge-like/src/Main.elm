@@ -856,18 +856,12 @@ viewSlot clock location slot =
                                     Tuple.map Location.toTuple fromTo
                                         |> uncurry Tuple.sub
                                         |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
-                                        |> Just
 
                                 _ ->
-                                    Nothing
+                                    Tuple.zero
 
                         finalDXY =
-                            case movingDXY of
-                                Just dxy ->
-                                    Tuple.map2 add locationDXY dxy
-
-                                Nothing ->
-                                    locationDXY
+                            Tuple.add locationDXY movingDXY
                     in
                     div
                         [ commonStyles

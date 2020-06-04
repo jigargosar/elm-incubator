@@ -1,6 +1,23 @@
-module Tuple.More exposing (andMap, any, fromFloat, join, map, map2, sub, toFloat, toFloatScaled)
+module Tuple.More exposing
+    ( add
+    , andMap
+    , any
+    , fromFloat
+    , join
+    , map
+    , map2
+    , sub
+    , toFloat
+    , toFloatScaled
+    , zero
+    )
 
 import Basics.More as Basics exposing (..)
+
+
+zero : ( number, number )
+zero =
+    ( 0, 0 )
 
 
 any : (a -> Bool) -> ( a, a ) -> Bool
@@ -36,6 +53,11 @@ map2 f ( a1, a2 ) ( b1, b2 ) =
 sub : ( number, number ) -> ( number, number ) -> ( number, number )
 sub =
     map2 Basics.sub
+
+
+add : ( number, number ) -> ( number, number ) -> ( number, number )
+add =
+    map2 Basics.add
 
 
 andMap : ( a, a ) -> ( a -> b, a -> b ) -> ( b, b )
