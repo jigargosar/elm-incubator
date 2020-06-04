@@ -878,10 +878,13 @@ viewSlot clock location slot =
 
                                 Nothing ->
                                     Tuple.zero
+
+                        finalDXY =
+                            Tuple.add locationDXY movingDXY
                     in
                     div
                         [ commonStyles
-                        , cssTransform [ cssTranslate locationDXY ]
+                        , cssTransform [ cssTranslate finalDXY ]
                         , attrIf isSelected (class "outline")
                         ]
                         [ text (String.fromInt hp)
