@@ -349,7 +349,7 @@ type alias EnemyTurn =
 type EnemyStatus
     = EnemyStarting Location
     | EnemyMoving ( Location, Location )
-    | EnemyDying
+    | EnemyDying Location
 
 
 etmSetStatus : Clock -> EnemyStatus -> EnemyTurn -> EnemyTurn
@@ -530,7 +530,7 @@ updateEnemyTurn etm model =
                                         EnemyMoving ( startLocation, to )
 
                                     EnemyAttackPlayer ->
-                                        EnemyDying
+                                        EnemyDying startLocation
 
                                     EnemyAttackEnemy victim ->
                                         EnemyMoving ( startLocation, victim.location )
@@ -541,7 +541,7 @@ updateEnemyTurn etm model =
         EnemyMoving _ ->
             selectNextEnemy etm model
 
-        EnemyDying ->
+        EnemyDying _ ->
             selectNextEnemy etm model
 
 
@@ -922,7 +922,7 @@ viewSlot clock location slot =
 
                         dyingScale =
                             case maybeES of
-                                Just ( EnemyDying, timer ) ->
+                                Just ( EnemyDying _, timer ) ->
                                     timerPendingProgress clock timer
 
                                 _ ->
