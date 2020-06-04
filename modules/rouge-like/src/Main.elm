@@ -850,20 +850,6 @@ viewSlot clock location slot =
 
                 Enemy_ maybeES ->
                     let
-                        styles =
-                            case maybeES of
-                                Just ( EnemyMoving fromTo, timer ) ->
-                                    let
-                                        dxy =
-                                            Tuple.map Location.toTuple fromTo
-                                                |> uncurry Tuple.sub
-                                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
-                                    in
-                                    [ cssTransform [ cssTranslate dxy ] ]
-
-                                _ ->
-                                    []
-
                         movingDXY =
                             case maybeES of
                                 Just ( EnemyMoving fromTo, timer ) ->
@@ -894,8 +880,8 @@ viewSlot clock location slot =
                             ([ [ commonStyles
                                , class "absolute"
                                , attrMaybe maybeES (\_ -> class "outline")
+                               , attrMaybe movingDXY (\dxy -> cssTransform [ cssTranslate dxy ])
                                ]
-                             , styles
                              ]
                                 |> List.concat
                             )
