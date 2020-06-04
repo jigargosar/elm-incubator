@@ -349,7 +349,6 @@ type alias EnemyTurn =
 type EnemyStatus
     = EnemyStarting Location
     | EnemyMoving ( Location, Location )
-    | EnemyDying
     | EnemyEnding
 
 
@@ -529,19 +528,13 @@ updateEnemyTurnOnTick etm model =
                                         EnemySetLocation to ->
                                             EnemyMoving ( startLocation, to )
 
-                                        EnemyAttackPlayer ->
-                                            EnemyDying
-
-                                        EnemyAttackEnemy _ ->
-                                            EnemyDying
+                                        _ ->
+                                            EnemyEnding
                                     )
                                     etm
                                 )
 
             EnemyMoving _ ->
-                model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
-
-            EnemyDying ->
                 model |> setEnemyTurn (etmSetStatus model.clock EnemyEnding etm)
 
             EnemyEnding ->
