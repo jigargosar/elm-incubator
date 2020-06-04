@@ -861,8 +861,14 @@ cssTranslate dxy =
         |> append "translate"
 
 
+cssScale s =
+    String.fromFloat s
+        |> paren
+        |> append "scale"
+
+
 cssTransform xs =
-    style "transform" (String.join ", " xs)
+    style "transform" (String.join " " xs)
 
 
 viewSlot : Clock -> Location -> MGrid.Slot Cell -> HM
@@ -914,12 +920,20 @@ viewSlot clock location slot =
                                 _ ->
                                     Tuple.zero
 
+                        dyingScale =
+                            case maybeES of
+                                Just ( EnemyDying, timer ) ->
+                                    timerPendingProgress clock timer
+
+                                _ ->
+                                    1
+
                         finalDXY =
                             Tuple.add locationDXY movingDXY
                     in
                     div
                         [ commonStyles
-                        , cssTransform [ cssTranslate finalDXY ]
+                        , cssTransform [ cssTranslate finalDXY, cssScale dyingScale ]
                         , attrMaybe maybeES (\_ -> class "outline")
                         ]
                         [ text "e" ]
