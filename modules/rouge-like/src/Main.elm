@@ -868,8 +868,7 @@ viewSlot clock location slot =
                         , cssTransform [ cssTranslate finalDXY ]
                         , attrMaybe maybeES (\_ -> class "outline")
                         ]
-                        [ text "e"
-                        ]
+                        [ text "e" ]
 
                 Wall ->
                     div
@@ -879,7 +878,8 @@ viewSlot clock location slot =
                         [ text "#" ]
 
         MGrid.Empty ->
-            div [ commonStyles, cssTransform [ cssTranslate locationDXY ] ] [ text "." ]
+            div [ commonStyles, cssTransform [ cssTranslate locationDXY ] ]
+                [ text "." ]
 
 
 toGridView : Model -> MGrid.MGrid Cell
