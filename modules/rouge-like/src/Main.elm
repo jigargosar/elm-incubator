@@ -318,9 +318,20 @@ type alias Model =
 
 
 type Turn
-    = PlayerTurn
-    | PlayerMoving { from : Location, timer : Timer }
+    = WaitingForPlayerInput
+    | PlayerTurn_ PlayerTurn
     | EnemyTurn_ EnemyTurn
+
+
+
+-- PlayerTurn
+
+
+type alias PlayerTurn =
+    { from : Location
+    , move : PlayerMove
+    , timer : Timer
+    }
 
 
 
@@ -418,7 +429,7 @@ init flags =
       , playerHp = 3
       , walls = acc.walls
       , enemies = acc.enemies
-      , turn = PlayerTurn
+      , turn = WaitingForPlayerInput
       , clock = clockZero
       , seed = seed
       }
@@ -444,7 +455,7 @@ update message model =
 
         KeyDown key ->
             case model.turn of
-                PlayerTurn ->
+                WaitingForPlayerInput ->
                     ( if model.playerHp > 0 then
                         toPlayerInput key
                             |> Maybe.andThen (\playerInput -> stepPlayerInput playerInput model)
@@ -455,7 +466,7 @@ update message model =
                     , Cmd.none
                     )
 
-                PlayerMoving _ ->
+                PlayerTurn_ _ ->
                     ( model, Cmd.none )
 
                 EnemyTurn_ _ ->
@@ -463,13 +474,13 @@ update message model =
 
         Tick delta ->
             case model.turn of
-                PlayerTurn ->
+                WaitingForPlayerInput ->
                     ( model
                         |> stepClock delta
                     , Cmd.none
                     )
 
-                PlayerMoving pm ->
+                PlayerTurn_ pm ->
                     ( if timerIsDone model.clock pm.timer then
                         initEnemyTurn model
 
@@ -529,7 +540,7 @@ updateEnemyTurnOnTick etm model =
             EnemyEnding ->
                 etmSelectNextEnemy model.clock model.enemies etm
                     |> Maybe.map (flip setEnemyTurn model)
-                    |> Maybe.withDefault { model | turn = PlayerTurn }
+                    |> Maybe.withDefault { model | turn = WaitingForPlayerInput }
 
     else
         model
@@ -565,21 +576,16 @@ stepPlayerInput playerInput model =
                     (\playerMove ->
                         model
                             |> performPlayerMove playerMove
-                            |> initPlayerMoving model.player playerMove
+                            |> initPlayerTurn model.player playerMove
                     )
 
         StayPut ->
             initEnemyTurn model |> Just
 
 
-initPlayerMoving : Location -> PlayerMove -> Model -> Model
-initPlayerMoving from playerMove model =
-    case playerMove of
-        PlayerSetLocation _ ->
-            { model | turn = PlayerMoving { from = from, timer = timerInit model.clock defaultAnimSpeed } }
-
-        PlayerAttackEnemy _ ->
-            model
+initPlayerTurn : Location -> PlayerMove -> Model -> Model
+initPlayerTurn from playerMove model =
+    { model | turn = PlayerTurn_ { from = from, move = playerMove, timer = timerInit model.clock defaultAnimSpeed } }
 
 
 initEnemyTurn : Model -> Model
@@ -762,13 +768,13 @@ subscriptions model =
                 |> JD.map KeyDown
             )
         , case model.turn of
-            PlayerTurn ->
+            WaitingForPlayerInput ->
                 Sub.none
 
             EnemyTurn_ _ ->
                 Browser.Events.onAnimationFrameDelta Tick
 
-            PlayerMoving _ ->
+            PlayerTurn_ _ ->
                 Browser.Events.onAnimationFrameDelta Tick
         ]
 
@@ -835,7 +841,7 @@ type alias HM =
 
 
 type Cell
-    = Player (Maybe { from : Location, timer : Timer }) Bool Int
+    = Player (Maybe PlayerTurn) Bool Int
     | Enemy_ (Maybe ( EnemyStatus, Timer ))
     | Wall
 
@@ -929,22 +935,22 @@ toCellGrid model =
     let
         playerCell =
             case model.turn of
-                PlayerTurn ->
+                WaitingForPlayerInput ->
                     Player Nothing True model.playerHp
 
                 EnemyTurn_ _ ->
                     Player Nothing False model.playerHp
 
-                PlayerMoving pm ->
+                PlayerTurn_ pm ->
                     Player (Just pm) True model.playerHp
 
         currentEnemyCellEntry : Maybe ( Location, Cell )
         currentEnemyCellEntry =
             case model.turn of
-                PlayerTurn ->
+                WaitingForPlayerInput ->
                     Nothing
 
-                PlayerMoving _ ->
+                PlayerTurn_ _ ->
                     Nothing
 
                 EnemyTurn_ etm ->
