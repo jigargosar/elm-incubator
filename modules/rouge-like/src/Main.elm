@@ -941,8 +941,8 @@ toCellGrid model =
                 EnemyTurn_ _ ->
                     Player Nothing False model.playerHp
 
-                PlayerTurn_ pm ->
-                    Player (Just pm) True model.playerHp
+                PlayerTurn_ turn ->
+                    Player (Just turn) True model.playerHp
 
         currentEnemyCellEntry : Maybe ( Location, Cell )
         currentEnemyCellEntry =
