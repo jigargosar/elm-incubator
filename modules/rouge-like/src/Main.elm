@@ -843,11 +843,7 @@ viewSlot clock location slot =
                     div
                         [ commonStyles
                         , cssTransform [ cssTranslate locationDXY ]
-                        , if isSelected then
-                            class "outline"
-
-                          else
-                            class ""
+                        , attrIf isSelected (class "outline")
                         ]
                         [ text (String.fromInt hp)
                         ]
@@ -890,16 +886,13 @@ viewSlot clock location slot =
                         , cssTransform [ cssTranslate locationDXY ]
                         ]
                         [ div
-                            ([ commonStyles
-                             , class "absolute"
-                             , case maybeES of
-                                Just _ ->
-                                    class "outline"
-
-                                Nothing ->
-                                    class ""
+                            ([ [ commonStyles
+                               , class "absolute"
+                               , attrMaybe maybeES (\_ -> class "outline")
+                               ]
+                             , styles
                              ]
-                                ++ styles
+                                |> List.concat
                             )
                             [ text "e" ]
                         ]

@@ -1,5 +1,6 @@
 module Basics.More exposing (..)
 
+import Html.Attributes
 import Random
 
 
@@ -202,3 +203,24 @@ paren =
 
 append =
     (++)
+
+
+attrIf bool x =
+    if bool then
+        x
+
+    else
+        noAttr
+
+
+attrMaybe mx f =
+    case mx of
+        Just x ->
+            f x
+
+        Nothing ->
+            noAttr
+
+
+noAttr =
+    Html.Attributes.classList []
