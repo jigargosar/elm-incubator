@@ -864,18 +864,23 @@ viewSlot clock location slot =
                                 _ ->
                                     []
 
-                        finalDXY =
+                        movingDXY =
                             case maybeES of
                                 Just ( EnemyMoving fromTo, timer ) ->
-                                    let
-                                        dxy =
-                                            Tuple.map Location.toTuple fromTo
-                                                |> uncurry Tuple.sub
-                                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
-                                    in
-                                    Tuple.map2 add locationDXY dxy
+                                    Tuple.map Location.toTuple fromTo
+                                        |> uncurry Tuple.sub
+                                        |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
+                                        |> Just
 
                                 _ ->
+                                    Nothing
+
+                        finalDXY =
+                            case movingDXY of
+                                Just dxy ->
+                                    Tuple.map2 add locationDXY dxy
+
+                                Nothing ->
                                     locationDXY
 
                         styles2 =
