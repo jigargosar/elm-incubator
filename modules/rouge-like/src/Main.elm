@@ -591,7 +591,14 @@ stepPlayerInput playerInput model =
 
 initPlayerTurn : Location -> PlayerMove -> Model -> Model
 initPlayerTurn from playerMove model =
-    { model | turn = PlayerTurn_ { from = from, move = playerMove, timer = timerInit model.clock defaultAnimSpeed } }
+    { model
+        | turn =
+            PlayerTurn_
+                { from = from
+                , move = playerMove
+                , timer = timerInit model.clock defaultAnimSpeed
+                }
+    }
 
 
 initEnemyTurn : Model -> Model
