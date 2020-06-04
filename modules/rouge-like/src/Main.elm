@@ -320,14 +320,14 @@ type alias Model =
 type Turn
     = PlayerTurn
     | PlayerMoving { from : Location, timer : Timer }
-    | EnemyTurn EnemyTurnModel
+    | EnemyTurn_ EnemyTurn
 
 
 
 -- EnemyTurnModel
 
 
-type alias EnemyTurnModel =
+type alias EnemyTurn =
     { currentId : Uid
     , status : EnemyStatus
     , pendingIds : List Uid
@@ -341,12 +341,12 @@ type EnemyStatus
     | EnemyEnding
 
 
-etmSetStatus : Clock -> EnemyStatus -> EnemyTurnModel -> EnemyTurnModel
+etmSetStatus : Clock -> EnemyStatus -> EnemyTurn -> EnemyTurn
 etmSetStatus clock status etm =
     { etm | status = status, timer = timerReset clock etm.timer }
 
 
-etmInit : Clock -> Enemy -> List Uid -> EnemyTurnModel
+etmInit : Clock -> Enemy -> List Uid -> EnemyTurn
 etmInit clock enemy pendingIds =
     { currentId = enemyToId enemy
     , status = EnemyStarting enemy.location
@@ -355,12 +355,12 @@ etmInit clock enemy pendingIds =
     }
 
 
-etmCurrentId : EnemyTurnModel -> Uid
+etmCurrentId : EnemyTurn -> Uid
 etmCurrentId =
     .currentId
 
 
-etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurnModel -> Maybe EnemyTurnModel
+etmSelectNextEnemy : Clock -> List Enemy -> EnemyTurn -> Maybe EnemyTurn
 etmSelectNextEnemy clock enemies etm =
     enemiesFindFirst etm.pendingIds enemies
         |> Maybe.map (\( enemy, pendingIds ) -> etmInit clock enemy pendingIds)
@@ -458,7 +458,7 @@ update message model =
                 PlayerMoving _ ->
                     ( model, Cmd.none )
 
-                EnemyTurn _ ->
+                EnemyTurn_ _ ->
                     ( model, Cmd.none )
 
         Tick delta ->
@@ -479,7 +479,7 @@ update message model =
                     , Cmd.none
                     )
 
-                EnemyTurn etm ->
+                EnemyTurn_ etm ->
                     ( updateEnemyTurnOnTick etm model
                         |> stepClock delta
                     , Cmd.none
@@ -491,7 +491,7 @@ stepClock delta model =
     { model | clock = clockStep delta model.clock }
 
 
-updateEnemyTurnOnTick : EnemyTurnModel -> Model -> Model
+updateEnemyTurnOnTick : EnemyTurn -> Model -> Model
 updateEnemyTurnOnTick etm model =
     if timerIsDone model.clock etm.timer then
         case etm.status of
@@ -535,9 +535,9 @@ updateEnemyTurnOnTick etm model =
         model
 
 
-setEnemyTurn : EnemyTurnModel -> Model -> Model
+setEnemyTurn : EnemyTurn -> Model -> Model
 setEnemyTurn etm model =
-    { model | turn = EnemyTurn etm }
+    { model | turn = EnemyTurn_ etm }
 
 
 type PlayerInput
@@ -765,7 +765,7 @@ subscriptions model =
             PlayerTurn ->
                 Sub.none
 
-            EnemyTurn _ ->
+            EnemyTurn_ _ ->
                 Browser.Events.onAnimationFrameDelta Tick
 
             PlayerMoving _ ->
@@ -932,7 +932,7 @@ toCellGrid model =
                 PlayerTurn ->
                     Player Nothing True model.playerHp
 
-                EnemyTurn _ ->
+                EnemyTurn_ _ ->
                     Player Nothing False model.playerHp
 
                 PlayerMoving pm ->
@@ -947,7 +947,7 @@ toCellGrid model =
                 PlayerMoving _ ->
                     Nothing
 
-                EnemyTurn etm ->
+                EnemyTurn_ etm ->
                     case enemiesFind etm.currentId model.enemies of
                         Nothing ->
                             Nothing
