@@ -9,6 +9,7 @@ module MGrid exposing
     , setEntry
     , setMaybeEntry
     , toList
+    , viewFilledList
     , viewList
     , viewRows
     )
@@ -89,6 +90,21 @@ toList (MGrid _ dict) =
 viewList : (Location -> Slot a -> b) -> MGrid a -> List b
 viewList f (MGrid _ dict) =
     Dict.foldr (\k -> f (Location.fromTuple k) >> (::)) [] dict
+
+
+viewFilledList : (Location -> a -> b) -> MGrid a -> List b
+viewFilledList f (MGrid _ dict) =
+    Dict.foldr
+        (\k v xs ->
+            case v of
+                Empty ->
+                    xs
+
+                Filled a ->
+                    f (Location.fromTuple k) a :: xs
+        )
+        []
+        dict
 
 
 toEntryRows : MGrid a -> List (List ( Location, Slot a ))

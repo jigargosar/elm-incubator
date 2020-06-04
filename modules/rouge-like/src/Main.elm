@@ -879,71 +879,66 @@ locationToDXY location =
         |> Tuple.toFloatScaled 32
 
 
-viewSlot : Clock -> Location -> MGrid.Slot Cell -> HM
-viewSlot clock location slot =
+viewCell : Clock -> Location -> Cell -> HM
+viewCell clock location cell =
     let
         locationDXY =
             locationToDXY location
     in
-    case slot of
-        MGrid.Filled cell ->
-            case cell of
-                Player maybePS isSelected hp ->
-                    let
-                        movingDXY =
-                            case maybePS of
-                                Just { from, timer } ->
-                                    ( from, location )
-                                        |> Tuple.map Location.toTuple
-                                        |> uncurry Tuple.sub
-                                        |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
+    case cell of
+        Player maybePS isSelected hp ->
+            let
+                movingDXY =
+                    case maybePS of
+                        Just { from, timer } ->
+                            ( from, location )
+                                |> Tuple.map Location.toTuple
+                                |> uncurry Tuple.sub
+                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
 
-                                Nothing ->
-                                    Tuple.zero
+                        Nothing ->
+                            Tuple.zero
 
-                        finalDXY =
-                            Tuple.add locationDXY movingDXY
-                    in
-                    div
-                        [ commonStyles
-                        , cssTransform [ cssTranslate finalDXY ]
-                        , attrIf isSelected (class "outline")
-                        ]
-                        [ text (String.fromInt hp)
-                        ]
+                finalDXY =
+                    Tuple.add locationDXY movingDXY
+            in
+            div
+                [ commonStyles
+                , cssTransform [ cssTranslate finalDXY ]
+                , attrIf isSelected (class "outline")
+                ]
+                [ text (String.fromInt hp)
+                ]
 
-                Enemy_ maybeES ->
-                    let
-                        movingDXY =
-                            case maybeES of
-                                Just ( EnemyMoving fromTo, timer ) ->
-                                    Tuple.map Location.toTuple fromTo
-                                        |> uncurry Tuple.sub
-                                        |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
+        Enemy_ maybeES ->
+            let
+                movingDXY =
+                    case maybeES of
+                        Just ( EnemyMoving fromTo, timer ) ->
+                            Tuple.map Location.toTuple fromTo
+                                |> uncurry Tuple.sub
+                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
 
-                                _ ->
-                                    Tuple.zero
+                        _ ->
+                            Tuple.zero
 
-                        dyingScale =
-                            case maybeES of
-                                Just ( EnemyDying _, timer ) ->
-                                    timerPendingProgress clock timer
+                dyingScale =
+                    case maybeES of
+                        Just ( EnemyDying _, timer ) ->
+                            timerPendingProgress clock timer
 
-                                _ ->
-                                    1
+                        _ ->
+                            1
 
-                        finalDXY =
-                            Tuple.add locationDXY movingDXY
-                    in
-                    div
-                        [ commonStyles
-                        , cssTransform [ cssTranslate finalDXY, cssScale dyingScale ]
-                        , attrMaybe maybeES (\_ -> class "outline")
-                        ]
-                        [ text "e" ]
-
-        MGrid.Empty ->
-            text ""
+                finalDXY =
+                    Tuple.add locationDXY movingDXY
+            in
+            div
+                [ commonStyles
+                , cssTransform [ cssTranslate finalDXY, cssScale dyingScale ]
+                , attrMaybe maybeES (\_ -> class "outline")
+                ]
+                [ text "e" ]
 
 
 viewWallTile location =
@@ -1016,7 +1011,7 @@ viewGrid model =
             , class "relative"
             ]
             ([ backgroundTiles model.dimension model.walls
-             , MGrid.viewList (viewSlot model.clock) grid
+             , MGrid.viewFilledList (viewCell model.clock) grid
              ]
                 |> List.concat
             )
