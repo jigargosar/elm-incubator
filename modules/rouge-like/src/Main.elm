@@ -526,7 +526,7 @@ updateEnemyTurn etm model =
                         |> setEnemyTurn
                             (etmSetStatus model.clock
                                 (case em of
-                                    EnemySetLocation to ->
+                                    EnemyMoveToLocation to ->
                                         EnemyMoving ( startLocation, to )
 
                                     EnemyAttackPlayer ->
@@ -670,7 +670,7 @@ performEnemyMove uid enemyMove model =
             model
                 |> mapEnemies (enemiesRemove victim.id)
 
-        EnemySetLocation location ->
+        EnemyMoveToLocation location ->
             model
                 |> mapEnemies (enemiesUpdate uid (enemySetLocation location))
 
@@ -696,7 +696,7 @@ betterEnemyMovesToWardsPlayer enemyLocation model =
 
 
 type EnemyMove
-    = EnemySetLocation Location
+    = EnemyMoveToLocation Location
     | EnemyAttackPlayer
     | EnemyAttackEnemy Enemy
 
@@ -721,7 +721,7 @@ toEnemyMove location model =
                 Just (EnemyAttackEnemy enemy)
 
             Nothing ->
-                Just (EnemySetLocation location)
+                Just (EnemyMoveToLocation location)
 
 
 stepLocationInDirection : Direction -> Location -> Location
