@@ -319,6 +319,7 @@ type alias Model =
 
 type Turn
     = PlayerTurn
+    | PlayerMoving { from : Location, timer : Timer }
     | EnemyTurn EnemyTurnModel
 
 
@@ -454,6 +455,9 @@ update message model =
                     , Cmd.none
                     )
 
+                PlayerMoving _ ->
+                    ( model, Cmd.none )
+
                 EnemyTurn _ ->
                     ( model, Cmd.none )
 
@@ -462,6 +466,15 @@ update message model =
                 PlayerTurn ->
                     ( model
                         |> stepClock delta
+                    , Cmd.none
+                    )
+
+                PlayerMoving pm ->
+                    ( if timerIsDone model.clock pm.timer then
+                        initEnemyTurn model
+
+                      else
+                        model
                     , Cmd.none
                     )
 
@@ -743,6 +756,9 @@ subscriptions model =
 
             EnemyTurn _ ->
                 Browser.Events.onAnimationFrameDelta Tick
+
+            PlayerMoving _ ->
+                Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
@@ -893,10 +909,16 @@ toCellGrid model =
                 EnemyTurn _ ->
                     False
 
+                PlayerMoving _ ->
+                    True
+
         currentEnemyCellEntry : Maybe ( Location, Cell )
         currentEnemyCellEntry =
             case model.turn of
                 PlayerTurn ->
+                    Nothing
+
+                PlayerMoving _ ->
                     Nothing
 
                 EnemyTurn etm ->
