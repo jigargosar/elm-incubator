@@ -340,19 +340,19 @@ type alias PlayerTurn =
 
 type alias EnemyTurn =
     { currentId : Uid
-    , status : EnemyView
+    , status : EnemyStatus
     , pendingIds : List Uid
     , timer : Timer
     }
 
 
-type EnemyView
+type EnemyStatus
     = EnemyStarting Location
     | EnemyMoving ( Location, Location )
     | EnemyEnding
 
 
-etmSetStatus : Clock -> EnemyView -> EnemyTurn -> EnemyTurn
+etmSetStatus : Clock -> EnemyStatus -> EnemyTurn -> EnemyTurn
 etmSetStatus clock status etm =
     { etm | status = status, timer = timerReset clock etm.timer }
 
@@ -842,7 +842,7 @@ type alias HM =
 
 type Cell
     = Player (Maybe PlayerTurn) Bool Int
-    | Enemy_ (Maybe ( EnemyView, Timer ))
+    | Enemy_ (Maybe ( EnemyStatus, Timer ))
     | Wall
 
 
