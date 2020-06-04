@@ -871,15 +871,20 @@ cssTransform xs =
     style "transform" (String.join " " xs)
 
 
+commonStyles =
+    class "w2 h2 flex items-center justify-center absolute top-0 left-0"
+
+
+locationToDXY location =
+    Location.toTuple location
+        |> Tuple.toFloatScaled 32
+
+
 viewSlot : Clock -> Location -> MGrid.Slot Cell -> HM
 viewSlot clock location slot =
     let
-        commonStyles =
-            class "w2 h2 flex items-center justify-center absolute top-0 left-0"
-
         locationDXY =
-            Location.toTuple location
-                |> Tuple.toFloatScaled 32
+            locationToDXY location
     in
     case slot of
         MGrid.Filled entity ->
@@ -946,8 +951,12 @@ viewSlot clock location slot =
                         [ text "#" ]
 
         MGrid.Empty ->
-            div [ commonStyles, cssTransform [ cssTranslate locationDXY ] ]
-                [ text "." ]
+            viewFloorTile location
+
+
+viewFloorTile location =
+    div [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text "." ]
 
 
 toCellGrid : Model -> MGrid.MGrid Cell
