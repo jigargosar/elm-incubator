@@ -473,33 +473,10 @@ update message model =
                     ( model, Cmd.none )
 
         Tick delta ->
-            case model.turn of
-                WaitingForPlayerInput ->
-                    ( model
-                        |> stepClock delta
-                    , Cmd.none
-                    )
-
-                PlayerTurn_ pm ->
-                    ( if timerIsDone model.clock pm.timer then
-                        initEnemyTurn model
-
-                      else
-                        model
-                            |> stepClock delta
-                    , Cmd.none
-                    )
-
-                EnemyTurn_ etm ->
-                    ( if timerIsDone model.clock etm.timer then
-                        updateEnemyTurn etm model
-                            |> stepClock delta
-
-                      else
-                        model
-                            |> stepClock delta
-                    , Cmd.none
-                    )
+            ( updateOnTick model
+                |> stepClock delta
+            , Cmd.none
+            )
 
 
 updateOnTick : Model -> Model
