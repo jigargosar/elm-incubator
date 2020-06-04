@@ -17,7 +17,7 @@ import Tuple.More as Tuple
 
 
 defaultAnimSpeed =
-    ticksToMillis 2
+    ticksToMillis 15
 
 
 ticksToMillis =
