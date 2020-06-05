@@ -405,6 +405,20 @@ update message model =
             )
 
 
+updateTick : Model -> Model
+updateTick model =
+    case model.state of
+        PlayerMovingTo location timer player ->
+            if timerIsDone model.clock timer then
+                { model | state = WaitingForInput (playerMapLocation (always location) player) }
+
+            else
+                model
+
+        WaitingForInput _ ->
+            model
+
+
 type LocationClass
     = Blocked
     | HasEnemy Enemy
