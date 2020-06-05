@@ -9,7 +9,6 @@ import Html.Attributes exposing (class, style)
 import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
-import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
