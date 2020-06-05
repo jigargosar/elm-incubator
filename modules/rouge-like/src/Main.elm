@@ -289,7 +289,7 @@ type alias Model =
 
 
 type State
-    = PlayerMoving Player
+    = PlayerMovingTo Location Player
     | WaitingForInput Player
 
 
@@ -378,7 +378,7 @@ update message model =
                                         newPlayer =
                                             playerMapLocation (always locationInDirection) player
                                     in
-                                    { model | state = PlayerMoving newPlayer }
+                                    { model | state = PlayerMovingTo locationInDirection player }
 
                                 Blocked ->
                                     model
@@ -392,7 +392,7 @@ update message model =
                         Nothing ->
                             model
 
-                PlayerMoving _ ->
+                PlayerMovingTo _ _ ->
                     model
             , Cmd.none
             )
@@ -505,7 +505,7 @@ viewOverlay model =
     let
         player =
             case model.state of
-                PlayerMoving player_ ->
+                PlayerMovingTo _ player_ ->
                     player_
 
                 WaitingForInput player_ ->
@@ -588,6 +588,12 @@ viewPlayerTile location hp =
         [ text (String.fromInt hp) ]
 
 
+viewPlayerMovingTo to location hp =
+    div
+        [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text (String.fromInt hp) ]
+
+
 viewEnemyTile location =
     div
         [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
@@ -623,8 +629,8 @@ viewGrid model =
                     WaitingForInput player ->
                         viewPlayerTile player.location player.hp
 
-                    PlayerMoving player ->
-                        viewPlayerTile player.location player.hp
+                    PlayerMovingTo to player ->
+                        viewPlayerMovingTo to player.location player.hp
                ]
              ]
                 |> List.concat
