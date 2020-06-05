@@ -281,11 +281,16 @@ shuffleSplit n xs =
 type alias Model =
     { dimension : Dimension
     , walls : List Location
-    , player : Player
+    , state : State
     , enemies : List Enemy
     , clock : Clock
     , seed : Seed
     }
+
+
+type State
+    = PlayerMoving Player
+    | WaitingForInput Player
 
 
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
@@ -293,9 +298,10 @@ mapEnemies f model =
     { model | enemies = f model.enemies }
 
 
-mapPlayer : (Player -> Player) -> Model -> Model
-mapPlayer f model =
-    { model | player = f model.player }
+
+--mapPlayer : (Player -> Player) -> Model -> Model
+--mapPlayer f model =
+--    { model | player = f model.player }
 
 
 type alias WorldMap a =
@@ -329,7 +335,7 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , player = acc.player
+      , state = WaitingForInput acc.player
       , enemies = acc.enemies
       , clock = clockZero
       , seed = seed
@@ -355,32 +361,34 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( case directionFromKey key of
-                Just direction ->
-                    let
-                        player =
-                            model.player
+            ( case model.state of
+                WaitingForInput player ->
+                    case directionFromKey key of
+                        Just direction ->
+                            let
+                                enemies =
+                                    model.enemies
 
-                        enemies =
-                            model.enemies
+                                locationInDirection =
+                                    stepLocationInDirection direction player.location
+                            in
+                            case classifyLocation locationInDirection player enemies model of
+                                HasNoActor ->
+                                    { model | state = PlayerMoving (playerMapLocation (always locationInDirection) player) }
 
-                        locationInDirection =
-                            stepLocationInDirection direction player.location
-                    in
-                    case classifyLocation locationInDirection player enemies model of
-                        HasNoActor ->
-                            mapPlayer (playerMapLocation (always locationInDirection)) model
+                                Blocked ->
+                                    model
 
-                        Blocked ->
+                                HasEnemy enemy ->
+                                    model
+
+                                HasPlayer ->
+                                    model
+
+                        Nothing ->
                             model
 
-                        HasEnemy enemy ->
-                            model
-
-                        HasPlayer ->
-                            model
-
-                Nothing ->
+                PlayerMoving _ ->
                     model
             , Cmd.none
             )
@@ -491,8 +499,16 @@ view model =
 viewOverlay : Model -> HM
 viewOverlay model =
     let
+        player =
+            case model.state of
+                PlayerMoving player_ ->
+                    player_
+
+                WaitingForInput player_ ->
+                    player_
+
         alive =
-            playerAlive model.player
+            playerAlive player
 
         allEnemiesDead =
             List.length model.enemies == 0
@@ -599,7 +615,13 @@ viewGrid model =
             ]
             ([ backgroundTileViews dimension model.walls
              , List.map (\enemy -> viewEnemyTile enemy.location) model.enemies
-             , [ viewPlayerTile model.player.location model.player.hp ]
+             , [ case model.state of
+                    WaitingForInput player ->
+                        viewPlayerTile player.location player.hp
+
+                    PlayerMoving player ->
+                        viewPlayerTile player.location player.hp
+               ]
              ]
                 |> List.concat
             )
