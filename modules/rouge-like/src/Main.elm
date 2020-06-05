@@ -407,17 +407,28 @@ update message model =
             )
 
 
-updateOnTick : Model -> Model
-updateOnTick model =
-    case model.state of
+updateStateOnTick : Clock -> State -> Maybe State
+updateStateOnTick clock state =
+    case state of
         PlayerMovingTo location timer player ->
-            if timerIsDone model.clock timer then
-                { model | state = WaitingForInput (playerMapLocation (always location) player) }
+            if timerIsDone clock timer then
+                WaitingForInput (playerMapLocation (always location) player)
+                    |> Just
 
             else
-                model
+                Nothing
 
         WaitingForInput _ ->
+            Nothing
+
+
+updateOnTick : Model -> Model
+updateOnTick model =
+    case updateStateOnTick model.clock model.state of
+        Just state ->
+            { model | state = state }
+
+        Nothing ->
             model
 
 
