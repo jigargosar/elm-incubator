@@ -282,23 +282,20 @@ type alias Model =
     { dimension : Dimension
     , walls : List Location
     , state : State
-    , enemies : List Enemy
     , clock : Clock
     , seed : Seed
     }
 
 
 type State
-    = PlayerMovingTo Location Timer Player
-    | WaitingForInput Player
-
-
-mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
-mapEnemies f model =
-    { model | enemies = f model.enemies }
+    = PlayerMovingTo Location Timer Player (List Enemy)
+    | WaitingForInput Player (List Enemy)
 
 
 
+--mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
+--mapEnemies f model =
+--    { model | enemies = f model.enemies }
 --mapPlayer : (Player -> Player) -> Model -> Model
 --mapPlayer f model =
 --    { model | player = f model.player }
@@ -335,8 +332,7 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , state = WaitingForInput acc.player
-      , enemies = acc.enemies
+      , state = WaitingForInput acc.player acc.enemies
       , clock = clockZero
       , seed = seed
       }
@@ -362,13 +358,10 @@ update message model =
 
         KeyDown key ->
             ( case model.state of
-                WaitingForInput player ->
+                WaitingForInput player enemies ->
                     case directionFromKey key of
                         Just direction ->
                             let
-                                enemies =
-                                    model.enemies
-
                                 locationInDirection =
                                     stepLocationInDirection direction player.location
                             in
@@ -378,7 +371,7 @@ update message model =
                                         movingTimer =
                                             timerInit model.clock defaultAnimSpeed
                                     in
-                                    { model | state = PlayerMovingTo locationInDirection movingTimer player }
+                                    { model | state = PlayerMovingTo locationInDirection movingTimer player enemies }
 
                                 Blocked ->
                                     model
@@ -392,7 +385,7 @@ update message model =
                         Nothing ->
                             model
 
-                PlayerMovingTo _ _ _ ->
+                PlayerMovingTo _ _ _ _ ->
                     model
             , Cmd.none
             )
@@ -411,15 +404,15 @@ update message model =
 updateStateOnTick : Clock -> State -> Maybe State
 updateStateOnTick clock state =
     case state of
-        PlayerMovingTo location timer player ->
+        PlayerMovingTo location timer player enemies ->
             if timerIsDone clock timer then
-                WaitingForInput (playerMapLocation (always location) player)
+                WaitingForInput (playerMapLocation (always location) player) enemies
                     |> Just
 
             else
                 Nothing
 
-        WaitingForInput _ ->
+        WaitingForInput _ _ ->
             Nothing
 
 
@@ -518,19 +511,19 @@ view model =
 viewOverlay : Model -> HM
 viewOverlay model =
     let
-        player =
+        ( player, enemies ) =
             case model.state of
-                PlayerMovingTo _ _ player_ ->
-                    player_
+                PlayerMovingTo _ _ player_ enemies_ ->
+                    ( player_, enemies_ )
 
-                WaitingForInput player_ ->
-                    player_
+                WaitingForInput player_ enemies_ ->
+                    ( player_, enemies_ )
 
         alive =
             playerAlive player
 
         allEnemiesDead =
-            List.length model.enemies == 0
+            List.length enemies == 0
 
         won =
             alive && allEnemiesDead
@@ -651,14 +644,14 @@ viewGrid model =
             , class "relative"
             ]
             ([ backgroundTileViews dimension model.walls
-             , List.map (\enemy -> viewEnemyTile enemy.location) model.enemies
-             , [ case model.state of
-                    WaitingForInput player ->
-                        viewPlayerTile player.location player.hp
+             , case model.state of
+                WaitingForInput player enemies ->
+                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                        ++ [ viewPlayerTile player.location player.hp ]
 
-                    PlayerMovingTo to timer player ->
-                        viewPlayerTileMovingTo model.clock to timer player.location player.hp
-               ]
+                PlayerMovingTo to timer player enemies ->
+                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                        ++ [ viewPlayerTileMovingTo model.clock to timer player.location player.hp ]
              ]
                 |> List.concat
             )
