@@ -17,7 +17,7 @@ import Tuple.More as Tuple
 
 
 defaultAnimSpeed =
-    ticksToMillis 20
+    ticksToMillis 50
 
 
 ticksToMillis =
@@ -609,7 +609,7 @@ viewPlayerTileMovingTo clock to timer location hp =
             ( to, location )
                 |> Tuple.map Location.toTuple
                 |> uncurry Tuple.sub
-                |> Tuple.toFloatScaled (32 * Ease.reverse Ease.linear (timerProgress clock timer))
+                |> Tuple.toFloatScaled (32 * Ease.inOutBounce (timerProgress clock timer))
     in
     div
         [ commonStyles
