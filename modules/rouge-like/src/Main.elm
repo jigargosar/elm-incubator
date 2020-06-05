@@ -112,11 +112,6 @@ type alias Enemy =
     }
 
 
-enemyToId : Enemy -> Uid
-enemyToId =
-    .id
-
-
 newEnemy : Location -> Generator Enemy
 newEnemy location =
     newUid
