@@ -9,6 +9,7 @@ import Html.Attributes exposing (class, style)
 import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
+import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -161,6 +162,11 @@ enemiesToIds =
     List.map .id
 
 
+enemiesFindAt : Location -> List Enemy -> Maybe Enemy
+enemiesFindAt location =
+    List.find (enemyLocationEq location)
+
+
 
 -- Player
 
@@ -181,6 +187,16 @@ playerInit location =
 playerAlive : Player -> Bool
 playerAlive player =
     player.hp > 0
+
+
+playerLocationEq : Location -> Player -> Bool
+playerLocationEq location player =
+    player.location == location
+
+
+playerMapLocation : (Location -> Location) -> Player -> Player
+playerMapLocation f player =
+    { player | location = f player.location }
 
 
 
@@ -284,8 +300,8 @@ type alias WorldMap a =
     }
 
 
-isInvalidOrWall : Location -> WorldMap a -> Bool
-isInvalidOrWall location worldMap =
+worldIsWalkable : Location -> WorldMap a -> Bool
+worldIsWalkable location worldMap =
     not (Dimension.containsLocation location worldMap.dimension)
         || List.member location worldMap.walls
 
@@ -333,13 +349,63 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        KeyDown _ ->
-            ( model, Cmd.none )
+        KeyDown key ->
+            ( case directionFromKey key of
+                Just direction ->
+                    let
+                        player =
+                            model.player
+
+                        enemies =
+                            model.enemies
+
+                        locationInDirection =
+                            stepLocationInDirection direction player.location
+                    in
+                    case worldIsWalkable locationInDirection model of
+                        True ->
+                            case enemiesFindAt locationInDirection enemies of
+                                Just enemy ->
+                                    model
+
+                                Nothing ->
+                                    model
+
+                        False ->
+                            model
+
+                Nothing ->
+                    model
+            , Cmd.none
+            )
 
         Tick delta ->
             ( model |> stepClock delta
             , Cmd.none
             )
+
+
+type LocationClass
+    = Blocked
+    | HasEnemy Enemy
+    | HasPlayer Player
+
+
+classifyLocation : Location -> Player -> List Enemy -> WorldMap a -> LocationClass
+classifyLocation location player enemies worldMap =
+    if not (worldIsWalkable location worldMap) then
+        Blocked
+
+    else if playerLocationEq location player then
+        HasPlayer player
+
+    else
+        case enemiesFindAt location enemies of
+            Just enemy ->
+                HasEnemy enemy
+
+            Nothing ->
+                Debug.todo "cannot classify location, this should never happen"
 
 
 stepClock : Float -> Model -> Model
