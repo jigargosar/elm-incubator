@@ -357,35 +357,11 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( case model.state of
-                WaitingForInput player enemies ->
-                    case directionFromKey key of
-                        Just direction ->
-                            let
-                                locationInDirection =
-                                    stepLocationInDirection direction player.location
-                            in
-                            case classifyLocation locationInDirection player enemies model of
-                                HasNoActor ->
-                                    let
-                                        movingTimer =
-                                            timerInit model.clock defaultAnimSpeed
-                                    in
-                                    { model | state = PlayerMovingTo locationInDirection movingTimer player enemies }
+            ( case updateStateOnKey key model.clock model model.state of
+                Just state ->
+                    { model | state = state }
 
-                                Blocked ->
-                                    model
-
-                                HasEnemy enemy ->
-                                    model
-
-                                HasPlayer ->
-                                    model
-
-                        Nothing ->
-                            model
-
-                PlayerMovingTo _ _ _ _ ->
+                Nothing ->
                     model
             , Cmd.none
             )
@@ -399,6 +375,41 @@ update message model =
                     { model | clock = clockStep delta model.clock }
             , Cmd.none
             )
+
+
+updateStateOnKey : String -> Clock -> WorldMap a -> State -> Maybe State
+updateStateOnKey key clock worldMap state =
+    case state of
+        WaitingForInput player enemies ->
+            case directionFromKey key of
+                Just direction ->
+                    let
+                        locationInDirection =
+                            stepLocationInDirection direction player.location
+                    in
+                    case classifyLocation locationInDirection player enemies worldMap of
+                        HasNoActor ->
+                            let
+                                movingTimer =
+                                    timerInit clock defaultAnimSpeed
+                            in
+                            PlayerMovingTo locationInDirection movingTimer player enemies
+                                |> Just
+
+                        Blocked ->
+                            Nothing
+
+                        HasEnemy enemy ->
+                            Nothing
+
+                        HasPlayer ->
+                            Nothing
+
+                Nothing ->
+                    Nothing
+
+        PlayerMovingTo _ _ _ _ ->
+            Nothing
 
 
 updateStateOnTick : Clock -> State -> Maybe State
