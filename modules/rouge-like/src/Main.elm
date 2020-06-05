@@ -288,8 +288,8 @@ type alias Model =
 
 
 type State
-    = PlayerMovingTo Location Timer Player (List Enemy)
-    | PlayerAttackingEnemy Player (List Enemy) Timer
+    = PlayerMoving Timer Location Player (List Enemy)
+    | PlayerAttackingEnemy Timer Player (List Enemy)
     | WaitingForInput Player (List Enemy)
 
 
@@ -394,7 +394,7 @@ updateStateOnKey key clock worldMap state =
                                 movingTimer =
                                     timerInit clock defaultAnimSpeed
                             in
-                            PlayerMovingTo location movingTimer player enemies
+                            PlayerMoving movingTimer location player enemies
                                 |> Just
 
                         Blocked ->
@@ -405,7 +405,7 @@ updateStateOnKey key clock worldMap state =
                                 attackTimer =
                                     timerInit clock defaultAnimSpeed
                             in
-                            PlayerAttackingEnemy player enemies attackTimer
+                            PlayerAttackingEnemy attackTimer player enemies
                                 |> Just
 
                         HasPlayer ->
@@ -421,7 +421,7 @@ updateStateOnKey key clock worldMap state =
 updateStateOnTick : Clock -> State -> Maybe State
 updateStateOnTick clock state =
     case state of
-        PlayerMovingTo location timer player enemies ->
+        PlayerMoving timer location player enemies ->
             if timerIsDone clock timer then
                 WaitingForInput (playerMapLocation (always location) player) enemies
                     |> Just
@@ -432,7 +432,7 @@ updateStateOnTick clock state =
         WaitingForInput _ _ ->
             Nothing
 
-        PlayerAttackingEnemy player enemies timer ->
+        PlayerAttackingEnemy timer player enemies ->
             if timerIsDone clock timer then
                 WaitingForInput player enemies
                     |> Just
@@ -676,11 +676,11 @@ viewGrid model =
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
                         ++ [ viewPlayerTile player.location player.hp ]
 
-                PlayerMovingTo to timer player enemies ->
+                PlayerMoving timer to player enemies ->
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
                         ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
-                PlayerAttackingEnemy player enemies timer ->
+                PlayerAttackingEnemy timer player enemies ->
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
                         ++ [ viewPlayerTile player.location player.hp ]
              ]
