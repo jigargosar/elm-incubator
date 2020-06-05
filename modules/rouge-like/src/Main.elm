@@ -293,6 +293,11 @@ mapEnemies f model =
     { model | enemies = f model.enemies }
 
 
+mapPlayer : (Player -> Player) -> Model -> Model
+mapPlayer f model =
+    { model | player = f model.player }
+
+
 type alias WorldMap a =
     { a
         | dimension : Dimension
@@ -364,7 +369,7 @@ update message model =
                     in
                     case classifyLocation locationInDirection player enemies model of
                         HasNoActor ->
-                            model
+                            mapPlayer (playerMapLocation (always locationInDirection)) model
 
                         Blocked ->
                             model
