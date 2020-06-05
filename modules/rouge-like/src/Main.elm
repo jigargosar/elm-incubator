@@ -307,9 +307,9 @@ shuffleSplit n xs =
 
 type alias Model =
     { dimension : Dimension
+    , walls : List Location
     , player : Location
     , playerHp : Int
-    , walls : List Location
     , enemies : List Enemy
     , turn : Turn
     , clock : Clock
