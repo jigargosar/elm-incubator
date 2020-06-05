@@ -10,6 +10,7 @@ import Html.Attributes exposing (class, style)
 import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
+import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -138,6 +139,11 @@ enemyIdEq uid enemy =
     enemy.id == uid
 
 
+enemyEqById : Enemy -> Enemy -> Bool
+enemyEqById a b =
+    a.id == b.id
+
+
 
 -- Enemies
 
@@ -160,6 +166,22 @@ enemiesFind uid enemies =
 enemiesToIds : List Enemy -> List Uid
 enemiesToIds =
     List.map .id
+
+
+enemiesSelectSplitById : Uid -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
+enemiesSelectSplitById id =
+    enemiesSelectSplitBy (enemyIdEq id)
+
+
+enemiesSelectSplitBy : (Enemy -> Bool) -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
+enemiesSelectSplitBy pred enemies =
+    List.selectSplit enemies
+        |> List.find (\( _, enemy, _ ) -> pred enemy)
+
+
+enemiesSelectSplitByLocation : Location -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
+enemiesSelectSplitByLocation location =
+    enemiesSelectSplitBy (enemyLocationEq location)
 
 
 enemiesFindAt : Location -> List Enemy -> Maybe Enemy
@@ -289,7 +311,7 @@ type alias Model =
 
 type State
     = PlayerMoving Timer Location Player (List Enemy)
-    | PlayerAttackingEnemy Timer Player (List Enemy)
+    | PlayerAttackingEnemy Timer Player ( List Enemy, Enemy, List Enemy )
     | WaitingForInput Player (List Enemy)
 
 
@@ -400,12 +422,12 @@ updateStateOnKey key clock worldMap state =
                         Blocked ->
                             Nothing
 
-                        HasEnemy enemy ->
+                        HasEnemy ez ->
                             let
                                 attackTimer =
                                     timerInit clock defaultAnimSpeed
                             in
-                            PlayerAttackingEnemy attackTimer player enemies
+                            PlayerAttackingEnemy attackTimer player ez
                                 |> Just
 
                         HasPlayer ->
@@ -432,18 +454,22 @@ updateStateOnTick clock state =
         WaitingForInput _ _ ->
             Nothing
 
-        PlayerAttackingEnemy timer player enemies ->
+        PlayerAttackingEnemy timer player ez ->
             if timerIsDone clock timer then
-                WaitingForInput player enemies
+                WaitingForInput player (selectSplitToList ez)
                     |> Just
 
             else
                 Nothing
 
 
+selectSplitToList ( l, c, r ) =
+    l ++ c :: r
+
+
 type LocationClass
     = Blocked
-    | HasEnemy Enemy
+    | HasEnemy ( List Enemy, Enemy, List Enemy )
     | HasPlayer
     | HasNoActor
 
@@ -457,12 +483,8 @@ classifyLocation location player enemies worldMap =
         HasPlayer
 
     else
-        case enemiesFindAt location enemies of
-            Just enemy ->
-                HasEnemy enemy
-
-            Nothing ->
-                HasNoActor
+        enemiesSelectSplitByLocation location enemies
+            |> Maybe.unwrap HasNoActor HasEnemy
 
 
 stepLocationInDirection : Direction -> Location -> Location
@@ -680,8 +702,8 @@ viewGrid model =
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
                         ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
-                PlayerAttackingEnemy timer player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                PlayerAttackingEnemy timer player ez ->
+                    List.map (\enemy -> viewEnemyTile enemy.location) (selectSplitToList ez)
                         ++ [ viewPlayerTile player.location player.hp ]
              ]
                 |> List.concat
