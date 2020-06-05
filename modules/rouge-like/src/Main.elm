@@ -310,9 +310,10 @@ type alias Model =
 
 
 type State
-    = PlayerMoving Timer Location Player (List Enemy)
+    = PlayerMoving Timer Location Player ( Enemy, List Enemy )
     | PlayerAttackingEnemy Timer Player ( List Enemy, Enemy, List Enemy )
-    | WaitingForInput Player (List Enemy)
+    | WaitingForInput Player ( Enemy, List Enemy )
+    | Victory Player
 
 
 
@@ -355,7 +356,11 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , state = WaitingForInput acc.player acc.enemies
+      , state =
+            acc.enemies
+                |> List.uncons
+                |> Maybe.map (WaitingForInput acc.player)
+                |> Maybe.withDefault (Victory acc.player)
       , clock = clockZero
       , seed = seed
       }
@@ -447,6 +452,9 @@ initPlayerMoving clock location player enemies =
 updateStateOnTick : Clock -> State -> Maybe State
 updateStateOnTick clock state =
     case state of
+        WaitingForInput _ _ ->
+            Nothing
+
         PlayerMoving timer location player enemies ->
             if timerIsDone clock timer then
                 WaitingForInput (playerMapLocation (always location) player) enemies
@@ -455,16 +463,19 @@ updateStateOnTick clock state =
             else
                 Nothing
 
-        WaitingForInput _ _ ->
-            Nothing
-
         PlayerAttackingEnemy timer player (( _, enemy, _ ) as ess) ->
             if timerIsDone clock timer then
-                initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
+                selectSplitConcatSides ess
+                    |> List.uncons
+                    |> Maybe.map (initPlayerMoving clock enemy.location player)
+                    |> Maybe.withDefault (Victory player)
                     |> Just
 
             else
                 Nothing
+
+        Victory _ ->
+            Nothing
 
 
 selectSplitConcatSides ( l, _, r ) =
@@ -486,7 +497,7 @@ type LocationClass
     | HasNoActor
 
 
-classifyLocation : Location -> Player -> List Enemy -> WorldMap a -> LocationClass
+classifyLocation : Location -> Player -> ( Enemy, List Enemy ) -> WorldMap a -> LocationClass
 classifyLocation location player enemies worldMap =
     if worldIsBlockedAt location worldMap then
         Blocked
@@ -495,8 +506,12 @@ classifyLocation location player enemies worldMap =
         HasPlayer
 
     else
-        enemiesSelectSplitByLocation location enemies
+        enemiesSelectSplitByLocation location (consToList enemies)
             |> Maybe.unwrap HasNoActor HasEnemy
+
+
+consToList ( x, xs ) =
+    x :: xs
 
 
 stepLocationInDirection : Direction -> Location -> Location
@@ -562,61 +577,26 @@ view model =
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
         , div [ class "flex relative" ]
             [ viewGrid model
-
-            --, viewOverlay model
+            , viewOverlay model.state
             ]
         ]
 
 
+viewOverlay : State -> HM
+viewOverlay state =
+    case state of
+        Victory _ ->
+            div
+                [ class "absolute w-100 h-100 flex items-center justify-center"
+                ]
+                [ div [ class "bg-white-50 black pa3 br3" ]
+                    [ div [ class "code f2 tc" ] [ text "You Won!" ]
+                    , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
+                    ]
+                ]
 
---viewOverlay : Model -> HM
---viewOverlay model =
---    let
---        ( player, enemies ) =
---            case model.state of
---                PlayerMovingTo _ _ player_ enemies_ ->
---                    ( player_, enemies_ )
---
---                WaitingForInput player_ enemies_ ->
---                    ( player_, enemies_ )
---
---        alive =
---            playerAlive player
---
---        allEnemiesDead =
---            List.length enemies == 0
---
---        won =
---            alive && allEnemiesDead
---
---        lost =
---            not alive
---
---        over =
---            won || lost
---
---        subTitle =
---            if won then
---                "You Won!"
---
---            else if lost then
---                "You Lost!"
---
---            else
---                ""
---    in
---    if over then
---        div
---            [ class "absolute w-100 h-100 flex items-center justify-center"
---            ]
---            [ div [ class "bg-white-50 black pa3 br3" ]
---                [ div [ class "code f2 tc" ] [ text subTitle ]
---                , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
---                ]
---            ]
---
---    else
---        text ""
+        _ ->
+            text ""
 
 
 type alias HM =
@@ -718,11 +698,11 @@ viewGrid model =
             ([ backgroundTileViews dimension model.walls
              , case model.state of
                 WaitingForInput player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                    List.map (\enemy -> viewEnemyTile enemy.location) (consToList enemies)
                         ++ [ viewPlayerTile player.location player.hp ]
 
                 PlayerMoving timer to player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                    List.map (\enemy -> viewEnemyTile enemy.location) (consToList enemies)
                         ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
                 PlayerAttackingEnemy timer player ess ->
@@ -733,6 +713,9 @@ viewGrid model =
                         |> selectSplitToList
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
+
+                Victory player ->
+                    [ viewPlayerTile player.location player.hp ]
              ]
                 |> List.concat
             )
