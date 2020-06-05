@@ -457,6 +457,11 @@ initPlayerMoving clock location player enemies =
     PlayerMoving movingTimer location player enemies
 
 
+justConstant : a -> Maybe (Generator a)
+justConstant x =
+    Random.constant x
+        |> Just
+
 updateStateOnTick : Clock -> State -> Maybe State
 updateStateOnTick clock state =
     case state of
