@@ -289,7 +289,7 @@ type alias Model =
 
 
 type State
-    = PlayerMovingTo Location Player
+    = PlayerMovingTo Location Timer Player
     | WaitingForInput Player
 
 
@@ -377,8 +377,11 @@ update message model =
                                     let
                                         newPlayer =
                                             playerMapLocation (always locationInDirection) player
+
+                                        movingTimer =
+                                            timerInit model.clock defaultAnimSpeed
                                     in
-                                    { model | state = PlayerMovingTo locationInDirection player }
+                                    { model | state = PlayerMovingTo locationInDirection movingTimer player }
 
                                 Blocked ->
                                     model
@@ -392,7 +395,7 @@ update message model =
                         Nothing ->
                             model
 
-                PlayerMovingTo _ _ ->
+                PlayerMovingTo _ _ _ ->
                     model
             , Cmd.none
             )
@@ -505,7 +508,7 @@ viewOverlay model =
     let
         player =
             case model.state of
-                PlayerMovingTo _ player_ ->
+                PlayerMovingTo _ _ player_ ->
                     player_
 
                 WaitingForInput player_ ->
@@ -588,9 +591,21 @@ viewPlayerTile location hp =
         [ text (String.fromInt hp) ]
 
 
-viewPlayerMovingTo to location hp =
+viewPlayerMovingTo clock to timer location hp =
+    let
+        moveDXY =
+            ( to, location )
+                |> Tuple.map Location.toTuple
+                |> uncurry Tuple.sub
+                |> Tuple.toFloatScaled (32 * timerProgress clock timer)
+    in
     div
-        [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ commonStyles
+        , cssTransform
+            [ cssTranslate (locationToDXY location)
+            , cssTranslate moveDXY
+            ]
+        ]
         [ text (String.fromInt hp) ]
 
 
@@ -629,8 +644,8 @@ viewGrid model =
                     WaitingForInput player ->
                         viewPlayerTile player.location player.hp
 
-                    PlayerMovingTo to player ->
-                        viewPlayerMovingTo to player.location player.hp
+                    PlayerMovingTo to timer player ->
+                        viewPlayerMovingTo model.clock to timer player.location player.hp
                ]
              ]
                 |> List.concat
