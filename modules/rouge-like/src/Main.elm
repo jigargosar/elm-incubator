@@ -475,6 +475,10 @@ selectSplitToList ( l, c, r ) =
     l ++ c :: r
 
 
+selectSplitMapCS fc fs ( l, c, r ) =
+    ( List.map fs l, fc c, List.map fs r )
+
+
 type LocationClass
     = Blocked
     | HasEnemy ( List Enemy, Enemy, List Enemy )
@@ -710,8 +714,13 @@ viewGrid model =
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
                         ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
-                PlayerAttackingEnemy timer player ez ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (selectSplitToList ez)
+                PlayerAttackingEnemy timer player ess ->
+                    (selectSplitMapCS
+                        (\enemy -> viewEnemyTile enemy.location)
+                        (\enemy -> viewEnemyTile enemy.location)
+                        ess
+                        |> selectSplitToList
+                    )
                         ++ [ viewPlayerTile player.location player.hp ]
              ]
                 |> List.concat
