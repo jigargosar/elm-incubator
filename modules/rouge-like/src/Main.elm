@@ -727,8 +727,8 @@ viewGrid model =
 
                 PlayerAttackingEnemy timer player ess ->
                     (selectSplitMapCS
-                        (\enemy -> viewEnemyTile enemy.location)
                         (\enemy -> viewEnemyDyingTile (timerProgress model.clock timer) enemy.location)
+                        (\enemy -> viewEnemyTile enemy.location)
                         ess
                         |> selectSplitToList
                     )
