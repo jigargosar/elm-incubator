@@ -289,6 +289,7 @@ type alias Model =
 
 type State
     = PlayerMovingTo Location Timer Player (List Enemy)
+    | PlayerAttackingEnemy Player (List Enemy) Timer
     | WaitingForInput Player (List Enemy)
 
 
@@ -400,7 +401,12 @@ updateStateOnKey key clock worldMap state =
                             Nothing
 
                         HasEnemy enemy ->
-                            Nothing
+                            let
+                                attackTimer =
+                                    timerInit clock defaultAnimSpeed
+                            in
+                            PlayerAttackingEnemy player enemies attackTimer
+                                |> Just
 
                         HasPlayer ->
                             Nothing
@@ -425,6 +431,14 @@ updateStateOnTick clock state =
 
         WaitingForInput _ _ ->
             Nothing
+
+        PlayerAttackingEnemy player enemies timer ->
+            if timerIsDone clock timer then
+                WaitingForInput player enemies
+                    |> Just
+
+            else
+                Nothing
 
 
 type LocationClass
@@ -514,59 +528,61 @@ view model =
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
         , div [ class "flex relative" ]
             [ viewGrid model
-            , viewOverlay model
+
+            --, viewOverlay model
             ]
         ]
 
 
-viewOverlay : Model -> HM
-viewOverlay model =
-    let
-        ( player, enemies ) =
-            case model.state of
-                PlayerMovingTo _ _ player_ enemies_ ->
-                    ( player_, enemies_ )
 
-                WaitingForInput player_ enemies_ ->
-                    ( player_, enemies_ )
-
-        alive =
-            playerAlive player
-
-        allEnemiesDead =
-            List.length enemies == 0
-
-        won =
-            alive && allEnemiesDead
-
-        lost =
-            not alive
-
-        over =
-            won || lost
-
-        subTitle =
-            if won then
-                "You Won!"
-
-            else if lost then
-                "You Lost!"
-
-            else
-                ""
-    in
-    if over then
-        div
-            [ class "absolute w-100 h-100 flex items-center justify-center"
-            ]
-            [ div [ class "bg-white-50 black pa3 br3" ]
-                [ div [ class "code f2 tc" ] [ text subTitle ]
-                , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
-                ]
-            ]
-
-    else
-        text ""
+--viewOverlay : Model -> HM
+--viewOverlay model =
+--    let
+--        ( player, enemies ) =
+--            case model.state of
+--                PlayerMovingTo _ _ player_ enemies_ ->
+--                    ( player_, enemies_ )
+--
+--                WaitingForInput player_ enemies_ ->
+--                    ( player_, enemies_ )
+--
+--        alive =
+--            playerAlive player
+--
+--        allEnemiesDead =
+--            List.length enemies == 0
+--
+--        won =
+--            alive && allEnemiesDead
+--
+--        lost =
+--            not alive
+--
+--        over =
+--            won || lost
+--
+--        subTitle =
+--            if won then
+--                "You Won!"
+--
+--            else if lost then
+--                "You Lost!"
+--
+--            else
+--                ""
+--    in
+--    if over then
+--        div
+--            [ class "absolute w-100 h-100 flex items-center justify-center"
+--            ]
+--            [ div [ class "bg-white-50 black pa3 br3" ]
+--                [ div [ class "code f2 tc" ] [ text subTitle ]
+--                , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
+--                ]
+--            ]
+--
+--    else
+--        text ""
 
 
 type alias HM =
@@ -607,13 +623,13 @@ viewPlayerTile location hp =
         [ text (String.fromInt hp) ]
 
 
-viewPlayerTileMovingTo clock to timer location hp =
+viewPlayerTileMovingTo to progress location hp =
     let
         moveDXY =
             ( to, location )
                 |> Tuple.map Location.toTuple
                 |> uncurry Tuple.sub
-                |> Tuple.toFloatScaled (32 * Ease.outQuad (timerProgress clock timer))
+                |> Tuple.toFloatScaled (32 * Ease.outQuad progress)
     in
     div
         [ commonStyles
@@ -662,7 +678,11 @@ viewGrid model =
 
                 PlayerMovingTo to timer player enemies ->
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                        ++ [ viewPlayerTileMovingTo model.clock to timer player.location player.hp ]
+                        ++ [ viewPlayerTileMovingTo to (timerProgress model.clock timer) player.location player.hp ]
+
+                PlayerAttackingEnemy player enemies timer ->
+                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                        ++ [ viewPlayerTile player.location player.hp ]
              ]
                 |> List.concat
             )
