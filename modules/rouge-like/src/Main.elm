@@ -374,9 +374,6 @@ update message model =
                             case classifyLocation locationInDirection player enemies model of
                                 HasNoActor ->
                                     let
-                                        newPlayer =
-                                            playerMapLocation (always locationInDirection) player
-
                                         movingTimer =
                                             timerInit model.clock defaultAnimSpeed
                                     in
