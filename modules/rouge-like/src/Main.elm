@@ -308,7 +308,12 @@ type State
     = WaitingForInput Player (NonEmpty Enemy)
     | PlayerMoving Timer Location Player (List Enemy)
     | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
+    | EnemiesMoving Timer Player (NonEmpty EnemyMoving)
     | Victory Player
+
+
+type EnemyMoving
+    = EnemyMoving Location Enemy
 
 
 type alias NonEmpty a =
@@ -482,6 +487,25 @@ updateStateOnTick clock state =
 
         Victory _ ->
             Nothing
+
+        EnemiesMoving timer player neEnemiesMoving ->
+            if timerIsDone clock timer then
+                WaitingForInput player (neEnemiesMoving |> nonEmptyMap updateMovingEnemy)
+                    |> Just
+
+            else
+                Nothing
+
+
+nonEmptyMap f ( x, xs ) =
+    ( f x, List.map f xs )
+
+
+updateMovingEnemy : EnemyMoving -> Enemy
+updateMovingEnemy enemyMoving =
+    case enemyMoving of
+        EnemyMoving location enemy ->
+            enemySetLocation location enemy
 
 
 selectSplitConcatSides ( l, _, r ) =
@@ -720,9 +744,18 @@ viewGrid model =
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
 
+                EnemiesMoving timer player neEnemiesMoving ->
+                    (neEnemiesMoving
+                        |> nonEmptyToList
+                        |> List.map (updateMovingEnemy >> .location >> viewEnemyTile ))
+
+                    ++ [ viewPlayerTile player.location player.hp ]
+
                 Victory player ->
                     [ viewPlayerTile player.location player.hp ]
-             ]
+
+
+                                  ]
                 |> List.concat
             )
         ]
