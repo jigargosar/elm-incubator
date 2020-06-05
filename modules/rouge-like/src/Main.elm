@@ -9,7 +9,6 @@ import Html.Attributes exposing (class, style)
 import Json.Decode as JD
 import List.Extra as List
 import Location exposing (Location)
-import MGrid
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
@@ -25,45 +24,6 @@ ticksToMillis =
 
 
 
--- Counter
-{-
-
-   type alias Counter =
-       { elapsed : Float
-       , target : Float
-       }
-
-
-   counterInit : Float -> Counter
-   counterInit target =
-       { elapsed = 0, target = target }
-
-
-   counterProgress : Counter -> Float
-   counterProgress c =
-       clamp 0 c.target c.elapsed / c.target
-
-
-   counterPendingProgress : Counter -> Float
-   counterPendingProgress c =
-       1 - counterProgress c
-
-
-   counterReset : Counter -> Counter
-   counterReset c =
-       { c | elapsed = 0 }
-
-
-   counterTick : Counter -> Counter
-   counterTick c =
-       { c | elapsed = c.elapsed + 1 }
-
-
-   counterIsDone : Counter -> Bool
-   counterIsDone c =
-       c.elapsed >= c.target
-
--}
 -- Timer
 
 
@@ -140,13 +100,6 @@ newUid =
         |> Random.map Uid
 
 
-
---uidToInt : Uid -> Int
---uidToInt (Uid i) =
---    i
---
-
-
 type alias Enemy =
     { id : Uid
     , location : Location
@@ -209,30 +162,7 @@ enemiesToIds =
 
 
 
---type alias UidDict a =
---    Dict Int a
---
---uidDictInsert : Uid -> a -> UidDict a -> UidDict a
---uidDictInsert uid =
---    Dict.insert (uidToInt uid)
---
---
---uidDictInsertBy : (a -> Uid) -> a -> UidDict a -> UidDict a
---uidDictInsertBy f a =
---    uidDictInsert (f a) a
---type alias EnemyUidDict =
---    UidDict Enemy
---enemyUidDictInsert : Enemy -> EnemyUidDict -> EnemyUidDict
---enemyUidDictInsert =
---    uidDictInsertBy enemyToId
---
---
---enemyUidDictGet id =
---    Dict.get (uidToInt id)
---enemiesToIdDict : List Enemy -> EnemyUidDict
---enemiesToIdDict =
---    List.foldl (uidDictInsertBy .id) Dict.empty
--- World Generator
+-- World Locations
 
 
 type alias WorldLocations =
@@ -886,68 +816,6 @@ locationToDXY location =
         |> Tuple.toFloatScaled 32
 
 
-viewCell : Clock -> Location -> Cell -> HM
-viewCell clock location cell =
-    let
-        locationDXY =
-            locationToDXY location
-    in
-    case cell of
-        Player maybePS isSelected hp ->
-            let
-                movingDXY =
-                    case maybePS of
-                        Just { from, timer } ->
-                            ( from, location )
-                                |> Tuple.map Location.toTuple
-                                |> uncurry Tuple.sub
-                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
-
-                        Nothing ->
-                            Tuple.zero
-
-                finalDXY =
-                    Tuple.add locationDXY movingDXY
-            in
-            div
-                [ commonStyles
-                , cssTransform [ cssTranslate finalDXY ]
-                , attrIf isSelected (class "outline")
-                ]
-                [ text (String.fromInt hp)
-                ]
-
-        Enemy_ maybeES ->
-            let
-                movingDXY =
-                    case maybeES of
-                        Just ( EnemyMoving fromTo, timer ) ->
-                            Tuple.map Location.toTuple fromTo
-                                |> uncurry Tuple.sub
-                                |> Tuple.toFloatScaled (32 * timerPendingProgress clock timer)
-
-                        _ ->
-                            Tuple.zero
-
-                dyingScale =
-                    case maybeES of
-                        Just ( EnemyDying _, timer ) ->
-                            timerPendingProgress clock timer
-
-                        _ ->
-                            1
-
-                finalDXY =
-                    Tuple.add locationDXY movingDXY
-            in
-            div
-                [ commonStyles
-                , cssTransform [ cssTranslate finalDXY, cssScale dyingScale ]
-                , attrMaybe maybeES (\_ -> class "outline")
-                ]
-                [ text "e" ]
-
-
 viewPlayerTile location hp =
     div
         [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
@@ -969,52 +837,6 @@ viewWallTile location =
 viewFloorTile location =
     div [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
         [ text "." ]
-
-
-toCellGrid : Model -> MGrid.MGrid Cell
-toCellGrid model =
-    let
-        playerCell =
-            case model.turn of
-                WaitingForPlayerInput ->
-                    Player Nothing True model.playerHp
-
-                EnemyTurn_ _ ->
-                    Player Nothing False model.playerHp
-
-                PlayerTurn_ turn ->
-                    Player (Just turn) True model.playerHp
-
-        currentEnemyCellEntry : Maybe ( Location, Cell )
-        currentEnemyCellEntry =
-            case model.turn of
-                WaitingForPlayerInput ->
-                    Nothing
-
-                PlayerTurn_ _ ->
-                    Nothing
-
-                EnemyTurn_ etm ->
-                    case enemiesFind etm.currentId model.enemies of
-                        Nothing ->
-                            Nothing
-
-                        Just enemy ->
-                            Just ( enemy.location, Enemy_ (Just ( etm.status, etm.timer )) )
-
-        enemyToCellEntry enemy =
-            ( enemy.location, Enemy_ Nothing )
-
-        setEnemies =
-            MGrid.setAllEntriesBy enemyToCellEntry model.enemies
-                >> MGrid.setMaybeEntry currentEnemyCellEntry
-
-        grid =
-            MGrid.empty model.dimension
-                |> setEnemies
-                |> MGrid.set model.player playerCell
-    in
-    grid
 
 
 viewGrid : Model -> HM
