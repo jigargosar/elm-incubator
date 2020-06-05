@@ -362,16 +362,17 @@ update message model =
                         locationInDirection =
                             stepLocationInDirection direction player.location
                     in
-                    case worldIsWalkable locationInDirection model of
-                        True ->
-                            case enemiesFindAt locationInDirection enemies of
-                                Just enemy ->
-                                    model
+                    case classifyLocation locationInDirection player enemies model of
+                        HasNoActor ->
+                            model
 
-                                Nothing ->
-                                    model
+                        Blocked ->
+                            model
 
-                        False ->
+                        HasEnemy enemy ->
+                            model
+
+                        HasPlayer ->
                             model
 
                 Nothing ->
@@ -388,7 +389,8 @@ update message model =
 type LocationClass
     = Blocked
     | HasEnemy Enemy
-    | HasPlayer Player
+    | HasPlayer
+    | HasNoActor
 
 
 classifyLocation : Location -> Player -> List Enemy -> WorldMap a -> LocationClass
@@ -397,7 +399,7 @@ classifyLocation location player enemies worldMap =
         Blocked
 
     else if playerLocationEq location player then
-        HasPlayer player
+        HasPlayer
 
     else
         case enemiesFindAt location enemies of
@@ -405,7 +407,7 @@ classifyLocation location player enemies worldMap =
                 HasEnemy enemy
 
             Nothing ->
-                Debug.todo "cannot classify location, this should never happen"
+                HasNoActor
 
 
 stepClock : Float -> Model -> Model
