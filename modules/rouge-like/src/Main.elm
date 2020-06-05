@@ -4,6 +4,7 @@ import Basics.More exposing (..)
 import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
+import Ease
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, style)
 import Json.Decode as JD
@@ -602,13 +603,13 @@ viewPlayerTile location hp =
         [ text (String.fromInt hp) ]
 
 
-viewPlayerMovingTo clock to timer location hp =
+viewPlayerTileMovingTo clock to timer location hp =
     let
         moveDXY =
             ( to, location )
                 |> Tuple.map Location.toTuple
                 |> uncurry Tuple.sub
-                |> Tuple.toFloatScaled (32 * timerProgress clock timer)
+                |> Tuple.toFloatScaled (32 * Ease.reverse Ease.linear (timerProgress clock timer))
     in
     div
         [ commonStyles
@@ -656,7 +657,7 @@ viewGrid model =
                         viewPlayerTile player.location player.hp
 
                     PlayerMovingTo to timer player ->
-                        viewPlayerMovingTo model.clock to timer player.location player.hp
+                        viewPlayerTileMovingTo model.clock to timer player.location player.hp
                ]
              ]
                 |> List.concat
