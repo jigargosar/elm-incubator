@@ -681,6 +681,17 @@ viewEnemyTile location =
         [ text "e" ]
 
 
+viewEnemyDyingTile progress location =
+    div
+        [ commonStyles
+        , cssTransform
+            [ cssTranslate (locationToDXY location)
+            , cssScale (Ease.reverse Ease.inOutBounce progress)
+            ]
+        ]
+        [ text "e" ]
+
+
 viewWallTile location =
     div
         [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
@@ -717,7 +728,7 @@ viewGrid model =
                 PlayerAttackingEnemy timer player ess ->
                     (selectSplitMapCS
                         (\enemy -> viewEnemyTile enemy.location)
-                        (\enemy -> viewEnemyTile enemy.location)
+                        (\enemy -> viewEnemyDyingTile (timerProgress model.clock timer) enemy.location)
                         ess
                         |> selectSplitToList
                     )
