@@ -374,7 +374,11 @@ update message model =
                             in
                             case classifyLocation locationInDirection player enemies model of
                                 HasNoActor ->
-                                    { model | state = PlayerMoving (playerMapLocation (always locationInDirection) player) }
+                                    let
+                                        newPlayer =
+                                            playerMapLocation (always locationInDirection) player
+                                    in
+                                    { model | state = PlayerMoving newPlayer }
 
                                 Blocked ->
                                     model
