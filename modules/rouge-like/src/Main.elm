@@ -25,6 +25,10 @@ ticksToMillis =
     mul (1000 / 60)
 
 
+initialEnemyCount =
+    8
+
+
 
 -- Timer
 
@@ -267,7 +271,7 @@ playerGenerator dimension =
 
 enemiesGenerator : WorldInit -> Generator WorldInit
 enemiesGenerator acc =
-    shuffleSplit 8 acc.empty
+    shuffleSplit initialEnemyCount acc.empty
         |> Random.andThen
             (\( enemyLocations, empty ) ->
                 enemyLocations
