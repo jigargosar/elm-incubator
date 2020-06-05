@@ -1010,14 +1010,17 @@ viewGrid model =
     let
         grid =
             toCellGrid model
+
+        dimension =
+            model.dimension
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         [ div
-            [ style "width" (String.fromInt (model.dimension.width * 32) ++ "px")
-            , style "height" (String.fromInt (model.dimension.height * 32) ++ "px")
+            [ gridWidthStyle dimension.width
+            , gridHeightStyle dimension.height
             , class "relative"
             ]
-            ([ backgroundTiles model.dimension model.walls
+            ([ backgroundTileViews model.dimension model.walls
              , MGrid.viewFilledList (viewCell model.clock) grid
              ]
                 |> List.concat
@@ -1025,8 +1028,16 @@ viewGrid model =
         ]
 
 
-backgroundTiles : Dimension -> List Location -> List HM
-backgroundTiles dimension walls =
+gridWidthStyle width =
+    style "width" (String.fromInt (width * 32) ++ "px")
+
+
+gridHeightStyle height =
+    style "height" (String.fromInt (height * 32) ++ "px")
+
+
+backgroundTileViews : Dimension -> List Location -> List HM
+backgroundTileViews dimension walls =
     Dimension.toLocations dimension
         |> List.map
             (\location ->
