@@ -400,9 +400,12 @@ update message model =
             )
 
         Tick delta ->
-            ( model
-                |> updateOnTick
-                |> stepClock delta
+            ( case updateStateOnTick model.clock model.state of
+                Just state ->
+                    { model | state = state, clock = clockStep delta model.clock }
+
+                Nothing ->
+                    { model | clock = clockStep delta model.clock }
             , Cmd.none
             )
 
@@ -420,16 +423,6 @@ updateStateOnTick clock state =
 
         WaitingForInput _ ->
             Nothing
-
-
-updateOnTick : Model -> Model
-updateOnTick model =
-    case updateStateOnTick model.clock model.state of
-        Just state ->
-            { model | state = state }
-
-        Nothing ->
-            model
 
 
 type LocationClass
@@ -454,11 +447,6 @@ classifyLocation location player enemies worldMap =
 
             Nothing ->
                 HasNoActor
-
-
-stepClock : Float -> Model -> Model
-stepClock delta model =
-    { model | clock = clockStep delta model.clock }
 
 
 stepLocationInDirection : Direction -> Location -> Location
