@@ -404,8 +404,12 @@ update message model =
 
         Tick delta ->
             ( case updateStateOnTick model.clock model.state of
-                Just state ->
-                    { model | state = state, clock = clockStep delta model.clock }
+                Just stateGenerator ->
+                    let
+                        ( state, seed ) =
+                            Random.step stateGenerator model.seed
+                    in
+                    { model | state = state, seed = seed, clock = clockStep delta model.clock }
 
                 Nothing ->
                     { model | clock = clockStep delta model.clock }
@@ -462,7 +466,8 @@ justConstant x =
     Random.constant x
         |> Just
 
-updateStateOnTick : Clock -> State -> Maybe State
+
+updateStateOnTick : Clock -> State -> Maybe (Generator State)
 updateStateOnTick clock state =
     case state of
         WaitingForInput _ _ ->
@@ -477,7 +482,7 @@ updateStateOnTick clock state =
                 enemies
                     |> List.uncons
                     |> Maybe.unwrap (Victory newPlayer) (WaitingForInput newPlayer)
-                    |> Just
+                    |> justConstant
 
             else
                 Nothing
@@ -485,7 +490,7 @@ updateStateOnTick clock state =
         PlayerAttackingEnemy timer player (( _, enemy, _ ) as ess) ->
             if timerIsDone clock timer then
                 initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
-                    |> Just
+                    |> justConstant
 
             else
                 Nothing
@@ -496,7 +501,7 @@ updateStateOnTick clock state =
         EnemiesMoving timer player neEnemiesMoving ->
             if timerIsDone clock timer then
                 WaitingForInput player (neEnemiesMoving |> nonEmptyMap updateMovingEnemy)
-                    |> Just
+                    |> justConstant
 
             else
                 Nothing
@@ -752,15 +757,13 @@ viewGrid model =
                 EnemiesMoving timer player neEnemiesMoving ->
                     (neEnemiesMoving
                         |> nonEmptyToList
-                        |> List.map (updateMovingEnemy >> .location >> viewEnemyTile ))
-
-                    ++ [ viewPlayerTile player.location player.hp ]
+                        |> List.map (updateMovingEnemy >> .location >> viewEnemyTile)
+                    )
+                        ++ [ viewPlayerTile player.location player.hp ]
 
                 Victory player ->
                     [ viewPlayerTile player.location player.hp ]
-
-
-                                  ]
+             ]
                 |> List.concat
             )
         ]
