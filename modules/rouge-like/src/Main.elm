@@ -463,6 +463,10 @@ updateStateOnTick clock state =
                 Nothing
 
 
+selectSplitConcatSides ( l, _, r ) =
+    l ++ r
+
+
 selectSplitToList ( l, c, r ) =
     l ++ c :: r
 
