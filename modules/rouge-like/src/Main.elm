@@ -412,11 +412,7 @@ updateStateOnKey key clock worldMap state =
                     in
                     case classifyLocation location player enemies worldMap of
                         HasNoActor ->
-                            let
-                                movingTimer =
-                                    timerInit clock defaultAnimSpeed
-                            in
-                            PlayerMoving movingTimer location player enemies
+                            initPlayerMoving clock location player enemies
                                 |> Just
 
                         Blocked ->
@@ -440,6 +436,14 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
+initPlayerMoving clock location player enemies =
+    let
+        movingTimer =
+            timerInit clock defaultAnimSpeed
+    in
+    PlayerMoving movingTimer location player enemies
+
+
 updateStateOnTick : Clock -> State -> Maybe State
 updateStateOnTick clock state =
     case state of
@@ -454,9 +458,9 @@ updateStateOnTick clock state =
         WaitingForInput _ _ ->
             Nothing
 
-        PlayerAttackingEnemy timer player ess ->
+        PlayerAttackingEnemy timer player (( _, enemy, _ ) as ess) ->
             if timerIsDone clock timer then
-                WaitingForInput player (selectSplitConcatSides ess)
+                initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
                     |> Just
 
             else
