@@ -100,8 +100,8 @@ type Uid
     = Uid Int
 
 
-uidGenerator : Generator Uid
-uidGenerator =
+newUid : Generator Uid
+newUid =
     Random.int Random.minInt Random.maxInt
         |> Random.map Uid
 
@@ -119,9 +119,9 @@ initEnemy location id =
     }
 
 
-enemyGenerator : Location -> Generator Enemy
-enemyGenerator location =
-    uidGenerator |> Random.map (initEnemy location)
+newEnemy : Location -> Generator Enemy
+newEnemy location =
+    newUid |> Random.map (initEnemy location)
 
 
 enemyLocationEq : Location -> Enemy -> Bool
@@ -266,7 +266,7 @@ enemiesGenerator acc =
         |> Random.andThen
             (\( enemyLocations, empty ) ->
                 enemyLocations
-                    |> List.map enemyGenerator
+                    |> List.map newEnemy
                     |> Random.combine
                     |> Random.map
                         (\enemies ->
