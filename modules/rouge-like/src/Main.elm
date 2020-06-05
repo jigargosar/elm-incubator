@@ -162,12 +162,34 @@ enemiesToIds =
 
 
 
+-- Player
+
+
+type alias Player =
+    { location : Location
+    , hp : Int
+    }
+
+
+playerInit : Location -> Player
+playerInit location =
+    { location = location
+    , hp = 3
+    }
+
+
+playerAlive : Player -> Bool
+playerAlive player =
+    player.hp > 0
+
+
+
 -- Initial World
 
 
 type alias WorldInit =
     { empty : List Location
-    , player : Location
+    , player : Player
     , walls : List Location
     , enemies : List Enemy
     }
@@ -176,13 +198,13 @@ type alias WorldInit =
 initialWorldGenerator : Dimension -> Generator WorldInit
 initialWorldGenerator dimension =
     let
-        acc : Location -> WorldInit
-        acc playerLocation =
+        acc : Player -> WorldInit
+        acc player =
             { empty =
                 dimension
                     |> Dimension.toLocations
-                    |> List.remove playerLocation
-            , player = playerLocation
+                    |> List.remove player.location
+            , player = player
             , walls = []
             , enemies = []
             }
@@ -193,11 +215,16 @@ initialWorldGenerator dimension =
         |> Random.andThen enemiesGenerator
 
 
-playerGenerator : Dimension -> Generator Location
+playerGenerator : Dimension -> Generator Player
 playerGenerator dimension =
-    Dimension.toLocations dimension
-        |> maybeUniformGenerator
-        |> Maybe.withDefault (Random.constant Location.zero)
+    case Dimension.toLocations dimension of
+        [] ->
+            playerInit Location.zero
+                |> Random.constant
+
+        x :: xs ->
+            Random.uniform x xs
+                |> Random.map playerInit
 
 
 enemiesGenerator : WorldInit -> Generator WorldInit
@@ -238,8 +265,7 @@ shuffleSplit n xs =
 type alias Model =
     { dimension : Dimension
     , walls : List Location
-    , player : Location
-    , playerHp : Int
+    , player : Player
     , enemies : List Enemy
     , clock : Clock
     , seed : Seed
@@ -249,11 +275,6 @@ type alias Model =
 mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
 mapEnemies f model =
     { model | enemies = f model.enemies }
-
-
-mapPlayerHp : (Int -> Int) -> Model -> Model
-mapPlayerHp f model =
-    { model | playerHp = f model.playerHp }
 
 
 isInvalidOrWall : Location -> Model -> Bool
@@ -280,7 +301,6 @@ init flags =
     in
     ( { dimension = dimension
       , player = acc.player
-      , playerHp = 3
       , walls = acc.walls
       , enemies = acc.enemies
       , clock = clockZero
@@ -392,7 +412,7 @@ viewOverlay : Model -> HM
 viewOverlay model =
     let
         alive =
-            model.playerHp > 0
+            playerAlive model.player
 
         allEnemiesDead =
             List.length model.enemies == 0
@@ -499,7 +519,7 @@ viewGrid model =
             ]
             ([ backgroundTileViews dimension model.walls
              , List.map (\enemy -> viewEnemyTile enemy.location) model.enemies
-             , [ viewPlayerTile model.player model.playerHp ]
+             , [ viewPlayerTile model.player.location model.player.hp ]
              ]
                 |> List.concat
             )
