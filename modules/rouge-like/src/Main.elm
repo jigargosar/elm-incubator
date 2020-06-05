@@ -408,7 +408,7 @@ updateStateOnKey key clock worldMap state =
                 Nothing ->
                     Nothing
 
-        PlayerMovingTo _ _ _ _ ->
+        _ ->
             Nothing
 
 
