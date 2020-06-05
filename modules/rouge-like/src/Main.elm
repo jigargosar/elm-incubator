@@ -384,16 +384,16 @@ updateStateOnKey key clock worldMap state =
             case directionFromKey key of
                 Just direction ->
                     let
-                        locationInDirection =
+                        location =
                             stepLocationInDirection direction player.location
                     in
-                    case classifyLocation locationInDirection player enemies worldMap of
+                    case classifyLocation location player enemies worldMap of
                         HasNoActor ->
                             let
                                 movingTimer =
                                     timerInit clock defaultAnimSpeed
                             in
-                            PlayerMovingTo locationInDirection movingTimer player enemies
+                            PlayerMovingTo location movingTimer player enemies
                                 |> Just
 
                         Blocked ->
