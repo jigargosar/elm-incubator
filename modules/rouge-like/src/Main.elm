@@ -300,8 +300,8 @@ type alias WorldMap a =
     }
 
 
-worldIsWalkable : Location -> WorldMap a -> Bool
-worldIsWalkable location worldMap =
+worldIsBlockedAt : Location -> WorldMap a -> Bool
+worldIsBlockedAt location worldMap =
     not (Dimension.containsLocation location worldMap.dimension)
         || List.member location worldMap.walls
 
@@ -395,7 +395,7 @@ type LocationClass
 
 classifyLocation : Location -> Player -> List Enemy -> WorldMap a -> LocationClass
 classifyLocation location player enemies worldMap =
-    if not (worldIsWalkable location worldMap) then
+    if worldIsBlockedAt location worldMap then
         Blocked
 
     else if playerLocationEq location player then
