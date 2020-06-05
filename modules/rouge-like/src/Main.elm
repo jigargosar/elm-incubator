@@ -307,8 +307,8 @@ init flags =
             Random.step (initialWorldGenerator dimension) initialSeed
     in
     ( { dimension = dimension
-      , player = acc.player
       , walls = acc.walls
+      , player = acc.player
       , enemies = acc.enemies
       , clock = clockZero
       , seed = seed
