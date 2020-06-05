@@ -405,8 +405,8 @@ update message model =
             )
 
 
-updateTick : Model -> Model
-updateTick model =
+updateOnTick : Model -> Model
+updateOnTick model =
     case model.state of
         PlayerMovingTo location timer player ->
             if timerIsDone model.clock timer then
