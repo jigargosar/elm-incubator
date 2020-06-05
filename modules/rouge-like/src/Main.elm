@@ -506,11 +506,11 @@ classifyLocation location player enemies worldMap =
         HasPlayer
 
     else
-        enemiesSelectSplitByLocation location (consToList enemies)
+        enemiesSelectSplitByLocation location (nonEmptyToList enemies)
             |> Maybe.unwrap HasNoActor HasEnemy
 
 
-consToList ( x, xs ) =
+nonEmptyToList ( x, xs ) =
     x :: xs
 
 
@@ -698,11 +698,11 @@ viewGrid model =
             ([ backgroundTileViews dimension model.walls
              , case model.state of
                 WaitingForInput player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (consToList enemies)
+                    List.map (\enemy -> viewEnemyTile enemy.location) (nonEmptyToList enemies)
                         ++ [ viewPlayerTile player.location player.hp ]
 
                 PlayerMoving timer to player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (consToList enemies)
+                    List.map (\enemy -> viewEnemyTile enemy.location) (nonEmptyToList enemies)
                         ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
                 PlayerAttackingEnemy timer player ess ->
