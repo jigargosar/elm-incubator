@@ -26,7 +26,7 @@ ticksToMillis =
 
 
 initialEnemyCount =
-    8
+    1
 
 
 
@@ -314,10 +314,14 @@ type alias Model =
 
 
 type State
-    = PlayerMoving Timer Location Player ( Enemy, List Enemy )
+    = PlayerMoving Timer Location Player (List Enemy)
     | PlayerAttackingEnemy Timer Player ( List Enemy, Enemy, List Enemy )
-    | WaitingForInput Player ( Enemy, List Enemy )
+    | WaitingForInput Player (NonEmpty Enemy)
     | Victory Player
+
+
+type alias NonEmpty a =
+    ( a, List a )
 
 
 
@@ -353,7 +357,7 @@ init flags =
             Dimension.new 12 16
 
         initialSeed =
-            Random.initialSeed (flags.now |> always 0)
+            Random.initialSeed (flags.now |> always 4)
 
         ( acc, seed ) =
             Random.step (initialWorldGenerator dimension) initialSeed
@@ -421,7 +425,7 @@ updateStateOnKey key clock worldMap state =
                     in
                     case classifyLocation location player enemies worldMap of
                         HasNoActor ->
-                            initPlayerMoving clock location player enemies
+                            initPlayerMoving clock location player (nonEmptyToList enemies)
                                 |> Just
 
                         Blocked ->
@@ -461,7 +465,13 @@ updateStateOnTick clock state =
 
         PlayerMoving timer location player enemies ->
             if timerIsDone clock timer then
-                WaitingForInput (playerMapLocation (always location) player) enemies
+                let
+                    newPlayer =
+                        playerMapLocation (always location) player
+                in
+                enemies
+                    |> List.uncons
+                    |> Maybe.unwrap (Victory newPlayer) (WaitingForInput newPlayer)
                     |> Just
 
             else
@@ -469,10 +479,7 @@ updateStateOnTick clock state =
 
         PlayerAttackingEnemy timer player (( _, enemy, _ ) as ess) ->
             if timerIsDone clock timer then
-                selectSplitConcatSides ess
-                    |> List.uncons
-                    |> Maybe.map (initPlayerMoving clock enemy.location player)
-                    |> Maybe.withDefault (Victory player)
+                initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
                     |> Just
 
             else
@@ -701,12 +708,12 @@ viewGrid model =
             ]
             ([ backgroundTileViews dimension model.walls
              , case model.state of
-                WaitingForInput player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (nonEmptyToList enemies)
+                WaitingForInput player enemiesNE ->
+                    List.map (\enemy -> viewEnemyTile enemy.location) (nonEmptyToList enemiesNE)
                         ++ [ viewPlayerTile player.location player.hp ]
 
                 PlayerMoving timer to player enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (nonEmptyToList enemies)
+                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
                         ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
                 PlayerAttackingEnemy timer player ess ->
