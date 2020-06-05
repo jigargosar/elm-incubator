@@ -623,7 +623,7 @@ viewPlayerTile location hp =
         [ text (String.fromInt hp) ]
 
 
-viewPlayerTileMovingTo to progress location hp =
+viewPlayerTileMovingTo progress to location hp =
     let
         moveDXY =
             ( to, location )
@@ -678,7 +678,7 @@ viewGrid model =
 
                 PlayerMovingTo to timer player enemies ->
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                        ++ [ viewPlayerTileMovingTo to (timerProgress model.clock timer) player.location player.hp ]
+                        ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
 
                 PlayerAttackingEnemy player enemies timer ->
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
