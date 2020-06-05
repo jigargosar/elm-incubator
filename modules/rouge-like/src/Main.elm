@@ -162,10 +162,10 @@ enemiesToIds =
 
 
 
--- World Locations
+-- Initial World
 
 
-type alias WorldLocations =
+type alias WorldInit =
     { empty : List Location
     , player : Location
     , walls : List Location
@@ -173,10 +173,10 @@ type alias WorldLocations =
     }
 
 
-worldLocationsGenerator : Dimension -> Generator WorldLocations
-worldLocationsGenerator dimension =
+initialWorldGenerator : Dimension -> Generator WorldInit
+initialWorldGenerator dimension =
     let
-        acc : Location -> WorldLocations
+        acc : Location -> WorldInit
         acc playerLocation =
             { empty =
                 dimension
@@ -200,7 +200,7 @@ playerGenerator dimension =
         |> Maybe.withDefault (Random.constant Location.zero)
 
 
-enemiesGenerator : WorldLocations -> Generator WorldLocations
+enemiesGenerator : WorldInit -> Generator WorldInit
 enemiesGenerator acc =
     shuffleSplit 8 acc.empty
         |> Random.andThen
@@ -215,7 +215,7 @@ enemiesGenerator acc =
             )
 
 
-wallsGenerator : WorldLocations -> Generator WorldLocations
+wallsGenerator : WorldInit -> Generator WorldInit
 wallsGenerator acc =
     shuffleSplit 20 acc.empty
         |> Random.map
@@ -352,7 +352,7 @@ init flags =
             Random.initialSeed (flags.now |> always 0)
 
         ( acc, seed ) =
-            Random.step (worldLocationsGenerator dimension) initialSeed
+            Random.step (initialWorldGenerator dimension) initialSeed
     in
     ( { dimension = dimension
       , player = acc.player
