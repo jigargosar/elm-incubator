@@ -277,10 +277,17 @@ mapEnemies f model =
     { model | enemies = f model.enemies }
 
 
-isInvalidOrWall : Location -> Model -> Bool
-isInvalidOrWall l model =
-    not (Dimension.containsLocation l model.dimension)
-        || List.member l model.walls
+type alias WorldMap a =
+    { a
+        | dimension : Dimension
+        , walls : List Location
+    }
+
+
+isInvalidOrWall : Location -> WorldMap a -> Bool
+isInvalidOrWall location worldMap =
+    not (Dimension.containsLocation location worldMap.dimension)
+        || List.member location worldMap.walls
 
 
 type alias Flags =
