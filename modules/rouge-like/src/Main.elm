@@ -316,12 +316,16 @@ type alias Model =
 type State
     = WaitingForInput Player (NonEmpty Enemy)
     | PlayerMoving Timer Location Player (List Enemy)
-    | PlayerAttackingEnemy Timer Player ( List Enemy, Enemy, List Enemy )
+    | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
     | Victory Player
 
 
 type alias NonEmpty a =
     ( a, List a )
+
+
+type alias SelectSplit a =
+    ( List a, a, List a )
 
 
 
