@@ -454,9 +454,9 @@ updateStateOnTick clock state =
         WaitingForInput _ _ ->
             Nothing
 
-        PlayerAttackingEnemy timer player ez ->
+        PlayerAttackingEnemy timer player ess ->
             if timerIsDone clock timer then
-                WaitingForInput player (selectSplitToList ez)
+                WaitingForInput player (selectSplitConcatSides ess)
                     |> Just
 
             else
