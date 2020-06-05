@@ -400,7 +400,9 @@ update message model =
             )
 
         Tick delta ->
-            ( model |> stepClock delta
+            ( model
+                |> updateOnTick
+                |> stepClock delta
             , Cmd.none
             )
 
