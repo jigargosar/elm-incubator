@@ -314,9 +314,9 @@ type alias Model =
 
 
 type State
-    = PlayerMoving Timer Location Player (List Enemy)
+    = WaitingForInput Player (NonEmpty Enemy)
+    | PlayerMoving Timer Location Player (List Enemy)
     | PlayerAttackingEnemy Timer Player ( List Enemy, Enemy, List Enemy )
-    | WaitingForInput Player (NonEmpty Enemy)
     | Victory Player
 
 
