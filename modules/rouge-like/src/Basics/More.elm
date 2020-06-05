@@ -224,3 +224,19 @@ attrMaybe mx f =
 
 noAttr =
     Html.Attributes.classList []
+
+
+eqBy f a b =
+    f a == f b
+
+
+eqById =
+    eqBy .id
+
+
+propEq x fx a =
+    x == fx a
+
+
+idEq id =
+    propEq id .id

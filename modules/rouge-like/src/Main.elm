@@ -134,13 +134,8 @@ enemySetLocation location enemy =
 
 
 enemyIdEq : Uid -> Enemy -> Bool
-enemyIdEq uid enemy =
-    enemy.id == uid
-
-
-enemyEqById : Enemy -> Enemy -> Bool
-enemyEqById a b =
-    a.id == b.id
+enemyIdEq =
+    idEq
 
 
 
