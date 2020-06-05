@@ -1020,9 +1020,6 @@ toCellGrid model =
 viewGrid : Model -> HM
 viewGrid model =
     let
-        grid =
-            toCellGrid model
-
         dimension =
             model.dimension
     in
@@ -1032,8 +1029,7 @@ viewGrid model =
             , gridHeightStyle dimension.height
             , class "relative"
             ]
-            ([ backgroundTileViews model.dimension model.walls
-             , MGrid.viewFilledList (viewCell model.clock) grid
+            ([ backgroundTileViews dimension model.walls
              , List.map (\enemy -> viewEnemyTile enemy.location) model.enemies
              , [ viewPlayerTile model.player model.playerHp ]
              ]
