@@ -948,6 +948,12 @@ viewCell clock location cell =
                 [ text "e" ]
 
 
+viewEnemyTile location =
+    div
+        [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text "e" ]
+
+
 viewWallTile location =
     div
         [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
@@ -1022,6 +1028,7 @@ viewGrid model =
             ]
             ([ backgroundTileViews model.dimension model.walls
              , MGrid.viewFilledList (viewCell model.clock) grid
+             , List.map (\enemy -> viewEnemyTile enemy.location) model.enemies
              ]
                 |> List.concat
             )
