@@ -504,7 +504,7 @@ initPlayerMoving clock location player enemies =
     PlayerMoving movingTimer location player enemies
 
 
-initEnemiesMoving : Clock -> Player -> ( Enemy, List Enemy ) -> State
+initEnemiesMoving : Clock -> Player -> Cons Enemy -> State
 initEnemiesMoving clock player emCons =
     let
         movingTimer =
@@ -545,7 +545,7 @@ type LocationClass
     | HasNoActor
 
 
-classifyLocation : Location -> Player -> ( Enemy, List Enemy ) -> WorldMap a -> LocationClass
+classifyLocation : Location -> Player -> Cons Enemy -> WorldMap a -> LocationClass
 classifyLocation location player enemies worldMap =
     if worldIsBlockedAt location worldMap then
         Blocked
