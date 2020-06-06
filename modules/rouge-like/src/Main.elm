@@ -15,6 +15,7 @@ import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
+import Tuple exposing (first)
 import Tuple.More as Tuple
 
 
@@ -514,8 +515,51 @@ initEnemiesMoving clock worldMap player emCons =
     let
         movingTimer =
             timerInit clock defaultAnimSpeed
+
+        --foo location =
+        --    worldMapAdjacentWalkable location worldMap
+        --        |> List.filterNot hasActor
     in
     EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) emCons)
+
+
+enemiesMovesGenerator : WorldMap a -> Player -> List Enemy -> Generator (List ( Location, Enemy ))
+enemiesMovesGenerator worldMap player enemies =
+    List.map (\e -> ( e.location, e )) enemies
+        |> Random.constant
+
+
+enemyMoveGenerator : WorldMap a -> Player -> List ( Location, Enemy ) -> Enemy -> Generator ( Location, Enemy )
+enemyMoveGenerator worldMap player enemies enemy =
+    let
+        locations =
+            worldMapAdjacentWalkable enemy.location worldMap
+                |> listRemoveAll (player.location :: List.map first enemies)
+
+        locationGenerator =
+            case locations of
+                [] ->
+                    Random.constant enemy.location
+
+                x :: xs ->
+                    Random.uniform x xs
+    in
+    locationGenerator
+        |> Random.map (pairTo enemy)
+
+
+listRemoveAll : List a -> List a -> List a
+listRemoveAll toRemove =
+    let
+        shouldKeep x =
+            List.notMember x toRemove
+    in
+    List.filter shouldKeep
+
+
+filterGenerator : (a -> Bool) -> List a -> Maybe (Generator a)
+filterGenerator f xs =
+    Debug.todo "impl"
 
 
 justConstant : a -> Maybe (Generator a)
