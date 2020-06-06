@@ -860,9 +860,18 @@ viewGrid model =
                         ++ [ viewPlayerTile player.location player.hp ]
 
                 EnemiesActing timer player eaCons ->
+                    let
+                        progress =
+                            timerProgress model.clock timer
+                    in
                     (eaCons
                         |> Cons.toList
-                        |> List.map (updateMovingEnemy >> .location >> viewEnemyTile)
+                        |> List.map
+                            (\ea ->
+                                case ea of
+                                    EnemyMoving to enemy ->
+                                        viewEnemyTileMoving progress to enemy.location
+                            )
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
 
