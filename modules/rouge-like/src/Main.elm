@@ -518,6 +518,13 @@ initEnemiesMoving clock worldMap player emCons =
         movingTimer =
             timerInit clock defaultAnimSpeed
 
+        getNextEnemyLocations location =
+            worldMapAdjacentWalkable location worldMap
+                |> List.remove player.location
+
+        _ =
+            esToLEsGenerator getNextEnemyLocations
+
         --foo location =
         --    worldMapAdjacentWalkable location worldMap
         --        |> List.filterNot hasActor
