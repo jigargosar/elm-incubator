@@ -325,12 +325,11 @@ worldMapAdjacentWalkable location worldMap =
 
 
 type alias Model =
-    { dimension : Dimension
-    , walls : List Location
-    , state : State
-    , clock : Clock
-    , seed : Seed
-    }
+    WorldMap
+        { state : State
+        , clock : Clock
+        , seed : Seed
+        }
 
 
 type State
