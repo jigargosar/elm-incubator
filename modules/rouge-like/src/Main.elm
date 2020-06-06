@@ -367,7 +367,7 @@ init flags =
       , state =
             acc.enemies
                 |> List.uncons
-                |> Maybe.map (WaitingForInput acc.player)
+                |> Maybe.map (initWaitingForInput acc.player)
                 |> Maybe.withDefault (Victory acc.player)
       , clock = clockZero
       , seed = seed
@@ -453,20 +453,6 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
-initPlayerMoving clock location player enemies =
-    let
-        movingTimer =
-            timerInit clock defaultAnimSpeed
-    in
-    PlayerMoving movingTimer location player enemies
-
-
-justConstant : a -> Maybe (Generator a)
-justConstant x =
-    Random.constant x
-        |> Just
-
-
 updateStateOnTick : Clock -> State -> Maybe (Generator State)
 updateStateOnTick clock state =
     case state of
@@ -481,7 +467,7 @@ updateStateOnTick clock state =
                 in
                 enemies
                     |> List.uncons
-                    |> Maybe.unwrap (Victory newPlayer) (WaitingForInput newPlayer)
+                    |> Maybe.unwrap (Victory newPlayer) (initWaitingForInput newPlayer)
                     |> justConstant
 
             else
@@ -500,11 +486,30 @@ updateStateOnTick clock state =
 
         EnemiesMoving timer player neEnemiesMoving ->
             if timerIsDone clock timer then
-                WaitingForInput player (neEnemiesMoving |> nonEmptyMap updateMovingEnemy)
+                initWaitingForInput player (neEnemiesMoving |> nonEmptyMap updateMovingEnemy)
                     |> justConstant
 
             else
                 Nothing
+
+
+initWaitingForInput : Player -> NonEmpty Enemy -> State
+initWaitingForInput player neEnemies =
+    WaitingForInput player neEnemies
+
+
+initPlayerMoving clock location player enemies =
+    let
+        movingTimer =
+            timerInit clock defaultAnimSpeed
+    in
+    PlayerMoving movingTimer location player enemies
+
+
+justConstant : a -> Maybe (Generator a)
+justConstant x =
+    Random.constant x
+        |> Just
 
 
 nonEmptyMap f ( x, xs ) =
