@@ -513,7 +513,7 @@ initPlayerMoving clock location player enemies =
 
 
 initEnemiesMoving : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator State
-initEnemiesMoving clock worldMap player emCons =
+initEnemiesMoving clock worldMap player enemyCons =
     let
         movingTimer =
             timerInit clock defaultAnimSpeed
@@ -522,18 +522,20 @@ initEnemiesMoving clock worldMap player emCons =
             worldMapAdjacentWalkable location worldMap
                 |> List.remove player.location
 
-        _ =
-            esToLEsGenerator getNextEnemyLocations
+        foo : Generator State
+        foo =
+            esToLEsGenerator getNextEnemyLocations enemyCons
+                |> Random.map (Cons.map (uncurry EnemyMoving))
+                |> Random.map (EnemiesMoving movingTimer player)
 
-        --foo location =
-        --    worldMapAdjacentWalkable location worldMap
-        --        |> List.filterNot hasActor
+        bar =
+            EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) enemyCons)
+                |> Random.constant
     in
-    EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) emCons)
-        |> Random.constant
+    foo
 
 
-esToLEsGenerator : (Location -> List Location) -> List Enemy -> Generator (List ( Location, Enemy ))
+esToLEsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons ( Location, Enemy ))
 esToLEsGenerator getNextLocations enemies =
     let
         f seed =
@@ -543,12 +545,14 @@ esToLEsGenerator getNextLocations enemies =
     Random.independentSeed |> Random.map f
 
 
-esToLEsHelp : (Location -> List Location) -> Seed -> List Enemy -> ( ( List Location, Seed ), List ( Location, Enemy ) )
+esToLEsHelp : (Location -> List Location) -> Seed -> Cons Enemy -> ( ( List Location, Seed ), Cons ( Location, Enemy ) )
 esToLEsHelp getNextLocations iSeed iEnemies =
     let
         iOccupied : List Location
         iOccupied =
-            List.map .location iEnemies
+            iEnemies
+                |> Cons.toList
+                |> List.map .location
 
         reducer : ( List Location, Seed ) -> Enemy -> ( ( List Location, Seed ), ( Location, Enemy ) )
         reducer ( occupied, seed ) enemy =
@@ -568,7 +572,7 @@ esToLEsHelp getNextLocations iSeed iEnemies =
             in
             ( ( nOccupied, nSeed ), ( nl, enemy ) )
     in
-    List.mapAccuml reducer ( iOccupied, iSeed ) iEnemies
+    Cons.mapAccuml reducer ( iOccupied, iSeed ) iEnemies
 
 
 listRemoveAll : List a -> List a -> List a
