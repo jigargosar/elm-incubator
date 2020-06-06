@@ -343,6 +343,16 @@ worldMapIsBlockedAt location worldMap =
         || List.member location worldMap.walls
 
 
+worldMapAdjacentWalkable : Location -> WorldMap a -> List Location
+worldMapAdjacentWalkable location worldMap =
+    let
+        pred x =
+            worldMapIsBlockedAt x worldMap
+    in
+    Location.adjacent location
+        |> List.filter pred
+
+
 type alias Flags =
     { now : Int }
 
