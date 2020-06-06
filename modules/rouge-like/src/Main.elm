@@ -476,7 +476,7 @@ updateStateOnTick clock worldMap state =
                     |> List.uncons
                     |> Maybe.unwrap
                         (Random.constant (Victory newPlayer))
-                        (initEnemiesMoving clock worldMap newPlayer)
+                        (initEnemiesActing clock worldMap newPlayer)
                     |> Just
 
             else
@@ -516,8 +516,8 @@ initPlayerMoving clock location player enemies =
     PlayerMoving movingTimer location player enemies
 
 
-initEnemiesMoving : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator State
-initEnemiesMoving clock worldMap player enemyCons =
+initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator State
+initEnemiesActing clock worldMap player enemyCons =
     let
         movingTimer =
             timerInit clock defaultAnimSpeed
