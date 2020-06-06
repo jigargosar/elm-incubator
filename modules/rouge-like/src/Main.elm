@@ -337,11 +337,11 @@ type State
     = WaitingForInput Player (Cons Enemy)
     | PlayerMoving Timer Location Player (List Enemy)
     | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
-    | EnemiesMoving Timer Player (Cons EnemyMoving)
+    | EnemiesActing Timer Player (Cons EnemyAction)
     | Victory Player
 
 
-type EnemyMoving
+type EnemyAction
     = EnemyMoving Location Enemy
 
 
@@ -489,7 +489,7 @@ updateStateOnTick clock worldMap state =
         Victory _ ->
             Nothing
 
-        EnemiesMoving timer player emCons ->
+        EnemiesActing timer player emCons ->
             if timerIsDone clock timer then
                 initWaitingForInput player (emCons |> Cons.map updateMovingEnemy)
                     |> justConstant
@@ -525,16 +525,16 @@ initEnemiesMoving clock worldMap player enemyCons =
         foo : Generator State
         foo =
             esToLEsGenerator getNextEnemyLocations enemyCons
-                |> Random.map (EnemiesMoving movingTimer player)
+                |> Random.map (EnemiesActing movingTimer player)
 
         bar =
-            EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) enemyCons)
+            EnemiesActing movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) enemyCons)
                 |> Random.constant
     in
     foo
 
 
-esToLEsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons EnemyMoving)
+esToLEsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons EnemyAction)
 esToLEsGenerator getNextLocations enemies =
     let
         f seed =
@@ -544,7 +544,7 @@ esToLEsGenerator getNextLocations enemies =
     Random.independentSeed |> Random.map f
 
 
-esToLEsHelp : (Location -> List Location) -> Seed -> Cons Enemy -> ( ( List Location, Seed ), Cons EnemyMoving )
+esToLEsHelp : (Location -> List Location) -> Seed -> Cons Enemy -> ( ( List Location, Seed ), Cons EnemyAction )
 esToLEsHelp getNextLocations iSeed iEnemies =
     let
         iOccupied : List Location
@@ -553,7 +553,7 @@ esToLEsHelp getNextLocations iSeed iEnemies =
                 |> Cons.toList
                 |> List.map .location
 
-        reducer : ( List Location, Seed ) -> Enemy -> ( ( List Location, Seed ), EnemyMoving )
+        reducer : ( List Location, Seed ) -> Enemy -> ( ( List Location, Seed ), EnemyAction )
         reducer ( occupied, seed ) enemy =
             let
                 nlGenerator =
@@ -594,7 +594,7 @@ justConstant x =
         |> Just
 
 
-updateMovingEnemy : EnemyMoving -> Enemy
+updateMovingEnemy : EnemyAction -> Enemy
 updateMovingEnemy enemyMoving =
     case enemyMoving of
         EnemyMoving location enemy ->
@@ -833,7 +833,7 @@ viewGrid model =
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
 
-                EnemiesMoving timer player neEnemiesMoving ->
+                EnemiesActing timer player neEnemiesMoving ->
                     (neEnemiesMoving
                         |> Cons.toList
                         |> List.map (updateMovingEnemy >> .location >> viewEnemyTile)
