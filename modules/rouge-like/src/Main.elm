@@ -293,6 +293,34 @@ shuffleSplit n xs =
 
 
 
+-- World Map
+
+
+type alias WorldMap a =
+    { a
+        | dimension : Dimension
+        , walls : List Location
+    }
+
+
+worldMapIsLocationBlocked : Location -> WorldMap a -> Bool
+worldMapIsLocationBlocked location worldMap =
+    not (Dimension.containsLocation location worldMap.dimension)
+        || List.member location worldMap.walls
+
+
+worldMapIsLocationWalkable : Location -> WorldMap a -> Bool
+worldMapIsLocationWalkable location =
+    worldMapIsLocationBlocked location >> not
+
+
+worldMapAdjacentWalkable : Location -> WorldMap a -> List Location
+worldMapAdjacentWalkable location worldMap =
+    Location.adjacent location
+        |> List.filter (\x -> worldMapIsLocationWalkable x worldMap)
+
+
+
 -- Model
 
 
@@ -319,39 +347,6 @@ type EnemyMoving
 
 type alias SelectSplit a =
     ( List a, a, List a )
-
-
-
---mapEnemies : (List Enemy -> List Enemy) -> Model -> Model
---mapEnemies f model =
---    { model | enemies = f model.enemies }
---mapPlayer : (Player -> Player) -> Model -> Model
---mapPlayer f model =
---    { model | player = f model.player }
-
-
-type alias WorldMap a =
-    { a
-        | dimension : Dimension
-        , walls : List Location
-    }
-
-
-worldMapIsLocationBlocked : Location -> WorldMap a -> Bool
-worldMapIsLocationBlocked location worldMap =
-    not (Dimension.containsLocation location worldMap.dimension)
-        || List.member location worldMap.walls
-
-
-worldMapIsLocationWalkable : Location -> WorldMap a -> Bool
-worldMapIsLocationWalkable location =
-    worldMapIsLocationBlocked location >> not
-
-
-worldMapAdjacentWalkable : Location -> WorldMap a -> List Location
-worldMapAdjacentWalkable location worldMap =
-    Location.adjacent location
-        |> List.filter (\x -> worldMapIsLocationWalkable x worldMap)
 
 
 type alias Flags =
