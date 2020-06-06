@@ -839,12 +839,20 @@ viewGrid model =
                         ++ [ viewPlayerTile player.location player.hp ]
 
                 PlayerMoving timer to player enemies ->
+                    let
+                        progress =
+                            timerProgress model.clock timer
+                    in
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                        ++ [ viewPlayerTileMoving (timerProgress model.clock timer) to player.location player.hp ]
+                        ++ [ viewPlayerTileMoving progress to player.location player.hp ]
 
                 PlayerAttackingEnemy timer player ess ->
+                    let
+                        progress =
+                            timerProgress model.clock timer
+                    in
                     (selectSplitMapCS
-                        (\enemy -> viewEnemyDyingTile (timerProgress model.clock timer) enemy.location)
+                        (\enemy -> viewEnemyDyingTile progress enemy.location)
                         (\enemy -> viewEnemyTile enemy.location)
                         ess
                         |> selectSplitToList
