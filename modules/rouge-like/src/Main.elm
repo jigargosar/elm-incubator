@@ -756,7 +756,7 @@ viewPlayerTile location hp =
         [ text (String.fromInt hp) ]
 
 
-viewPlayerTileMovingTo progress to location hp =
+viewPlayerTileMoving progress to location hp =
     let
         moveDXY =
             ( to, location )
@@ -772,6 +772,24 @@ viewPlayerTileMovingTo progress to location hp =
             ]
         ]
         [ text (String.fromInt hp) ]
+
+
+viewEnemyTileMoving progress to location =
+    let
+        moveDXY =
+            ( to, location )
+                |> Tuple.map Location.toTuple
+                |> uncurry Tuple.sub
+                |> Tuple.toFloatScaled (32 * Ease.outQuad progress)
+    in
+    div
+        [ commonStyles
+        , cssTransform
+            [ cssTranslate (locationToDXY location)
+            , cssTranslate moveDXY
+            ]
+        ]
+        [ text "e" ]
 
 
 viewEnemyTile location =
@@ -822,7 +840,7 @@ viewGrid model =
 
                 PlayerMoving timer to player enemies ->
                     List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                        ++ [ viewPlayerTileMovingTo (timerProgress model.clock timer) to player.location player.hp ]
+                        ++ [ viewPlayerTileMoving (timerProgress model.clock timer) to player.location player.hp ]
 
                 PlayerAttackingEnemy timer player ess ->
                     (selectSplitMapCS
@@ -833,8 +851,8 @@ viewGrid model =
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
 
-                EnemiesActing timer player neEnemiesMoving ->
-                    (neEnemiesMoving
+                EnemiesActing timer player eaCons ->
+                    (eaCons
                         |> Cons.toList
                         |> List.map (updateMovingEnemy >> .location >> viewEnemyTile)
                     )
