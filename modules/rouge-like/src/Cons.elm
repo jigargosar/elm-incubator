@@ -1,4 +1,4 @@
-module Cons exposing (Cons, fromList, init, map, toList)
+module Cons exposing (Cons, fromList, init, map, mapAccuml, toList)
 
 import Basics.More exposing (..)
 import List.Extra as List
