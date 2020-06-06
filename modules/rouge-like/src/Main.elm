@@ -470,8 +470,10 @@ updateStateOnTick clock worldMap state =
                 in
                 enemies
                     |> List.uncons
-                    |> Maybe.unwrap (Victory newPlayer) (initEnemiesMoving clock worldMap newPlayer)
-                    |> justConstant
+                    |> Maybe.unwrap
+                        (Random.constant (Victory newPlayer))
+                        (initEnemiesMoving clock worldMap newPlayer)
+                    |> Just
 
             else
                 Nothing
@@ -510,7 +512,7 @@ initPlayerMoving clock location player enemies =
     PlayerMoving movingTimer location player enemies
 
 
-initEnemiesMoving : Clock -> WorldMap a -> Player -> Cons Enemy -> State
+initEnemiesMoving : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator State
 initEnemiesMoving clock worldMap player emCons =
     let
         movingTimer =
@@ -521,6 +523,7 @@ initEnemiesMoving clock worldMap player emCons =
         --        |> List.filterNot hasActor
     in
     EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) emCons)
+        |> Random.constant
 
 
 esToLEsGenerator : (Location -> List Location) -> List Enemy -> Generator (List ( Location, Enemy ))
