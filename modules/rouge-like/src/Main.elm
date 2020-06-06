@@ -532,7 +532,7 @@ initEnemiesMoving clock worldMap player enemyCons =
             EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) enemyCons)
                 |> Random.constant
     in
-    bar
+    foo
 
 
 esToLEsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons ( Location, Enemy ))
