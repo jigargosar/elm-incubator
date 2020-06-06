@@ -345,6 +345,10 @@ type EnemyAction
     = EnemyMoving Location Enemy
 
 
+type PlayerReaction
+    = PlayerWasAttacked Int Player
+
+
 type alias SelectSplit a =
     ( List a, a, List a )
 
