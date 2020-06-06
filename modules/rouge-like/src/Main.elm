@@ -525,17 +525,9 @@ initEnemiesActing clock worldMap player enemyCons =
         getNextEnemyLocations location =
             worldMapAdjacentWalkable location worldMap
                 |> List.remove player.location
-
-        foo : Generator State
-        foo =
-            enemyActionsGenerator getNextEnemyLocations enemyCons
-                |> Random.map (EnemiesActing movingTimer player)
-
-        bar =
-            EnemiesActing movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) enemyCons)
-                |> Random.constant
     in
-    foo
+    enemyActionsGenerator getNextEnemyLocations enemyCons
+        |> Random.map (EnemiesActing movingTimer player)
 
 
 enemyActionsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons EnemyAction)
