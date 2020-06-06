@@ -529,12 +529,12 @@ enemiesMovesGenerator worldMap player enemies =
         |> Random.constant
 
 
-enemyMoveGenerator : WorldMap a -> Player -> List ( Location, Enemy ) -> Enemy -> Generator ( Location, Enemy )
-enemyMoveGenerator worldMap player enemies enemy =
+enemyMoveGenerator : WorldMap a -> List Location -> Enemy -> Generator ( Location, Enemy )
+enemyMoveGenerator worldMap occupiedLocations enemy =
     let
         locations =
             worldMapAdjacentWalkable enemy.location worldMap
-                |> listRemoveAll (player.location :: List.map first enemies)
+                |> listRemoveAll occupiedLocations
 
         locationGenerator =
             case locations of
