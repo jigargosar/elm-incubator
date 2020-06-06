@@ -75,19 +75,15 @@ toList =
 mapAccuml : (a -> b -> ( a, c )) -> a -> Cons b -> ( a, Cons c )
 mapAccuml f acc0 ( x0, xs ) =
     let
-        ( acc1, y0 ) =
+        iAcc =
             f acc0 x0
+                |> Tuple.mapSecond singleton
+
+        reducer x ( acc, yCons ) =
+            f acc x
+                |> Tuple.mapSecond (\y -> push y yCons)
 
         ( accFinal, generatedCons ) =
-            List.foldl
-                (\x ( acc, yCons ) ->
-                    let
-                        ( nAcc, y ) =
-                            f acc x
-                    in
-                    ( nAcc, push y yCons )
-                )
-                ( acc1, singleton y0 )
-                xs
+            List.foldl reducer iAcc xs
     in
     ( accFinal, reverse generatedCons )
