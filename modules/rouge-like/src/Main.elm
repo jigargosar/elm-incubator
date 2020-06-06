@@ -28,7 +28,7 @@ ticksToMillis =
 
 
 initialEnemyCount =
-    1
+    8
 
 
 
