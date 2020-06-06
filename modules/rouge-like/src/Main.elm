@@ -15,7 +15,7 @@ import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
-import Tuple exposing (first)
+import Tuple exposing (first, second)
 import Tuple.More as Tuple
 
 
@@ -523,37 +523,42 @@ initEnemiesMoving clock worldMap player emCons =
     EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) emCons)
 
 
-foo getNextLocations iEnemies =
+esToLEsGenerator : (Location -> List Location) -> List Enemy -> Generator (List ( Location, Enemy ))
+esToLEsGenerator getNextLocations enemies =
     let
+        f seed =
+            esToLEsHelp getNextLocations seed enemies
+                |> second
+    in
+    Random.independentSeed |> Random.map f
+
+
+esToLEsHelp : (Location -> List Location) -> Seed -> List Enemy -> ( ( List Location, Seed ), List ( Location, Enemy ) )
+esToLEsHelp getNextLocations iSeed iEnemies =
+    let
+        iOccupied : List Location
         iOccupied =
             List.map .location iEnemies
 
-        reducer occupied enemy =
+        reducer : ( List Location, Seed ) -> Enemy -> ( ( List Location, Seed ), ( Location, Enemy ) )
+        reducer ( occupied, seed ) enemy =
             let
-                nl =
+                nlGenerator =
                     enemy.location
                         |> getNextLocations
                         |> listRemoveAll occupied
-                        |> List.head
-                        |> Maybe.withDefault enemy.location
+                        |> maybeUniformGenerator
+                        |> Maybe.withDefault (Random.constant enemy.location)
+
+                ( nl, nSeed ) =
+                    Random.step nlGenerator seed
+
+                nOccupied =
+                    List.setIf (eq enemy.location) nl occupied
             in
-            ( List.setIf (eq enemy.location) nl occupied, ( nl, enemy ) )
+            ( ( nOccupied, nSeed ), ( nl, enemy ) )
     in
-    List.mapAccuml reducer iOccupied iEnemies
-
-
-esToELS : List ( Location, Enemy ) -> Enemy -> List Enemy -> List ( Location, Enemy )
-esToELS ds e ps =
-    let
-        nds =
-            ( e.location, e ) :: ds
-    in
-    case ps of
-        [] ->
-            List.reverse nds
-
-        x :: xs ->
-            esToELS nds x xs
+    List.mapAccuml reducer ( iOccupied, iSeed ) iEnemies
 
 
 listRemoveAll : List a -> List a -> List a
