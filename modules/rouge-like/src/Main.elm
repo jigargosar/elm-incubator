@@ -525,7 +525,7 @@ initEnemiesMoving clock worldMap player emCons =
 
 foo getNextLocations iEnemies =
     let
-        iAcc =
+        iOccupied =
             List.map .location iEnemies
 
         reducer occupied enemy =
@@ -539,7 +539,7 @@ foo getNextLocations iEnemies =
             in
             ( List.setIf (eq enemy.location) nl occupied, ( nl, enemy ) )
     in
-    List.mapAccuml reducer iAcc iEnemies
+    List.mapAccuml reducer iOccupied iEnemies
 
 
 esToELS : List ( Location, Enemy ) -> Enemy -> List Enemy -> List ( Location, Enemy )
