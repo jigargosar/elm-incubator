@@ -524,7 +524,7 @@ initEnemiesMoving clock worldMap player enemyCons =
 
         foo : Generator State
         foo =
-            esToLEsGenerator getNextEnemyLocations enemyCons
+            enemiesActionGenerator getNextEnemyLocations enemyCons
                 |> Random.map (EnemiesActing movingTimer player)
 
         bar =
@@ -534,18 +534,22 @@ initEnemiesMoving clock worldMap player enemyCons =
     foo
 
 
-esToLEsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons EnemyAction)
-esToLEsGenerator getNextLocations enemies =
+enemiesActionGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons EnemyAction)
+enemiesActionGenerator getNextLocations enemies =
     let
         f seed =
-            esToLEsHelp getNextLocations seed enemies
+            enemiesActionGeneratorHelp getNextLocations seed enemies
                 |> second
     in
     Random.independentSeed |> Random.map f
 
 
-esToLEsHelp : (Location -> List Location) -> Seed -> Cons Enemy -> ( ( List Location, Seed ), Cons EnemyAction )
-esToLEsHelp getNextLocations iSeed iEnemies =
+enemiesActionGeneratorHelp :
+    (Location -> List Location)
+    -> Seed
+    -> Cons Enemy
+    -> ( ( List Location, Seed ), Cons EnemyAction )
+enemiesActionGeneratorHelp getNextLocations iSeed iEnemies =
     let
         iOccupied : List Location
         iOccupied =
