@@ -523,29 +523,18 @@ initEnemiesMoving clock worldMap player emCons =
     EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) emCons)
 
 
-enemiesMovesGenerator : WorldMap a -> Player -> List Enemy -> Generator (List ( Location, Enemy ))
-enemiesMovesGenerator worldMap player enemies =
-    List.map (\e -> ( e.location, e )) enemies
-        |> Random.constant
-
-
-enemyMoveGenerator : WorldMap a -> List Location -> Enemy -> Generator ( Location, Enemy )
-enemyMoveGenerator worldMap occupiedLocations enemy =
+foo : List ( Location, Enemy ) -> Enemy -> List Enemy -> List ( Location, Enemy )
+foo ds e ps =
     let
-        locations =
-            worldMapAdjacentWalkable enemy.location worldMap
-                |> listRemoveAll occupiedLocations
-
-        locationGenerator =
-            case locations of
-                [] ->
-                    Random.constant enemy.location
-
-                x :: xs ->
-                    Random.uniform x xs
+        nds =
+            ( e.location, e ) :: ds
     in
-    locationGenerator
-        |> Random.map (pairTo enemy)
+    case ps of
+        [] ->
+            List.reverse nds
+
+        x :: xs ->
+            foo nds x xs
 
 
 listRemoveAll : List a -> List a -> List a
