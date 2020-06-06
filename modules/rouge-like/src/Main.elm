@@ -467,7 +467,7 @@ updateStateOnTick clock state =
                 in
                 enemies
                     |> List.uncons
-                    |> Maybe.unwrap (Victory newPlayer) (initWaitingForInput newPlayer)
+                    |> Maybe.unwrap (Victory newPlayer) (initEnemiesMoving clock newPlayer)
                     |> justConstant
 
             else
@@ -484,9 +484,9 @@ updateStateOnTick clock state =
         Victory _ ->
             Nothing
 
-        EnemiesMoving timer player neEnemiesMoving ->
+        EnemiesMoving timer player enemyMovingNonEmpty ->
             if timerIsDone clock timer then
-                initWaitingForInput player (neEnemiesMoving |> nonEmptyMap updateMovingEnemy)
+                initWaitingForInput player (enemyMovingNonEmpty |> nonEmptyMap updateMovingEnemy)
                     |> justConstant
 
             else
@@ -498,12 +498,22 @@ initWaitingForInput player neEnemies =
     WaitingForInput player neEnemies
 
 
+initPlayerMoving : Clock -> Location -> Player -> List Enemy -> State
 initPlayerMoving clock location player enemies =
     let
         movingTimer =
             timerInit clock defaultAnimSpeed
     in
     PlayerMoving movingTimer location player enemies
+
+
+initEnemiesMoving : Clock -> Player -> ( Enemy, List Enemy ) -> State
+initEnemiesMoving clock player enemiesNonEmpty =
+    let
+        movingTimer =
+            timerInit clock defaultAnimSpeed
+    in
+    EnemiesMoving movingTimer player (nonEmptyMap (\enemy -> EnemyMoving enemy.location enemy) enemiesNonEmpty)
 
 
 justConstant : a -> Maybe (Generator a)
