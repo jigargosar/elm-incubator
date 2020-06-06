@@ -3,6 +3,7 @@ module Main exposing (main)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
+import Cons exposing (Cons)
 import Dimension exposing (Dimension)
 import Ease
 import Html exposing (Html, div, text)
@@ -305,19 +306,15 @@ type alias Model =
 
 
 type State
-    = WaitingForInput Player (NonEmpty Enemy)
+    = WaitingForInput Player (Cons Enemy)
     | PlayerMoving Timer Location Player (List Enemy)
     | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
-    | EnemiesMoving Timer Player (NonEmpty EnemyMoving)
+    | EnemiesMoving Timer Player (Cons EnemyMoving)
     | Victory Player
 
 
 type EnemyMoving
     = EnemyMoving Location Enemy
-
-
-type alias NonEmpty a =
-    ( a, List a )
 
 
 type alias SelectSplit a =
@@ -429,7 +426,7 @@ updateStateOnKey key clock worldMap state =
                     in
                     case classifyLocation location player enemies worldMap of
                         HasNoActor ->
-                            initPlayerMoving clock location player (nonEmptyToList enemies)
+                            initPlayerMoving clock location player (Cons.toList enemies)
                                 |> Just
 
                         Blocked ->
@@ -493,7 +490,7 @@ updateStateOnTick clock state =
                 Nothing
 
 
-initWaitingForInput : Player -> NonEmpty Enemy -> State
+initWaitingForInput : Player -> Cons Enemy -> State
 initWaitingForInput player neEnemies =
     WaitingForInput player neEnemies
 
@@ -561,12 +558,8 @@ classifyLocation location player enemies worldMap =
         HasPlayer
 
     else
-        enemiesSelectSplitByLocation location (nonEmptyToList enemies)
+        enemiesSelectSplitByLocation location (Cons.toList enemies)
             |> Maybe.unwrap HasNoActor HasEnemy
-
-
-nonEmptyToList ( x, xs ) =
-    x :: xs
 
 
 stepLocationInDirection : Direction -> Location -> Location
@@ -753,7 +746,7 @@ viewGrid model =
             ([ backgroundTileViews dimension model.walls
              , case model.state of
                 WaitingForInput player enemiesNE ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (nonEmptyToList enemiesNE)
+                    List.map (\enemy -> viewEnemyTile enemy.location) (Cons.toList enemiesNE)
                         ++ [ viewPlayerTile player.location player.hp ]
 
                 PlayerMoving timer to player enemies ->
@@ -771,7 +764,7 @@ viewGrid model =
 
                 EnemiesMoving timer player neEnemiesMoving ->
                     (neEnemiesMoving
-                        |> nonEmptyToList
+                        |> Cons.toList
                         |> List.map (updateMovingEnemy >> .location >> viewEnemyTile)
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
