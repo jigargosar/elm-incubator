@@ -337,20 +337,21 @@ type alias WorldMap a =
     }
 
 
-worldMapIsBlockedAt : Location -> WorldMap a -> Bool
-worldMapIsBlockedAt location worldMap =
+worldMapIsLocationBlocked : Location -> WorldMap a -> Bool
+worldMapIsLocationBlocked location worldMap =
     not (Dimension.containsLocation location worldMap.dimension)
         || List.member location worldMap.walls
 
 
+worldMapIsLocationWalkable : Location -> WorldMap a -> Bool
+worldMapIsLocationWalkable location =
+    worldMapIsLocationBlocked location >> not
+
+
 worldMapAdjacentWalkable : Location -> WorldMap a -> List Location
 worldMapAdjacentWalkable location worldMap =
-    let
-        pred x =
-            worldMapIsBlockedAt x worldMap
-    in
     Location.adjacent location
-        |> List.filter pred
+        |> List.filter (\x -> worldMapIsLocationWalkable x worldMap)
 
 
 type alias Flags =
@@ -557,7 +558,7 @@ type LocationClass
 
 classifyLocation : Location -> Player -> Cons Enemy -> WorldMap a -> LocationClass
 classifyLocation location player enemies worldMap =
-    if worldMapIsBlockedAt location worldMap then
+    if worldMapIsLocationBlocked location worldMap then
         Blocked
 
     else if playerLocationEq location player then
