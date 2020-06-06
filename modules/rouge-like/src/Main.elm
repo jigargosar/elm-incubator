@@ -405,7 +405,7 @@ update message model =
             )
 
         Tick delta ->
-            ( case updateStateOnTick model.clock model.state of
+            ( case updateStateOnTick model.clock model model.state of
                 Just stateGenerator ->
                     let
                         ( state, seed ) =
@@ -455,8 +455,8 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
-updateStateOnTick : Clock -> State -> Maybe (Generator State)
-updateStateOnTick clock state =
+updateStateOnTick : Clock -> WorldMap a -> State -> Maybe (Generator State)
+updateStateOnTick clock worldMap state =
     case state of
         WaitingForInput _ _ ->
             Nothing
