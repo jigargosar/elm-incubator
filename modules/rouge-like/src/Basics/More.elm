@@ -226,6 +226,10 @@ noAttr =
     Html.Attributes.classList []
 
 
+eq =
+    (==)
+
+
 eqBy f a b =
     f a == f b
 

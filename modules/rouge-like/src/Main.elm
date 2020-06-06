@@ -523,8 +523,27 @@ initEnemiesMoving clock worldMap player emCons =
     EnemiesMoving movingTimer player (Cons.map (\enemy -> EnemyMoving enemy.location enemy) emCons)
 
 
-foo : List ( Location, Enemy ) -> Enemy -> List Enemy -> List ( Location, Enemy )
-foo ds e ps =
+foo getNextLocations iEnemies =
+    let
+        iAcc =
+            List.map .location iEnemies
+
+        reducer occupied enemy =
+            let
+                nl =
+                    enemy.location
+                        |> getNextLocations
+                        |> listRemoveAll occupied
+                        |> List.head
+                        |> Maybe.withDefault enemy.location
+            in
+            ( List.setIf (eq enemy.location) nl occupied, ( nl, enemy ) )
+    in
+    List.mapAccuml reducer iAcc iEnemies
+
+
+esToELS : List ( Location, Enemy ) -> Enemy -> List Enemy -> List ( Location, Enemy )
+esToELS ds e ps =
     let
         nds =
             ( e.location, e ) :: ds
@@ -534,7 +553,7 @@ foo ds e ps =
             List.reverse nds
 
         x :: xs ->
-            foo nds x xs
+            esToELS nds x xs
 
 
 listRemoveAll : List a -> List a -> List a
