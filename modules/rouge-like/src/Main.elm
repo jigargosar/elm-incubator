@@ -15,7 +15,7 @@ import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
 import Random.Extra as Random
 import Random.List
-import Tuple exposing (first, second)
+import Tuple exposing (..)
 import Tuple.More as Tuple
 
 
