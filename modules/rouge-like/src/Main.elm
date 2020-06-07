@@ -150,12 +150,10 @@ enemySetLocation location enemy =
     { enemy | location = location }
 
 
-enemyIdEq : Uid -> Enemy -> Bool
-enemyIdEq =
-    idEq
 
-
-
+--enemyIdEq : Uid -> Enemy -> Bool
+--enemyIdEq =
+--    idEq
 -- Enemies
 --enemiesRemove : Uid -> List Enemy -> List Enemy
 --enemiesRemove uid =
