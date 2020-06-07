@@ -19,7 +19,19 @@ import Tuple exposing (..)
 import Tuple.More as Tuple
 
 
+playerMoveAnimSpeed =
+    fastAnimSpeed
+
+
 defaultAnimSpeed =
+    fastAnimSpeed
+
+
+fastAnimSpeed =
+    ticksToMillis 5
+
+
+slowAnimSpeed =
     ticksToMillis 15
 
 
@@ -531,7 +543,7 @@ initPlayerMoving : Clock -> Location -> Player -> List Enemy -> State
 initPlayerMoving clock location player enemies =
     let
         movingTimer =
-            timerInit clock defaultAnimSpeed
+            timerInit clock playerMoveAnimSpeed
     in
     PlayerMoving movingTimer location player enemies
 
@@ -539,15 +551,25 @@ initPlayerMoving clock location player enemies =
 initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator State
 initEnemiesActing clock worldMap player enemyCons =
     let
-        movingTimer =
+        toActionTimer nPlayerHp =
+            if nPlayerHp == player.hp then
+                defaultActionTimer
+
+            else
+                slowActionTimer
+
+        defaultActionTimer =
             timerInit clock defaultAnimSpeed
+
+        slowActionTimer =
+            timerInit clock slowAnimSpeed
 
         getNextEnemyLocations location =
             worldMapAdjacentWalkable location worldMap
     in
     enemyActionsGeneratorHelp getNextEnemyLocations player enemyCons
         |> generatorWithIndependentSeed
-        |> Random.map (\( nPlayerHp, eas ) -> EnemiesActing movingTimer (PlayerWasAttacked nPlayerHp player) eas)
+        |> Random.map (\( nPlayerHp, eas ) -> EnemiesActing (toActionTimer nPlayerHp) (PlayerWasAttacked nPlayerHp player) eas)
 
 
 generatorWithIndependentSeed : (Seed -> ( b, Seed )) -> Generator b
