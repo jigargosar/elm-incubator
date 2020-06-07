@@ -1022,14 +1022,6 @@ viewGrid model =
         ]
 
 
-gridWidthStyle width =
-    HS.width (width * 32)
-
-
-gridHeightStyle height =
-    style "height" (String.fromInt (height * 32) ++ "px")
-
-
 backgroundTileViews : Dimension -> List Location -> List HM
 backgroundTileViews dimension walls =
     Dimension.toLocations dimension
