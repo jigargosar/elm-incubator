@@ -730,8 +730,8 @@ justConstant x =
 
 
 performEnemyAction : EnemyAction -> Enemy
-performEnemyAction enemyMoving =
-    case enemyMoving of
+performEnemyAction action =
+    case action of
         EnemyMoving location enemy ->
             enemySetLocation location enemy
 
