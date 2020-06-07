@@ -32,7 +32,7 @@ fastAnimSpeed =
 
 
 slowAnimSpeed =
-    ticksToMillis 15
+    ticksToMillis 25
 
 
 ticksToMillis =
