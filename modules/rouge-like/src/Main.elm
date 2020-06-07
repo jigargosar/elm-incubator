@@ -376,7 +376,7 @@ worldMapAdjacentWalkable location worldMap =
 
 type alias Model =
     WorldMap
-        { state : State
+        { animState : AnimState
         , clock : Clock
         , seed : Seed
         }
@@ -425,11 +425,12 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , state =
+      , animState =
             acc.enemies
                 |> List.uncons
                 |> Maybe.map (initWaitingForInput acc.player)
                 |> Maybe.withDefault (Victory acc.player)
+                |> AnimState (timerInit clockZero 0)
       , clock = clockZero
       , seed = seed
       }
@@ -454,26 +455,34 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( case updateStateOnKey key model.clock model model.state of
-                Just state ->
-                    { model | state = state }
+            ( case model.animState of
+                AnimState timer state ->
+                    case updateStateOnKey key model.clock model state of
+                        Just nState ->
+                            { model | animState = AnimState timer nState }
 
-                Nothing ->
-                    model
+                        Nothing ->
+                            model
             , Cmd.none
             )
 
         Tick delta ->
-            ( case updateStateOnTick model.clock model model.state of
-                Just stateGenerator ->
-                    let
-                        ( state, seed ) =
-                            Random.step stateGenerator model.seed
-                    in
-                    { model | state = state, seed = seed, clock = clockStep delta model.clock }
+            ( case model.animState of
+                AnimState timer state ->
+                    case updateStateOnTick model.clock model state of
+                        Just stateGenerator ->
+                            let
+                                ( nState, seed ) =
+                                    Random.step stateGenerator model.seed
+                            in
+                            { model
+                                | animState = AnimState timer nState
+                                , seed = seed
+                                , clock = clockStep delta model.clock
+                            }
 
-                Nothing ->
-                    { model | clock = clockStep delta model.clock }
+                        Nothing ->
+                            { model | clock = clockStep delta model.clock }
             , Cmd.none
             )
 
@@ -774,12 +783,14 @@ subscriptions model =
             (JD.field "key" JD.string
                 |> JD.map KeyDown
             )
-        , case model.state of
-            WaitingForInput _ _ ->
-                Sub.none
+        , case model.animState of
+            AnimState timer state ->
+                case state of
+                    WaitingForInput _ _ ->
+                        Sub.none
 
-            _ ->
-                Browser.Events.onAnimationFrameDelta Tick
+                    _ ->
+                        Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
@@ -793,7 +804,9 @@ view model =
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
         , div [ class "flex relative" ]
             [ viewGrid model
-            , viewOverlay model.state
+            , case model.animState of
+                AnimState timer state ->
+                    viewOverlay state
             ]
         ]
 
@@ -943,59 +956,61 @@ viewGrid model =
             , class "relative"
             ]
             ([ backgroundTileViews dimension model.walls
-             , case model.state of
-                WaitingForInput player enemiesNE ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) (Cons.toList enemiesNE)
-                        ++ [ viewPlayerTile player.location player.hp ]
+             , case model.animState of
+                AnimState t state ->
+                    case state of
+                        WaitingForInput player enemiesNE ->
+                            List.map (\enemy -> viewEnemyTile enemy.location) (Cons.toList enemiesNE)
+                                ++ [ viewPlayerTile player.location player.hp ]
 
-                PlayerMoving timer to player enemies ->
-                    let
-                        progress =
-                            timerProgress model.clock timer
-                    in
-                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                        ++ [ viewPlayerTileMoving progress to player.location player.hp ]
+                        PlayerMoving timer to player enemies ->
+                            let
+                                progress =
+                                    timerProgress model.clock timer
+                            in
+                            List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                                ++ [ viewPlayerTileMoving progress to player.location player.hp ]
 
-                PlayerAttackingEnemy timer player ess ->
-                    let
-                        progress =
-                            timerProgress model.clock timer
-                    in
-                    (selectSplitMapCS
-                        (\enemy -> viewEnemyDyingTile progress enemy.location)
-                        (\enemy -> viewEnemyTile enemy.location)
-                        ess
-                        |> selectSplitToList
-                    )
-                        ++ [ viewPlayerTile player.location player.hp ]
-
-                EnemiesActing timer playerRA eaCons ->
-                    let
-                        progress =
-                            timerProgress model.clock timer
-                    in
-                    (eaCons
-                        |> Cons.toList
-                        |> List.map
-                            (\ea ->
-                                case ea of
-                                    EnemyMoving to enemy ->
-                                        viewEnemyTileMoving progress to enemy.location
+                        PlayerAttackingEnemy timer player ess ->
+                            let
+                                progress =
+                                    timerProgress model.clock timer
+                            in
+                            (selectSplitMapCS
+                                (\enemy -> viewEnemyDyingTile progress enemy.location)
+                                (\enemy -> viewEnemyTile enemy.location)
+                                ess
+                                |> selectSplitToList
                             )
-                    )
-                        ++ (case playerRA of
-                                PlayerWasAttacked hp player ->
-                                    [ viewPlayerTileFading progress player.location hp
-                                    , viewPlayerTileFading (Ease.reverse Ease.linear progress) player.location player.hp
-                                    ]
-                           )
+                                ++ [ viewPlayerTile player.location player.hp ]
 
-                Victory player ->
-                    [ viewPlayerTile player.location player.hp ]
+                        EnemiesActing timer playerRA eaCons ->
+                            let
+                                progress =
+                                    timerProgress model.clock timer
+                            in
+                            (eaCons
+                                |> Cons.toList
+                                |> List.map
+                                    (\ea ->
+                                        case ea of
+                                            EnemyMoving to enemy ->
+                                                viewEnemyTileMoving progress to enemy.location
+                                    )
+                            )
+                                ++ (case playerRA of
+                                        PlayerWasAttacked hp player ->
+                                            [ viewPlayerTileFading progress player.location hp
+                                            , viewPlayerTileFading (Ease.reverse Ease.linear progress) player.location player.hp
+                                            ]
+                                   )
 
-                Defeat location enemies ->
-                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                        ++ [ viewPlayerTile location 0 ]
+                        Victory player ->
+                            [ viewPlayerTile player.location player.hp ]
+
+                        Defeat location enemies ->
+                            List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                                ++ [ viewPlayerTile location 0 ]
              ]
                 |> List.concat
             )
