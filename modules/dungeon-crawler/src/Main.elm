@@ -3,365 +3,15 @@ module Main exposing (main)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
-import Cons exposing (Cons)
 import Dimension exposing (Dimension)
-import Direction
 import Ease
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class)
 import HtmlStyle as HS
 import Json.Decode as JD
-import List.Extra as List
 import Location exposing (Location)
-import Maybe.Extra as Maybe
 import Random exposing (Generator, Seed)
-import Random.Extra as Random
-import Random.List
-import Tuple exposing (..)
 import Tuple.More as Tuple
-
-
-
--- Config
-
-
-initialPlayerHp =
-    3
-
-
-initialEnemyCount =
-    8
-
-
-playerMoveAnimSpeed =
-    Fast
-
-
-defaultAnimDurationMillis =
-    1
-
-
-
--- Anim Speed Config
-
-
-fastAnimDurationMillis =
-    ticksToMillis 5
-
-
-slowAnimDurationMills =
-    ticksToMillis 25
-
-
-ticksToMillis =
-    mul (1000 / 60)
-
-
-
--- Timer
-
-
-type alias Clock =
-    { time : Float
-    , prevTime : Float
-    }
-
-
-clockZero : Clock
-clockZero =
-    { time = 0, prevTime = 0 }
-
-
-clockStep : Float -> Clock -> Clock
-clockStep delta clock =
-    if delta > 0 then
-        { clock | time = clock.time + delta, prevTime = clock.time }
-
-    else
-        clock
-
-
-clockCurrentTime : Clock -> Float
-clockCurrentTime clock =
-    clock.time
-
-
-clockPreviousTime : Clock -> Float
-clockPreviousTime clock =
-    clock.prevTime
-
-
-type alias Timer =
-    { startTime : Float
-    , duration : Float
-    }
-
-
-timerInit : Clock -> Float -> Timer
-timerInit clock duration =
-    { startTime = clockCurrentTime clock, duration = duration }
-
-
-timerIsDone : Clock -> Timer -> Bool
-timerIsDone clock timer =
-    timerElapsed clock timer >= timer.duration
-
-
-timerWasDone : Clock -> Timer -> Bool
-timerWasDone clock timer =
-    timerPrevClockElapsed clock timer >= timer.duration
-
-
-timerElapsed : Clock -> Timer -> Float
-timerElapsed clock timer =
-    clockCurrentTime clock - timer.startTime
-
-
-timerPrevClockElapsed : Clock -> Timer -> Float
-timerPrevClockElapsed clock timer =
-    clockPreviousTime clock - timer.startTime
-
-
-timerProgress : Clock -> Timer -> Float
-timerProgress clock timer =
-    let
-        elapsed =
-            clockCurrentTime clock - timer.startTime
-    in
-    clamp 0 timer.duration elapsed / timer.duration
-
-
-
--- UID
-
-
-type Uid
-    = Uid Int
-
-
-newUid : Generator Uid
-newUid =
-    Random.int Random.minInt Random.maxInt
-        |> Random.map Uid
-
-
-type alias Enemy =
-    { id : Uid
-    , location : Location
-    }
-
-
-initEnemy : Location -> Uid -> Enemy
-initEnemy location id =
-    { id = id
-    , location = location
-    }
-
-
-newEnemy : Location -> Generator Enemy
-newEnemy location =
-    newUid |> Random.map (initEnemy location)
-
-
-enemyLocationEq : Location -> Enemy -> Bool
-enemyLocationEq location =
-    propEq location .location
-
-
-enemySetLocation : Location -> Enemy -> Enemy
-enemySetLocation location enemy =
-    { enemy | location = location }
-
-
-
---enemyIdEq : Uid -> Enemy -> Bool
---enemyIdEq =
---    idEq
--- Enemies
---enemiesRemove : Uid -> List Enemy -> List Enemy
---enemiesRemove uid =
---    List.filterNot (enemyIdEq uid)
---
---
---enemiesUpdate : Uid -> (Enemy -> Enemy) -> List Enemy -> List Enemy
---enemiesUpdate id =
---    List.updateIf (enemyIdEq id)
---
---
---enemiesFind : Uid -> List Enemy -> Maybe Enemy
---enemiesFind uid enemies =
---    List.find (enemyIdEq uid) enemies
---
---
---enemiesToIds : List Enemy -> List Uid
---enemiesToIds =
---    List.map .id
---
---
---enemiesSelectSplitById : Uid -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
---enemiesSelectSplitById id =
---    enemiesSelectSplitBy (enemyIdEq id)
-
-
-enemiesSelectSplitBy : (Enemy -> Bool) -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
-enemiesSelectSplitBy pred enemies =
-    List.selectSplit enemies
-        |> List.find (\( _, enemy, _ ) -> pred enemy)
-
-
-enemiesSelectSplitByLocation : Location -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
-enemiesSelectSplitByLocation location =
-    enemiesSelectSplitBy (enemyLocationEq location)
-
-
-
---enemiesFindAt : Location -> List Enemy -> Maybe Enemy
---enemiesFindAt location =
---    List.find (enemyLocationEq location)
--- Player
-
-
-type alias Player =
-    { location : Location
-    , hp : Int
-    }
-
-
-
---playerDecHp : Player -> Player
---playerDecHp player =
---    { player | hp = player.hp - 1 |> atLeast 0 }
-
-
-playerSetHp : Int -> Player -> Player
-playerSetHp hp player =
-    { player | hp = hp |> atLeast 0 }
-
-
-playerInit : Location -> Player
-playerInit location =
-    { location = location
-    , hp = initialPlayerHp
-    }
-
-
-
---playerAlive : Player -> Bool
---playerAlive player =
---    player.hp > 0
-
-
-playerLocationEq : Location -> Player -> Bool
-playerLocationEq location player =
-    player.location == location
-
-
-playerMapLocation : (Location -> Location) -> Player -> Player
-playerMapLocation f player =
-    { player | location = f player.location }
-
-
-
--- Initial World
-
-
-type alias WorldInit =
-    { empty : List Location
-    , player : Player
-    , walls : List Location
-    , enemies : List Enemy
-    }
-
-
-initialWorldGenerator : Dimension -> Generator WorldInit
-initialWorldGenerator dimension =
-    let
-        acc : Player -> WorldInit
-        acc player =
-            { empty =
-                dimension
-                    |> Dimension.toLocations
-                    |> List.remove player.location
-            , player = player
-            , walls = []
-            , enemies = []
-            }
-    in
-    playerGenerator dimension
-        |> Random.map acc
-        |> Random.andThen wallsGenerator
-        |> Random.andThen enemiesGenerator
-
-
-playerGenerator : Dimension -> Generator Player
-playerGenerator dimension =
-    case Dimension.toLocations dimension of
-        [] ->
-            playerInit Location.zero
-                |> Random.constant
-
-        x :: xs ->
-            Random.uniform x xs
-                |> Random.map playerInit
-
-
-enemiesGenerator : WorldInit -> Generator WorldInit
-enemiesGenerator acc =
-    shuffleSplit initialEnemyCount acc.empty
-        |> Random.andThen
-            (\( enemyLocations, empty ) ->
-                enemyLocations
-                    |> List.map newEnemy
-                    |> Random.combine
-                    |> Random.map
-                        (\enemies ->
-                            { acc | enemies = enemies, empty = empty }
-                        )
-            )
-
-
-wallsGenerator : WorldInit -> Generator WorldInit
-wallsGenerator acc =
-    shuffleSplit 20 acc.empty
-        |> Random.map
-            (\( walls, empty ) ->
-                { acc | walls = walls, empty = empty }
-            )
-
-
-shuffleSplit : Int -> List a -> Generator ( List a, List a )
-shuffleSplit n xs =
-    Random.List.shuffle xs
-        |> Random.andThen Random.List.shuffle
-        |> Random.map (List.splitAt n)
-
-
-
--- World Map
-
-
-type alias WorldMap a =
-    { a
-        | dimension : Dimension
-        , walls : List Location
-    }
-
-
-worldMapIsLocationBlocked : Location -> WorldMap a -> Bool
-worldMapIsLocationBlocked location worldMap =
-    not (Dimension.isValidLocation location worldMap.dimension)
-        || List.member location worldMap.walls
-
-
-worldMapIsLocationWalkable : Location -> WorldMap a -> Bool
-worldMapIsLocationWalkable location =
-    worldMapIsLocationBlocked location >> not
-
-
-worldMapAdjacentWalkable : Location -> WorldMap a -> List Location
-worldMapAdjacentWalkable location worldMap =
-    Location.adjacent location
-        |> List.filter (\x -> worldMapIsLocationWalkable x worldMap)
 
 
 
@@ -369,68 +19,9 @@ worldMapAdjacentWalkable location worldMap =
 
 
 type alias Model =
-    WorldMap
-        { stateAnim : StateAnim
-        , clock : Clock
-        , seed : Seed
-        }
-
-
-type StateAnim
-    = StateAnim Timer State
-
-
-type AnimSpeed
-    = Instant
-    | Slow
-    | Default
-    | Fast
-
-
-type StateTransit
-    = StateTransit AnimSpeed State
-
-
-toStateAnim : Clock -> StateTransit -> StateAnim
-toStateAnim clock (StateTransit speed state) =
-    let
-        fromDuration duration =
-            StateAnim (timerInit clock duration) state
-    in
-    case speed of
-        Instant ->
-            fromDuration 1
-
-        Slow ->
-            fromDuration slowAnimDurationMills
-
-        Default ->
-            fromDuration defaultAnimDurationMillis
-
-        Fast ->
-            fromDuration fastAnimDurationMillis
-
-
-type State
-    = WaitingForInput Player (Cons Enemy)
-    | PlayerMoving Location Player (List Enemy)
-    | PlayerAttackingEnemy Player (SelectSplit Enemy)
-    | EnemiesActing PlayerReaction (Cons EnemyAction)
-    | Victory Player
-    | Defeat Location (List Enemy)
-
-
-type EnemyAction
-    = EnemyMoving Location Enemy
-    | EnemyDyingFromCounterAttack Location Enemy
-
-
-type PlayerReaction
-    = PlayerWasAttacked Int Player
-
-
-type alias SelectSplit a =
-    ( List a, a, List a )
+    { dimension : Dimension
+    , seed : Seed
+    }
 
 
 type alias Flags =
@@ -445,25 +36,9 @@ init flags =
 
         initialSeed =
             Random.initialSeed (flags.now |> always 4)
-
-        ( acc, seed ) =
-            Random.step (initialWorldGenerator dimension) initialSeed
-
-        initialClock =
-            clockZero
-
-        nextState : StateTransit
-        nextState =
-            acc.enemies
-                |> List.uncons
-                |> Maybe.map (initWaitingForInput acc.player)
-                |> Maybe.withDefault (initVictory acc.player)
     in
     ( { dimension = dimension
-      , walls = acc.walls
-      , stateAnim = toStateAnim initialClock nextState
-      , clock = initialClock
-      , seed = seed
+      , seed = initialSeed
       }
     , Cmd.none
     )
@@ -486,298 +61,14 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( case model.stateAnim of
-                StateAnim timer state ->
-                    if timerIsDone model.clock timer then
-                        case updateStateOnKey key model state of
-                            Just nextState ->
-                                { model | stateAnim = toStateAnim model.clock nextState }
-
-                            Nothing ->
-                                model
-
-                    else
-                        model
+            ( model
             , Cmd.none
             )
 
         Tick delta ->
-            ( case model.stateAnim of
-                StateAnim timer state ->
-                    if timerIsDone model.clock timer then
-                        case updateStateOnTimerDone model state of
-                            Just stateGenerator ->
-                                let
-                                    ( nextState, seed ) =
-                                        Random.step stateGenerator model.seed
-                                in
-                                { model
-                                    | stateAnim = toStateAnim model.clock nextState
-                                    , seed = seed
-                                    , clock = clockStep delta model.clock
-                                }
-
-                            Nothing ->
-                                { model | clock = clockStep delta model.clock }
-
-                    else
-                        { model | clock = clockStep delta model.clock }
+            ( model
             , Cmd.none
             )
-
-
-updateStateOnKey : String -> WorldMap a -> State -> Maybe StateTransit
-updateStateOnKey key worldMap state =
-    case state of
-        WaitingForInput player enemies ->
-            case Direction.directionFromArrowKey key of
-                Just direction ->
-                    let
-                        location =
-                            Direction.stepLocationInDirection direction player.location
-                    in
-                    case classifyLocation location player enemies worldMap of
-                        HasNoActor ->
-                            initPlayerMoving location player (Cons.toList enemies)
-                                |> Just
-
-                        Blocked ->
-                            Nothing
-
-                        HasEnemy ez ->
-                            PlayerAttackingEnemy player ez
-                                |> StateTransit Default
-                                |> Just
-
-                        HasPlayer ->
-                            Nothing
-
-                Nothing ->
-                    case key of
-                        " " ->
-                            initPlayerMoving player.location player (Cons.toList enemies)
-                                |> Just
-
-                        _ ->
-                            Nothing
-
-        _ ->
-            Nothing
-
-
-updateStateOnTimerDone : WorldMap a -> State -> Maybe (Generator StateTransit)
-updateStateOnTimerDone worldMap state =
-    case state of
-        WaitingForInput _ _ ->
-            Nothing
-
-        PlayerMoving location player enemies ->
-            let
-                newPlayer =
-                    playerMapLocation (always location) player
-            in
-            enemies
-                |> List.uncons
-                |> Maybe.unwrap
-                    (Random.constant
-                        (initVictory newPlayer)
-                    )
-                    (initEnemiesActing worldMap newPlayer)
-                |> Just
-
-        PlayerAttackingEnemy player (( _, enemy, _ ) as ess) ->
-            initPlayerMoving enemy.location player (selectSplitConcatSides ess)
-                |> justConstant
-
-        Victory _ ->
-            Nothing
-
-        EnemiesActing playerRA emCons ->
-            case playerRA of
-                PlayerWasAttacked nHp player ->
-                    let
-                        nPlayer =
-                            playerSetHp nHp player
-
-                        nEnemies =
-                            emCons |> Cons.toList |> List.filterMap performEnemyAction
-
-                        nextState =
-                            if nHp == 0 then
-                                Defeat player.location nEnemies
-                                    |> StateTransit Slow
-
-                            else
-                                case Cons.fromList nEnemies of
-                                    Just nEnemyCons ->
-                                        initWaitingForInput nPlayer nEnemyCons
-
-                                    Nothing ->
-                                        initVictory player
-                    in
-                    nextState
-                        |> justConstant
-
-        Defeat _ _ ->
-            Nothing
-
-
-initVictory : Player -> StateTransit
-initVictory player =
-    Victory player
-        |> StateTransit Slow
-
-
-initWaitingForInput : Player -> Cons Enemy -> StateTransit
-initWaitingForInput player neEnemies =
-    WaitingForInput player neEnemies
-        |> StateTransit Instant
-
-
-initPlayerMoving : Location -> Player -> List Enemy -> StateTransit
-initPlayerMoving location player enemies =
-    PlayerMoving location player enemies
-        |> StateTransit playerMoveAnimSpeed
-
-
-initEnemiesActing : WorldMap a -> Player -> Cons Enemy -> Generator StateTransit
-initEnemiesActing worldMap player enemyCons =
-    let
-        getNextEnemyLocations location =
-            worldMapAdjacentWalkable location worldMap
-    in
-    enemyActionsGeneratorHelp getNextEnemyLocations player enemyCons
-        |> generatorWithIndependentSeed
-        |> Random.map
-            (\( nPlayerHp, eas ) ->
-                let
-                    speed =
-                        if nPlayerHp == player.hp then
-                            Default
-
-                        else
-                            Slow
-                in
-                EnemiesActing
-                    (PlayerWasAttacked nPlayerHp player)
-                    eas
-                    |> StateTransit speed
-            )
-
-
-generatorWithIndependentSeed : (Seed -> ( b, Seed )) -> Generator b
-generatorWithIndependentSeed f =
-    Random.independentSeed
-        |> Random.map (f >> Tuple.first)
-
-
-enemyActionsGeneratorHelp :
-    (Location -> List Location)
-    -> Player
-    -> Cons Enemy
-    -> Seed
-    -> ( ( Int, Cons EnemyAction ), Seed )
-enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
-    let
-        iOccupied : List Location
-        iOccupied =
-            iEnemies
-                |> Cons.toList
-                |> List.map .location
-
-        reducer : ( Int, List Location, Seed ) -> Enemy -> ( ( Int, List Location, Seed ), EnemyAction )
-        reducer ( playerHp, occupied, seed ) enemy =
-            let
-                walkableLocations =
-                    enemy.location
-                        |> getNextLocations
-
-                nextLocationGenerator =
-                    if List.member player.location walkableLocations then
-                        Random.constant player.location
-
-                    else
-                        walkableLocations
-                            |> listRemoveAll occupied
-                            |> maybeUniformGenerator
-                            |> Maybe.withDefault (Random.constant enemy.location)
-
-                ( targetLocation, nSeed ) =
-                    Random.step nextLocationGenerator seed
-            in
-            if targetLocation == player.location then
-                ( ( playerHp - 1 |> atLeast 0, List.remove targetLocation occupied, nSeed )
-                , EnemyDyingFromCounterAttack targetLocation enemy
-                )
-
-            else
-                ( ( playerHp
-                  , List.setIf (eq enemy.location) targetLocation occupied
-                  , nSeed
-                  )
-                , EnemyMoving targetLocation enemy
-                )
-    in
-    Cons.mapAccuml reducer ( player.hp, iOccupied, iSeed ) iEnemies
-        |> (\( ( rPlayer, _, rSeed ), rEAs ) -> ( ( rPlayer, rEAs ), rSeed ))
-
-
-listRemoveAll : List a -> List a -> List a
-listRemoveAll toRemove =
-    let
-        shouldKeep x =
-            List.notMember x toRemove
-    in
-    List.filter shouldKeep
-
-
-justConstant : a -> Maybe (Generator a)
-justConstant x =
-    Random.constant x
-        |> Just
-
-
-performEnemyAction : EnemyAction -> Maybe Enemy
-performEnemyAction action =
-    case action of
-        EnemyMoving location enemy ->
-            enemySetLocation location enemy
-                |> Just
-
-        EnemyDyingFromCounterAttack _ _ ->
-            Nothing
-
-
-selectSplitConcatSides ( l, _, r ) =
-    l ++ r
-
-
-selectSplitToList ( l, c, r ) =
-    l ++ c :: r
-
-
-selectSplitMapCS fc fs ( l, c, r ) =
-    ( List.map fs l, fc c, List.map fs r )
-
-
-type LocationClass
-    = Blocked
-    | HasEnemy ( List Enemy, Enemy, List Enemy )
-    | HasPlayer
-    | HasNoActor
-
-
-classifyLocation : Location -> Player -> Cons Enemy -> WorldMap a -> LocationClass
-classifyLocation location player enemies worldMap =
-    if worldMapIsLocationBlocked location worldMap then
-        Blocked
-
-    else if playerLocationEq location player then
-        HasPlayer
-
-    else
-        enemiesSelectSplitByLocation location (Cons.toList enemies)
-            |> Maybe.unwrap HasNoActor HasEnemy
 
 
 subscriptions : Model -> Sub Msg
@@ -787,13 +78,7 @@ subscriptions model =
             (JD.field "key" JD.string
                 |> JD.map KeyDown
             )
-        , case model.stateAnim of
-            StateAnim timer _ ->
-                if timerWasDone model.clock timer then
-                    Sub.none
-
-                else
-                    Browser.Events.onAnimationFrameDelta Tick
+        , subscribeIf False (Browser.Events.onAnimationFrameDelta Tick)
         ]
 
 
@@ -807,35 +92,21 @@ view model =
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
         , div [ class "flex relative" ]
             [ viewGrid model
-            , case model.stateAnim of
-                StateAnim timer state ->
-                    let
-                        progress =
-                            timerProgress model.clock timer
-                    in
-                    case state of
-                        Victory _ ->
-                            viewOverlayMsg progress "You Won!"
-
-                        Defeat _ _ ->
-                            viewOverlayMsg progress "You Lost!"
-
-                        _ ->
-                            text ""
             ]
         ]
 
 
-viewOverlayMsg progress message =
-    div
-        [ class "absolute w-100 h-100 flex items-center justify-center"
-        , HS.opacity progress
-        ]
-        [ div [ class "bg-white-50 black pa3 br3" ]
-            [ div [ class "code b f2 tc" ] [ text message ]
-            , div [ class "code b f3 tc" ] [ text "Ctrl+R to restart" ]
-            ]
-        ]
+
+--viewOverlayMsg progress message =
+--    div
+--        [ class "absolute w-100 h-100 flex items-center justify-center"
+--        , HS.opacity progress
+--        ]
+--        [ div [ class "bg-white-50 black pa3 br3" ]
+--            [ div [ class "code b f2 tc" ] [ text message ]
+--            , div [ class "code b f3 tc" ] [ text "Ctrl+R to restart" ]
+--            ]
+--        ]
 
 
 type alias HM =
@@ -964,57 +235,7 @@ viewGrid model =
             , HS.height ghPx
             , class "relative"
             ]
-            ([ backgroundTileViews dimension model.walls
-             , case model.stateAnim of
-                StateAnim timer state ->
-                    let
-                        progress =
-                            timerProgress model.clock timer
-                    in
-                    case state of
-                        WaitingForInput player enemiesNE ->
-                            List.map (\enemy -> viewEnemyTile enemy.location) (Cons.toList enemiesNE)
-                                ++ [ viewPlayerTile player.location player.hp ]
-
-                        PlayerMoving to player enemies ->
-                            List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                                ++ [ viewPlayerTileMoving progress to player.location player.hp ]
-
-                        PlayerAttackingEnemy player ess ->
-                            (selectSplitMapCS
-                                (\enemy -> viewEnemyTileDying progress enemy.location)
-                                (\enemy -> viewEnemyTile enemy.location)
-                                ess
-                                |> selectSplitToList
-                            )
-                                ++ [ viewPlayerTile player.location player.hp ]
-
-                        EnemiesActing playerRA eaCons ->
-                            (eaCons
-                                |> Cons.toList
-                                |> List.map
-                                    (\ea ->
-                                        case ea of
-                                            EnemyMoving to enemy ->
-                                                viewEnemyTileMoving progress to enemy.location
-
-                                            EnemyDyingFromCounterAttack location enemy ->
-                                                viewEnemyTileDyingFromCounterAttack progress location enemy.location
-                                    )
-                            )
-                                ++ (case playerRA of
-                                        PlayerWasAttacked hp player ->
-                                            [ viewPlayerTileFading progress player.location hp
-                                            , viewPlayerTileFading (Ease.reverse Ease.linear progress) player.location player.hp
-                                            ]
-                                   )
-
-                        Victory player ->
-                            [ viewPlayerTile player.location player.hp ]
-
-                        Defeat location enemies ->
-                            List.map (\enemy -> viewEnemyTile enemy.location) enemies
-                                ++ [ viewPlayerTile location 0 ]
+            ([ backgroundTileViews dimension []
              ]
                 |> List.concat
             )

@@ -2,7 +2,9 @@ module Basics.More exposing (..)
 
 import Html
 import Html.Attributes
-import Random
+import List.Extra as List
+import Random exposing (Generator)
+import Random.List
 
 
 type alias Int2 =
@@ -278,3 +280,27 @@ isValidIndex x len =
 int2Pair : Int -> Int -> Int2
 int2Pair =
     pair
+
+
+shuffleSplit : Int -> List a -> Generator ( List a, List a )
+shuffleSplit n xs =
+    Random.List.shuffle xs
+        |> Random.andThen Random.List.shuffle
+        |> Random.map (List.splitAt n)
+
+
+listRemoveAll : List a -> List a -> List a
+listRemoveAll toRemove =
+    let
+        shouldKeep x =
+            List.notMember x toRemove
+    in
+    List.filter shouldKeep
+
+
+subscribeIf bool s =
+    if bool then
+        s
+
+    else
+        Sub.none
