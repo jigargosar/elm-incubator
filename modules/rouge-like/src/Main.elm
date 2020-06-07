@@ -751,10 +751,10 @@ subscriptions model =
             )
         , case model.state of
             WaitingForInput _ _ ->
-                Browser.Events.onAnimationFrameDelta Tick
+                Sub.none
 
             _ ->
-                Sub.none
+                Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
