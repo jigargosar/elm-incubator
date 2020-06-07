@@ -386,6 +386,18 @@ type AnimState
     = AnimState Timer State
 
 
+type AnimSpeed
+    = Instant
+    | Slow
+    | Medium
+    | Fast
+
+
+type NextState
+    = Stay
+    | Transition AnimSpeed State
+
+
 type State
     = WaitingForInput Player (Cons Enemy)
     | PlayerMoving Location Player (List Enemy)
