@@ -368,14 +368,14 @@ worldMapAdjacentWalkable location worldMap =
 
 type alias Model =
     WorldMap
-        { stateAnim : StateAnimation
+        { stateAnim : StateAnim
         , clock : Clock
         , seed : Seed
         }
 
 
-type StateAnimation
-    = AnimState Timer State
+type StateAnim
+    = StateAnim Timer State
 
 
 type AnimSpeed
@@ -389,11 +389,11 @@ type StateTransition
     = StateAnimation AnimSpeed State
 
 
-toStateAnim : Clock -> StateTransition -> StateAnimation
+toStateAnim : Clock -> StateTransition -> StateAnim
 toStateAnim clock (StateAnimation speed state) =
     let
         fromDuration duration =
-            AnimState (timerInit clock duration) state
+            StateAnim (timerInit clock duration) state
     in
     case speed of
         Instant ->
@@ -484,7 +484,7 @@ update message model =
 
         KeyDown key ->
             ( case model.stateAnim of
-                AnimState timer state ->
+                StateAnim timer state ->
                     if timerIsDone model.clock timer then
                         case updateStateOnKey key model state of
                             Just nextState ->
@@ -500,7 +500,7 @@ update message model =
 
         Tick delta ->
             ( case model.stateAnim of
-                AnimState timer state ->
+                StateAnim timer state ->
                     if timerIsDone model.clock timer then
                         case updateStateOnTimerDone model state of
                             Just stateGenerator ->
@@ -818,7 +818,7 @@ subscriptions model =
                 |> JD.map KeyDown
             )
         , case model.stateAnim of
-            AnimState timer _ ->
+            StateAnim timer _ ->
                 if timerWasDone model.clock timer then
                     Sub.none
 
@@ -838,7 +838,7 @@ view model =
         , div [ class "flex relative" ]
             [ viewGrid model
             , case model.stateAnim of
-                AnimState timer state ->
+                StateAnim timer state ->
                     let
                         progress =
                             timerProgress model.clock timer
@@ -997,7 +997,7 @@ viewGrid model =
             ]
             ([ backgroundTileViews dimension model.walls
              , case model.stateAnim of
-                AnimState timer state ->
+                StateAnim timer state ->
                     let
                         progress =
                             timerProgress model.clock timer
