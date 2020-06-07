@@ -822,6 +822,16 @@ viewOverlay state =
                     ]
                 ]
 
+        Defeat _ _ ->
+            div
+                [ class "absolute w-100 h-100 flex items-center justify-center"
+                ]
+                [ div [ class "bg-white-50 black pa3 br3" ]
+                    [ div [ class "code f2 tc" ] [ text "You Lost!" ]
+                    , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
+                    ]
+                ]
+
         _ ->
             text ""
 
