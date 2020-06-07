@@ -59,19 +59,19 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        KeyDown key ->
+        KeyDown _ ->
             ( model
             , Cmd.none
             )
 
-        Tick delta ->
+        Tick _ ->
             ( model
             , Cmd.none
             )
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ Browser.Events.onKeyDown
             (JD.field "key" JD.string
