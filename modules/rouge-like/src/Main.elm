@@ -969,24 +969,20 @@ viewGrid model =
             ([ backgroundTileViews dimension model.walls
              , case model.animState of
                 AnimState timer state ->
+                    let
+                        progress =
+                            timerProgress model.clock timer
+                    in
                     case state of
                         WaitingForInput player enemiesNE ->
                             List.map (\enemy -> viewEnemyTile enemy.location) (Cons.toList enemiesNE)
                                 ++ [ viewPlayerTile player.location player.hp ]
 
                         PlayerMoving to player enemies ->
-                            let
-                                progress =
-                                    timerProgress model.clock timer
-                            in
                             List.map (\enemy -> viewEnemyTile enemy.location) enemies
                                 ++ [ viewPlayerTileMoving progress to player.location player.hp ]
 
                         PlayerAttackingEnemy player ess ->
-                            let
-                                progress =
-                                    timerProgress model.clock timer
-                            in
                             (selectSplitMapCS
                                 (\enemy -> viewEnemyDyingTile progress enemy.location)
                                 (\enemy -> viewEnemyTile enemy.location)
@@ -996,10 +992,6 @@ viewGrid model =
                                 ++ [ viewPlayerTile player.location player.hp ]
 
                         EnemiesActing playerRA eaCons ->
-                            let
-                                progress =
-                                    timerProgress model.clock timer
-                            in
                             (eaCons
                                 |> Cons.toList
                                 |> List.map
