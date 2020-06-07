@@ -388,9 +388,9 @@ type AnimState
 
 type State
     = WaitingForInput Player (Cons Enemy)
-    | PlayerMoving Timer Location Player (List Enemy)
-    | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
-    | EnemiesActing Timer PlayerReaction (Cons EnemyAction)
+    | PlayerMoving Location Player (List Enemy)
+    | PlayerAttackingEnemy Player (SelectSplit Enemy)
+    | EnemiesActing PlayerReaction (Cons EnemyAction)
     | Victory Player
     | Defeat Location (List Enemy)
 
@@ -523,7 +523,7 @@ updateStateOnKey key clock worldMap state =
                                 attackTimer =
                                     defaultTimer clock
                             in
-                            PlayerAttackingEnemy attackTimer player ez
+                            PlayerAttackingEnemy player ez
                                 |> AnimState attackTimer
                                 |> Just
 
@@ -549,50 +549,38 @@ updateStateOnTimerDone clock worldMap state =
         WaitingForInput _ _ ->
             Nothing
 
-        PlayerMoving timer location player enemies ->
-            if timerIsDone clock timer then
-                let
-                    newPlayer =
-                        playerMapLocation (always location) player
-                in
-                enemies
-                    |> List.uncons
-                    |> Maybe.unwrap
-                        (Random.constant
-                            (Victory newPlayer
-                                |> AnimState (timerInit clock 0)
-                            )
+        PlayerMoving location player enemies ->
+            let
+                newPlayer =
+                    playerMapLocation (always location) player
+            in
+            enemies
+                |> List.uncons
+                |> Maybe.unwrap
+                    (Random.constant
+                        (Victory newPlayer
+                            |> AnimState (timerInit clock 0)
                         )
-                        (initEnemiesActing clock worldMap newPlayer)
-                    |> Just
+                    )
+                    (initEnemiesActing clock worldMap newPlayer)
+                |> Just
 
-            else
-                Nothing
-
-        PlayerAttackingEnemy timer player (( _, enemy, _ ) as ess) ->
-            if timerIsDone clock timer then
-                initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
-                    |> justConstant
-
-            else
-                Nothing
+        PlayerAttackingEnemy player (( _, enemy, _ ) as ess) ->
+            initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
+                |> justConstant
 
         Victory _ ->
             Nothing
 
-        EnemiesActing timer playerRA emCons ->
-            if timerIsDone clock timer then
-                case playerRA of
-                    PlayerWasAttacked nHp player ->
-                        let
-                            nPlayer =
-                                playerSetHp nHp player
-                        in
-                        initWaitingForInput clock nPlayer (emCons |> Cons.map updateMovingEnemy)
-                            |> justConstant
-
-            else
-                Nothing
+        EnemiesActing playerRA emCons ->
+            case playerRA of
+                PlayerWasAttacked nHp player ->
+                    let
+                        nPlayer =
+                            playerSetHp nHp player
+                    in
+                    initWaitingForInput clock nPlayer (emCons |> Cons.map updateMovingEnemy)
+                        |> justConstant
 
         Defeat _ _ ->
             Nothing
@@ -610,7 +598,7 @@ initPlayerMoving clock location player enemies =
         movingTimer =
             timerInit clock playerMoveAnimSpeed
     in
-    AnimState movingTimer (PlayerMoving movingTimer location player enemies)
+    AnimState movingTimer (PlayerMoving location player enemies)
 
 
 initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator AnimState
@@ -635,7 +623,6 @@ initEnemiesActing clock worldMap player enemyCons =
                         toActionTimer nPlayerHp
                 in
                 EnemiesActing
-                    actionTimer
                     (PlayerWasAttacked nPlayerHp player)
                     eas
                     |> AnimState actionTimer
@@ -981,13 +968,13 @@ viewGrid model =
             ]
             ([ backgroundTileViews dimension model.walls
              , case model.animState of
-                AnimState t state ->
+                AnimState timer state ->
                     case state of
                         WaitingForInput player enemiesNE ->
                             List.map (\enemy -> viewEnemyTile enemy.location) (Cons.toList enemiesNE)
                                 ++ [ viewPlayerTile player.location player.hp ]
 
-                        PlayerMoving timer to player enemies ->
+                        PlayerMoving to player enemies ->
                             let
                                 progress =
                                     timerProgress model.clock timer
@@ -995,7 +982,7 @@ viewGrid model =
                             List.map (\enemy -> viewEnemyTile enemy.location) enemies
                                 ++ [ viewPlayerTileMoving progress to player.location player.hp ]
 
-                        PlayerAttackingEnemy timer player ess ->
+                        PlayerAttackingEnemy player ess ->
                             let
                                 progress =
                                     timerProgress model.clock timer
@@ -1008,7 +995,7 @@ viewGrid model =
                             )
                                 ++ [ viewPlayerTile player.location player.hp ]
 
-                        EnemiesActing timer playerRA eaCons ->
+                        EnemiesActing playerRA eaCons ->
                             let
                                 progress =
                                     timerProgress model.clock timer
