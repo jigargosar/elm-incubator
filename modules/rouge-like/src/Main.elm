@@ -196,6 +196,11 @@ type alias Player =
     }
 
 
+playerDecHp : Player -> Player
+playerDecHp player =
+    { player | hp = player.hp - 1 |> atLeast 0 }
+
+
 playerInit : Location -> Player
 playerInit location =
     { location = location
@@ -560,16 +565,19 @@ enemyActionsGeneratorHelp getNextLocations iPlayer iEnemies iSeed =
                         |> maybeUniformGenerator
                         |> Maybe.withDefault (Random.constant enemy.location)
 
-                ( nl, nSeed ) =
+                ( targetLocation, nSeed ) =
                     Random.step nlGenerator seed
-
-                nOccupied =
-                    List.setIf (eq enemy.location) nl occupied
-
-                nPlayer =
-                    player
             in
-            ( ( nPlayer, nOccupied, nSeed ), EnemyMoving nl enemy )
+            if targetLocation == player.location then
+                ( ( playerDecHp player, occupied, nSeed ), EnemyMoving enemy.location enemy )
+
+            else
+                ( ( player
+                  , List.setIf (eq enemy.location) targetLocation occupied
+                  , nSeed
+                  )
+                , EnemyMoving targetLocation enemy
+                )
     in
     Cons.mapAccuml reducer ( iPlayer, iOccupied, iSeed ) iEnemies
         |> (\( ( rPlayer, _, rSeed ), rEAs ) -> ( ( rPlayer, rEAs ), rSeed ))
