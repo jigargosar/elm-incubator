@@ -23,10 +23,6 @@ import Tuple.More as Tuple
 -- Config
 
 
-playerMoveAnimSpeed =
-    fastAnimSpeed
-
-
 initialPlayerHp =
     3
 
@@ -35,12 +31,16 @@ initialEnemyCount =
     8
 
 
+playerMoveAnimSpeed =
+    fastAnimSpeed
+
+
 defaultAnimSpeed =
     fastAnimSpeed
 
 
 
---
+-- Anim Speed Config
 
 
 fastAnimSpeed =
