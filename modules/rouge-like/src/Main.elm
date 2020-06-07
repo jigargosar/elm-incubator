@@ -90,6 +90,21 @@ timerInit clock duration =
     { startTime = clockCurrentTime clock, duration = duration }
 
 
+slowTimer : Clock -> Timer
+slowTimer =
+    flip timerInit slowAnimSpeed
+
+
+defaultTimer : Clock -> Timer
+defaultTimer =
+    flip timerInit defaultAnimSpeed
+
+
+fastTimer : Clock -> Timer
+fastTimer =
+    flip timerInit fastAnimSpeed
+
+
 timerIsDone : Clock -> Timer -> Bool
 timerIsDone clock timer =
     let
