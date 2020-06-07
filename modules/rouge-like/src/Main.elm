@@ -813,27 +813,24 @@ viewOverlay : State -> HM
 viewOverlay state =
     case state of
         Victory _ ->
-            div
-                [ class "absolute w-100 h-100 flex items-center justify-center"
-                ]
-                [ div [ class "bg-white-50 black pa3 br3" ]
-                    [ div [ class "code f2 tc" ] [ text "You Won!" ]
-                    , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
-                    ]
-                ]
+            viewOverlayMsg "You Won!"
 
         Defeat _ _ ->
-            div
-                [ class "absolute w-100 h-100 flex items-center justify-center"
-                ]
-                [ div [ class "bg-white-50 black pa3 br3" ]
-                    [ div [ class "code f2 tc" ] [ text "You Lost!" ]
-                    , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
-                    ]
-                ]
+            viewOverlayMsg "You Lost!"
 
         _ ->
             text ""
+
+
+viewOverlayMsg message =
+    div
+        [ class "absolute w-100 h-100 flex items-center justify-center"
+        ]
+        [ div [ class "bg-white-50 black pa3 br3" ]
+            [ div [ class "code f2 tc" ] [ text message ]
+            , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
+            ]
+        ]
 
 
 type alias HM =
