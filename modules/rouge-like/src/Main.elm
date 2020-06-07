@@ -577,7 +577,7 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
                     enemy.location
                         |> getNextLocations
 
-                nlGenerator =
+                nextLocationGenerator =
                     if List.member player.location walkableLocations then
                         Random.constant player.location
 
@@ -588,7 +588,7 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
                             |> Maybe.withDefault (Random.constant enemy.location)
 
                 ( targetLocation, nSeed ) =
-                    Random.step nlGenerator seed
+                    Random.step nextLocationGenerator seed
             in
             if targetLocation == player.location then
                 ( ( playerHp - 1 |> atLeast 0, occupied, nSeed )
