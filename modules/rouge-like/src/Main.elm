@@ -201,6 +201,11 @@ playerDecHp player =
     { player | hp = player.hp - 1 |> atLeast 0 }
 
 
+playerSetHp : Int -> Player -> Player
+playerSetHp hp player =
+    { player | hp = hp |> atLeast 0 }
+
+
 playerInit : Location -> Player
 playerInit location =
     { location = location
@@ -342,7 +347,7 @@ type State
     = WaitingForInput Player (Cons Enemy)
     | PlayerMoving Timer Location Player (List Enemy)
     | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
-    | EnemiesActing Timer Player (Cons EnemyAction)
+    | EnemiesActing Timer PlayerReaction (Cons EnemyAction)
     | Victory Player
 
 
@@ -498,10 +503,20 @@ updateStateOnTick clock worldMap state =
         Victory _ ->
             Nothing
 
-        EnemiesActing timer player emCons ->
+        EnemiesActing timer playerRA emCons ->
             if timerIsDone clock timer then
-                initWaitingForInput player (emCons |> Cons.map updateMovingEnemy)
-                    |> justConstant
+                case playerRA of
+                    PlayerWasAttacked 0 player ->
+                        initWaitingForInput player (emCons |> Cons.map updateMovingEnemy)
+                            |> justConstant
+
+                    PlayerWasAttacked nHp player ->
+                        let
+                            nPlayer =
+                                playerSetHp nHp player
+                        in
+                        initWaitingForInput nPlayer (emCons |> Cons.map updateMovingEnemy)
+                            |> justConstant
 
             else
                 Nothing
@@ -532,7 +547,7 @@ initEnemiesActing clock worldMap player enemyCons =
     in
     enemyActionsGeneratorHelp getNextEnemyLocations player enemyCons
         |> generatorWithIndependentSeed
-        |> Random.map (\( rPlayer, eas ) -> EnemiesActing movingTimer rPlayer eas)
+        |> Random.map (\( nPlayerHp, eas ) -> EnemiesActing movingTimer (PlayerWasAttacked nPlayerHp player) eas)
 
 
 generatorWithIndependentSeed : (Seed -> ( b, Seed )) -> Generator b
@@ -546,8 +561,8 @@ enemyActionsGeneratorHelp :
     -> Player
     -> Cons Enemy
     -> Seed
-    -> ( ( Player, Cons EnemyAction ), Seed )
-enemyActionsGeneratorHelp getNextLocations iPlayer iEnemies iSeed =
+    -> ( ( Int, Cons EnemyAction ), Seed )
+enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
     let
         iOccupied : List Location
         iOccupied =
@@ -555,8 +570,8 @@ enemyActionsGeneratorHelp getNextLocations iPlayer iEnemies iSeed =
                 |> Cons.toList
                 |> List.map .location
 
-        reducer : ( Player, List Location, Seed ) -> Enemy -> ( ( Player, List Location, Seed ), EnemyAction )
-        reducer ( player, occupied, seed ) enemy =
+        reducer : ( Int, List Location, Seed ) -> Enemy -> ( ( Int, List Location, Seed ), EnemyAction )
+        reducer ( playerHp, occupied, seed ) enemy =
             let
                 nlGenerator =
                     enemy.location
@@ -569,17 +584,17 @@ enemyActionsGeneratorHelp getNextLocations iPlayer iEnemies iSeed =
                     Random.step nlGenerator seed
             in
             if targetLocation == player.location then
-                ( ( playerDecHp player, occupied, nSeed ), EnemyMoving enemy.location enemy )
+                ( ( playerHp - 1 |> atLeast 0, occupied, nSeed ), EnemyMoving enemy.location enemy )
 
             else
-                ( ( player
+                ( ( playerHp
                   , List.setIf (eq enemy.location) targetLocation occupied
                   , nSeed
                   )
                 , EnemyMoving targetLocation enemy
                 )
     in
-    Cons.mapAccuml reducer ( iPlayer, iOccupied, iSeed ) iEnemies
+    Cons.mapAccuml reducer ( player.hp, iOccupied, iSeed ) iEnemies
         |> (\( ( rPlayer, _, rSeed ), rEAs ) -> ( ( rPlayer, rEAs ), rSeed ))
 
 
@@ -746,6 +761,10 @@ cssScale s =
         |> append "scale"
 
 
+cssFade o =
+    style "opacity" (String.fromFloat o)
+
+
 cssTransform xs =
     style "transform" (String.join " " xs)
 
@@ -762,6 +781,15 @@ locationToDXY location =
 viewPlayerTile location hp =
     div
         [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text (String.fromInt hp) ]
+
+
+viewPlayerTileFading progress location hp =
+    div
+        [ commonStyles
+        , cssTransform [ cssTranslate (locationToDXY location) ]
+        , cssFade progress
+        ]
         [ text (String.fromInt hp) ]
 
 
@@ -868,7 +896,7 @@ viewGrid model =
                     )
                         ++ [ viewPlayerTile player.location player.hp ]
 
-                EnemiesActing timer player eaCons ->
+                EnemiesActing timer playerRA eaCons ->
                     let
                         progress =
                             timerProgress model.clock timer
@@ -882,7 +910,10 @@ viewGrid model =
                                         viewEnemyTileMoving progress to enemy.location
                             )
                     )
-                        ++ [ viewPlayerTile player.location player.hp ]
+                        ++ [ case playerRA of
+                                PlayerWasAttacked hp player ->
+                                    viewPlayerTileFading progress player.location hp
+                           ]
 
                 Victory player ->
                     [ viewPlayerTile player.location player.hp ]
