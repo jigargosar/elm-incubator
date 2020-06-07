@@ -476,7 +476,12 @@ updateStateOnKey key clock worldMap state =
                             Nothing
 
                 Nothing ->
-                    Nothing
+                    case key of
+                        " " ->
+                            Nothing
+
+                        _ ->
+                            Nothing
 
         _ ->
             Nothing
