@@ -92,11 +92,17 @@ timerInit clock duration =
 
 timerIsDone : Clock -> Timer -> Bool
 timerIsDone clock timer =
-    let
-        elapsed =
-            clockCurrentTime clock - timer.startTime
-    in
-    elapsed >= timer.duration
+    timerElapsed clock timer >= timer.duration
+
+
+timerOverShot : Clock -> Timer -> Bool
+timerOverShot clock timer =
+    timerElapsed clock timer > timer.duration
+
+
+timerElapsed : Clock -> Timer -> Float
+timerElapsed clock timer =
+    clockCurrentTime clock - timer.startTime
 
 
 timerProgress : Clock -> Timer -> Float
@@ -376,7 +382,7 @@ toAnimState clock (NextState speed state) =
     in
     case speed of
         Instant ->
-            fromDuration 0
+            fromDuration 1
 
         Slow ->
             fromDuration slowAnimSpeed
@@ -784,11 +790,11 @@ subscriptions model =
             )
         , case model.animState of
             AnimState timer _ ->
-                if timerIsDone model.clock timer then
-                    Sub.none
-
-                else
-                    Browser.Events.onAnimationFrameDelta Tick
+                let
+                    _ =
+                        Debug.log "debug" (timerIsDone model.clock timer)
+                in
+                Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
