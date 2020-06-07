@@ -257,3 +257,19 @@ propEq x fx a =
 
 idEq id =
     propEq id .id
+
+
+rangeLen : Int -> List Int
+rangeLen len =
+    List.range 0 (len - 1)
+
+
+rangeLen2 : Int -> Int -> List (List ( Int, Int ))
+rangeLen2 l1 l2 =
+    rangeLen l1
+        |> List.map (\i1 -> rangeLen l2 |> List.map (Tuple.pair i1))
+
+
+isValidIndex : Int -> Int -> Bool
+isValidIndex x len =
+    x == clamp 0 (len - 1) x

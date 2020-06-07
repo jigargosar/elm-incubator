@@ -6,24 +6,36 @@ module Dimension exposing
     , toLocations
     )
 
-import Index
+import Basics.More exposing (..)
 import Location exposing (Location)
 
 
-type alias Dimension =
-    { width : Int
-    , height : Int
-    }
+type Dimension
+    = Dimension ( Int, Int )
 
 
 new : Int -> Int -> Dimension
 new w h =
-    Dimension w h
+    fromTuple ( w, h )
+
+
+fromTuple : ( Int, Int ) -> Dimension
+fromTuple =
+    Dimension
+
+
+toTuple : Dimension -> ( Int, Int )
+toTuple (Dimension wh) =
+    wh
 
 
 toLocationRows : Dimension -> List (List Location)
 toLocationRows d =
-    Index.range2 d.height d.width
+    let
+        ( w, h ) =
+            toTuple d
+    in
+    rangeLen2 h w
         |> List.map (List.map (\( y, x ) -> Location.new x y))
 
 
@@ -33,10 +45,12 @@ toLocations =
 
 
 containsLocation : Location -> Dimension -> Bool
-containsLocation location dimension =
+containsLocation location d =
     let
         ( x, y ) =
             Location.toTuple location
+
+        ( w, h ) =
+            toTuple d
     in
-    Index.memberOf dimension.width x
-        && Index.memberOf dimension.height y
+    isValidIndex x w && isValidIndex y h
