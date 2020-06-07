@@ -388,6 +388,7 @@ type State
     | PlayerAttackingEnemy Timer Player (SelectSplit Enemy)
     | EnemiesActing Timer PlayerReaction (Cons EnemyAction)
     | Victory Player
+    | Defeat Location (List Enemy)
 
 
 type EnemyAction
@@ -561,6 +562,9 @@ updateStateOnTick clock worldMap state =
 
             else
                 Nothing
+
+        Defeat _ _ ->
+            Nothing
 
 
 initWaitingForInput : Player -> Cons Enemy -> State
@@ -984,6 +988,10 @@ viewGrid model =
 
                 Victory player ->
                     [ viewPlayerTile player.location player.hp ]
+
+                Defeat location enemies ->
+                    List.map (\enemy -> viewEnemyTile enemy.location) enemies
+                        ++ [ viewPlayerTile location 0 ]
              ]
                 |> List.concat
             )
