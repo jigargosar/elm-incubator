@@ -837,15 +837,15 @@ view model =
             , case model.animState of
                 AnimState timer state ->
                     let
-                        isDone =
-                            timerIsDone model.clock timer
+                        progress =
+                            timerProgress model.clock timer
                     in
                     case state of
                         Victory _ ->
-                            viewIf isDone (viewOverlayMsg "You Won!")
+                            viewOverlayMsg progress "You Won!"
 
                         Defeat _ _ ->
-                            viewIf isDone (viewOverlayMsg "You Lost!")
+                            viewOverlayMsg progress "You Lost!"
 
                         _ ->
                             text ""
@@ -853,9 +853,10 @@ view model =
         ]
 
 
-viewOverlayMsg message =
+viewOverlayMsg progress message =
     div
         [ class "absolute w-100 h-100 flex items-center justify-center"
+        , cssFade progress
         ]
         [ div [ class "bg-white-50 black pa3 br3" ]
             [ div [ class "code f2 tc" ] [ text message ]
