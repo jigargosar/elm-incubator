@@ -829,7 +829,7 @@ view model =
 viewOverlayMsg progress message =
     div
         [ class "absolute w-100 h-100 flex items-center justify-center"
-        , HS.cssOpacity progress
+        , HS.opacity progress
         ]
         [ div [ class "bg-white-50 black pa3 br3" ]
             [ div [ class "code b f2 tc" ] [ text message ]
@@ -853,15 +853,15 @@ locationToDXY location =
 
 viewPlayerTile location hp =
     div
-        [ commonStyles, HS.cssTransform [ HS.cssTranslate (locationToDXY location) ] ]
+        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
         [ text (String.fromInt hp) ]
 
 
 viewPlayerTileFading progress location hp =
     div
         [ commonStyles
-        , HS.cssTransform [ HS.cssTranslate (locationToDXY location) ]
-        , HS.cssOpacity progress
+        , HS.transforms [ HS.move (locationToDXY location) ]
+        , HS.opacity progress
         ]
         [ text (String.fromInt hp) ]
 
@@ -876,9 +876,9 @@ viewPlayerTileMoving progress to location hp =
     in
     div
         [ commonStyles
-        , HS.cssTransform
-            [ HS.cssTranslate (locationToDXY location)
-            , HS.cssTranslate moveDXY
+        , HS.transforms
+            [ HS.move (locationToDXY location)
+            , HS.move moveDXY
             ]
         ]
         [ text (String.fromInt hp) ]
@@ -886,7 +886,7 @@ viewPlayerTileMoving progress to location hp =
 
 viewEnemyTile location =
     div
-        [ commonStyles, HS.cssTransform [ HS.cssTranslate (locationToDXY location) ] ]
+        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
         [ text "e" ]
 
 
@@ -900,10 +900,10 @@ viewEnemyTileDyingFromCounterAttack progress to location =
     in
     div
         [ commonStyles
-        , HS.cssTransform
-            [ HS.cssTranslate (locationToDXY location)
-            , HS.cssTranslate moveDXY
-            , HS.cssScale (Ease.reverse Ease.inOutBounce progress)
+        , HS.transforms
+            [ HS.move (locationToDXY location)
+            , HS.move moveDXY
+            , HS.scale (Ease.reverse Ease.inOutBounce progress)
             ]
         ]
         [ text "e" ]
@@ -912,9 +912,9 @@ viewEnemyTileDyingFromCounterAttack progress to location =
 viewEnemyTileDying progress location =
     div
         [ commonStyles
-        , HS.cssTransform
-            [ HS.cssTranslate (locationToDXY location)
-            , HS.cssScale (Ease.reverse Ease.inOutBounce progress)
+        , HS.transforms
+            [ HS.move (locationToDXY location)
+            , HS.scale (Ease.reverse Ease.inOutBounce progress)
             ]
         ]
         [ text "e" ]
@@ -930,9 +930,9 @@ viewEnemyTileMoving progress to location =
     in
     div
         [ commonStyles
-        , HS.cssTransform
-            [ HS.cssTranslate (locationToDXY location)
-            , HS.cssTranslate moveDXY
+        , HS.transforms
+            [ HS.move (locationToDXY location)
+            , HS.move moveDXY
             ]
         ]
         [ text "e" ]
@@ -940,12 +940,12 @@ viewEnemyTileMoving progress to location =
 
 viewWallTile location =
     div
-        [ commonStyles, HS.cssTransform [ HS.cssTranslate (locationToDXY location) ] ]
+        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
         [ text "#" ]
 
 
 viewFloorTile location =
-    div [ commonStyles, HS.cssTransform [ HS.cssTranslate (locationToDXY location) ] ]
+    div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
         [ text "." ]
 
 

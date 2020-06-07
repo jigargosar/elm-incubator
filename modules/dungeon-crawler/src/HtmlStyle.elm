@@ -1,12 +1,12 @@
-module HtmlStyle exposing (..)
+module HtmlStyle exposing (move, opacity, scale, transforms)
 
 import Basics.More exposing (..)
 import Html.Attributes exposing (style)
 import Tuple.More as Tuple
 
 
-cssTranslate : ( Float, Float ) -> String
-cssTranslate dxy =
+move : ( Float, Float ) -> String
+move dxy =
     dxy
         |> Tuple.map pxFromFloat
         |> Tuple.join ","
@@ -14,15 +14,15 @@ cssTranslate dxy =
         |> append "translate"
 
 
-cssScale s =
+scale s =
     String.fromFloat s
         |> paren
         |> append "scale"
 
 
-cssOpacity o =
+opacity o =
     style "opacity" (String.fromFloat o)
 
 
-cssTransform xs =
+transforms xs =
     style "transform" (String.join " " xs)
