@@ -597,7 +597,7 @@ updateStateOnTimerDone worldMap state =
                             playerSetHp nHp player
 
                         nEnemyCons =
-                            emCons |> Cons.map updateMovingEnemy
+                            emCons |> Cons.map performEnemyAction
 
                         nextState =
                             if nHp == 0 then
@@ -729,8 +729,8 @@ justConstant x =
         |> Just
 
 
-updateMovingEnemy : EnemyAction -> Enemy
-updateMovingEnemy enemyMoving =
+performEnemyAction : EnemyAction -> Enemy
+performEnemyAction enemyMoving =
     case enemyMoving of
         EnemyMoving location enemy ->
             enemySetLocation location enemy
