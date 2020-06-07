@@ -32,7 +32,7 @@ initialEnemyCount =
 
 
 playerMoveAnimSpeed =
-    fastAnimSpeed
+    Fast
 
 
 defaultAnimSpeed =
@@ -389,13 +389,32 @@ type AnimState
 type AnimSpeed
     = Instant
     | Slow
-    | Medium
+    | Default
     | Fast
 
 
 type NextState
-    = Stay
-    | Transition AnimSpeed State
+    = NextState AnimSpeed State
+
+
+toAnimState : Clock -> NextState -> AnimState
+toAnimState clock (NextState speed state) =
+    let
+        fromDuration duration =
+            AnimState (timerInit clock duration) state
+    in
+    case speed of
+        Instant ->
+            fromDuration 0
+
+        Slow ->
+            fromDuration slowAnimSpeed
+
+        Default ->
+            fromDuration defaultAnimSpeed
+
+        Fast ->
+            fromDuration fastAnimSpeed
 
 
 type State
@@ -446,8 +465,9 @@ init flags =
                 |> Maybe.map (initWaitingForInput initialClock acc.player)
                 |> Maybe.withDefault
                     (Victory acc.player
-                        |> AnimState (timerInit initialClock 0)
+                        |> NextState Instant
                     )
+                |> toAnimState initialClock
       , clock = initialClock
       , seed = seed
       }
@@ -476,8 +496,8 @@ update message model =
                 AnimState timer state ->
                     if timerIsDone model.clock timer then
                         case updateStateOnKey key model.clock model state of
-                            Just animState ->
-                                { model | animState = animState }
+                            Just nextState ->
+                                { model | animState = toAnimState model.clock nextState }
 
                             Nothing ->
                                 model
@@ -494,11 +514,11 @@ update message model =
                         case updateStateOnTimerDone model.clock model state of
                             Just stateGenerator ->
                                 let
-                                    ( animState, seed ) =
+                                    ( nextState, seed ) =
                                         Random.step stateGenerator model.seed
                                 in
                                 { model
-                                    | animState = animState
+                                    | animState = toAnimState model.clock nextState
                                     , seed = seed
                                     , clock = clockStep delta model.clock
                                 }
@@ -512,7 +532,7 @@ update message model =
             )
 
 
-updateStateOnKey : String -> Clock -> WorldMap a -> State -> Maybe AnimState
+updateStateOnKey : String -> Clock -> WorldMap a -> State -> Maybe NextState
 updateStateOnKey key clock worldMap state =
     case state of
         WaitingForInput player enemies ->
@@ -531,12 +551,8 @@ updateStateOnKey key clock worldMap state =
                             Nothing
 
                         HasEnemy ez ->
-                            let
-                                attackTimer =
-                                    defaultTimer clock
-                            in
                             PlayerAttackingEnemy player ez
-                                |> AnimState attackTimer
+                                |> NextState Default
                                 |> Just
 
                         HasPlayer ->
@@ -555,7 +571,7 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
-updateStateOnTimerDone : Clock -> WorldMap a -> State -> Maybe (Generator AnimState)
+updateStateOnTimerDone : Clock -> WorldMap a -> State -> Maybe (Generator NextState)
 updateStateOnTimerDone clock worldMap state =
     case state of
         WaitingForInput _ _ ->
@@ -571,7 +587,7 @@ updateStateOnTimerDone clock worldMap state =
                 |> Maybe.unwrap
                     (Random.constant
                         (Victory newPlayer
-                            |> AnimState (timerInit clock 0)
+                            |> NextState Instant
                         )
                     )
                     (initEnemiesActing clock worldMap newPlayer)
@@ -598,31 +614,21 @@ updateStateOnTimerDone clock worldMap state =
             Nothing
 
 
-initWaitingForInput : Clock -> Player -> Cons Enemy -> AnimState
+initWaitingForInput : Clock -> Player -> Cons Enemy -> NextState
 initWaitingForInput clock player neEnemies =
     WaitingForInput player neEnemies
-        |> AnimState (timerInit clock 0)
+        |> NextState Instant
 
 
-initPlayerMoving : Clock -> Location -> Player -> List Enemy -> AnimState
+initPlayerMoving : Clock -> Location -> Player -> List Enemy -> NextState
 initPlayerMoving clock location player enemies =
-    let
-        movingTimer =
-            timerInit clock playerMoveAnimSpeed
-    in
-    AnimState movingTimer (PlayerMoving location player enemies)
+    PlayerMoving location player enemies
+        |> NextState playerMoveAnimSpeed
 
 
-initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator AnimState
+initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator NextState
 initEnemiesActing clock worldMap player enemyCons =
     let
-        toActionTimer nPlayerHp =
-            if nPlayerHp == player.hp then
-                defaultTimer clock
-
-            else
-                slowTimer clock
-
         getNextEnemyLocations location =
             worldMapAdjacentWalkable location worldMap
     in
@@ -631,13 +637,17 @@ initEnemiesActing clock worldMap player enemyCons =
         |> Random.map
             (\( nPlayerHp, eas ) ->
                 let
-                    actionTimer =
-                        toActionTimer nPlayerHp
+                    speed =
+                        if nPlayerHp == player.hp then
+                            Default
+
+                        else
+                            Slow
                 in
                 EnemiesActing
                     (PlayerWasAttacked nPlayerHp player)
                     eas
-                    |> AnimState actionTimer
+                    |> NextState speed
             )
 
 
