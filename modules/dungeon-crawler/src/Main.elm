@@ -956,8 +956,7 @@ viewGrid model =
             model.dimension
 
         ( sw, sh ) =
-            Dimension.toTuple dimension
-                |> Tuple.toFloatScaled 32
+            Dimension.toFloatScaled 32 dimension
                 |> Tuple.mapBoth HS.width HS.height
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
