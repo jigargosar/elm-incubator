@@ -1019,7 +1019,7 @@ viewGrid model =
 
 
 gridWidthStyle width =
-    style "width" (String.fromInt (width * 32) ++ "px")
+    HS.width (width * 32)
 
 
 gridHeightStyle height =

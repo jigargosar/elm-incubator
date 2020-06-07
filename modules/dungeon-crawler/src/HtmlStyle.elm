@@ -1,4 +1,4 @@
-module HtmlStyle exposing (move, opacity, scale, transforms)
+module HtmlStyle exposing (height, move, opacity, scale, transforms, width)
 
 import Basics.More exposing (..)
 import Html exposing (Attribute)
@@ -30,3 +30,13 @@ opacity o =
 transforms : List String -> Attribute msg
 transforms xs =
     style "transform" (String.join " " xs)
+
+
+width : Float -> Attribute msg
+width n =
+    style "width" (pxFromFloat n)
+
+
+height : Float -> Attribute msg
+height n =
+    style "height" (pxFromFloat n)
