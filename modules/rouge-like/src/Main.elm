@@ -705,7 +705,7 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
             in
             if targetLocation == player.location then
                 ( ( playerHp - 1 |> atLeast 0, occupied, nSeed )
-                , EnemyMoving enemy.location enemy
+                , EnemyDyingFromCounterAttack enemy
                 )
 
             else
