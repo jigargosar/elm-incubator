@@ -584,7 +584,9 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
                     Random.step nlGenerator seed
             in
             if targetLocation == player.location then
-                ( ( playerHp - 1 |> atLeast 0, occupied, nSeed ), EnemyMoving enemy.location enemy )
+                ( ( playerHp - 1 |> atLeast 0, occupied, nSeed )
+                , EnemyMoving enemy.location enemy
+                )
 
             else
                 ( ( playerHp
