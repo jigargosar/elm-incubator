@@ -90,21 +90,6 @@ timerInit clock duration =
     { startTime = clockCurrentTime clock, duration = duration }
 
 
-slowTimer : Clock -> Timer
-slowTimer =
-    flip timerInit slowAnimSpeed
-
-
-defaultTimer : Clock -> Timer
-defaultTimer =
-    flip timerInit defaultAnimSpeed
-
-
-fastTimer : Clock -> Timer
-fastTimer =
-    flip timerInit fastAnimSpeed
-
-
 timerIsDone : Clock -> Timer -> Bool
 timerIsDone clock timer =
     let
@@ -114,11 +99,6 @@ timerIsDone clock timer =
     elapsed >= timer.duration
 
 
-timerReset : Clock -> Timer -> Timer
-timerReset clock timer =
-    { timer | startTime = clockCurrentTime clock }
-
-
 timerProgress : Clock -> Timer -> Float
 timerProgress clock timer =
     let
@@ -126,11 +106,6 @@ timerProgress clock timer =
             clockCurrentTime clock - timer.startTime
     in
     clamp 0 timer.duration elapsed / timer.duration
-
-
-timerPendingProgress : Clock -> Timer -> Float
-timerPendingProgress clock timer =
-    1 - timerProgress clock timer
 
 
 
@@ -182,31 +157,29 @@ enemyIdEq =
 
 
 -- Enemies
-
-
-enemiesRemove : Uid -> List Enemy -> List Enemy
-enemiesRemove uid =
-    List.filterNot (enemyIdEq uid)
-
-
-enemiesUpdate : Uid -> (Enemy -> Enemy) -> List Enemy -> List Enemy
-enemiesUpdate id =
-    List.updateIf (enemyIdEq id)
-
-
-enemiesFind : Uid -> List Enemy -> Maybe Enemy
-enemiesFind uid enemies =
-    List.find (enemyIdEq uid) enemies
-
-
-enemiesToIds : List Enemy -> List Uid
-enemiesToIds =
-    List.map .id
-
-
-enemiesSelectSplitById : Uid -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
-enemiesSelectSplitById id =
-    enemiesSelectSplitBy (enemyIdEq id)
+--enemiesRemove : Uid -> List Enemy -> List Enemy
+--enemiesRemove uid =
+--    List.filterNot (enemyIdEq uid)
+--
+--
+--enemiesUpdate : Uid -> (Enemy -> Enemy) -> List Enemy -> List Enemy
+--enemiesUpdate id =
+--    List.updateIf (enemyIdEq id)
+--
+--
+--enemiesFind : Uid -> List Enemy -> Maybe Enemy
+--enemiesFind uid enemies =
+--    List.find (enemyIdEq uid) enemies
+--
+--
+--enemiesToIds : List Enemy -> List Uid
+--enemiesToIds =
+--    List.map .id
+--
+--
+--enemiesSelectSplitById : Uid -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
+--enemiesSelectSplitById id =
+--    enemiesSelectSplitBy (enemyIdEq id)
 
 
 enemiesSelectSplitBy : (Enemy -> Bool) -> List Enemy -> Maybe ( List Enemy, Enemy, List Enemy )
@@ -220,12 +193,10 @@ enemiesSelectSplitByLocation location =
     enemiesSelectSplitBy (enemyLocationEq location)
 
 
-enemiesFindAt : Location -> List Enemy -> Maybe Enemy
-enemiesFindAt location =
-    List.find (enemyLocationEq location)
 
-
-
+--enemiesFindAt : Location -> List Enemy -> Maybe Enemy
+--enemiesFindAt location =
+--    List.find (enemyLocationEq location)
 -- Player
 
 
@@ -235,9 +206,10 @@ type alias Player =
     }
 
 
-playerDecHp : Player -> Player
-playerDecHp player =
-    { player | hp = player.hp - 1 |> atLeast 0 }
+
+--playerDecHp : Player -> Player
+--playerDecHp player =
+--    { player | hp = player.hp - 1 |> atLeast 0 }
 
 
 playerSetHp : Int -> Player -> Player
@@ -252,9 +224,10 @@ playerInit location =
     }
 
 
-playerAlive : Player -> Bool
-playerAlive player =
-    player.hp > 0
+
+--playerAlive : Player -> Bool
+--playerAlive player =
+--    player.hp > 0
 
 
 playerLocationEq : Location -> Player -> Bool
@@ -495,7 +468,7 @@ update message model =
             ( case model.animState of
                 AnimState timer state ->
                     if timerIsDone model.clock timer then
-                        case updateStateOnKey key model.clock model state of
+                        case updateStateOnKey key model state of
                             Just nextState ->
                                 { model | animState = toAnimState model.clock nextState }
 
@@ -511,7 +484,7 @@ update message model =
             ( case model.animState of
                 AnimState timer state ->
                     if timerIsDone model.clock timer then
-                        case updateStateOnTimerDone model.clock model state of
+                        case updateStateOnTimerDone model state of
                             Just stateGenerator ->
                                 let
                                     ( nextState, seed ) =
@@ -532,8 +505,8 @@ update message model =
             )
 
 
-updateStateOnKey : String -> Clock -> WorldMap a -> State -> Maybe NextState
-updateStateOnKey key clock worldMap state =
+updateStateOnKey : String -> WorldMap a -> State -> Maybe NextState
+updateStateOnKey key worldMap state =
     case state of
         WaitingForInput player enemies ->
             case directionFromKey key of
@@ -571,8 +544,8 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
-updateStateOnTimerDone : Clock -> WorldMap a -> State -> Maybe (Generator NextState)
-updateStateOnTimerDone clock worldMap state =
+updateStateOnTimerDone : WorldMap a -> State -> Maybe (Generator NextState)
+updateStateOnTimerDone worldMap state =
     case state of
         WaitingForInput _ _ ->
             Nothing
@@ -715,11 +688,6 @@ listRemoveAll toRemove =
             List.notMember x toRemove
     in
     List.filter shouldKeep
-
-
-filterGenerator : (a -> Bool) -> List a -> Maybe (Generator a)
-filterGenerator f xs =
-    Debug.todo "impl"
 
 
 justConstant : a -> Maybe (Generator a)
