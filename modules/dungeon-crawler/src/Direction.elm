@@ -1,6 +1,6 @@
 module Direction exposing
     ( Direction(..)
-    , directionFromKey
+    , directionFromArrowKey
     , stepLocationInDirection
     )
 
@@ -23,8 +23,8 @@ stepLocationInDirection direction =
             Location.down
 
 
-directionFromKey : String -> Maybe Direction
-directionFromKey key =
+directionFromArrowKey : String -> Maybe Direction
+directionFromArrowKey key =
     case key of
         "ArrowLeft" ->
             Just Left

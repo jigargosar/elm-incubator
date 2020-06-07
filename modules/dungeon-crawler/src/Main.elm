@@ -530,7 +530,7 @@ updateStateOnKey : String -> WorldMap a -> State -> Maybe StateTransit
 updateStateOnKey key worldMap state =
     case state of
         WaitingForInput player enemies ->
-            case Direction.directionFromKey key of
+            case Direction.directionFromArrowKey key of
                 Just direction ->
                     let
                         location =
