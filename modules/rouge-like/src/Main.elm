@@ -785,13 +785,12 @@ subscriptions model =
                 |> JD.map KeyDown
             )
         , case model.animState of
-            AnimState timer state ->
-                case state of
-                    WaitingForInput _ _ ->
-                        Sub.none
+            AnimState timer _ ->
+                if timerIsDone model.clock timer then
+                    Sub.none
 
-                    _ ->
-                        Browser.Events.onAnimationFrameDelta Tick
+                else
+                    Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
