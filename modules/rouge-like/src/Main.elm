@@ -385,12 +385,12 @@ type AnimSpeed
     | Fast
 
 
-type Transit
-    = Transit AnimSpeed State
+type StateTransition
+    = StateTransition AnimSpeed State
 
 
-toAnimState : Clock -> Transit -> AnimState
-toAnimState clock (Transit speed state) =
+toAnimState : Clock -> StateTransition -> AnimState
+toAnimState clock (StateTransition speed state) =
     let
         fromDuration duration =
             AnimState (timerInit clock duration) state
@@ -449,7 +449,7 @@ init flags =
         initialClock =
             clockZero
 
-        nextState : Transit
+        nextState : StateTransition
         nextState =
             acc.enemies
                 |> List.uncons
@@ -523,7 +523,7 @@ update message model =
             )
 
 
-updateStateOnKey : String -> WorldMap a -> State -> Maybe Transit
+updateStateOnKey : String -> WorldMap a -> State -> Maybe StateTransition
 updateStateOnKey key worldMap state =
     case state of
         WaitingForInput player enemies ->
@@ -543,7 +543,7 @@ updateStateOnKey key worldMap state =
 
                         HasEnemy ez ->
                             PlayerAttackingEnemy player ez
-                                |> Transit Default
+                                |> StateTransition Default
                                 |> Just
 
                         HasPlayer ->
@@ -562,7 +562,7 @@ updateStateOnKey key worldMap state =
             Nothing
 
 
-updateStateOnTimerDone : WorldMap a -> State -> Maybe (Generator Transit)
+updateStateOnTimerDone : WorldMap a -> State -> Maybe (Generator StateTransition)
 updateStateOnTimerDone worldMap state =
     case state of
         WaitingForInput _ _ ->
@@ -602,7 +602,7 @@ updateStateOnTimerDone worldMap state =
                         nextState =
                             if nHp == 0 then
                                 Defeat player.location (Cons.toList nEnemyCons)
-                                    |> Transit Slow
+                                    |> StateTransition Slow
 
                             else
                                 initWaitingForInput nPlayer nEnemyCons
@@ -614,25 +614,25 @@ updateStateOnTimerDone worldMap state =
             Nothing
 
 
-initVictory : Player -> Transit
+initVictory : Player -> StateTransition
 initVictory player =
     Victory player
-        |> Transit Slow
+        |> StateTransition Slow
 
 
-initWaitingForInput : Player -> Cons Enemy -> Transit
+initWaitingForInput : Player -> Cons Enemy -> StateTransition
 initWaitingForInput player neEnemies =
     WaitingForInput player neEnemies
-        |> Transit Instant
+        |> StateTransition Instant
 
 
-initPlayerMoving : Location -> Player -> List Enemy -> Transit
+initPlayerMoving : Location -> Player -> List Enemy -> StateTransition
 initPlayerMoving location player enemies =
     PlayerMoving location player enemies
-        |> Transit playerMoveAnimSpeed
+        |> StateTransition playerMoveAnimSpeed
 
 
-initEnemiesActing : WorldMap a -> Player -> Cons Enemy -> Generator Transit
+initEnemiesActing : WorldMap a -> Player -> Cons Enemy -> Generator StateTransition
 initEnemiesActing worldMap player enemyCons =
     let
         getNextEnemyLocations location =
@@ -653,7 +653,7 @@ initEnemiesActing worldMap player enemyCons =
                 EnemiesActing
                     (PlayerWasAttacked nPlayerHp player)
                     eas
-                    |> Transit speed
+                    |> StateTransition speed
             )
 
 
