@@ -803,7 +803,7 @@ view model =
         , div [ class "flex relative" ]
             [ viewGrid model
             , case model.animState of
-                AnimState timer state ->
+                AnimState _ state ->
                     viewOverlay state
             ]
         ]
