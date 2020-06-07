@@ -598,8 +598,19 @@ updateStateOnTimerDone worldMap state =
                     let
                         nPlayer =
                             playerSetHp nHp player
+
+                        nEnemyCons =
+                            emCons |> Cons.map updateMovingEnemy
+
+                        nextState =
+                            if nHp == 0 then
+                                Defeat player.location (Cons.toList nEnemyCons)
+                                    |> NextState Slow
+
+                            else
+                                initWaitingForInput nPlayer nEnemyCons
                     in
-                    initWaitingForInput nPlayer (emCons |> Cons.map updateMovingEnemy)
+                    nextState
                         |> justConstant
 
         Defeat _ _ ->
