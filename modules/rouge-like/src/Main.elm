@@ -448,15 +448,17 @@ init flags =
 
         initialClock =
             clockZero
-    in
-    ( { dimension = dimension
-      , walls = acc.walls
-      , animState =
+
+        nextState : NextState
+        nextState =
             acc.enemies
                 |> List.uncons
                 |> Maybe.map (initWaitingForInput acc.player)
                 |> Maybe.withDefault (initVictory acc.player)
-                |> toAnimState initialClock
+    in
+    ( { dimension = dimension
+      , walls = acc.walls
+      , animState = toAnimState initialClock nextState
       , clock = initialClock
       , seed = seed
       }
