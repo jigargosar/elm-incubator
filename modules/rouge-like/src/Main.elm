@@ -19,12 +19,28 @@ import Tuple exposing (..)
 import Tuple.More as Tuple
 
 
+
+-- Config
+
+
 playerMoveAnimSpeed =
     fastAnimSpeed
 
 
+initialPlayerHp =
+    3
+
+
+initialEnemyCount =
+    8
+
+
 defaultAnimSpeed =
     fastAnimSpeed
+
+
+
+--
 
 
 fastAnimSpeed =
@@ -37,10 +53,6 @@ slowAnimSpeed =
 
 ticksToMillis =
     mul (1000 / 60)
-
-
-initialEnemyCount =
-    8
 
 
 
@@ -221,7 +233,7 @@ playerSetHp hp player =
 playerInit : Location -> Player
 playerInit location =
     { location = location
-    , hp = 3
+    , hp = initialPlayerHp
     }
 
 
