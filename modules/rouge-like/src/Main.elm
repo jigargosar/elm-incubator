@@ -524,28 +524,25 @@ initEnemiesActing clock worldMap player enemyCons =
 
         getNextEnemyLocations location =
             worldMapAdjacentWalkable location worldMap
-                |> List.remove player.location
     in
-    enemyActionsGenerator getNextEnemyLocations enemyCons
-        |> Random.map (EnemiesActing movingTimer player)
+    enemyActionsGeneratorHelp getNextEnemyLocations player enemyCons
+        |> generatorWithIndependentSeed
+        |> Random.map (\( _, eas ) -> EnemiesActing movingTimer player eas)
 
 
-enemyActionsGenerator : (Location -> List Location) -> Cons Enemy -> Generator (Cons EnemyAction)
-enemyActionsGenerator getNextLocations enemies =
-    let
-        f seed =
-            enemyActionsGeneratorHelp getNextLocations seed enemies
-                |> second
-    in
-    Random.independentSeed |> Random.map f
+generatorWithIndependentSeed : (Seed -> ( b, Seed )) -> Generator b
+generatorWithIndependentSeed f =
+    Random.independentSeed
+        |> Random.map (f >> Tuple.first)
 
 
 enemyActionsGeneratorHelp :
     (Location -> List Location)
-    -> Seed
+    -> Player
     -> Cons Enemy
-    -> ( ( List Location, Seed ), Cons EnemyAction )
-enemyActionsGeneratorHelp getNextLocations iSeed iEnemies =
+    -> Seed
+    -> ( ( Player, Cons EnemyAction ), Seed )
+enemyActionsGeneratorHelp getNextLocations iPlayer iEnemies iSeed =
     let
         iOccupied : List Location
         iOccupied =
@@ -553,8 +550,8 @@ enemyActionsGeneratorHelp getNextLocations iSeed iEnemies =
                 |> Cons.toList
                 |> List.map .location
 
-        reducer : ( List Location, Seed ) -> Enemy -> ( ( List Location, Seed ), EnemyAction )
-        reducer ( occupied, seed ) enemy =
+        reducer : ( Player, List Location, Seed ) -> Enemy -> ( ( Player, List Location, Seed ), EnemyAction )
+        reducer ( player, occupied, seed ) enemy =
             let
                 nlGenerator =
                     enemy.location
@@ -568,10 +565,14 @@ enemyActionsGeneratorHelp getNextLocations iSeed iEnemies =
 
                 nOccupied =
                     List.setIf (eq enemy.location) nl occupied
+
+                nPlayer =
+                    player
             in
-            ( ( nOccupied, nSeed ), EnemyMoving nl enemy )
+            ( ( nPlayer, nOccupied, nSeed ), EnemyMoving nl enemy )
     in
-    Cons.mapAccuml reducer ( iOccupied, iSeed ) iEnemies
+    Cons.mapAccuml reducer ( iPlayer, iOccupied, iSeed ) iEnemies
+        |> (\( ( rPlayer, _, rSeed ), rEAs ) -> ( ( rPlayer, rEAs ), rSeed ))
 
 
 listRemoveAll : List a -> List a -> List a
