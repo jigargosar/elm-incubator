@@ -457,7 +457,7 @@ init flags =
                 |> Maybe.map (initWaitingForInput acc.player)
                 |> Maybe.withDefault
                     (Victory acc.player
-                        |> NextState Instant
+                        |> NextState Slow
                     )
                 |> toAnimState initialClock
       , clock = initialClock
