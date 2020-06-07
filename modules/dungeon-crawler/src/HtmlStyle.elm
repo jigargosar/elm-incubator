@@ -20,7 +20,7 @@ cssScale s =
         |> append "scale"
 
 
-cssFade o =
+cssOpacity o =
     style "opacity" (String.fromFloat o)
 
 

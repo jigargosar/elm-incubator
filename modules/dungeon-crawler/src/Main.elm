@@ -829,7 +829,7 @@ view model =
 viewOverlayMsg progress message =
     div
         [ class "absolute w-100 h-100 flex items-center justify-center"
-        , HS.cssFade progress
+        , HS.cssOpacity progress
         ]
         [ div [ class "bg-white-50 black pa3 br3" ]
             [ div [ class "code b f2 tc" ] [ text message ]
@@ -861,7 +861,7 @@ viewPlayerTileFading progress location hp =
     div
         [ commonStyles
         , HS.cssTransform [ HS.cssTranslate (locationToDXY location) ]
-        , HS.cssFade progress
+        , HS.cssOpacity progress
         ]
         [ text (String.fromInt hp) ]
 
