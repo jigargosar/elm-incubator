@@ -494,7 +494,7 @@ updateStateOnKey key clock worldMap state =
                         HasEnemy ez ->
                             let
                                 attackTimer =
-                                    timerInit clock defaultAnimSpeed
+                                    defaultTimer clock
                             in
                             PlayerAttackingEnemy attackTimer player ez
                                 |> Just
@@ -582,16 +582,10 @@ initEnemiesActing clock worldMap player enemyCons =
     let
         toActionTimer nPlayerHp =
             if nPlayerHp == player.hp then
-                defaultActionTimer
+                defaultTimer clock
 
             else
-                slowActionTimer
-
-        defaultActionTimer =
-            timerInit clock defaultAnimSpeed
-
-        slowActionTimer =
-            timerInit clock slowAnimSpeed
+                slowTimer clock
 
         getNextEnemyLocations location =
             worldMapAdjacentWalkable location worldMap
