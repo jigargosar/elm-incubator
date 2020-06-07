@@ -273,3 +273,8 @@ rangeLen2 l1 l2 =
 isValidIndex : Int -> Int -> Bool
 isValidIndex x len =
     x == clamp 0 (len - 1) x
+
+
+int2Pair : Int -> Int -> Int2
+int2Pair =
+    pair

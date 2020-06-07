@@ -954,11 +954,16 @@ viewGrid model =
     let
         dimension =
             model.dimension
+
+        ( sw, sh ) =
+            Dimension.toTuple dimension
+                |> Tuple.toFloatScaled 32
+                |> Tuple.mapBoth HS.width HS.height
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         [ div
-            [ gridWidthStyle dimension.width
-            , gridHeightStyle dimension.height
+            [ sw
+            , sh
             , class "relative"
             ]
             ([ backgroundTileViews dimension model.walls

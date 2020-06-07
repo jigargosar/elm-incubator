@@ -2,12 +2,15 @@ module Dimension exposing
     ( Dimension
     , isValidLocation
     , new
+    , toFloatScaled
     , toLocationRows
     , toLocations
+    , toTuple
     )
 
 import Basics.More exposing (..)
 import Location exposing (Location)
+import Tuple.More as Tuple
 
 
 type Dimension
@@ -16,7 +19,7 @@ type Dimension
 
 new : Int -> Int -> Dimension
 new w h =
-    fromTuple ( w, h )
+    int2Pair w h |> fromTuple
 
 
 fromTuple : ( Int, Int ) -> Dimension
@@ -24,9 +27,14 @@ fromTuple =
     Dimension
 
 
-toTuple : Dimension -> ( Int, Int )
+toTuple : Dimension -> Int2
 toTuple (Dimension wh) =
     wh
+
+
+toFloatScaled : Float -> Dimension -> Float2
+toFloatScaled n =
+    toTuple >> Tuple.toFloatScaled n
 
 
 toLocationRows : Dimension -> List (List Location)
