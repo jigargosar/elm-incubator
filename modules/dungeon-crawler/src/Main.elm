@@ -349,7 +349,7 @@ type alias WorldMap a =
 
 worldMapIsLocationBlocked : Location -> WorldMap a -> Bool
 worldMapIsLocationBlocked location worldMap =
-    not (Dimension.containsLocation location worldMap.dimension)
+    not (Dimension.isValidLocation location worldMap.dimension)
         || List.member location worldMap.walls
 
 

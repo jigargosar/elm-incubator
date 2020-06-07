@@ -1,6 +1,6 @@
 module Dimension exposing
     ( Dimension
-    , containsLocation
+    , isValidLocation
     , new
     , toLocationRows
     , toLocations
@@ -44,8 +44,8 @@ toLocations =
     toLocationRows >> List.concat
 
 
-containsLocation : Location -> Dimension -> Bool
-containsLocation location d =
+isValidLocation : Location -> Dimension -> Bool
+isValidLocation location d =
     let
         ( x, y ) =
             Location.toTuple location
