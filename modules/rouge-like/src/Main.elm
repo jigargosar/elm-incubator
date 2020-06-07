@@ -872,8 +872,8 @@ viewOverlayMsg progress message =
         , cssFade progress
         ]
         [ div [ class "bg-white-50 black pa3 br3" ]
-            [ div [ class "code f2 tc" ] [ text message ]
-            , div [ class "code f3 tc" ] [ text "Ctrl+R to restart" ]
+            [ div [ class "code b f2 tc" ] [ text message ]
+            , div [ class "code b f3 tc" ] [ text "Ctrl+R to restart" ]
             ]
         ]
 
@@ -950,6 +950,25 @@ viewPlayerTileMoving progress to location hp =
 viewEnemyTile location =
     div
         [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text "e" ]
+
+
+viewEnemyTileDyingFromCounterAttack progress to location =
+    let
+        moveDXY =
+            ( to, location )
+                |> Tuple.map Location.toTuple
+                |> uncurry Tuple.sub
+                |> Tuple.toFloatScaled (32 * Ease.outQuad progress)
+    in
+    div
+        [ commonStyles
+        , cssTransform
+            [ cssTranslate (locationToDXY location)
+            , cssTranslate moveDXY
+            , cssScale (Ease.reverse Ease.inOutBounce progress)
+            ]
+        ]
         [ text "e" ]
 
 
@@ -1040,7 +1059,7 @@ viewGrid model =
                                                 viewEnemyTileMoving progress to enemy.location
 
                                             EnemyDyingFromCounterAttack location enemy ->
-                                                viewEnemyTileDying progress enemy.location
+                                                viewEnemyTileDyingFromCounterAttack progress location enemy.location
                                     )
                             )
                                 ++ (case playerRA of
