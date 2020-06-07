@@ -804,22 +804,17 @@ view model =
             [ viewGrid model
             , case model.animState of
                 AnimState _ state ->
-                    viewOverlay state
+                    case state of
+                        Victory _ ->
+                            viewOverlayMsg "You Won!"
+
+                        Defeat _ _ ->
+                            viewOverlayMsg "You Lost!"
+
+                        _ ->
+                            text ""
             ]
         ]
-
-
-viewOverlay : State -> HM
-viewOverlay state =
-    case state of
-        Victory _ ->
-            viewOverlayMsg "You Won!"
-
-        Defeat _ _ ->
-            viewOverlayMsg "You Lost!"
-
-        _ ->
-            text ""
 
 
 viewOverlayMsg message =
