@@ -573,12 +573,19 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
         reducer : ( Int, List Location, Seed ) -> Enemy -> ( ( Int, List Location, Seed ), EnemyAction )
         reducer ( playerHp, occupied, seed ) enemy =
             let
-                nlGenerator =
+                walkableLocations =
                     enemy.location
                         |> getNextLocations
-                        |> listRemoveAll occupied
-                        |> maybeUniformGenerator
-                        |> Maybe.withDefault (Random.constant enemy.location)
+
+                nlGenerator =
+                    if List.member player.location walkableLocations then
+                        Random.constant player.location
+
+                    else
+                        walkableLocations
+                            |> listRemoveAll occupied
+                            |> maybeUniformGenerator
+                            |> Maybe.withDefault (Random.constant enemy.location)
 
                 ( targetLocation, nSeed ) =
                     Random.step nlGenerator seed
