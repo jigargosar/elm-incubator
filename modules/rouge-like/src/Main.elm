@@ -532,7 +532,7 @@ initEnemiesActing clock worldMap player enemyCons =
     in
     enemyActionsGeneratorHelp getNextEnemyLocations player enemyCons
         |> generatorWithIndependentSeed
-        |> Random.map (\( _, eas ) -> EnemiesActing movingTimer player eas)
+        |> Random.map (\( rPlayer, eas ) -> EnemiesActing movingTimer rPlayer eas)
 
 
 generatorWithIndependentSeed : (Seed -> ( b, Seed )) -> Generator b
