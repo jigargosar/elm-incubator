@@ -20,7 +20,7 @@ import Tuple.More as Tuple
 
 
 defaultAnimSpeed =
-    ticksToMillis 5
+    ticksToMillis 15
 
 
 ticksToMillis =
@@ -910,10 +910,12 @@ viewGrid model =
                                         viewEnemyTileMoving progress to enemy.location
                             )
                     )
-                        ++ [ case playerRA of
+                        ++ (case playerRA of
                                 PlayerWasAttacked hp player ->
-                                    viewPlayerTileFading progress player.location hp
-                           ]
+                                    [ viewPlayerTileFading progress player.location hp
+                                    , viewPlayerTileFading (Ease.reverse Ease.linear progress) player.location player.hp
+                                    ]
+                           )
 
                 Victory player ->
                     [ viewPlayerTile player.location player.hp ]
