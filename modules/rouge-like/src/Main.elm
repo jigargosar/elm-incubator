@@ -478,20 +478,24 @@ update message model =
         Tick delta ->
             ( case model.animState of
                 AnimState timer state ->
-                    case updateStateOnTick model.clock model state of
-                        Just stateGenerator ->
-                            let
-                                ( animState, seed ) =
-                                    Random.step stateGenerator model.seed
-                            in
-                            { model
-                                | animState = animState
-                                , seed = seed
-                                , clock = clockStep delta model.clock
-                            }
+                    if timerIsDone model.clock timer then
+                        case updateStateOnTimerDone model.clock model state of
+                            Just stateGenerator ->
+                                let
+                                    ( animState, seed ) =
+                                        Random.step stateGenerator model.seed
+                                in
+                                { model
+                                    | animState = animState
+                                    , seed = seed
+                                    , clock = clockStep delta model.clock
+                                }
 
-                        Nothing ->
-                            { model | clock = clockStep delta model.clock }
+                            Nothing ->
+                                { model | clock = clockStep delta model.clock }
+
+                    else
+                        { model | clock = clockStep delta model.clock }
             , Cmd.none
             )
 
@@ -539,8 +543,8 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
-updateStateOnTick : Clock -> WorldMap a -> State -> Maybe (Generator AnimState)
-updateStateOnTick clock worldMap state =
+updateStateOnTimerDone : Clock -> WorldMap a -> State -> Maybe (Generator AnimState)
+updateStateOnTimerDone clock worldMap state =
     case state of
         WaitingForInput _ _ ->
             Nothing
