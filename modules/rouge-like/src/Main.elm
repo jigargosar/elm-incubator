@@ -524,10 +524,6 @@ updateStateOnTick clock worldMap state =
         EnemiesActing timer playerRA emCons ->
             if timerIsDone clock timer then
                 case playerRA of
-                    PlayerWasAttacked 0 player ->
-                        initWaitingForInput player (emCons |> Cons.map updateMovingEnemy)
-                            |> justConstant
-
                     PlayerWasAttacked nHp player ->
                         let
                             nPlayer =
