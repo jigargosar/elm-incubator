@@ -61,17 +61,22 @@ ticksToMillis =
 
 type alias Clock =
     { time : Float
+    , prevTime : Float
     }
 
 
 clockZero : Clock
 clockZero =
-    { time = 0 }
+    { time = 0, prevTime = 0 }
 
 
 clockStep : Float -> Clock -> Clock
 clockStep delta clock =
-    { clock | time = clock.time + delta }
+    if delta > 0 then
+        { clock | time = clock.time + delta, prevTime = clock.time }
+
+    else
+        clock
 
 
 clockCurrentTime : Clock -> Float
