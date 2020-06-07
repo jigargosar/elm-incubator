@@ -455,10 +455,7 @@ init flags =
             acc.enemies
                 |> List.uncons
                 |> Maybe.map (initWaitingForInput acc.player)
-                |> Maybe.withDefault
-                    (Victory acc.player
-                        |> NextState Slow
-                    )
+                |> Maybe.withDefault (initVictory acc.player)
                 |> toAnimState initialClock
       , clock = initialClock
       , seed = seed
@@ -578,9 +575,7 @@ updateStateOnTimerDone worldMap state =
                 |> List.uncons
                 |> Maybe.unwrap
                     (Random.constant
-                        (Victory newPlayer
-                            |> NextState Instant
-                        )
+                        (initVictory newPlayer)
                     )
                     (initEnemiesActing worldMap newPlayer)
                 |> Just
@@ -615,6 +610,12 @@ updateStateOnTimerDone worldMap state =
 
         Defeat _ _ ->
             Nothing
+
+
+initVictory : Player -> NextState
+initVictory player =
+    Victory player
+        |> NextState Slow
 
 
 initWaitingForInput : Player -> Cons Enemy -> NextState
