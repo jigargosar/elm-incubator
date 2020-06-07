@@ -95,11 +95,6 @@ timerIsDone clock timer =
     timerElapsed clock timer >= timer.duration
 
 
-timerOverShot : Clock -> Timer -> Bool
-timerOverShot clock timer =
-    timerElapsed clock timer > timer.duration
-
-
 timerElapsed : Clock -> Timer -> Float
 timerElapsed clock timer =
     clockCurrentTime clock - timer.startTime
