@@ -422,16 +422,21 @@ init flags =
 
         ( acc, seed ) =
             Random.step (initialWorldGenerator dimension) initialSeed
+
+        initialClock =
+            clockZero
     in
     ( { dimension = dimension
       , walls = acc.walls
       , animState =
             acc.enemies
                 |> List.uncons
-                |> Maybe.map (initWaitingForInput acc.player)
-                |> Maybe.withDefault (Victory acc.player)
-                |> AnimState (timerInit clockZero 0)
-      , clock = clockZero
+                |> Maybe.map (initWaitingForInput initialClock acc.player)
+                |> Maybe.withDefault
+                    (Victory acc.player
+                        |> AnimState (timerInit initialClock 0)
+                    )
+      , clock = initialClock
       , seed = seed
       }
     , Cmd.none
@@ -458,8 +463,8 @@ update message model =
             ( case model.animState of
                 AnimState timer state ->
                     case updateStateOnKey key model.clock model state of
-                        Just nState ->
-                            { model | animState = AnimState timer nState }
+                        Just animState ->
+                            { model | animState = animState }
 
                         Nothing ->
                             model
@@ -472,11 +477,11 @@ update message model =
                     case updateStateOnTick model.clock model state of
                         Just stateGenerator ->
                             let
-                                ( nState, seed ) =
+                                ( animState, seed ) =
                                     Random.step stateGenerator model.seed
                             in
                             { model
-                                | animState = AnimState timer nState
+                                | animState = animState
                                 , seed = seed
                                 , clock = clockStep delta model.clock
                             }
@@ -487,7 +492,7 @@ update message model =
             )
 
 
-updateStateOnKey : String -> Clock -> WorldMap a -> State -> Maybe State
+updateStateOnKey : String -> Clock -> WorldMap a -> State -> Maybe AnimState
 updateStateOnKey key clock worldMap state =
     case state of
         WaitingForInput player enemies ->
@@ -511,6 +516,7 @@ updateStateOnKey key clock worldMap state =
                                     defaultTimer clock
                             in
                             PlayerAttackingEnemy attackTimer player ez
+                                |> AnimState attackTimer
                                 |> Just
 
                         HasPlayer ->
@@ -529,7 +535,7 @@ updateStateOnKey key clock worldMap state =
             Nothing
 
 
-updateStateOnTick : Clock -> WorldMap a -> State -> Maybe (Generator State)
+updateStateOnTick : Clock -> WorldMap a -> State -> Maybe (Generator AnimState)
 updateStateOnTick clock worldMap state =
     case state of
         WaitingForInput _ _ ->
@@ -544,7 +550,11 @@ updateStateOnTick clock worldMap state =
                 enemies
                     |> List.uncons
                     |> Maybe.unwrap
-                        (Random.constant (Victory newPlayer))
+                        (Random.constant
+                            (Victory newPlayer
+                                |> AnimState (timerInit clock 0)
+                            )
+                        )
                         (initEnemiesActing clock worldMap newPlayer)
                     |> Just
 
@@ -570,7 +580,7 @@ updateStateOnTick clock worldMap state =
                             nPlayer =
                                 playerSetHp nHp player
                         in
-                        initWaitingForInput nPlayer (emCons |> Cons.map updateMovingEnemy)
+                        initWaitingForInput clock nPlayer (emCons |> Cons.map updateMovingEnemy)
                             |> justConstant
 
             else
@@ -580,21 +590,22 @@ updateStateOnTick clock worldMap state =
             Nothing
 
 
-initWaitingForInput : Player -> Cons Enemy -> State
-initWaitingForInput player neEnemies =
+initWaitingForInput : Clock -> Player -> Cons Enemy -> AnimState
+initWaitingForInput clock player neEnemies =
     WaitingForInput player neEnemies
+        |> AnimState (timerInit clock 0)
 
 
-initPlayerMoving : Clock -> Location -> Player -> List Enemy -> State
+initPlayerMoving : Clock -> Location -> Player -> List Enemy -> AnimState
 initPlayerMoving clock location player enemies =
     let
         movingTimer =
             timerInit clock playerMoveAnimSpeed
     in
-    PlayerMoving movingTimer location player enemies
+    AnimState movingTimer (PlayerMoving movingTimer location player enemies)
 
 
-initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator State
+initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator AnimState
 initEnemiesActing clock worldMap player enemyCons =
     let
         toActionTimer nPlayerHp =
@@ -611,10 +622,15 @@ initEnemiesActing clock worldMap player enemyCons =
         |> generatorWithIndependentSeed
         |> Random.map
             (\( nPlayerHp, eas ) ->
+                let
+                    actionTimer =
+                        toActionTimer nPlayerHp
+                in
                 EnemiesActing
-                    (toActionTimer nPlayerHp)
+                    actionTimer
                     (PlayerWasAttacked nPlayerHp player)
                     eas
+                    |> AnimState actionTimer
             )
 
 
