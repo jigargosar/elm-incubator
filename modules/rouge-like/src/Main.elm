@@ -462,12 +462,16 @@ update message model =
         KeyDown key ->
             ( case model.animState of
                 AnimState timer state ->
-                    case updateStateOnKey key model.clock model state of
-                        Just animState ->
-                            { model | animState = animState }
+                    if timerIsDone model.clock timer then
+                        case updateStateOnKey key model.clock model state of
+                            Just animState ->
+                                { model | animState = animState }
 
-                        Nothing ->
-                            model
+                            Nothing ->
+                                model
+
+                    else
+                        model
             , Cmd.none
             )
 
