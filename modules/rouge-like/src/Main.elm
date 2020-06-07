@@ -704,7 +704,7 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
                     Random.step nextLocationGenerator seed
             in
             if targetLocation == player.location then
-                ( ( playerHp - 1 |> atLeast 0, occupied, nSeed )
+                ( ( playerHp - 1 |> atLeast 0, List.remove enemy.location occupied, nSeed )
                 , EnemyDyingFromCounterAttack enemy
                 )
 
