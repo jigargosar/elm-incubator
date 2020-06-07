@@ -1,5 +1,6 @@
 module Basics.More exposing (..)
 
+import Html
 import Html.Attributes
 import Random
 
@@ -224,6 +225,18 @@ attrMaybe mx f =
 
 noAttr =
     Html.Attributes.classList []
+
+
+viewIf bool x =
+    if bool then
+        x
+
+    else
+        noView
+
+
+noView =
+    Html.text ""
 
 
 eq =

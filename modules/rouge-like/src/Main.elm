@@ -835,13 +835,17 @@ view model =
         , div [ class "flex relative" ]
             [ viewGrid model
             , case model.animState of
-                AnimState _ state ->
+                AnimState timer state ->
+                    let
+                        isDone =
+                            timerIsDone model.clock timer
+                    in
                     case state of
                         Victory _ ->
-                            viewOverlayMsg "You Won!"
+                            viewIf isDone (viewOverlayMsg "You Won!")
 
                         Defeat _ _ ->
-                            viewOverlayMsg "You Lost!"
+                            viewIf isDone (viewOverlayMsg "You Lost!")
 
                         _ ->
                             text ""
