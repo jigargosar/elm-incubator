@@ -35,7 +35,7 @@ playerMoveAnimSpeed =
     Fast
 
 
-defaultAnimSpeedMillis =
+defaultAnimDurationMillis =
     1
 
 
@@ -43,11 +43,11 @@ defaultAnimSpeedMillis =
 -- Anim Speed Config
 
 
-fastAnimSpeed =
+fastAnimDurationMillis =
     ticksToMillis 5
 
 
-slowAnimSpeed =
+slowAnimDurationMills =
     ticksToMillis 25
 
 
@@ -400,13 +400,13 @@ toStateAnim clock (StateTransit speed state) =
             fromDuration 1
 
         Slow ->
-            fromDuration slowAnimSpeed
+            fromDuration slowAnimDurationMills
 
         Default ->
-            fromDuration defaultAnimSpeedMillis
+            fromDuration defaultAnimDurationMillis
 
         Fast ->
-            fromDuration fastAnimSpeed
+            fromDuration fastAnimDurationMillis
 
 
 type State
