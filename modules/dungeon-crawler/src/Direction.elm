@@ -1,4 +1,8 @@
-module Direction exposing (Direction(..), directionFromKey, stepLocationInDirection)
+module Direction exposing
+    ( Direction(..)
+    , directionFromKey
+    , stepLocationInDirection
+    )
 
 import Location exposing (Location)
 
