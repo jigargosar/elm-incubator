@@ -1,15 +1,20 @@
 module Dimension exposing
     ( Dimension
+    , height
+    , heightScaled
     , isValidLocation
     , new
     , toFloatScaled
     , toLocationRows
     , toLocations
     , toTuple
+    , width
+    , widthScaled
     )
 
-import Basics.More exposing (..)
+import Basics.More as B exposing (..)
 import Location exposing (Location)
+import Tuple exposing (first)
 import Tuple.More as Tuple
 
 
@@ -35,6 +40,26 @@ toTuple (Dimension wh) =
 toFloatScaled : Float -> Dimension -> Float2
 toFloatScaled n =
     toTuple >> Tuple.toFloatScaled n
+
+
+widthScaled : Float -> Dimension -> Float
+widthScaled n =
+    width >> B.toFloatScaled n
+
+
+heightScaled : Float -> Dimension -> Float
+heightScaled n =
+    height >> B.toFloatScaled n
+
+
+width : Dimension -> Int
+width =
+    toTuple >> first
+
+
+height : Dimension -> Int
+height =
+    toTuple >> first
 
 
 toLocationRows : Dimension -> List (List Location)
