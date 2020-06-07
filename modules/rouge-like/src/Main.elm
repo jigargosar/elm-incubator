@@ -478,7 +478,8 @@ updateStateOnKey key clock worldMap state =
                 Nothing ->
                     case key of
                         " " ->
-                            Nothing
+                            initPlayerMoving clock player.location player (Cons.toList enemies)
+                                |> Just
 
                         _ ->
                             Nothing
