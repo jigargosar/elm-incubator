@@ -382,6 +382,10 @@ type alias Model =
         }
 
 
+type AnimState
+    = AnimState Timer State
+
+
 type State
     = WaitingForInput Player (Cons Enemy)
     | PlayerMoving Timer Location Player (List Enemy)
