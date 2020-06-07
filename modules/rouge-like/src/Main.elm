@@ -462,7 +462,7 @@ init flags =
       , animState =
             acc.enemies
                 |> List.uncons
-                |> Maybe.map (initWaitingForInput initialClock acc.player)
+                |> Maybe.map (initWaitingForInput acc.player)
                 |> Maybe.withDefault
                     (Victory acc.player
                         |> NextState Instant
@@ -544,7 +544,7 @@ updateStateOnKey key clock worldMap state =
                     in
                     case classifyLocation location player enemies worldMap of
                         HasNoActor ->
-                            initPlayerMoving clock location player (Cons.toList enemies)
+                            initPlayerMoving location player (Cons.toList enemies)
                                 |> Just
 
                         Blocked ->
@@ -561,7 +561,7 @@ updateStateOnKey key clock worldMap state =
                 Nothing ->
                     case key of
                         " " ->
-                            initPlayerMoving clock player.location player (Cons.toList enemies)
+                            initPlayerMoving player.location player (Cons.toList enemies)
                                 |> Just
 
                         _ ->
@@ -590,11 +590,11 @@ updateStateOnTimerDone clock worldMap state =
                             |> NextState Instant
                         )
                     )
-                    (initEnemiesActing clock worldMap newPlayer)
+                    (initEnemiesActing worldMap newPlayer)
                 |> Just
 
         PlayerAttackingEnemy player (( _, enemy, _ ) as ess) ->
-            initPlayerMoving clock enemy.location player (selectSplitConcatSides ess)
+            initPlayerMoving enemy.location player (selectSplitConcatSides ess)
                 |> justConstant
 
         Victory _ ->
@@ -607,27 +607,27 @@ updateStateOnTimerDone clock worldMap state =
                         nPlayer =
                             playerSetHp nHp player
                     in
-                    initWaitingForInput clock nPlayer (emCons |> Cons.map updateMovingEnemy)
+                    initWaitingForInput nPlayer (emCons |> Cons.map updateMovingEnemy)
                         |> justConstant
 
         Defeat _ _ ->
             Nothing
 
 
-initWaitingForInput : Clock -> Player -> Cons Enemy -> NextState
-initWaitingForInput clock player neEnemies =
+initWaitingForInput : Player -> Cons Enemy -> NextState
+initWaitingForInput player neEnemies =
     WaitingForInput player neEnemies
         |> NextState Instant
 
 
-initPlayerMoving : Clock -> Location -> Player -> List Enemy -> NextState
-initPlayerMoving clock location player enemies =
+initPlayerMoving : Location -> Player -> List Enemy -> NextState
+initPlayerMoving location player enemies =
     PlayerMoving location player enemies
         |> NextState playerMoveAnimSpeed
 
 
-initEnemiesActing : Clock -> WorldMap a -> Player -> Cons Enemy -> Generator NextState
-initEnemiesActing clock worldMap player enemyCons =
+initEnemiesActing : WorldMap a -> Player -> Cons Enemy -> Generator NextState
+initEnemiesActing worldMap player enemyCons =
     let
         getNextEnemyLocations location =
             worldMapAdjacentWalkable location worldMap
