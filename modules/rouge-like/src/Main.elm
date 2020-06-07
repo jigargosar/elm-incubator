@@ -84,6 +84,11 @@ clockCurrentTime clock =
     clock.time
 
 
+clockPreviousTime : Clock -> Float
+clockPreviousTime clock =
+    clock.prevTime
+
+
 type alias Timer =
     { startTime : Float
     , duration : Float
@@ -100,9 +105,19 @@ timerIsDone clock timer =
     timerElapsed clock timer >= timer.duration
 
 
+timerWasDone : Clock -> Timer -> Bool
+timerWasDone clock timer =
+    timerPrevClockElapsed clock timer >= timer.duration
+
+
 timerElapsed : Clock -> Timer -> Float
 timerElapsed clock timer =
     clockCurrentTime clock - timer.startTime
+
+
+timerPrevClockElapsed : Clock -> Timer -> Float
+timerPrevClockElapsed clock timer =
+    clockPreviousTime clock - timer.startTime
 
 
 timerProgress : Clock -> Timer -> Float
@@ -790,11 +805,11 @@ subscriptions model =
             )
         , case model.animState of
             AnimState timer _ ->
-                let
-                    _ =
-                        Debug.log "debug" (timerIsDone model.clock timer)
-                in
-                Browser.Events.onAnimationFrameDelta Tick
+                if timerWasDone model.clock timer then
+                    Sub.none
+
+                else
+                    Browser.Events.onAnimationFrameDelta Tick
         ]
 
 
