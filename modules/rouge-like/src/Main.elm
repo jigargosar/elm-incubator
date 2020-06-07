@@ -420,6 +420,7 @@ type State
 
 type EnemyAction
     = EnemyMoving Location Enemy
+    | EnemyDyingFromCounterAttack Enemy
 
 
 type PlayerReaction
@@ -596,16 +597,21 @@ updateStateOnTimerDone worldMap state =
                         nPlayer =
                             playerSetHp nHp player
 
-                        nEnemyCons =
-                            emCons |> Cons.map performEnemyAction
+                        nEnemies =
+                            emCons |> Cons.toList |> List.filterMap performEnemyAction
 
                         nextState =
                             if nHp == 0 then
-                                Defeat player.location (Cons.toList nEnemyCons)
+                                Defeat player.location nEnemies
                                     |> StateTransit Slow
 
                             else
-                                initWaitingForInput nPlayer nEnemyCons
+                                case Cons.fromList nEnemies of
+                                    Just nEnemyCons ->
+                                        initWaitingForInput nPlayer nEnemyCons
+
+                                    Nothing ->
+                                        initVictory player
                     in
                     nextState
                         |> justConstant
@@ -729,11 +735,15 @@ justConstant x =
         |> Just
 
 
-performEnemyAction : EnemyAction -> Enemy
+performEnemyAction : EnemyAction -> Maybe Enemy
 performEnemyAction action =
     case action of
         EnemyMoving location enemy ->
             enemySetLocation location enemy
+                |> Just
+
+        EnemyDyingFromCounterAttack _ ->
+            Nothing
 
 
 selectSplitConcatSides ( l, _, r ) =
@@ -1028,6 +1038,9 @@ viewGrid model =
                                         case ea of
                                             EnemyMoving to enemy ->
                                                 viewEnemyTileMoving progress to enemy.location
+
+                                            EnemyDyingFromCounterAttack enemy ->
+                                                viewEnemyDyingTile progress enemy.location
                                     )
                             )
                                 ++ (case playerRA of
