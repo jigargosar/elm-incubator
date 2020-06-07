@@ -36,7 +36,7 @@ playerMoveAnimSpeed =
 
 
 defaultAnimSpeed =
-    0
+    1
 
 
 
