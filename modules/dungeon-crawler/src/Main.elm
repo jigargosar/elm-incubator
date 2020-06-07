@@ -4,7 +4,6 @@ import Basics.More exposing (..)
 import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
-import Ease
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import HtmlStyle as HS
@@ -86,6 +85,10 @@ subscriptions model =
 -- View
 
 
+type alias HM =
+    Html Msg
+
+
 view : Model -> Html Msg
 view model =
     div [ class "measure center" ]
@@ -94,130 +97,6 @@ view model =
             [ viewGrid model
             ]
         ]
-
-
-
---viewOverlayMsg progress message =
---    div
---        [ class "absolute w-100 h-100 flex items-center justify-center"
---        , HS.opacity progress
---        ]
---        [ div [ class "bg-white-50 black pa3 br3" ]
---            [ div [ class "code b f2 tc" ] [ text message ]
---            , div [ class "code b f3 tc" ] [ text "Ctrl+R to restart" ]
---            ]
---        ]
-
-
-type alias HM =
-    Html Msg
-
-
-commonStyles =
-    class "w2 h2 flex items-center justify-center absolute top-0 left-0 bg-black-50"
-
-
-locationToDXY location =
-    Location.toTuple location
-        |> Tuple.toFloatScaled 32
-
-
-viewPlayerTile location hp =
-    div
-        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-        [ text (String.fromInt hp) ]
-
-
-viewPlayerTileFading progress location hp =
-    div
-        [ commonStyles
-        , HS.transforms [ HS.move (locationToDXY location) ]
-        , HS.opacity progress
-        ]
-        [ text (String.fromInt hp) ]
-
-
-viewPlayerTileMoving progress to location hp =
-    let
-        moveDXY =
-            ( to, location )
-                |> Tuple.map Location.toTuple
-                |> uncurry Tuple.sub
-                |> Tuple.toFloatScaled (32 * Ease.outQuad progress)
-    in
-    div
-        [ commonStyles
-        , HS.transforms
-            [ HS.move (locationToDXY location)
-            , HS.move moveDXY
-            ]
-        ]
-        [ text (String.fromInt hp) ]
-
-
-viewEnemyTile location =
-    div
-        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-        [ text "e" ]
-
-
-viewEnemyTileDyingFromCounterAttack progress to location =
-    let
-        moveDXY =
-            ( to, location )
-                |> Tuple.map Location.toTuple
-                |> uncurry Tuple.sub
-                |> Tuple.toFloatScaled (32 * Ease.outQuad progress)
-    in
-    div
-        [ commonStyles
-        , HS.transforms
-            [ HS.move (locationToDXY location)
-            , HS.move moveDXY
-            , HS.scale (Ease.reverse Ease.inOutBounce progress)
-            ]
-        ]
-        [ text "e" ]
-
-
-viewEnemyTileDying progress location =
-    div
-        [ commonStyles
-        , HS.transforms
-            [ HS.move (locationToDXY location)
-            , HS.scale (Ease.reverse Ease.inOutBounce progress)
-            ]
-        ]
-        [ text "e" ]
-
-
-viewEnemyTileMoving progress to location =
-    let
-        moveDXY =
-            ( to, location )
-                |> Tuple.map Location.toTuple
-                |> uncurry Tuple.sub
-                |> Tuple.toFloatScaled (32 * Ease.outQuad progress)
-    in
-    div
-        [ commonStyles
-        , HS.transforms
-            [ HS.move (locationToDXY location)
-            , HS.move moveDXY
-            ]
-        ]
-        [ text "e" ]
-
-
-viewWallTile location =
-    div
-        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-        [ text "#" ]
-
-
-viewFloorTile location =
-    div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-        [ text "." ]
 
 
 viewGrid : Model -> HM
@@ -240,6 +119,39 @@ viewGrid model =
                 |> List.concat
             )
         ]
+
+
+
+--viewOverlayMsg progress message =
+--    div
+--        [ class "absolute w-100 h-100 flex items-center justify-center"
+--        , HS.opacity progress
+--        ]
+--        [ div [ class "bg-white-50 black pa3 br3" ]
+--            [ div [ class "code b f2 tc" ] [ text message ]
+--            , div [ class "code b f3 tc" ] [ text "Ctrl+R to restart" ]
+--            ]
+--        ]
+
+
+commonStyles =
+    class "w2 h2 flex items-center justify-center absolute top-0 left-0 bg-black-50"
+
+
+locationToDXY location =
+    Location.toTuple location
+        |> Tuple.toFloatScaled 32
+
+
+viewWallTile location =
+    div
+        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
+        [ text "#" ]
+
+
+viewFloorTile location =
+    div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
+        [ text "." ]
 
 
 backgroundTileViews : Dimension -> List Location -> List HM
