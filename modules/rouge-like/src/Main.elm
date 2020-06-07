@@ -389,8 +389,8 @@ type StateTransition
     = StateAnimation AnimSpeed State
 
 
-toStateAnimation : Clock -> StateTransition -> StateAnimation
-toStateAnimation clock (StateAnimation speed state) =
+toStateAnim : Clock -> StateTransition -> StateAnimation
+toStateAnim clock (StateAnimation speed state) =
     let
         fromDuration duration =
             AnimState (timerInit clock duration) state
@@ -458,7 +458,7 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , stateAnim = toStateAnimation initialClock nextState
+      , stateAnim = toStateAnim initialClock nextState
       , clock = initialClock
       , seed = seed
       }
@@ -488,7 +488,7 @@ update message model =
                     if timerIsDone model.clock timer then
                         case updateStateOnKey key model state of
                             Just nextState ->
-                                { model | stateAnim = toStateAnimation model.clock nextState }
+                                { model | stateAnim = toStateAnim model.clock nextState }
 
                             Nothing ->
                                 model
@@ -509,7 +509,7 @@ update message model =
                                         Random.step stateGenerator model.seed
                                 in
                                 { model
-                                    | stateAnim = toStateAnimation model.clock nextState
+                                    | stateAnim = toStateAnim model.clock nextState
                                     , seed = seed
                                     , clock = clockStep delta model.clock
                                 }
