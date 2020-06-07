@@ -368,7 +368,7 @@ worldMapAdjacentWalkable location worldMap =
 
 type alias Model =
     WorldMap
-        { animState : StateAnimation
+        { stateAnim : StateAnimation
         , clock : Clock
         , seed : Seed
         }
@@ -458,7 +458,7 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , animState = toStateAnimation initialClock nextState
+      , stateAnim = toStateAnimation initialClock nextState
       , clock = initialClock
       , seed = seed
       }
@@ -483,12 +483,12 @@ update message model =
             ( model, Cmd.none )
 
         KeyDown key ->
-            ( case model.animState of
+            ( case model.stateAnim of
                 AnimState timer state ->
                     if timerIsDone model.clock timer then
                         case updateStateOnKey key model state of
                             Just nextState ->
-                                { model | animState = toStateAnimation model.clock nextState }
+                                { model | stateAnim = toStateAnimation model.clock nextState }
 
                             Nothing ->
                                 model
@@ -499,7 +499,7 @@ update message model =
             )
 
         Tick delta ->
-            ( case model.animState of
+            ( case model.stateAnim of
                 AnimState timer state ->
                     if timerIsDone model.clock timer then
                         case updateStateOnTimerDone model state of
@@ -509,7 +509,7 @@ update message model =
                                         Random.step stateGenerator model.seed
                                 in
                                 { model
-                                    | animState = toStateAnimation model.clock nextState
+                                    | stateAnim = toStateAnimation model.clock nextState
                                     , seed = seed
                                     , clock = clockStep delta model.clock
                                 }
@@ -817,7 +817,7 @@ subscriptions model =
             (JD.field "key" JD.string
                 |> JD.map KeyDown
             )
-        , case model.animState of
+        , case model.stateAnim of
             AnimState timer _ ->
                 if timerWasDone model.clock timer then
                     Sub.none
@@ -837,7 +837,7 @@ view model =
         [ div [ class "pv3 f3" ] [ text "Elm Rouge" ]
         , div [ class "flex relative" ]
             [ viewGrid model
-            , case model.animState of
+            , case model.stateAnim of
                 AnimState timer state ->
                     let
                         progress =
@@ -996,7 +996,7 @@ viewGrid model =
             , class "relative"
             ]
             ([ backgroundTileViews dimension model.walls
-             , case model.animState of
+             , case model.stateAnim of
                 AnimState timer state ->
                     let
                         progress =
