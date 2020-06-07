@@ -368,13 +368,13 @@ worldMapAdjacentWalkable location worldMap =
 
 type alias Model =
     WorldMap
-        { animState : AnimState
+        { animState : StateAnimation
         , clock : Clock
         , seed : Seed
         }
 
 
-type AnimState
+type StateAnimation
     = AnimState Timer State
 
 
@@ -386,11 +386,11 @@ type AnimSpeed
 
 
 type StateTransition
-    = StateTransition AnimSpeed State
+    = StateAnimation AnimSpeed State
 
 
-toAnimState : Clock -> StateTransition -> AnimState
-toAnimState clock (StateTransition speed state) =
+toStateAnimation : Clock -> StateTransition -> StateAnimation
+toStateAnimation clock (StateAnimation speed state) =
     let
         fromDuration duration =
             AnimState (timerInit clock duration) state
@@ -458,7 +458,7 @@ init flags =
     in
     ( { dimension = dimension
       , walls = acc.walls
-      , animState = toAnimState initialClock nextState
+      , animState = toStateAnimation initialClock nextState
       , clock = initialClock
       , seed = seed
       }
@@ -488,7 +488,7 @@ update message model =
                     if timerIsDone model.clock timer then
                         case updateStateOnKey key model state of
                             Just nextState ->
-                                { model | animState = toAnimState model.clock nextState }
+                                { model | animState = toStateAnimation model.clock nextState }
 
                             Nothing ->
                                 model
@@ -509,7 +509,7 @@ update message model =
                                         Random.step stateGenerator model.seed
                                 in
                                 { model
-                                    | animState = toAnimState model.clock nextState
+                                    | animState = toStateAnimation model.clock nextState
                                     , seed = seed
                                     , clock = clockStep delta model.clock
                                 }
@@ -543,7 +543,7 @@ updateStateOnKey key worldMap state =
 
                         HasEnemy ez ->
                             PlayerAttackingEnemy player ez
-                                |> StateTransition Default
+                                |> StateAnimation Default
                                 |> Just
 
                         HasPlayer ->
@@ -602,7 +602,7 @@ updateStateOnTimerDone worldMap state =
                         nextState =
                             if nHp == 0 then
                                 Defeat player.location (Cons.toList nEnemyCons)
-                                    |> StateTransition Slow
+                                    |> StateAnimation Slow
 
                             else
                                 initWaitingForInput nPlayer nEnemyCons
@@ -617,19 +617,19 @@ updateStateOnTimerDone worldMap state =
 initVictory : Player -> StateTransition
 initVictory player =
     Victory player
-        |> StateTransition Slow
+        |> StateAnimation Slow
 
 
 initWaitingForInput : Player -> Cons Enemy -> StateTransition
 initWaitingForInput player neEnemies =
     WaitingForInput player neEnemies
-        |> StateTransition Instant
+        |> StateAnimation Instant
 
 
 initPlayerMoving : Location -> Player -> List Enemy -> StateTransition
 initPlayerMoving location player enemies =
     PlayerMoving location player enemies
-        |> StateTransition playerMoveAnimSpeed
+        |> StateAnimation playerMoveAnimSpeed
 
 
 initEnemiesActing : WorldMap a -> Player -> Cons Enemy -> Generator StateTransition
@@ -653,7 +653,7 @@ initEnemiesActing worldMap player enemyCons =
                 EnemiesActing
                     (PlayerWasAttacked nPlayerHp player)
                     eas
-                    |> StateTransition speed
+                    |> StateAnimation speed
             )
 
 
