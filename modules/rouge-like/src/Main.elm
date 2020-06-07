@@ -749,7 +749,12 @@ subscriptions model =
             (JD.field "key" JD.string
                 |> JD.map KeyDown
             )
-        , Browser.Events.onAnimationFrameDelta Tick
+        , case model.state of
+            WaitingForInput _ _ ->
+                Browser.Events.onAnimationFrameDelta Tick
+
+            _ ->
+                Sub.none
         ]
 
 
