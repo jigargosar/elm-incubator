@@ -420,7 +420,7 @@ type State
 
 type EnemyAction
     = EnemyMoving Location Enemy
-    | EnemyDyingFromCounterAttack Enemy
+    | EnemyDyingFromCounterAttack Location Enemy
 
 
 type PlayerReaction
@@ -704,8 +704,8 @@ enemyActionsGeneratorHelp getNextLocations player iEnemies iSeed =
                     Random.step nextLocationGenerator seed
             in
             if targetLocation == player.location then
-                ( ( playerHp - 1 |> atLeast 0, List.remove enemy.location occupied, nSeed )
-                , EnemyDyingFromCounterAttack enemy
+                ( ( playerHp - 1 |> atLeast 0, List.remove targetLocation occupied, nSeed )
+                , EnemyDyingFromCounterAttack targetLocation enemy
                 )
 
             else
@@ -742,7 +742,7 @@ performEnemyAction action =
             enemySetLocation location enemy
                 |> Just
 
-        EnemyDyingFromCounterAttack _ ->
+        EnemyDyingFromCounterAttack _ _ ->
             Nothing
 
 
@@ -947,6 +947,23 @@ viewPlayerTileMoving progress to location hp =
         [ text (String.fromInt hp) ]
 
 
+viewEnemyTile location =
+    div
+        [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
+        [ text "e" ]
+
+
+viewEnemyTileDying progress location =
+    div
+        [ commonStyles
+        , cssTransform
+            [ cssTranslate (locationToDXY location)
+            , cssScale (Ease.reverse Ease.inOutBounce progress)
+            ]
+        ]
+        [ text "e" ]
+
+
 viewEnemyTileMoving progress to location =
     let
         moveDXY =
@@ -960,23 +977,6 @@ viewEnemyTileMoving progress to location =
         , cssTransform
             [ cssTranslate (locationToDXY location)
             , cssTranslate moveDXY
-            ]
-        ]
-        [ text "e" ]
-
-
-viewEnemyTile location =
-    div
-        [ commonStyles, cssTransform [ cssTranslate (locationToDXY location) ] ]
-        [ text "e" ]
-
-
-viewEnemyDyingTile progress location =
-    div
-        [ commonStyles
-        , cssTransform
-            [ cssTranslate (locationToDXY location)
-            , cssScale (Ease.reverse Ease.inOutBounce progress)
             ]
         ]
         [ text "e" ]
@@ -1023,7 +1023,7 @@ viewGrid model =
 
                         PlayerAttackingEnemy player ess ->
                             (selectSplitMapCS
-                                (\enemy -> viewEnemyDyingTile progress enemy.location)
+                                (\enemy -> viewEnemyTileDying progress enemy.location)
                                 (\enemy -> viewEnemyTile enemy.location)
                                 ess
                                 |> selectSplitToList
@@ -1039,8 +1039,8 @@ viewGrid model =
                                             EnemyMoving to enemy ->
                                                 viewEnemyTileMoving progress to enemy.location
 
-                                            EnemyDyingFromCounterAttack enemy ->
-                                                viewEnemyDyingTile progress enemy.location
+                                            EnemyDyingFromCounterAttack location enemy ->
+                                                viewEnemyTileDying progress enemy.location
                                     )
                             )
                                 ++ (case playerRA of
