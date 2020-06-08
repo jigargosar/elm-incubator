@@ -116,6 +116,13 @@ view model =
         ]
 
 
+type alias GridMap =
+    { dimension : Dimension
+    , cellSize : Float2
+    , origin : Float2
+    }
+
+
 circle : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
 circle r xs =
     Svg.circle (S.r r :: xs) []
