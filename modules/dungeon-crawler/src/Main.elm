@@ -131,13 +131,13 @@ viewGridMap =
     let
         gm =
             { dimension = Dimension.new 3 4
-            , cellSize = repeatFloat 64
-            , origin = pairFloat 0
+            , cellSize = twice 64
+            , origin = twice 0
             , dict = Dict.empty
             }
 
         toWorldCords =
-            Loc.toFloat >> Tuple.scaleBoth gm.cellSize
+            Loc.toFloat >> Tuple.scaleBoth gm.cellSize >> Tuple.add gm.origin
 
         viewLocation loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]

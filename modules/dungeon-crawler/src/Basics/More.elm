@@ -355,13 +355,13 @@ spacedFloats =
     List.map fromFloat >> spaced
 
 
-repeatFloat : Float -> Float2
-repeatFloat =
-    repeatPair
+floatTwice : Float -> Float2
+floatTwice =
+    twice
 
 
-repeatPair : a -> ( a, a )
-repeatPair x =
+twice : a -> ( a, a )
+twice x =
     pair x x
 
 

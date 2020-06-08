@@ -28,7 +28,7 @@ zero =
 
 repeat : a -> ( a, a )
 repeat =
-    repeatPair
+    twice
 
 
 any : (a -> Bool) -> ( a, a ) -> Bool
