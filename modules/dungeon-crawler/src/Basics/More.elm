@@ -240,6 +240,10 @@ noAttr =
     VirtualDom.style "" ""
 
 
+style =
+    VirtualDom.style
+
+
 viewIf bool x =
     if bool then
         x

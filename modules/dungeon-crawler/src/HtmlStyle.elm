@@ -1,9 +1,8 @@
 module HtmlStyle exposing (height, opacity, scale, transforms, translate, width)
 
 import Basics.More exposing (..)
-import Html exposing (Attribute)
-import Html.Attributes exposing (style)
 import Tuple.More as Tuple
+import VirtualDom exposing (Attribute)
 
 
 translate : ( Float, Float ) -> String

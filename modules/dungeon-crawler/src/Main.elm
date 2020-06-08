@@ -10,6 +10,7 @@ import HtmlStyle as HS
 import Json.Decode as JD
 import Location exposing (Location)
 import Random exposing (Generator, Seed)
+import Svg
 import Tuple.More as Tuple
 import VirtualDom
 
@@ -96,6 +97,9 @@ view model =
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
         , div [ class "flex relative" ]
             [ viewGrid model
+            ]
+        , Svg.svg [ VirtualDom.style "border" "1px solid blue", VirtualDom.style "fill" "green" ]
+            [ Svg.rect [ VirtualDom.style "width" "100%" ] []
             ]
         ]
 
