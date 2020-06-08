@@ -7,9 +7,9 @@ module Tuple.More exposing
     , join
     , map
     , map2
+    , mul
     , repeat
     , scale
-    , scaleBoth
     , spaced
     , spacedFloats
     , sub
@@ -88,12 +88,12 @@ add =
 
 scale : number -> ( number, number ) -> ( number, number )
 scale s =
-    map (mul s)
+    map (B.mul s)
 
 
-scaleBoth : ( number, number ) -> ( number, number ) -> ( number, number )
-scaleBoth =
-    map2 mul
+mul : ( number, number ) -> ( number, number ) -> ( number, number )
+mul =
+    map2 B.mul
 
 
 andMap : ( a, a ) -> ( a -> b, a -> b ) -> ( b, b )

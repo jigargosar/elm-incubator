@@ -137,7 +137,7 @@ viewGridMap =
             }
 
         toWorldCords =
-            Loc.toFloat >> Tuple.scaleBoth gm.cellSize >> Tuple.add gm.origin
+            Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gm.origin
 
         viewLocation loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
