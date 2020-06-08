@@ -193,8 +193,8 @@ append =
     (++)
 
 
-withPrefix : appendable -> appendable -> appendable
-withPrefix =
+prefixed : appendable -> appendable -> appendable
+prefixed =
     append
 
 
