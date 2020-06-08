@@ -150,7 +150,7 @@ viewGridMap =
         viewLocation loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
                 [ rect gm.cellSize [ S.strokeWhite ]
-                , words (Debug.toString loc) [ S.strokeWhite ]
+                , words (Debug.toString loc) [ S.fillWhite ]
                 ]
     in
     Svg.g []
