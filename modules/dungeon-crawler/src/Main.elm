@@ -7,6 +7,7 @@ import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Json.Decode as JD
+import Location as Loc
 import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
@@ -135,8 +136,11 @@ viewGridMap =
             , dict = Dict.empty
             }
 
+        toWorldCords =
+            Loc.toFloat >> Tuple.scaleBoth gm.cellSize
+
         viewLocation loc =
-            Svg.g []
+            Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
                 [ rect gm.cellSize [ S.fillBlackA 0.1 ]
                 , words (Debug.toString loc) [ S.strokeWhite ]
                 ]
