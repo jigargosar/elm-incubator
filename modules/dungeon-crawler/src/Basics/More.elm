@@ -300,6 +300,7 @@ subscribeIf bool x =
         noSub
 
 
+noSub : Sub msg
 noSub =
     Sub.none
 
@@ -313,6 +314,7 @@ cmdIf bool x =
         noCmd
 
 
+noCmd : Cmd msg
 noCmd =
     Cmd.none
 
