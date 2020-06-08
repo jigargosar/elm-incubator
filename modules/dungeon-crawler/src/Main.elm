@@ -112,7 +112,7 @@ view model =
             , circle 100 [ S.fillBlack ]
             , square 100 [ S.fillWhite, S.rx100 ]
             ]
-        , div [ class "pv3 f3 relative" ] [ text "Dungeon Crawler" ]
+        , div [ class "relative pv3 f3 white tc" ] [ text "Dungeon Crawler" ]
         ]
 
 
