@@ -111,7 +111,9 @@ viewGrid model =
                         |> Dimension.toLocations
                         |> List.map
                             (\l ->
-                                TextCell l (l |> Location.toTuple |> Tuple.fromInt |> Tuple.join ",")
+                                words (l |> Location.toTuple |> Tuple.fromInt |> Tuple.join ",")
+                                    |> atLocation l
+                                    |> scale 0.3
                             )
                    )
     in
@@ -170,7 +172,7 @@ renderDrawing dimension pictures =
 
 
 type Picture
-    = TextCell Location String
+    = TextCell Location String Float
 
 
 commonStyles =
@@ -185,19 +187,26 @@ locationToDXY location =
 renderPicture : Picture -> Html msg
 renderPicture picture =
     case picture of
-        TextCell l t ->
-            div [ commonStyles, HS.transforms [ HS.move (locationToDXY l) ] ]
+        TextCell l t s ->
+            div [ commonStyles, HS.transforms [ HS.move (locationToDXY l), HS.scale s ] ]
                 [ text t ]
 
 
+words : String -> Picture
 words t =
-    TextCell Location.zero t
+    TextCell Location.zero t 1
 
 
 atLocation l p =
     case p of
-        TextCell _ w ->
-            TextCell l w
+        TextCell _ w s ->
+            TextCell l w s
+
+
+scale ns p =
+    case p of
+        TextCell l w s ->
+            TextCell l w (ns * s)
 
 
 
