@@ -204,6 +204,15 @@ paren =
     surround "(" ")"
 
 
+join =
+    String.join
+
+
+join3 p sep s xs =
+    join sep xs
+        |> surround p s
+
+
 append =
     (++)
 
