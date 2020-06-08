@@ -160,6 +160,7 @@ locationToDXY location =
         |> Tuple.toFloatScaled 32
 
 
+renderPicture : Picture -> Html msg
 renderPicture picture =
     case picture of
         TextCell location words ->
