@@ -86,56 +86,48 @@ minNum =
     -maxNum
 
 
-{-| Swaps the elements in a pair.
-
-    swap ( 1, 2 ) --> ( 2, 1 )
-
--}
 swap : ( a, b ) -> ( b, a )
 swap ( a, b ) =
     ( b, a )
 
 
-{-| Flip the order of the first two arguments to a function.
--}
 flip : (a -> b -> c) -> (b -> a -> c)
 flip f b a =
     f a b
 
 
-{-| Change how arguments are passed to a function.
-This splits paired arguments into two separate arguments.
--}
 curry : (( a, b ) -> c) -> a -> b -> c
 curry f a b =
     f ( a, b )
 
 
-{-| Change how arguments are passed to a function.
-This combines two arguments into a single pair.
--}
 uncurry : (a -> b -> c) -> ( a, b ) -> c
 uncurry f ( a, b ) =
     f a b
 
 
+with : (c -> a) -> (a -> c -> b) -> c -> b
 with f1 f2 x =
     f2 (f1 x) x
 
 
+withMaybeAndThen : (c -> Maybe a) -> (a -> c -> Maybe b) -> c -> Maybe b
 withMaybeAndThen f1 f2 x =
     f1 x
         |> Maybe.andThen (\a -> f2 a x)
 
 
+applyTo : a -> (a -> b) -> b
 applyTo x f =
     f x
 
 
+sub : number -> number -> number
 sub =
     (-)
 
 
+mul : number -> number -> number
 mul =
     (*)
 
@@ -145,6 +137,7 @@ toFloatScaled s i =
     toFloat i * s
 
 
+absDiff : number -> number -> number
 absDiff a b =
     a - b |> abs
 
