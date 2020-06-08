@@ -291,9 +291,10 @@ removeAll toRemove =
     List.filter shouldKeep
 
 
-subscribeIf bool s =
+subscribeIf : Bool -> Sub msg -> Sub msg
+subscribeIf bool x =
     if bool then
-        s
+        x
 
     else
         noSub
@@ -301,6 +302,15 @@ subscribeIf bool s =
 
 noSub =
     Sub.none
+
+
+cmdIf : Bool -> Cmd msg -> Cmd msg
+cmdIf bool x =
+    if bool then
+        x
+
+    else
+        noCmd
 
 
 noCmd =
