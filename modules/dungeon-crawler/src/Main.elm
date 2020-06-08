@@ -93,7 +93,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
-        , Svg.svg [ S.width 300, S.height 300 ] []
+        , Svg.svg [ S.width 300, S.height 300, class "fixed left-0 top-0 bg-black-20" ] []
         ]
 
 
