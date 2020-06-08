@@ -350,6 +350,11 @@ spaced =
     String.join " "
 
 
+spacedFromFloat : List Float -> String
+spacedFromFloat =
+    List.map fromFloat >> spaced
+
+
 filter : (a -> Bool) -> List a -> List a
 filter =
     List.filter

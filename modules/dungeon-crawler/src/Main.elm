@@ -9,7 +9,7 @@ import Json.Decode as JD
 import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
-import Svg.Attributes as A
+import Svg.Attributes as SA
 import Tuple.More as Tuple
 
 
@@ -105,6 +105,7 @@ view model =
             [ S.width sw
             , S.height sh
             , class "fixed left-0 top-0"
+            , SA.viewBox ([ -sw / 2, -sh / 2, sw, sh ] |> spacedFromFloat)
             , S.noFill
             ]
             [ Svg.rect [ class "w-100 h-100", S.fillBlackA 0.2 ] []
