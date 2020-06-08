@@ -189,8 +189,8 @@ rect ( w, h ) xs =
 words : String -> List (Svg.Attribute msg) -> Svg.Svg msg
 words string xs =
     Svg.text_
-        (SA.textAnchor "middle"
-            :: SA.dominantBaseline "central"
+        (S.textAnchorMiddle
+            :: S.dominantBaselineCentral
             :: xs
         )
         [ Svg.text string ]

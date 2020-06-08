@@ -1,4 +1,4 @@
-module Styles exposing (fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, r, rx, rx100, rxPct, scale, stroke, strokeBlack, strokeBlackA, strokeWhite, strokeWhiteA, transforms, translate, width, widthPct, x, y)
+module Styles exposing (dominantBaselineCentral, fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, r, rx, rx100, rxPct, scale, stroke, strokeBlack, strokeBlackA, strokeWhite, strokeWhiteA, textAnchorMiddle, transforms, translate, width, widthPct, x, y)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -99,6 +99,24 @@ strokeWhite =
 strokeWhiteA : Float -> Attribute msg
 strokeWhiteA =
     whiteA >> stroke
+
+
+textAnchor : String -> Attribute msg
+textAnchor =
+    style "text-anchor"
+
+
+textAnchorMiddle =
+    textAnchor "middle"
+
+
+dominantBaselineCentral =
+    dominantBaseline "central"
+
+
+dominantBaseline : String -> Attribute msg
+dominantBaseline =
+    style "dominant-baseline"
 
 
 blackA : Float -> String
