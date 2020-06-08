@@ -138,11 +138,13 @@ backgroundTiles dimension walls =
     Dimension.toLocations dimension
         |> List.map
             (\location ->
-                if List.member location walls then
-                    TextCell location "#"
+                (if List.member location walls then
+                    words "#"
 
-                else
-                    TextCell location "."
+                 else
+                    words "."
+                )
+                    |> atLocation location
             )
 
 
@@ -183,9 +185,19 @@ locationToDXY location =
 renderPicture : Picture -> Html msg
 renderPicture picture =
     case picture of
-        TextCell location words ->
-            div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-                [ text words ]
+        TextCell l t ->
+            div [ commonStyles, HS.transforms [ HS.move (locationToDXY l) ] ]
+                [ text t ]
+
+
+words t =
+    TextCell Location.zero t
+
+
+atLocation l p =
+    case p of
+        TextCell _ w ->
+            TextCell l w
 
 
 
