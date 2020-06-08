@@ -93,7 +93,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
-        , div [ class "fixed absolute--fill" ] []
+        , Svg.svg [ S.width 300, S.height 300 ] []
         ]
 
 
