@@ -9,6 +9,7 @@ module Tuple.More exposing
     , map2
     , repeat
     , repeatFloat
+    , scale
     , sub
     , toFloat
     , toFloatScaled
@@ -76,6 +77,11 @@ sub =
 add : ( number, number ) -> ( number, number ) -> ( number, number )
 add =
     map2 B.add
+
+
+scale : number -> ( number, number ) -> ( number, number )
+scale s =
+    map (mul s)
 
 
 andMap : ( a, a ) -> ( a -> b, a -> b ) -> ( b, b )

@@ -122,7 +122,12 @@ viewGrid model =
                    )
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
-        [ renderDrawing { dimension = dimension, cellSize = Tuple.repeatFloat 32 } pictures
+        [ renderDrawing
+            { dimension = dimension
+            , cellSize =
+                Tuple.repeatFloat 32 |> Tuple.scale 2
+            }
+            pictures
         ]
 
 
