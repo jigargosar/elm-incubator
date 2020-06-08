@@ -207,7 +207,7 @@ type Picture
 
 
 commonStyles =
-    class "w2 h2 flex items-center justify-center absolute top-0 left-0 bg-black-50"
+    class "flex items-center justify-center absolute top-0 left-0 bg-black-50"
 
 
 renderPicture : Config -> Picture -> Html msg
@@ -217,8 +217,16 @@ renderPicture config picture =
             let
                 dxy =
                     toCellPosition config l
+
+                ( w, h ) =
+                    config.cellSize
             in
-            div [ commonStyles, HS.transforms [ HS.move dxy, HS.scale s ] ]
+            div
+                [ commonStyles
+                , HS.width w
+                , HS.height h
+                , HS.transforms [ HS.move dxy, HS.scale s ]
+                ]
                 [ text t ]
 
 
