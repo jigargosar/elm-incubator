@@ -4,6 +4,7 @@ module Dimension exposing
     , heightScaled
     , isValidLocation
     , new
+    , toFloat
     , toFloatScaled
     , toLocationRows
     , toLocations
@@ -40,6 +41,11 @@ toTuple (Dimension wh) =
 toFloatScaled : Float -> Dimension -> Float2
 toFloatScaled n =
     toTuple >> Tuple.toFloatScaled n
+
+
+toFloat : Dimension -> Float2
+toFloat =
+    toTuple >> Tuple.toFloat
 
 
 widthScaled : Float -> Dimension -> Float

@@ -118,7 +118,7 @@ viewGrid model =
                    )
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
-        [ renderDrawing dimension pictures
+        [ renderDrawing { dimension = dimension, cellSize = ( 32, 32 ) } pictures
         ]
 
 
@@ -154,10 +154,16 @@ backgroundTiles dimension walls =
 -- Drawing
 
 
-renderDrawing dimension pictures =
+renderDrawing c pictures =
     let
+        ( gw, gh ) =
+            Dimension.toFloat c.dimension
+
+        ( cw, ch ) =
+            c.cellSize
+
         ( gwPx, ghPx ) =
-            Dimension.toFloatScaled 32 dimension
+            ( gw * cw, gh * ch )
     in
     div
         [ HS.width gwPx
