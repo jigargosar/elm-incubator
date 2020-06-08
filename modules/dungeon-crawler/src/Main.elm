@@ -105,19 +105,11 @@ viewGrid model =
         dimension =
             model.dimension
 
-        ( gwPx, ghPx ) =
-            Dimension.toFloatScaled 32 dimension
-
         pictures =
             backgroundTiles dimension []
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
-        [ div
-            [ HS.width gwPx
-            , HS.height ghPx
-            , class "relative"
-            ]
-            (pictures |> List.map renderPicture)
+        [ renderDrawing dimension pictures
         ]
 
 
@@ -145,6 +137,27 @@ backgroundTiles dimension walls =
                 else
                     TextCell location "."
             )
+
+
+
+-- Drawing
+
+
+renderDrawing dimension pictures =
+    let
+        ( gwPx, ghPx ) =
+            Dimension.toFloatScaled 32 dimension
+    in
+    div
+        [ HS.width gwPx
+        , HS.height ghPx
+        , class "relative"
+        ]
+        (pictures |> List.map renderPicture)
+
+
+
+-- Picture
 
 
 type Picture
