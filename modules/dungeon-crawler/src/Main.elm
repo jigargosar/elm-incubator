@@ -8,7 +8,7 @@ import Html exposing (Html, div, text)
 import Json.Decode as JD
 import Random exposing (Generator, Seed)
 import Styles as S
-import Svg
+import Svg exposing (Attribute)
 import Svg.Attributes as A
 
 
@@ -114,6 +114,7 @@ view model =
         ]
 
 
+rect : Float2 -> List (Attribute msg) -> Svg.Svg msg
 rect ( w, h ) xs =
     Svg.rect
         (S.x (w * 0.5)
