@@ -114,6 +114,17 @@ view model =
         ]
 
 
+rect ( w, h ) xs =
+    Svg.rect
+        (S.x (w * 0.5)
+            :: S.y (h * 0.5)
+            :: S.width w
+            :: S.height h
+            :: xs
+        )
+        []
+
+
 
 -- Main
 
