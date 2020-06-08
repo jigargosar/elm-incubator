@@ -12,7 +12,6 @@ import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
 import Tuple.More as Tuple
-import VirtualDom
 
 
 
