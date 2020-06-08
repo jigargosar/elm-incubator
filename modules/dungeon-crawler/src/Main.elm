@@ -9,7 +9,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as JD
 import Location exposing (Location)
 import Random exposing (Generator, Seed)
-import Styles as HS
+import Styles as S
 import Svg
 import Tuple.More as Tuple
 import VirtualDom
@@ -196,8 +196,8 @@ renderDrawing c pictures =
             toGridSize c
     in
     div
-        [ HS.width gwPx
-        , HS.height ghPx
+        [ S.width gwPx
+        , S.height ghPx
         , class "relative"
         ]
         (pictures |> List.map (renderPicture c))
@@ -228,9 +228,9 @@ renderPicture config picture =
             in
             div
                 [ commonStyles
-                , HS.width w
-                , HS.height h
-                , HS.transforms [ HS.translate dxy, HS.scale s ]
+                , S.width w
+                , S.height h
+                , S.transforms [ S.translate dxy, S.scale s ]
                 ]
                 [ text t ]
 
