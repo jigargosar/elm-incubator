@@ -1,4 +1,4 @@
-module Styles exposing (fill, fillBlack, fillWhite, height, noFill, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct)
+module Styles exposing (fill, fillBlack, fillWhite, height, heightPct, noFill, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -36,14 +36,19 @@ width =
     pxStyle "width"
 
 
+height : Float -> Attribute msg
+height =
+    pxStyle "height"
+
+
 widthPct : Float -> Attribute msg
 widthPct =
     pctStyle "width"
 
 
-height : Float -> Attribute msg
-height =
-    pxStyle "height"
+heightPct : Float -> Attribute msg
+heightPct =
+    pctStyle "height"
 
 
 fill : String -> Attribute msg
