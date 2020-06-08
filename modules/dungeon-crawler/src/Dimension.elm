@@ -25,7 +25,7 @@ type Dimension
 
 new : Int -> Int -> Dimension
 new w h =
-    int2Pair w h |> fromTuple
+    pairInt w h |> fromTuple
 
 
 fromTuple : ( Int, Int ) -> Dimension

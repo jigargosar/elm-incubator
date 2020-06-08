@@ -270,27 +270,24 @@ eqBy f a b =
     f a == f b
 
 
+eqById : { a | id : b } -> { a | id : b } -> Bool
 eqById =
     eqBy .id
 
 
+propEq : a -> (c -> a) -> c -> Bool
 propEq x fx a =
     x == fx a
 
 
+idEq : b -> { a | id : b } -> Bool
 idEq id =
     propEq id .id
 
 
-rangeLen : Int -> List Int
-rangeLen len =
-    List.range 0 (len - 1)
-
-
-rangeLen2 : Int -> Int -> List (List ( Int, Int ))
+rangeLen2 : Int -> Int -> List (List Int2)
 rangeLen2 l1 l2 =
-    rangeLen l1
-        |> List.map (\i1 -> rangeLen l2 |> List.map (Tuple.pair i1))
+    times l1 (\i1 -> times l2 (pairInt i1))
 
 
 isValidIndex : Int -> Int -> Bool
@@ -298,8 +295,8 @@ isValidIndex x len =
     x == clamp 0 (len - 1) x
 
 
-int2Pair : Int -> Int -> Int2
-int2Pair =
+pairInt : Int -> Int -> Int2
+pairInt =
     pair
 
 
@@ -361,3 +358,11 @@ fromFloat =
 
 fromInt =
     String.fromInt
+
+
+indices n =
+    List.range 0 (n - 1)
+
+
+times n f =
+    indices n |> List.map f
