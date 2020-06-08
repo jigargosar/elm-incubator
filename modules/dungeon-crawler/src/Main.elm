@@ -103,10 +103,10 @@ view model =
         [ Svg.svg
             [ S.width sw
             , S.height sh
-            , class "fixed left-0 top-0 bg-black-20"
+            , class "fixed left-0 top-0"
             , S.noFill
             ]
-            [ Svg.rect [ class "w-100 h-100", S.fillBlack ] []
+            [ Svg.rect [ class "w-100 h-100", S.fillBlackA 0.2 ] []
             , Svg.rect [ S.width 100, S.height 100, S.fill "white", S.rx100 ] []
             , Svg.circle [ S.r 50 ] []
             ]
