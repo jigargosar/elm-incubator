@@ -66,10 +66,12 @@ toGeneratorOrConstant f x =
     f x |> Maybe.withDefault (Random.constant x)
 
 
+dec : number -> number
 dec =
     add -1
 
 
+add : number -> number -> number
 add =
     (+)
 
@@ -175,10 +177,12 @@ surround a b x =
     a ++ x ++ b
 
 
+paren : String -> String
 paren =
     surround "(" ")"
 
 
+join : String -> List String -> String
 join =
     String.join
 
