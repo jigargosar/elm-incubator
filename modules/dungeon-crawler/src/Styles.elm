@@ -1,4 +1,4 @@
-module Styles exposing (fill, fillBlack, fillWhite, height, heightPct, noFill, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct)
+module Styles exposing (fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -56,14 +56,34 @@ fill =
     style "fill"
 
 
+fillBlack : Attribute msg
+fillBlack =
+    fill "black"
+
+
+fillBlackA : Float -> Attribute msg
+fillBlackA =
+    blackA >> fill
+
+
 fillWhite : Attribute msg
 fillWhite =
     fill "white"
 
 
-fillBlack : Attribute msg
-fillBlack =
-    fill "black"
+fillWhiteA : Float -> Attribute msg
+fillWhiteA =
+    whiteA >> fill
+
+
+blackA : Float -> String
+blackA a =
+    "rgba(0,0,0," ++ fromFloat a ++ ")"
+
+
+whiteA : Float -> String
+whiteA a =
+    "rgba(255,255,255," ++ fromFloat a ++ ")"
 
 
 noFill : Attribute msg
