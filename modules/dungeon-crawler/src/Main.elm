@@ -101,7 +101,12 @@ view model =
     in
     div []
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
-        , Svg.svg [ S.width sw, S.height sh, class "fixed left-0 top-0 bg-black-20" ]
+        , Svg.svg
+            [ S.width sw
+            , S.height sh
+            , class "fixed left-0 top-0 bg-black-20"
+            , S.noFill
+            ]
             [ Svg.rect [ S.width 100, S.height 100, S.fill "white", S.rx100 ] []
             , Svg.circle [ S.r 50 ] []
             ]
