@@ -154,23 +154,36 @@ backgroundTiles dimension walls =
 -- Drawing
 
 
-renderDrawing c pictures =
+type alias Config =
+    { dimension : Dimension
+    , cellSize : Float2
+    }
+
+
+toGridSize : Config -> Float2
+toGridSize c =
     let
         ( gw, gh ) =
             Dimension.toFloat c.dimension
 
         ( cw, ch ) =
             c.cellSize
+    in
+    ( gw * cw, gh * ch )
 
+
+renderDrawing : Config -> List Picture -> Html msg
+renderDrawing c pictures =
+    let
         ( gwPx, ghPx ) =
-            ( gw * cw, gh * ch )
+            toGridSize c
     in
     div
         [ HS.width gwPx
         , HS.height ghPx
         , class "relative"
         ]
-        (pictures |> List.map renderPicture)
+        (pictures |> List.map (renderPicture c))
 
 
 
@@ -185,16 +198,16 @@ commonStyles =
     class "w2 h2 flex items-center justify-center absolute top-0 left-0 bg-black-50"
 
 
-locationToDXY location =
-    Location.toTuple location
-        |> Tuple.toFloatScaled 32
-
-
-renderPicture : Picture -> Html msg
-renderPicture picture =
+renderPicture : Config -> Picture -> Html msg
+renderPicture config picture =
     case picture of
         TextCell l t s ->
-            div [ commonStyles, HS.transforms [ HS.move (locationToDXY l), HS.scale s ] ]
+            let
+                dxy =
+                    Location.toTuple l
+                        |> Tuple.toFloatScaled 32
+            in
+            div [ commonStyles, HS.transforms [ HS.move dxy, HS.scale s ] ]
                 [ text t ]
 
 
