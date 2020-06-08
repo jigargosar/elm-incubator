@@ -10,6 +10,7 @@ module Location exposing
     , map2
     , new
     , right
+    , toFloat
     , toTuple
     , up
     , zero
@@ -41,6 +42,11 @@ fromTuple =
 toTuple : Location -> Int2
 toTuple (Loc p) =
     p
+
+
+toFloat : Location -> Float2
+toFloat =
+    toTuple >> Tuple.toFloat
 
 
 mapAsInternal : (Int2 -> Int2) -> Location -> Location

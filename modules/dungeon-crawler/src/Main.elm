@@ -172,6 +172,18 @@ toGridSize c =
     ( gw * cw, gh * ch )
 
 
+toCellPosition : Config -> Location -> Float2
+toCellPosition c l =
+    let
+        ( x, y ) =
+            Location.toFloat l
+
+        ( cw, ch ) =
+            c.cellSize
+    in
+    ( x * cw, y * ch )
+
+
 renderDrawing : Config -> List Picture -> Html msg
 renderDrawing c pictures =
     let
@@ -204,8 +216,7 @@ renderPicture config picture =
         TextCell l t s ->
             let
                 dxy =
-                    Location.toTuple l
-                        |> Tuple.toFloatScaled 32
+                    toCellPosition config l
             in
             div [ commonStyles, HS.transforms [ HS.move dxy, HS.scale s ] ]
                 [ text t ]
