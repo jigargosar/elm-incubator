@@ -3,6 +3,7 @@ module Tuple.More exposing
     , andMap
     , any
     , fromFloat
+    , fromInt
     , join
     , map
     , map2
@@ -40,9 +41,14 @@ toFloat =
     map Basics.toFloat
 
 
-fromFloat : ( Float, Float ) -> ( String, String )
+fromFloat : Float2 -> ( String, String )
 fromFloat =
     map String.fromFloat
+
+
+fromInt : Int2 -> ( String, String )
+fromInt =
+    map String.fromInt
 
 
 map2 : (a -> b -> c) -> ( a, a ) -> ( b, b ) -> ( c, c )

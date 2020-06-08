@@ -107,6 +107,13 @@ viewGrid model =
 
         pictures =
             backgroundTiles dimension []
+                ++ (dimension
+                        |> Dimension.toLocations
+                        |> List.map
+                            (\l ->
+                                TextCell l (l |> Location.toTuple |> Tuple.fromInt |> Tuple.join ",")
+                            )
+                   )
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         [ renderDrawing dimension pictures
