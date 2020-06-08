@@ -108,11 +108,16 @@ view model =
             , S.noFill
             ]
             [ Svg.rect [ class "w-100 h-100", S.fillBlackA 0.2 ] []
-            , Svg.rect [ S.width 100, S.height 100, S.fillWhite, S.rx100 ] []
-            , Svg.circle [ S.r 50, S.fillBlack ] []
+            , square 100 [ S.fillWhite, S.rx100 ]
+            , circle 50 [ S.fillBlack ]
             ]
         , div [ class "pv3 f3 relative" ] [ text "Dungeon Crawler" ]
         ]
+
+
+circle : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
+circle r xs =
+    Svg.circle (S.r r :: xs) []
 
 
 square : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
