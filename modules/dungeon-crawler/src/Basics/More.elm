@@ -350,8 +350,8 @@ spaced =
     String.join " "
 
 
-spacedFromFloat : List Float -> String
-spacedFromFloat =
+spacedFloats : List Float -> String
+spacedFloats =
     List.map fromFloat >> spaced
 
 

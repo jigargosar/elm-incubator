@@ -10,6 +10,8 @@ module Tuple.More exposing
     , repeat
     , repeatFloat
     , scale
+    , spaced
+    , spacedFloats
     , sub
     , toFloat
     , toFloatScaled
@@ -57,6 +59,16 @@ toFloat =
 fromFloat : Float2 -> String2
 fromFloat =
     map B.fromFloat
+
+
+spaced : String2 -> String
+spaced =
+    join " "
+
+
+spacedFloats : Float2 -> String
+spacedFloats =
+    fromFloat >> spaced
 
 
 fromInt : Int2 -> ( String, String )

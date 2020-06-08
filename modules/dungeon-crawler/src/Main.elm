@@ -105,10 +105,10 @@ view model =
             [ S.width sw
             , S.height sh
             , class "fixed left-0 top-0"
-            , SA.viewBox ([ -sw / 2, -sh / 2, sw, sh ] |> spacedFromFloat)
+            , SA.viewBox ([ sw / -2, sh / -2, sw, sh ] |> spacedFloats)
             , S.noFill
             ]
-            [ Svg.rect [ class "w-100 h-100", S.fillBlackA 0.2 ] []
+            [ rect model.screenSize [ class "w-100 h-100", S.fillBlackA 0.2 ]
             , square 100 [ S.fillWhite, S.rx100 ]
             , circle 50 [ S.fillBlack ]
             ]
@@ -129,8 +129,8 @@ square w =
 rect : Float2 -> List (Svg.Attribute msg) -> Svg.Svg msg
 rect ( w, h ) xs =
     Svg.rect
-        (S.x (w * 0.5)
-            :: S.y (h * 0.5)
+        (S.x (w / -2)
+            :: S.y (h / -2)
             :: S.width w
             :: S.height h
             :: xs
