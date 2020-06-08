@@ -8,8 +8,9 @@ import Html exposing (Html, div, text)
 import Json.Decode as JD
 import Random exposing (Generator, Seed)
 import Styles as S
-import Svg exposing (Attribute)
+import Svg
 import Svg.Attributes as A
+import Tuple.More as Tuple
 
 
 
@@ -114,7 +115,12 @@ view model =
         ]
 
 
-rect : Float2 -> List (Attribute msg) -> Svg.Svg msg
+square : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
+square w =
+    rect (Tuple.repeat w)
+
+
+rect : Float2 -> List (Svg.Attribute msg) -> Svg.Svg msg
 rect ( w, h ) xs =
     Svg.rect
         (S.x (w * 0.5)
