@@ -100,7 +100,7 @@ view model =
         ( sw, sh ) =
             model.screenSize
     in
-    div []
+    div [ S.noSelect ]
         [ Svg.svg
             [ S.width sw
             , S.height sh

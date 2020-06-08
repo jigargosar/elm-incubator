@@ -1,4 +1,4 @@
-module Styles exposing (fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct, x, y)
+module Styles exposing (fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct, x, y)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -119,6 +119,11 @@ rxPct =
 rx100 : Attribute msg
 rx100 =
     rxPct 100
+
+
+noSelect : Attribute msg
+noSelect =
+    style "user-select" "none"
 
 
 
