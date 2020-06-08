@@ -324,7 +324,15 @@ subscribeIf bool s =
         s
 
     else
-        Sub.none
+        noSub
+
+
+noSub =
+    Sub.none
+
+
+noCmd =
+    Cmd.none
 
 
 spaced : List String -> String
