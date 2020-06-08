@@ -111,8 +111,7 @@ view model =
             , S.noFill
             ]
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
-            , circle 100 [ S.fillBlack ]
-            , square 100 [ S.fillWhite, S.rx100 ]
+            , circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
             , viewGridMap
             ]
         , div [ class "relative pv3 f3 white tc" ] [ text "Dungeon Crawler" ]
