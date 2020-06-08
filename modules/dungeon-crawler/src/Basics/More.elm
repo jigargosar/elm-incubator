@@ -332,9 +332,19 @@ spaced =
     String.join " "
 
 
+filter : (a -> Bool) -> List a -> List a
+filter =
+    List.filter
+
+
 reject : (a -> Bool) -> List a -> List a
 reject =
-    List.filterNot
+    complement >> filter
+
+
+complement : (a -> Bool) -> a -> Bool
+complement f =
+    f >> not
 
 
 fromFloat =
