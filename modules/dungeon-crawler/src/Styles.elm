@@ -22,8 +22,8 @@ scale s =
 
 
 opacity : Float -> Attribute msg
-opacity o =
-    style "opacity" (fromFloat o)
+opacity =
+    numStyle "opacity"
 
 
 transforms : List String -> Attribute msg
@@ -44,3 +44,8 @@ height =
 pxStyle : String -> Float -> Attribute msg
 pxStyle key value =
     style key (pxFromFloat value)
+
+
+numStyle : String -> Float -> Attribute msg
+numStyle key value =
+    style key (fromFloat value)
