@@ -29,7 +29,7 @@ opacity o =
 
 transforms : List String -> Attribute msg
 transforms xs =
-    style "transform" (String.join " " xs)
+    style "transform" (spaced xs)
 
 
 width : Float -> Attribute msg

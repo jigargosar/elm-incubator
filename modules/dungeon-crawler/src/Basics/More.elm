@@ -304,3 +304,8 @@ subscribeIf bool s =
 
     else
         Sub.none
+
+
+spaced : List String -> String
+spaced =
+    String.join " "
