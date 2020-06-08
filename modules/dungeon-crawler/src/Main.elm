@@ -98,7 +98,7 @@ view model =
                 [ viewGrid model
                 ]
             ]
-        , Svg.svg [ class "asd", class "asd", class "asd", style "border" "1px solid blue", style "fill" "green" ]
+        , Svg.svg [ style "border" "1px solid blue", style "fill" "green" ]
             [ Svg.rect [ style "width" "100%" ] []
             ]
         ]
