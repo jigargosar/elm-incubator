@@ -172,6 +172,11 @@ pxFromFloat =
     fromFloat >> withSuffix "px"
 
 
+pctFromFloat : Float -> String
+pctFromFloat =
+    fromFloat >> withSuffix "%"
+
+
 surround : appendable -> appendable -> appendable -> appendable
 surround a b x =
     a ++ x ++ b

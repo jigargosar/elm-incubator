@@ -91,10 +91,12 @@ type alias HM =
 
 view : Model -> Html Msg
 view model =
-    div [ class "flex flex-column items-center", class "flex flex-column items-center" ]
+    div [ class "flex flex-column items-center" ]
         [ div []
             [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
-            , div [ class "flex relative" ]
+            , div
+                [ class "flex relative"
+                ]
                 [ viewGrid model
                 ]
             ]

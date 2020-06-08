@@ -1,4 +1,4 @@
-module Styles exposing (height, opacity, scale, transforms, translate, width)
+module Styles exposing (height, opacity, scale, transforms, translate, width, widthPct)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -36,6 +36,11 @@ width =
     pxStyle "width"
 
 
+widthPct : Float -> Attribute msg
+widthPct =
+    pctStyle "width"
+
+
 height : Float -> Attribute msg
 height =
     pxStyle "height"
@@ -49,3 +54,8 @@ pxStyle key value =
 numStyle : String -> Float -> Attribute msg
 numStyle key value =
     style key (fromFloat value)
+
+
+pctStyle : String -> Float -> Attribute msg
+pctStyle key value =
+    style key (pxFromFloat value)
