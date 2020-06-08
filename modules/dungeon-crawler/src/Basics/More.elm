@@ -159,7 +159,7 @@ withSuffix b a =
 
 pxFromFloat : Float -> String
 pxFromFloat =
-    String.fromFloat >> withSuffix "px"
+    fromFloat >> withSuffix "px"
 
 
 surround : appendable -> appendable -> appendable -> appendable
