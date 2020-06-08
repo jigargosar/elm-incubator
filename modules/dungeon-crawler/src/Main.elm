@@ -130,13 +130,13 @@ viewGridMap =
     let
         gm =
             { dimension = Dimension.new 3 4
-            , cellSize = repeatFloat 32
+            , cellSize = repeatFloat 64
             , origin = pairFloat 0
             , dict = Dict.empty
             }
 
         viewLocation loc =
-            rect gm.cellSize [ S.fillBlack ]
+            rect gm.cellSize [ S.fillBlackA 0.1 ]
     in
     Svg.g []
         (gm.dimension
