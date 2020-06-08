@@ -309,3 +309,8 @@ subscribeIf bool s =
 spaced : List String -> String
 spaced =
     String.join " "
+
+
+reject : (a -> Bool) -> List a -> List a
+reject =
+    List.filterNot
