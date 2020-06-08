@@ -17,12 +17,13 @@ import Svg
 
 type alias Model =
     { dimension : Dimension
+    , screenSize : Float2
     , seed : Seed
     }
 
 
 type alias Flags =
-    { now : Int }
+    { now : Int, window : { width : Float, height : Float } }
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -33,8 +34,12 @@ init flags =
 
         initialSeed =
             Random.initialSeed (flags.now |> always 4)
+
+        window =
+            flags.window
     in
     ( { dimension = dimension
+      , screenSize = pairFloat window.width window.height
       , seed = initialSeed
       }
     , Cmd.none
