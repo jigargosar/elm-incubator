@@ -108,7 +108,7 @@ view model =
             , SA.viewBox ([ sw / -2, sh / -2, sw, sh ] |> spacedFloats)
             , S.noFill
             ]
-            [ rect model.screenSize [ class "w-100 h-100", S.fillBlackA 0.2 ]
+            [ rect model.screenSize [ S.fillBlackA 0.2 ]
             , square 100 [ S.fillWhite, S.rx100 ]
             , circle 50 [ S.fillBlack ]
             ]
