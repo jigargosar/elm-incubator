@@ -136,9 +136,13 @@ viewGridMap =
             }
 
         gmOrigin =
+            gmSize
+                |> Tuple.sub gm.cellSize
+                |> Tuple.scale 0.5
+
+        gmSize =
             Dimension.toFloat gm.dimension
                 |> Tuple.mul gm.cellSize
-                |> Tuple.scale -0.5
 
         toWorldCords =
             Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
@@ -150,10 +154,14 @@ viewGridMap =
                 ]
     in
     Svg.g []
-        (gm.dimension
-            |> Dimension.toLocations
-            |> List.map viewLocation
-        )
+        [ Svg.g []
+            [ rect gmSize [ S.fill "green", S.fade 0.5 ] ]
+        , Svg.g []
+            (gm.dimension
+                |> Dimension.toLocations
+                |> List.map viewLocation
+            )
+        ]
 
 
 circle : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
