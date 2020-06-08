@@ -92,13 +92,15 @@ type alias HM =
 
 view : Model -> Html Msg
 view model =
-    div [ class "measure center" ]
-        [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
-        , div [ class "flex relative" ]
-            [ viewGrid model
-            ]
-        , Svg.svg [ style "border" "1px solid blue", style "fill" "green" ]
-            [ Svg.rect [ style "width" "100%" ] []
+    div [ class "flex flex-column items-center" ]
+        [ div []
+            [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
+            , div [ class "flex relative" ]
+                [ viewGrid model
+                ]
+            , Svg.svg [ style "border" "1px solid blue", style "fill" "green" ]
+                [ Svg.rect [ style "width" "100%" ] []
+                ]
             ]
         ]
 
