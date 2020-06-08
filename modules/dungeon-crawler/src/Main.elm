@@ -122,19 +122,6 @@ viewWorld model =
         pictures
 
 
-
---viewOverlayMsg progress message =
---    div
---        [ class "absolute w-100 h-100 flex items-center justify-center"
---        , HS.opacity progress
---        ]
---        [ div [ class "bg-white-50 black pa3 br3" ]
---            [ div [ class "code b f2 tc" ] [ text message ]
---            , div [ class "code b f3 tc" ] [ text "Ctrl+R to restart" ]
---            ]
---        ]
-
-
 backgroundTiles : Dimension -> List Location -> List Picture
 backgroundTiles dimension walls =
     Dimension.toLocations dimension
