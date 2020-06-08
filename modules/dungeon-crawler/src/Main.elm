@@ -126,16 +126,17 @@ type alias GridMap =
     }
 
 
+gmSize gm =
+    Dimension.toFloat gm.dimension
+        |> Tuple.mul gm.cellSize
+
+
 gmToWorldCords gm =
     let
         gmOrigin =
-            gmSize
+            gmSize gm
                 |> Tuple.sub gm.cellSize
                 |> Tuple.scale 0.5
-
-        gmSize =
-            Dimension.toFloat gm.dimension
-                |> Tuple.mul gm.cellSize
     in
     Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
 
@@ -149,17 +150,8 @@ viewGridMap =
             , dict = Dict.empty
             }
 
-        gmOrigin =
-            gmSize
-                |> Tuple.sub gm.cellSize
-                |> Tuple.scale 0.5
-
-        gmSize =
-            Dimension.toFloat gm.dimension
-                |> Tuple.mul gm.cellSize
-
         toWorldCords =
-            Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
+            gmToWorldCords gm
 
         viewLocation loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
@@ -169,7 +161,7 @@ viewGridMap =
     in
     Svg.g []
         [ Svg.g []
-            [ rect gmSize [ S.fill "green", S.fade 0.5 ] ]
+            [ rect (gmSize gm) [ S.fill "green", S.fade 0.5 ] ]
         , Svg.g []
             (gm.dimension
                 |> Dimension.toLocations
