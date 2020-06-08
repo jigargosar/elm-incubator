@@ -1,11 +1,8 @@
 module Basics.More exposing (..)
 
-import Html
-import Html.Attributes
 import List.Extra as List
 import Random exposing (Generator)
 import Random.List
-import Svg.Attributes
 import VirtualDom
 
 
@@ -259,9 +256,10 @@ viewIf bool x =
 
 
 noView =
-    Html.text ""
+    VirtualDom.text ""
 
 
+eq : a -> a -> Bool
 eq =
     (==)
 
