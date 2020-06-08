@@ -329,3 +329,11 @@ spaced =
 reject : (a -> Bool) -> List a -> List a
 reject =
     List.filterNot
+
+
+fromFloat =
+    String.fromFloat
+
+
+fromInt =
+    String.fromInt

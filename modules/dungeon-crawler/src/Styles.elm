@@ -23,7 +23,7 @@ scale s =
 
 opacity : Float -> Attribute msg
 opacity o =
-    style "opacity" (String.fromFloat o)
+    style "opacity" (fromFloat o)
 
 
 transforms : List String -> Attribute msg
