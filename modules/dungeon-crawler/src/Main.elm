@@ -122,6 +122,7 @@ view model =
 type alias GridMap =
     { dimension : Dimension
     , cellSize : Float2
+    , origin : Float2
     , dict : Dict Int2 Int
     }
 
@@ -132,6 +133,7 @@ viewGridMap =
         gm =
             { dimension = Dimension.new 3 4
             , cellSize = twice 64
+            , origin = twice 0
             , dict = Dict.empty
             }
 
@@ -139,6 +141,7 @@ viewGridMap =
             gmSize
                 |> Tuple.sub gm.cellSize
                 |> Tuple.scale 0.5
+                |> Tuple.add gm.origin
 
         gmSize =
             Dimension.toFloat gm.dimension
