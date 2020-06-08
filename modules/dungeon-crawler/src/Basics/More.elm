@@ -187,14 +187,14 @@ maybeUniformGenerator l =
             Random.uniform x xs |> Just
 
 
-appendWith : appendable -> appendable -> appendable
-appendWith b a =
+appendSuffix : appendable -> appendable -> appendable
+appendSuffix b a =
     a ++ b
 
 
 pxFromFloat : Float -> String
 pxFromFloat =
-    String.fromFloat >> appendWith "px"
+    String.fromFloat >> appendSuffix "px"
 
 
 surround : appendable -> appendable -> appendable -> appendable
@@ -215,6 +215,7 @@ join3 p sep s xs =
         |> surround p s
 
 
+append : appendable -> appendable -> appendable
 append =
     (++)
 
