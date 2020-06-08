@@ -9,6 +9,7 @@ import Json.Decode as JD
 import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
+import Svg.Attributes as A
 
 
 
@@ -101,8 +102,20 @@ view model =
     div []
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
         , Svg.svg [ S.width sw, S.height sh, class "fixed left-0 top-0 bg-black-20" ]
-            [ Svg.rect [ S.width 100, S.height 100, S.fill "white" ] [] ]
+            [ Svg.rect [ S.width 100, S.height 100, S.fill "white", A.rx "100%" ] [] ]
         ]
+
+
+rx =
+    fromFloat >> A.rx
+
+
+ry =
+    fromFloat >> A.ry
+
+
+r =
+    fromFloat >> A.r
 
 
 
