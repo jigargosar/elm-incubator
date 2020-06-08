@@ -32,10 +32,15 @@ transforms xs =
 
 
 width : Float -> Attribute msg
-width n =
-    style "width" (pxFromFloat n)
+width =
+    pxStyle "width"
 
 
 height : Float -> Attribute msg
-height n =
-    style "height" (pxFromFloat n)
+height =
+    pxStyle "height"
+
+
+pxStyle : String -> Float -> Attribute msg
+pxStyle key value =
+    style key (pxFromFloat value)
