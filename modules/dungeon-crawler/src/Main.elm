@@ -129,6 +129,7 @@ type alias GridMap =
 
 viewGridMap =
     let
+        gm : GridMap
         gm =
             { dimension = Dimension.new 3 4
             , cellSize = twice 64
