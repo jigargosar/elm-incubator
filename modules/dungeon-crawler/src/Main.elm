@@ -132,7 +132,7 @@ viewGridMap =
         gm =
             { dimension = Dimension.new 3 4
             , cellSize = twice 64
-            , origin = twice 0
+            , origin = pair -100 -100
             , dict = Dict.empty
             }
 
@@ -141,7 +141,7 @@ viewGridMap =
 
         viewLocation loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
-                [ rect gm.cellSize [ S.fillBlackA 0.1 ]
+                [ rect gm.cellSize [ S.fillBlackA 0.8 ]
                 , words (Debug.toString loc) [ S.strokeWhite ]
                 ]
     in
