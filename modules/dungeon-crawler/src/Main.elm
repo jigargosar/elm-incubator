@@ -98,8 +98,8 @@ view model =
         , div [ class "flex relative" ]
             [ viewGrid model
             ]
-        , Svg.svg [ VirtualDom.style "border" "1px solid blue", VirtualDom.style "fill" "green" ]
-            [ Svg.rect [ VirtualDom.style "width" "100%" ] []
+        , Svg.svg [ style "border" "1px solid blue", style "fill" "green" ]
+            [ Svg.rect [ style "width" "100%" ] []
             ]
         ]
 
