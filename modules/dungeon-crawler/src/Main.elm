@@ -6,11 +6,9 @@ import Browser.Events
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Json.Decode as JD
-import Location exposing (Location)
 import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
-import Tuple.More as Tuple
 
 
 
