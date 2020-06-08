@@ -140,15 +140,15 @@ backgroundTiles dimension walls =
         |> List.map
             (\location ->
                 if List.member location walls then
-                    TEXT location "#"
+                    TextCell location "#"
 
                 else
-                    TEXT location "."
+                    TextCell location "."
             )
 
 
 type Picture
-    = TEXT Location String
+    = TextCell Location String
 
 
 commonStyles =
@@ -162,7 +162,7 @@ locationToDXY location =
 
 renderPicture picture =
     case picture of
-        TEXT location words ->
+        TextCell location words ->
             div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
                 [ text words ]
 
