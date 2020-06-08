@@ -107,6 +107,9 @@ viewGrid model =
 
         ( gwPx, ghPx ) =
             Dimension.toFloatScaled 32 dimension
+
+        pictures =
+            backgroundTiles dimension []
     in
     div [ class "center code f2 bg-black white pa3 br3" ]
         [ div
@@ -114,10 +117,7 @@ viewGrid model =
             , HS.height ghPx
             , class "relative"
             ]
-            ([ backgroundTileViews dimension []
-             ]
-                |> List.concat
-            )
+            (pictures |> List.map renderPicture)
         ]
 
 
@@ -134,6 +134,23 @@ viewGrid model =
 --        ]
 
 
+backgroundTiles : Dimension -> List Location -> List Picture
+backgroundTiles dimension walls =
+    Dimension.toLocations dimension
+        |> List.map
+            (\location ->
+                if List.member location walls then
+                    TEXT location "#"
+
+                else
+                    TEXT location "."
+            )
+
+
+type Picture
+    = TEXT Location String
+
+
 commonStyles =
     class "w2 h2 flex items-center justify-center absolute top-0 left-0 bg-black-50"
 
@@ -143,32 +160,11 @@ locationToDXY location =
         |> Tuple.toFloatScaled 32
 
 
-viewWallTile location =
-    div
-        [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-        [ text "#" ]
-
-
-viewFloorTile location =
-    div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
-        [ text "." ]
-
-
-backgroundTileViews : Dimension -> List Location -> List HM
-backgroundTileViews dimension walls =
-    Dimension.toLocations dimension
-        |> List.map
-            (\location ->
-                if List.member location walls then
-                    viewWallTile location
-
-                else
-                    viewFloorTile location
-            )
-
-
-type Drawing
-    = TEXT Location String
+renderPicture picture =
+    case picture of
+        TEXT location words ->
+            div [ commonStyles, HS.transforms [ HS.move (locationToDXY location) ] ]
+                [ text words ]
 
 
 
