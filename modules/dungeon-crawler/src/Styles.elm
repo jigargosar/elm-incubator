@@ -62,7 +62,7 @@ stroke =
 
 
 strokeWidth =
-    numStyle "strokeWidth"
+    pxStyle "strokeWidth"
 
 
 fillBlack : Attribute msg
