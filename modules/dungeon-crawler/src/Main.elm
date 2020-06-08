@@ -126,6 +126,20 @@ type alias GridMap =
     }
 
 
+gmToWorldCords gm =
+    let
+        gmOrigin =
+            gmSize
+                |> Tuple.sub gm.cellSize
+                |> Tuple.scale 0.5
+
+        gmSize =
+            Dimension.toFloat gm.dimension
+                |> Tuple.mul gm.cellSize
+    in
+    Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
+
+
 viewGridMap =
     let
         gm : GridMap
