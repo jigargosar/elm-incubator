@@ -215,6 +215,15 @@ style =
     VirtualDom.style
 
 
+ifElse : (d -> Bool) -> (d -> a) -> (d -> a) -> d -> a
+ifElse p t f x =
+    if p x then
+        t x
+
+    else
+        f x
+
+
 viewIf bool x =
     if bool then
         x
