@@ -3,6 +3,7 @@ module Main exposing (main)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
+import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Json.Decode as JD
@@ -120,6 +121,7 @@ type alias GridMap =
     { dimension : Dimension
     , cellSize : Float2
     , origin : Float2
+    , dict : Dict Int2 Int
     }
 
 
