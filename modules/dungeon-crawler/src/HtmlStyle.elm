@@ -1,4 +1,4 @@
-module HtmlStyle exposing (height, move, opacity, scale, transforms, width)
+module HtmlStyle exposing (height, opacity, scale, transforms, translate, width)
 
 import Basics.More exposing (..)
 import Html exposing (Attribute)
@@ -6,8 +6,8 @@ import Html.Attributes exposing (style)
 import Tuple.More as Tuple
 
 
-move : ( Float, Float ) -> String
-move dxy =
+translate : ( Float, Float ) -> String
+translate dxy =
     dxy
         |> Tuple.map pxFromFloat
         |> Tuple.join ","

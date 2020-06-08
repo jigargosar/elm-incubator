@@ -225,7 +225,7 @@ renderPicture config picture =
                 [ commonStyles
                 , HS.width w
                 , HS.height h
-                , HS.transforms [ HS.move dxy, HS.scale s ]
+                , HS.transforms [ HS.translate dxy, HS.scale s ]
                 ]
                 [ text t ]
 
