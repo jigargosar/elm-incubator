@@ -122,7 +122,6 @@ view model =
 type alias GridMap =
     { dimension : Dimension
     , cellSize : Float2
-    , origin : Float2
     , dict : Dict Int2 Int
     }
 
@@ -133,12 +132,16 @@ viewGridMap =
         gm =
             { dimension = Dimension.new 3 4
             , cellSize = twice 64
-            , origin = pair -100 -100
             , dict = Dict.empty
             }
 
+        gmOrigin =
+            Dimension.toFloat gm.dimension
+                |> Tuple.mul gm.cellSize
+                |> Tuple.scale -0.5
+
         toWorldCords =
-            Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gm.origin
+            Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
 
         viewLocation loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
