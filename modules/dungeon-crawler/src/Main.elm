@@ -166,6 +166,13 @@ backgroundTiles dimension walls =
 -- Drawing
 
 
+type alias GridConfig =
+    { dimension : Dimension
+    , cellSize : Float2
+    , origin : Float2
+    }
+
+
 type alias Config =
     { dimension : Dimension
     , cellSize : Float2
