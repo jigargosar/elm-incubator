@@ -91,8 +91,9 @@ type alias HM =
 
 view : Model -> Html Msg
 view model =
-    div [ class "fixed absolute--fill" ]
+    div []
         [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
+        , div [ class "fixed absolute--fill" ] []
         ]
 
 
