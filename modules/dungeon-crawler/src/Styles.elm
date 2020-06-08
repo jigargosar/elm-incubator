@@ -1,4 +1,4 @@
-module Styles exposing (fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, opacity, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct, x, y)
+module Styles exposing (fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct, x, y)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -21,8 +21,8 @@ scale s =
         |> append "scale"
 
 
-opacity : Float -> Attribute msg
-opacity =
+fade : Float -> Attribute msg
+fade =
     numStyle "opacity"
 
 
