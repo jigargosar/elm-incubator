@@ -1,4 +1,4 @@
-module Styles exposing (fill, height, opacity, scale, transforms, translate, width, widthPct)
+module Styles exposing (fill, height, opacity, r, scale, transforms, translate, width, widthPct)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -64,3 +64,8 @@ pctStyle key value =
 fill : String -> Attribute msg
 fill =
     style "fill"
+
+
+r : Float -> Attribute msg
+r =
+    pxStyle "r"
