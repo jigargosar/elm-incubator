@@ -109,8 +109,8 @@ view model =
             , S.noFill
             ]
             [ rect model.screenSize [ S.fillBlackA 0.2 ]
+            , circle 100 [ S.fillBlack ]
             , square 100 [ S.fillWhite, S.rx100 ]
-            , circle 50 [ S.fillBlack ]
             ]
         , div [ class "pv3 f3 relative" ] [ text "Dungeon Crawler" ]
         ]
