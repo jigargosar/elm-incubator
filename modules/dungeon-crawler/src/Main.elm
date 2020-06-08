@@ -127,7 +127,7 @@ viewGrid model =
         [ renderDrawing
             { dimension = dimension
             , cellSize =
-                Tuple.repeatFloat 32 |> Tuple.scale 2
+                Tuple.repeatFloat 32
             }
             pictures
         ]
