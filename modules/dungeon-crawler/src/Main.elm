@@ -6,10 +6,10 @@ import Browser.Events
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
-import HtmlStyle as HS
 import Json.Decode as JD
 import Location exposing (Location)
 import Random exposing (Generator, Seed)
+import Styles as HS
 import Svg
 import Tuple.More as Tuple
 import VirtualDom

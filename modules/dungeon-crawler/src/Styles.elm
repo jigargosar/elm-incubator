@@ -1,4 +1,4 @@
-module HtmlStyle exposing (height, opacity, scale, transforms, translate, width)
+module Styles exposing (height, opacity, scale, transforms, translate, width)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
