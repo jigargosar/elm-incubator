@@ -43,6 +43,7 @@ pairTo b a =
     Tuple.pair a b
 
 
+pair : a -> b -> ( a, b )
 pair =
     Tuple.pair
 
@@ -65,47 +66,21 @@ add =
     (+)
 
 
-{-| Defines an upper bound for a variable.
-
-    42 |> atMost 0 --> 0
-
-    -42 |> atMost 0 --> -42
-
--}
 atMost : comparable -> comparable -> comparable
 atMost =
     min
 
 
-{-| Defines a lower bound for a variable.
-
-    -42 |> atLeast 0 --> 0
-
-    42 |> atLeast 0 --> 42
-
--}
 atLeast : comparable -> comparable -> comparable
 atLeast =
     max
 
 
-{-| The maximum _safe_ value for an integer, defined as `2^53 - 1`. Anything
-larger than that and behaviour becomes mathematically unsound.
-
-    maxSafeInteger + 1 --> maxSafeInteger + 2
-
--}
 maxNum : number
 maxNum =
     2 ^ 53 - 1
 
 
-{-| The minimum _safe_ value for an integer, defined as `-(2^53 - 1)`. Anything
-smaller than that, and behaviour becomes mathematically unsound.
-
-    minSafeInteger - 1 --> minSafeInteger - 2
-
--}
 minNum : number
 minNum =
     -maxNum
