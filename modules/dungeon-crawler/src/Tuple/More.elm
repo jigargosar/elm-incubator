@@ -8,7 +8,6 @@ module Tuple.More exposing
     , map
     , map2
     , repeat
-    , repeatFloat
     , scale
     , spaced
     , spacedFloats
@@ -27,13 +26,8 @@ zero =
 
 
 repeat : a -> ( a, a )
-repeat a =
-    pair a a
-
-
-repeatFloat : Float -> Float2
-repeatFloat =
-    repeat
+repeat =
+    repeatPair
 
 
 any : (a -> Bool) -> ( a, a ) -> Bool

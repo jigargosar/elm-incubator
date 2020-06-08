@@ -112,6 +112,7 @@ view model =
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
             , circle 100 [ S.fillBlack ]
             , square 100 [ S.fillWhite, S.rx100 ]
+            , viewGridMap
             ]
         , div [ class "relative pv3 f3 white tc" ] [ text "Dungeon Crawler" ]
         ]
@@ -123,6 +124,25 @@ type alias GridMap =
     , origin : Float2
     , dict : Dict Int2 Int
     }
+
+
+viewGridMap =
+    let
+        gm =
+            { dimension = Dimension.new 3 4
+            , cellSize = repeatFloat 32
+            , origin = pairFloat 0
+            , dict = Dict.empty
+            }
+
+        viewLocation loc =
+            rect gm.cellSize [ S.fillBlack ]
+    in
+    Svg.g []
+        (gm.dimension
+            |> Dimension.toLocations
+            |> List.map viewLocation
+        )
 
 
 circle : Float -> List (Svg.Attribute msg) -> Svg.Svg msg

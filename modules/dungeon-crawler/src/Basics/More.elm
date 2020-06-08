@@ -355,6 +355,16 @@ spacedFloats =
     List.map fromFloat >> spaced
 
 
+repeatFloat : Float -> Float2
+repeatFloat =
+    repeatPair
+
+
+repeatPair : a -> ( a, a )
+repeatPair x =
+    pair x x
+
+
 filter : (a -> Bool) -> List a -> List a
 filter =
     List.filter
