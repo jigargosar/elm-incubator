@@ -217,10 +217,10 @@ commonStyles =
 renderPicture : Config -> Picture -> Html msg
 renderPicture config picture =
     case picture of
-        TextCell l t s ->
+        TextCell location string s ->
             let
                 dxy =
-                    toCellPosition config l
+                    toCellPosition config location
 
                 ( w, h ) =
                     config.cellSize
@@ -231,7 +231,7 @@ renderPicture config picture =
                 , S.height h
                 , S.transforms [ S.translate dxy, S.scale s ]
                 ]
-                [ text t ]
+                [ text string ]
 
 
 words : String -> Picture
