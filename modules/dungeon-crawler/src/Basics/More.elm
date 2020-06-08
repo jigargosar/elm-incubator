@@ -310,8 +310,8 @@ shuffleSplit n xs =
         |> Random.map (List.splitAt n)
 
 
-listRemoveAll : List a -> List a -> List a
-listRemoveAll toRemove =
+removeAll : List a -> List a -> List a
+removeAll toRemove =
     let
         shouldKeep x =
             List.notMember x toRemove
