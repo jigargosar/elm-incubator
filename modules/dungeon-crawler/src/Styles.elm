@@ -46,21 +46,6 @@ height =
     pxStyle "height"
 
 
-pxStyle : String -> Float -> Attribute msg
-pxStyle key value =
-    style key (pxFromFloat value)
-
-
-numStyle : String -> Float -> Attribute msg
-numStyle key value =
-    style key (fromFloat value)
-
-
-pctStyle : String -> Float -> Attribute msg
-pctStyle key value =
-    style key (pxFromFloat value)
-
-
 fill : String -> Attribute msg
 fill =
     style "fill"
@@ -99,3 +84,22 @@ rxPct =
 rx100 : Attribute msg
 rx100 =
     rxPct 100
+
+
+
+-- Helpers
+
+
+pxStyle : String -> Float -> Attribute msg
+pxStyle key value =
+    style key (pxFromFloat value)
+
+
+numStyle : String -> Float -> Attribute msg
+numStyle key value =
+    style key (fromFloat value)
+
+
+pctStyle : String -> Float -> Attribute msg
+pctStyle key value =
+    style key (pxFromFloat value)
