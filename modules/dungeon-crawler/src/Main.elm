@@ -136,7 +136,10 @@ viewGridMap =
             }
 
         viewLocation loc =
-            rect gm.cellSize [ S.fillBlackA 0.1 ]
+            Svg.g []
+                [ rect gm.cellSize [ S.fillBlackA 0.1 ]
+                , words (Debug.toString loc) [ S.strokeWhite ]
+                ]
     in
     Svg.g []
         (gm.dimension

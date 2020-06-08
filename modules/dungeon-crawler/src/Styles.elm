@@ -1,4 +1,4 @@
-module Styles exposing (fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, r, rx, rx100, rxPct, scale, transforms, translate, width, widthPct, x, y)
+module Styles exposing (fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, r, rx, rx100, rxPct, scale, stroke, strokeBlack, strokeBlackA, strokeWhite, strokeWhiteA, transforms, translate, width, widthPct, x, y)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -56,6 +56,11 @@ fill =
     style "fill"
 
 
+stroke : String -> Attribute msg
+stroke =
+    style "stroke"
+
+
 fillBlack : Attribute msg
 fillBlack =
     fill "black"
@@ -74,6 +79,26 @@ fillWhite =
 fillWhiteA : Float -> Attribute msg
 fillWhiteA =
     whiteA >> fill
+
+
+strokeBlack : Attribute msg
+strokeBlack =
+    stroke "black"
+
+
+strokeBlackA : Float -> Attribute msg
+strokeBlackA =
+    blackA >> stroke
+
+
+strokeWhite : Attribute msg
+strokeWhite =
+    stroke "white"
+
+
+strokeWhiteA : Float -> Attribute msg
+strokeWhiteA =
+    whiteA >> stroke
 
 
 blackA : Float -> String
