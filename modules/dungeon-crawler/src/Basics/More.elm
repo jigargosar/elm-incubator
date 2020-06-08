@@ -223,6 +223,10 @@ style =
     VirtualDom.style
 
 
+class =
+    VirtualDom.attribute "class"
+
+
 ifElse : (d -> Bool) -> (d -> a) -> (d -> a) -> d -> a
 ifElse p t f x =
     if p x then

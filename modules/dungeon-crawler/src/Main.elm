@@ -5,7 +5,6 @@ import Browser
 import Browser.Events
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
 import Json.Decode as JD
 import Location exposing (Location)
 import Random exposing (Generator, Seed)
@@ -92,15 +91,15 @@ type alias HM =
 
 view : Model -> Html Msg
 view model =
-    div [ class "flex flex-column items-center" ]
+    div [ class "flex flex-column items-center", class "flex flex-column items-center" ]
         [ div []
             [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
             , div [ class "flex relative" ]
                 [ viewGrid model
                 ]
-            , Svg.svg [ style "border" "1px solid blue", style "fill" "green" ]
-                [ Svg.rect [ style "width" "100%" ] []
-                ]
+            ]
+        , Svg.svg [ class "asd", class "asd", class "asd", style "border" "1px solid blue", style "fill" "green" ]
+            [ Svg.rect [ style "width" "100%" ] []
             ]
         ]
 
