@@ -167,6 +167,10 @@ backgroundTileViews dimension walls =
             )
 
 
+type Drawing
+    = TEXT Location String
+
+
 
 -- Main
 
