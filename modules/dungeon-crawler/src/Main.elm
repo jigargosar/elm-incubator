@@ -106,7 +106,8 @@ view model =
             , class "fixed left-0 top-0 bg-black-20"
             , S.noFill
             ]
-            [ Svg.rect [ S.width 100, S.height 100, S.fill "white", S.rx100 ] []
+            [ Svg.rect [ class "w-100 h-100", S.fillBlack ] []
+            , Svg.rect [ S.width 100, S.height 100, S.fill "white", S.rx100 ] []
             , Svg.circle [ S.r 50 ] []
             ]
         , div [ class "pv3 f3 relative" ] [ text "Dungeon Crawler" ]
