@@ -7,18 +7,24 @@ module Tuple.More exposing
     , join
     , map
     , map2
+    , repeat
     , sub
     , toFloat
     , toFloatScaled
     , zero
     )
 
-import Basics.More as Basics exposing (..)
+import Basics.More as B exposing (..)
 
 
 zero : ( number, number )
 zero =
-    ( 0, 0 )
+    repeat 0
+
+
+repeat : a -> ( a, a )
+repeat a =
+    pair a a
 
 
 any : (a -> Bool) -> ( a, a ) -> Bool
@@ -33,22 +39,22 @@ map f =
 
 toFloatScaled : Float -> Int2 -> Float2
 toFloatScaled s =
-    map (Basics.toFloatScaled s)
+    map (B.toFloatScaled s)
 
 
-toFloat : ( Int, Int ) -> ( Float, Float )
+toFloat : Int2 -> Float2
 toFloat =
-    map Basics.toFloat
+    map B.toFloat
 
 
-fromFloat : Float2 -> ( String, String )
+fromFloat : Float2 -> String2
 fromFloat =
-    map String.fromFloat
+    map B.fromFloat
 
 
 fromInt : Int2 -> ( String, String )
 fromInt =
-    map String.fromInt
+    map B.fromInt
 
 
 map2 : (a -> b -> c) -> ( a, a ) -> ( b, b ) -> ( c, c )
@@ -58,12 +64,12 @@ map2 f ( a1, a2 ) ( b1, b2 ) =
 
 sub : ( number, number ) -> ( number, number ) -> ( number, number )
 sub =
-    map2 Basics.sub
+    map2 B.sub
 
 
 add : ( number, number ) -> ( number, number ) -> ( number, number )
 add =
-    map2 Basics.add
+    map2 B.add
 
 
 andMap : ( a, a ) -> ( a -> b, a -> b ) -> ( b, b )

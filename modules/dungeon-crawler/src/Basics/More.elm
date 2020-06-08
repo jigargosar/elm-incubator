@@ -14,6 +14,14 @@ type alias Float2 =
     ( Float, Float )
 
 
+type alias String2 =
+    ( String, String )
+
+
+toFloat =
+    Basics.toFloat
+
+
 allPass : List (a -> Bool) -> a -> Bool
 allPass fs v =
     List.all ((|>) v) fs
@@ -272,6 +280,11 @@ isValidIndex x len =
 
 pairInt : Int -> Int -> Int2
 pairInt =
+    pair
+
+
+pairFloat : Float -> Float -> Float2
+pairFloat =
     pair
 
 
