@@ -91,23 +91,13 @@ type alias HM =
 
 view : Model -> Html Msg
 view model =
-    div [ class "flex flex-column items-center" ]
-        [ div []
-            [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
-            , div
-                [ class "flex relative"
-                ]
-                [ viewGrid model
-                ]
-            ]
-        , Svg.svg [ style "border" "1px solid blue", style "fill" "green" ]
-            [ Svg.rect [ style "width" "100%" ] []
-            ]
+    div [ class "fixed absolute--fill" ]
+        [ div [ class "pv3 f3" ] [ text "Dungeon Crawler" ]
+        , viewWorld model
         ]
 
 
-viewGrid : Model -> HM
-viewGrid model =
+viewWorld model =
     let
         dimension =
             model.dimension
@@ -120,18 +110,16 @@ viewGrid model =
                             (\l ->
                                 words (l |> Location.toTuple |> Tuple.fromInt |> Tuple.join ",")
                                     |> atLocation l
-                                    |> scale 0.3
+                                    |> scale 1
                             )
                    )
     in
-    div [ class "center code f2 bg-black white pa3 br3" ]
-        [ renderDrawing
-            { dimension = dimension
-            , cellSize =
-                Tuple.repeatFloat 32
-            }
-            pictures
-        ]
+    renderDrawing
+        { dimension = dimension
+        , cellSize =
+            Tuple.repeatFloat 32
+        }
+        pictures
 
 
 
@@ -159,6 +147,7 @@ backgroundTiles dimension walls =
                     words "."
                 )
                     |> atLocation location
+                    |> scale 5
             )
 
 
@@ -226,7 +215,7 @@ type Picture
 
 
 commonStyles =
-    class "flex items-center justify-center absolute top-0 left-0 bg-black-50"
+    class "flex items-center justify-center absolute top-0 left-0"
 
 
 renderPicture : Config -> Picture -> Html msg
