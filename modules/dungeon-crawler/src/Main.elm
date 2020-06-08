@@ -11,6 +11,7 @@ import Json.Decode as JD
 import Location exposing (Location)
 import Random exposing (Generator, Seed)
 import Tuple.More as Tuple
+import VirtualDom
 
 
 

@@ -5,6 +5,8 @@ import Html.Attributes
 import List.Extra as List
 import Random exposing (Generator)
 import Random.List
+import Svg.Attributes
+import VirtualDom
 
 
 type alias Int2 =
@@ -235,7 +237,7 @@ attrMaybe mx f =
 
 
 noAttr =
-    Html.Attributes.classList []
+    VirtualDom.style "" ""
 
 
 viewIf bool x =
