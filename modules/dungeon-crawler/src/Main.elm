@@ -36,7 +36,7 @@ type alias Camera =
 
 initialCamera : Camera
 initialCamera =
-    { origin = Tuple.zero }
+    { origin = ( 0, 32 ) }
 
 
 initialGM : GridMap
@@ -161,7 +161,7 @@ view model =
             , ME.onClick SvgClick
             ]
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
-            , Svg.g [ S.transforms [ S.translate model.camera.origin ] ]
+            , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
                 [ circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
                 , viewGridMap model.gm
                 , words "Dungeon Crawler"
