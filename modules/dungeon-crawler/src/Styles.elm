@@ -158,6 +158,7 @@ textAnchorMiddle =
     textAnchor "middle"
 
 
+textAnchorStart : Attribute msg
 textAnchorStart =
     textAnchor "start"
 
@@ -167,6 +168,7 @@ textAnchorEnd =
     textAnchor "end"
 
 
+dominantBaselineCentral : Attribute msg
 dominantBaselineCentral =
     dominantBaseline "central"
 
