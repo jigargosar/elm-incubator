@@ -22,9 +22,18 @@ import Tuple.More as Tuple
 
 type alias Model =
     { dimension : Dimension
-    , dict : Dict Int2 Int
+    , gm : GridMap
     , screenSize : Float2
     , seed : Seed
+    }
+
+
+initialGM : GridMap
+initialGM =
+    { dimension = Dimension.new 3 4
+    , cellSize = twice 64
+    , dict = Dict.empty
+    , offset = Tuple.zero
     }
 
 
@@ -45,7 +54,7 @@ init flags =
             flags.window
     in
     ( { dimension = dimension
-      , dict = Dict.empty
+      , gm = initialGM
       , screenSize = pairFloat window.width window.height
       , seed = initialSeed
       }
@@ -124,7 +133,7 @@ view model =
             ]
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
             , circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
-            , viewGridMap
+            , viewGridMap model.gm
             , words "Dungeon Crawler"
                 [ S.dominantBaselineHanging
                 , S.fillWhite
@@ -166,16 +175,8 @@ gmToWorldCords gm =
     Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add zeroThCellCenter >> Tuple.add gm.offset
 
 
-viewGridMap =
+viewGridMap gm =
     let
-        gm : GridMap
-        gm =
-            { dimension = Dimension.new 3 4
-            , cellSize = twice 64
-            , dict = Dict.empty
-            , offset = Tuple.zero
-            }
-
         toWorldCords =
             gmToWorldCords gm
 
