@@ -175,16 +175,23 @@ gmToWorldCords gm =
     Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add zeroThCellCenter >> Tuple.add gm.offset
 
 
+gmGet : GridMap -> Location -> Maybe Int
+gmGet gm loc =
+    if Dimension.isValidLocation loc gm.dimension then
+        get (Loc.toTuple loc) gm.dict
+
+    else
+        Nothing
+
+
 viewGridMap gm =
     let
         toWorldCords =
             gmToWorldCords gm
 
         dataAt : Location -> String
-        dataAt loc =
-            gm.dict
-                |> getOr 0 (Loc.toTuple loc)
-                |> fromInt
+        dataAt =
+            gmGet gm >> Maybe.withDefault 0 >> fromInt
 
         viewLocationDebug loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
