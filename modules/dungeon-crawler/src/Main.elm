@@ -122,7 +122,7 @@ screenToWorld : Float2 -> Camera -> Float2 -> Float2
 screenToWorld ss cam p =
     ss
         |> Tuple.scale -0.5
-        |> Tuple.add (Tuple.negate cam.origin)
+        |> Tuple.add cam.origin
         |> Tuple.add p
 
 
