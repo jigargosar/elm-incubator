@@ -1,4 +1,4 @@
-module Styles exposing (dominantBaselineCentral, fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noFill, noSelect, r, rx, rx100, rxPct, scale, stroke, strokeBlack, strokeBlackA, strokeWhite, strokeWhiteA, strokeWidth, textAnchorMiddle, transforms, translate, width, widthPct, x, y)
+module Styles exposing (dominantBaselineCentral, fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noEvents, noFill, noSelect, r, rx, rx100, rxPct, scale, stroke, strokeBlack, strokeBlackA, strokeWhite, strokeWhiteA, strokeWidth, textAnchorMiddle, transforms, translate, width, widthPct, x, y)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -171,6 +171,11 @@ rx100 =
 noSelect : Attribute msg
 noSelect =
     style "user-select" "none"
+
+
+noEvents : Attribute msg
+noEvents =
+    style "pointer-events" "none"
 
 
 

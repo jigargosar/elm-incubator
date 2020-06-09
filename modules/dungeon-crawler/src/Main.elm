@@ -124,7 +124,10 @@ view model =
             , circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
             , viewGridMap
             ]
-        , div [ class "relative pv3 f3 white tc" ] [ text "Dungeon Crawler" ]
+        , div [ class "relative", S.noEvents ]
+            [ div [ class "pv3 f3 white tc" ]
+                [ text "Dungeon Crawler" ]
+            ]
         ]
 
 
