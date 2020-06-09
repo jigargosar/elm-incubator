@@ -118,6 +118,7 @@ update message model =
             )
 
 
+screenToWorld : Float2 -> Camera -> Float2 -> Float2
 screenToWorld ss cam p =
     ss
         |> Tuple.scale -0.5
