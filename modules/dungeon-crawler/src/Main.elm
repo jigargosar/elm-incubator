@@ -201,22 +201,8 @@ gmToWorldCords gm loc =
             loc
                 |> Loc.toFloat
                 |> Tuple.mul gm.cellSize
-
-        a2 =
-            Tuple.add zCenter locOffset
-
-        a1 =
-            loc
-                |> Loc.toFloat
-                |> Tuple.mul gm.cellSize
-                |> Tuple.add (gm.cellSize |> Tuple.halve)
-                |> Tuple.add (Tuple.negate (gmSize gm |> Tuple.halve))
-                |> Tuple.add gm.offset
-
-        _ =
-            Debug.log "debug" (a1 == a2)
     in
-    a1
+    Tuple.add zCenter locOffset
 
 
 gmFromWorldCords : GridMap -> Float2 -> Maybe Location
