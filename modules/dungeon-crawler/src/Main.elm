@@ -209,22 +209,10 @@ gmFromWorldCords : GridMap -> Float2 -> Maybe Location
 gmFromWorldCords gm wc =
     let
         loc =
-            wc
-                |> Tuple.add (Tuple.negate gm.offset)
-                |> Tuple.add (gmSize gm |> Tuple.halve)
-                |> Tuple.add (Tuple.negate (gm.cellSize |> Tuple.halve))
-                |> Tuple.mul (Tuple.invert gm.cellSize)
-                |> Tuple.map round
-                |> Loc.fromTuple
-
-        loc2 =
             Tuple.sub wc (gmZerothCellCenter gm)
                 |> Tuple.mul (Tuple.invert gm.cellSize)
                 |> Tuple.map round
                 |> Loc.fromTuple
-
-        _ =
-            Debug.log "debug" (loc == loc2)
     in
     Dimension.validLocation loc gm.dimension
 
