@@ -184,19 +184,9 @@ gmToWorldCords gm =
 
 
 gmFromWorldCords gm wc =
-    let
-        leftTop =
-            gm
-                |> gmSize
-                |> Tuple.scale -0.5
-
-        zeroThCellCenter =
-            leftTop
-                |> Tuple.add (gm.cellSize |> Tuple.halve)
-    in
     wc
         |> Tuple.add (Tuple.negate gm.offset)
-        |> Tuple.add (Tuple.negate zeroThCellCenter)
+        |> Tuple.add (Tuple.add (gm.cellSize |> Tuple.halve |> Tuple.negate) (gmSize gm |> Tuple.halve))
         |> Tuple.mul (Tuple.invert gm.cellSize)
         |> Tuple.map floor
 
