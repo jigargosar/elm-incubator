@@ -318,7 +318,7 @@ viewGridMap gm =
                 [ rect gm.cellSize [ S.strokeWhite ]
                 , words (Debug.toString loc)
                     [ S.fillWhite
-                    , S.transforms [ S.translateY (gm.cellSize |> first |> mul -0.25) ]
+                    , S.transforms [ S.translateY (gm.cellSize |> first |> mul -0.3), S.scale 0.8 ]
                     ]
                 , words (dataAt loc) [ S.fillWhite ]
                 ]
