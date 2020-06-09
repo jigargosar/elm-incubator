@@ -179,6 +179,8 @@ gmGet : GridMap -> Location -> Maybe Int
 gmGet gm loc =
     if Dimension.isValidLocation loc gm.dimension then
         get (Loc.toTuple loc) gm.dict
+            |> Maybe.withDefault 0
+            |> Just
 
     else
         Nothing
