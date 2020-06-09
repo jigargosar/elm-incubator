@@ -58,7 +58,8 @@ type alias Player =
 
 initialPlayer : Player
 initialPlayer =
-    { loc = Loc.zero }
+    { loc = Loc.fromTuple ( 10, 10 )
+    }
 
 
 
