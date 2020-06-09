@@ -159,7 +159,7 @@ viewGridMap =
         toWorldCords =
             gmToWorldCords gm
 
-        viewLocation loc =
+        viewLocationDebug loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
                 [ rect gm.cellSize [ S.strokeWhite ]
                 , words (Debug.toString loc) [ S.fillWhite ]
@@ -171,7 +171,7 @@ viewGridMap =
         , Svg.g []
             (gm.dimension
                 |> Dimension.toLocations
-                |> List.map viewLocation
+                |> List.map viewLocationDebug
             )
         ]
 
