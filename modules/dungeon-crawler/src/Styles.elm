@@ -24,6 +24,7 @@ module Styles exposing
     , strokeWhiteA
     , strokeWidth
     , textAnchorMiddle
+    , textAnchorStart
     , transforms
     , translate
     , translateX
@@ -154,6 +155,10 @@ textAnchor =
 
 textAnchorMiddle =
     textAnchor "middle"
+
+
+textAnchorStart =
+    textAnchor "start"
 
 
 dominantBaselineCentral =
