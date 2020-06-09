@@ -1,5 +1,6 @@
 module Styles exposing
     ( dominantBaselineCentral
+    , dominantBaselineHanging
     , fade
     , fill
     , fillBlack
@@ -157,6 +158,11 @@ textAnchorMiddle =
 
 dominantBaselineCentral =
     dominantBaseline "central"
+
+
+dominantBaselineHanging : Attribute msg
+dominantBaselineHanging =
+    dominantBaseline "hanging"
 
 
 dominantBaseline : String -> Attribute msg
