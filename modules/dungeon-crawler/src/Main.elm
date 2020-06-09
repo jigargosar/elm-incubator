@@ -16,18 +16,6 @@ import Svg.Attributes as SA
 import Tuple.More as Tuple
 
 
-
--- Model
-
-
-type alias Model =
-    { gm : GridMap
-    , camera : Camera
-    , screenSize : Float2
-    , seed : Seed
-    }
-
-
 type alias Camera =
     { origin : Float2
     }
@@ -57,6 +45,18 @@ initialGM =
     , cellSize = twice 64
     , dict = Dict.empty
     , offset = Tuple.zero
+    }
+
+
+
+-- Model
+
+
+type alias Model =
+    { gm : GridMap
+    , camera : Camera
+    , screenSize : Float2
+    , seed : Seed
     }
 
 
