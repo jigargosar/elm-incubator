@@ -22,6 +22,7 @@ import Tuple.More as Tuple
 
 type alias Model =
     { dimension : Dimension
+    , dict : Dict Int2 Int
     , screenSize : Float2
     , seed : Seed
     }
@@ -44,6 +45,7 @@ init flags =
             flags.window
     in
     ( { dimension = dimension
+      , dict = Dict.empty
       , screenSize = pairFloat window.width window.height
       , seed = initialSeed
       }
