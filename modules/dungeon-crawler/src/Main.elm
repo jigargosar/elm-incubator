@@ -215,6 +215,7 @@ view model =
                 ]
             , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
                 [ viewGridMap model.gm
+                , viewPlayer model.gm model.player
                 ]
             , Svg.g []
                 [ words "Dungeon Crawler"
@@ -227,6 +228,16 @@ view model =
             ]
         , div [ class "relative", S.noEvents ]
             [ div [ class "pv3 f3 white tc dn" ] [ text "Dungeon Crawler" ]
+            ]
+        ]
+
+
+viewPlayer gm player =
+    Svg.g [ S.transforms [ S.translate (gmToWorldCords gm player.loc) ] ]
+        [ circle (Tuple.first gm.cellSize)
+            [ S.fill "dodgerblue"
+            , S.transforms [ S.scale 0.5 ]
+            , S.fade 0.8
             ]
         ]
 
