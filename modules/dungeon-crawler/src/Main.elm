@@ -104,7 +104,7 @@ update message model =
         SvgClick event ->
             let
                 maybeLoc =
-                    screenToWorld model.screenSize event.offsetPos
+                    screenToWorld model.screenSize model.camera event.offsetPos
                         |> gmFromWorldCords model.gm
                         |> Debug.log "debug"
             in
@@ -118,9 +118,10 @@ update message model =
             )
 
 
-screenToWorld ss p =
+screenToWorld ss cam p =
     ss
         |> Tuple.scale -0.5
+        |> Tuple.add (Tuple.negate cam.origin)
         |> Tuple.add p
 
 
