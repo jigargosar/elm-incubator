@@ -4,6 +4,7 @@ module Tuple.More exposing
     , any
     , fromFloat
     , fromInt
+    , halve
     , join
     , map
     , map2
@@ -89,6 +90,11 @@ add =
 scale : number -> ( number, number ) -> ( number, number )
 scale s =
     map (B.mul s)
+
+
+halve : Float2 -> Float2
+halve =
+    scale 0.5
 
 
 mul : ( number, number ) -> ( number, number ) -> ( number, number )

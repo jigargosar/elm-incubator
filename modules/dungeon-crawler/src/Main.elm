@@ -135,7 +135,7 @@ gmToWorldCords gm =
         gmOrigin =
             gmSize gm
                 |> Tuple.sub gm.cellSize
-                |> Tuple.scale 0.5
+                |> Tuple.halve
     in
     Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
 
