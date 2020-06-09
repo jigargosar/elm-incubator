@@ -23,9 +23,20 @@ import Tuple.More as Tuple
 type alias Model =
     { dimension : Dimension
     , gm : GridMap
+    , camera : Camera
     , screenSize : Float2
     , seed : Seed
     }
+
+
+type alias Camera =
+    { origin : Float2
+    }
+
+
+initialCamera : Camera
+initialCamera =
+    { origin = Tuple.zero }
 
 
 initialGM : GridMap
@@ -56,6 +67,7 @@ init flags =
     ( { dimension = dimension
       , gm = initialGM
       , screenSize = pairFloat window.width window.height
+      , camera = initialCamera
       , seed = initialSeed
       }
     , Cmd.none
