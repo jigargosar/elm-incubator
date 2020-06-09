@@ -216,6 +216,14 @@ gmFromWorldCords gm wc =
                 |> Tuple.mul (Tuple.invert gm.cellSize)
                 |> Tuple.map round
                 |> Loc.fromTuple
+
+        loc2 =
+            Tuple.sub (gmZerothCellCenter gm) wc
+                |> Tuple.map round
+                |> Loc.fromTuple
+
+        _ =
+            Debug.log "debug" (loc == loc2)
     in
     Dimension.validLocation loc gm.dimension
 
