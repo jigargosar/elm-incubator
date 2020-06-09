@@ -6,6 +6,7 @@ import Browser.Events
 import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
+import Html.Events.Extra.Mouse as ME
 import Json.Decode as JD
 import Location as Loc exposing (Location)
 import Random exposing (Generator, Seed)
@@ -58,6 +59,7 @@ type Msg
     = NoOp
     | KeyDown String
     | Tick Float
+    | SvgClick ME.Event
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -75,6 +77,13 @@ update message model =
             ( model
             , Cmd.none
             )
+
+        SvgClick event ->
+            let
+                _ =
+                    Debug.log "event" event
+            in
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -109,6 +118,7 @@ view model =
             , class "fixed left-0 top-0"
             , SA.viewBox ([ sw / -2, sh / -2, sw, sh ] |> spacedFloats)
             , S.noFill
+            , ME.onClick SvgClick
             ]
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
             , circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
