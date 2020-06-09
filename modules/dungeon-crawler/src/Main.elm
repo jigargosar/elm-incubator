@@ -316,7 +316,8 @@ viewGridMap gm =
         viewLocationDebug loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
                 [ rect gm.cellSize [ S.strokeWhite ]
-                , words (Debug.toString loc) [ S.fillWhite, S.transforms [ S.translateY (gm.cellSize |> first |> mul -0.25) ] ]
+                , words (Debug.toString loc)
+                    [ S.fillWhite, S.transforms [ S.translateY (gm.cellSize |> first |> mul -0.25) ] ]
                 , words (dataAt loc) [ S.fillWhite ]
                 ]
     in
