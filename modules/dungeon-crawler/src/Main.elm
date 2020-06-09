@@ -218,7 +218,8 @@ gmFromWorldCords gm wc =
                 |> Loc.fromTuple
 
         loc2 =
-            Tuple.sub (gmZerothCellCenter gm) wc
+            Tuple.sub wc (gmZerothCellCenter gm)
+                |> Tuple.mul (Tuple.invert gm.cellSize)
                 |> Tuple.map round
                 |> Loc.fromTuple
 
