@@ -117,9 +117,14 @@ focusLoc ss gm loc cam =
             Tuple.add leftTop (Tuple.halve ss)
                 |> Tuple.add (Tuple.negate gm.cellSize)
 
+        maxCamCord =
+            Tuple.add (gmRightBottom gm) (Tuple.negate (Tuple.halve ss))
+                |> Tuple.add gm.cellSize
+
         focusCord =
             locCord
                 |> Tuple.map2 atLeast minCamCord
+                |> Tuple.map2 atMost maxCamCord
     in
     camFocus focusCord cam
 
@@ -294,6 +299,13 @@ gmLeftTop : GridMap -> Float2
 gmLeftTop gm =
     gmSize gm
         |> Tuple.scale -0.5
+        |> Tuple.add gm.offset
+
+
+gmRightBottom : GridMap -> Float2
+gmRightBottom gm =
+    gmSize gm
+        |> Tuple.scale 0.5
         |> Tuple.add gm.offset
 
 
