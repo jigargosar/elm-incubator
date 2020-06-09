@@ -23,6 +23,7 @@ module Styles exposing
     , strokeWhite
     , strokeWhiteA
     , strokeWidth
+    , textAnchorEnd
     , textAnchorMiddle
     , textAnchorStart
     , transforms
@@ -159,6 +160,11 @@ textAnchorMiddle =
 
 textAnchorStart =
     textAnchor "start"
+
+
+textAnchorEnd : Attribute msg
+textAnchorEnd =
+    textAnchor "end"
 
 
 dominantBaselineCentral =
