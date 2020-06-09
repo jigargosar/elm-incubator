@@ -168,7 +168,7 @@ update message model =
             )
 
 
-keyToXY : String -> Float2
+keyToXY : String -> Int2
 keyToXY string =
     case string of
         "ArrowLeft" ->
