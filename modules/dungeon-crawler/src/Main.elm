@@ -104,6 +104,7 @@ focusLoc ss gm loc cam =
 
         minCamCord =
             Tuple.add leftTop (Tuple.halve ss)
+                |> Tuple.add (Tuple.negate gm.cellSize)
 
         focusCord =
             locCord
