@@ -122,6 +122,7 @@ type alias GridMap =
     { dimension : Dimension
     , cellSize : Float2
     , dict : Dict Int2 Int
+    , offset : Float2
     }
 
 
@@ -142,7 +143,7 @@ gmToWorldCords gm =
             leftTop
                 |> Tuple.add (gm.cellSize |> Tuple.halve)
     in
-    Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add zeroThCellCenter
+    Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add zeroThCellCenter >> Tuple.add gm.offset
 
 
 viewGridMap =
@@ -152,6 +153,7 @@ viewGridMap =
             { dimension = Dimension.new 3 4
             , cellSize = twice 64
             , dict = Dict.empty
+            , offset = Tuple.zero
             }
 
         toWorldCords =
