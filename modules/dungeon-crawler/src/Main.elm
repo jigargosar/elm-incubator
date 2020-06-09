@@ -13,7 +13,6 @@ import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
 import Svg.Attributes as SA
-import Tuple exposing (first)
 import Tuple.More as Tuple
 
 
@@ -22,8 +21,7 @@ import Tuple.More as Tuple
 
 
 type alias Model =
-    { dimension : Dimension
-    , gm : GridMap
+    { gm : GridMap
     , camera : Camera
     , screenSize : Float2
     , seed : Seed
@@ -78,8 +76,7 @@ init flags =
         window =
             flags.window
     in
-    ( { dimension = dimension
-      , gm = initialGM
+    ( { gm = initialGM
       , screenSize = pairFloat window.width window.height
       , camera = initialCamera
       , seed = initialSeed
