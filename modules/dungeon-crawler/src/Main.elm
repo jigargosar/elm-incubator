@@ -96,7 +96,14 @@ update message model =
                         |> gmFromWorldCords model.gm
                         |> Debug.log "debug"
             in
-            ( model, Cmd.none )
+            ( case maybeLoc of
+                Just loc ->
+                    model
+
+                Nothing ->
+                    model
+            , Cmd.none
+            )
 
 
 screenToWorld ss p =
