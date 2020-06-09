@@ -1,17 +1,58 @@
-module Styles exposing (dominantBaselineCentral, fade, fill, fillBlack, fillBlackA, fillWhite, fillWhiteA, height, heightPct, noEvents, noFill, noSelect, r, rx, rx100, rxPct, scale, stroke, strokeBlack, strokeBlackA, strokeWhite, strokeWhiteA, strokeWidth, textAnchorMiddle, transforms, translate, width, widthPct, x, y)
+module Styles exposing
+    ( dominantBaselineCentral
+    , fade
+    , fill
+    , fillBlack
+    , fillBlackA
+    , fillWhite
+    , fillWhiteA
+    , height
+    , heightPct
+    , noEvents
+    , noFill
+    , noSelect
+    , r
+    , rx
+    , rx100
+    , rxPct
+    , scale
+    , stroke
+    , strokeBlack
+    , strokeBlackA
+    , strokeWhite
+    , strokeWhiteA
+    , strokeWidth
+    , textAnchorMiddle
+    , transforms
+    , translate
+    , translateX
+    , translateY
+    , width
+    , widthPct
+    , x
+    , y
+    )
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
 import VirtualDom exposing (Attribute)
 
 
-translate : ( Float, Float ) -> String
+translate : Float2 -> String
 translate dxy =
     dxy
         |> Tuple.map pxFromFloat
         |> Tuple.join ","
         |> paren
         |> append "translate"
+
+
+translateX n =
+    translate ( n, 0 )
+
+
+translateY n =
+    translate ( 0, n )
 
 
 scale : Float -> String

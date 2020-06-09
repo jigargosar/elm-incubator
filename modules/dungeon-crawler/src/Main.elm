@@ -123,11 +123,10 @@ view model =
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
             , circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
             , viewGridMap
-            , words "Dungeon Crawler" [ S.fillWhite, class "f3" ]
+            , words "Dungeon Crawler" [ S.fillWhite, class "f3", S.transforms [ S.translateY (sh * -0.5 + 32) ] ]
             ]
         , div [ class "relative", S.noEvents ]
-            [ div [ class "pv3 f3 white tc" ]
-                [ text "Dungeon Crawler" ]
+            [ div [ class "pv3 f3 white tc dn" ] [ text "Dungeon Crawler" ]
             ]
         ]
 
