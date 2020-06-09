@@ -83,8 +83,14 @@ init flags =
       , camera = initialCamera
       , seed = initialSeed
       }
+        |> postInit
     , Cmd.none
     )
+
+
+postInit : Model -> Model
+postInit model =
+    { model | camera = focusLoc model.gm Loc.zero model.camera }
 
 
 focusLoc : GridMap -> Location -> Camera -> Camera
