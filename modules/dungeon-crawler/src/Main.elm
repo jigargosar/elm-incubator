@@ -39,6 +39,11 @@ initialCamera =
     { origin = ( 0, 32 ) }
 
 
+camFocus : Float2 -> Camera -> Camera
+camFocus wp camera =
+    { camera | origin = wp }
+
+
 type alias GridMap =
     { dimension : Dimension
     , cellSize : Float2
@@ -80,6 +85,12 @@ init flags =
       }
     , Cmd.none
     )
+
+
+focusLoc : GridMap -> Location -> Camera -> Camera
+focusLoc gm loc cam =
+    cam
+        |> camFocus (gmToWorldCords gm loc)
 
 
 
