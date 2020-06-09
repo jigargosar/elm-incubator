@@ -23,7 +23,7 @@ type alias Camera =
 
 initialCamera : Camera
 initialCamera =
-    { origin = ( 0, 32 ) }
+    { origin = ( 0, 0 ) }
 
 
 camFocus : Float2 -> Camera -> Camera
