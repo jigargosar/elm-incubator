@@ -360,6 +360,11 @@ floatTwice =
     twice
 
 
+negate : number -> number
+negate =
+    mul -1
+
+
 twice : a -> ( a, a )
 twice x =
     pair x x

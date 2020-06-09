@@ -132,12 +132,16 @@ gmSize gm =
 
 gmToWorldCords gm =
     let
-        gmOrigin =
-            gmSize gm
-                |> Tuple.sub gm.cellSize
-                |> Tuple.halve
+        leftTop =
+            gm
+                |> gmSize
+                |> Tuple.scale -0.5
+
+        zeroThCellCenter =
+            leftTop
+                |> Tuple.add (gm.cellSize |> Tuple.halve)
     in
-    Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add gmOrigin
+    Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add zeroThCellCenter
 
 
 viewGridMap =

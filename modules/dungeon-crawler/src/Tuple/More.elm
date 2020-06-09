@@ -9,6 +9,7 @@ module Tuple.More exposing
     , map
     , map2
     , mul
+    , negate
     , repeat
     , scale
     , spaced
@@ -95,6 +96,11 @@ scale s =
 halve : Float2 -> Float2
 halve =
     scale 0.5
+
+
+negate : ( number, number ) -> ( number, number )
+negate =
+    map B.negate
 
 
 mul : ( number, number ) -> ( number, number ) -> ( number, number )
