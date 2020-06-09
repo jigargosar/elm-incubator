@@ -91,7 +91,7 @@ update message model =
 
         SvgClick event ->
             let
-                loc =
+                maybeLoc =
                     screenToWorld model.screenSize event.offsetPos
                         |> gmFromWorldCords model.gm
                         |> Debug.log "debug"
