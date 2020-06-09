@@ -90,13 +90,26 @@ init flags =
 
 postInit : Model -> Model
 postInit model =
-    { model | camera = focusLoc model.gm Loc.zero model.camera }
+    { model | camera = focusLoc model.screenSize model.gm Loc.zero model.camera }
 
 
-focusLoc : GridMap -> Location -> Camera -> Camera
-focusLoc gm loc cam =
-    cam
-        |> camFocus (gmToWorldCords gm loc)
+focusLoc : Float2 -> GridMap -> Location -> Camera -> Camera
+focusLoc ss gm loc cam =
+    let
+        locCord =
+            gmToWorldCords gm loc
+
+        leftTop =
+            gmLeftTop gm
+
+        minCamCord =
+            Tuple.add leftTop (Tuple.halve ss)
+
+        focusCord =
+            locCord
+                |> Tuple.map2 atLeast minCamCord
+    in
+    camFocus focusCord cam
 
 
 
@@ -212,13 +225,18 @@ gmSize gm =
         |> Tuple.mul gm.cellSize
 
 
+gmLeftTop : GridMap -> Float2
+gmLeftTop gm =
+    gmSize gm
+        |> Tuple.scale -0.5
+        |> Tuple.add gm.offset
+
+
 gmZerothCellCenter gm =
     let
         leftTop =
             gm
-                |> gmSize
-                |> Tuple.scale -0.5
-                |> Tuple.add gm.offset
+                |> gmLeftTop
 
         halfCellSize =
             gm.cellSize
