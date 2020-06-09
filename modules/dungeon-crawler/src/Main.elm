@@ -49,7 +49,7 @@ type alias GridMap =
 
 initialGM : GridMap
 initialGM =
-    { dimension = Dimension.new 3 4
+    { dimension = Dimension.new 50 50
     , cellSize = twice 64
     , dict = Dict.empty
     , offset = Tuple.zero
