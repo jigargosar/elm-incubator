@@ -145,8 +145,27 @@ update message model =
             let
                 player =
                     model.player
+
+                gm =
+                    model.gm
+
+                dxy =
+                    keyToXY key
+
+                ml =
+                    Dimension.validLocation
+                        (player.loc |> Loc.shift dxy)
+                        gm.dimension
+
+                nPlayer =
+                    case ml of
+                        Nothing ->
+                            player
+
+                        Just loc ->
+                            { player | loc = loc }
             in
-            ( { model | player = { player | loc = player.loc |> Loc.shift (keyToXY key) } }
+            ( { model | player = nPlayer }
                 |> focusPlayer
             , Cmd.none
             )
@@ -173,7 +192,6 @@ update message model =
             )
 
 
-keyToXY : String -> Int2
 keyToXY string =
     case string of
         "ArrowLeft" ->
