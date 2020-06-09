@@ -67,9 +67,6 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
-        dimension =
-            Dimension.new 12 16
-
         initialSeed =
             Random.initialSeed (flags.now |> always 4)
 
@@ -343,9 +340,10 @@ circle r xs =
     Svg.circle (S.r r :: xs) []
 
 
-square : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
-square w =
-    rect (Tuple.repeat w)
+
+--square : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
+--square w =
+--    rect (Tuple.repeat w)
 
 
 rect : Float2 -> List (Svg.Attribute msg) -> Svg.Svg msg
