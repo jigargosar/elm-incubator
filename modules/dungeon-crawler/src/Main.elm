@@ -161,10 +161,14 @@ view model =
             , ME.onClick SvgClick
             ]
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
-            , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
+            , Svg.g []
                 [ circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
-                , viewGridMap model.gm
-                , words "Dungeon Crawler"
+                ]
+            , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
+                [ viewGridMap model.gm
+                ]
+            , Svg.g []
+                [ words "Dungeon Crawler"
                     [ S.dominantBaselineHanging
                     , S.fillWhite
                     , class "f3"
