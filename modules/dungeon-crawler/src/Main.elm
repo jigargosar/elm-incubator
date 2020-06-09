@@ -39,6 +39,14 @@ initialCamera =
     { origin = ( 0, 32 ) }
 
 
+type alias GridMap =
+    { dimension : Dimension
+    , cellSize : Float2
+    , dict : Dict Int2 Int
+    , offset : Float2
+    }
+
+
 initialGM : GridMap
 initialGM =
     { dimension = Dimension.new 3 4
@@ -180,14 +188,6 @@ view model =
             [ div [ class "pv3 f3 white tc dn" ] [ text "Dungeon Crawler" ]
             ]
         ]
-
-
-type alias GridMap =
-    { dimension : Dimension
-    , cellSize : Float2
-    , dict : Dict Int2 Int
-    , offset : Float2
-    }
 
 
 gmSize gm =
