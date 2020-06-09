@@ -10,6 +10,7 @@ module Location exposing
     , map2
     , new
     , right
+    , shift
     , toFloat
     , toTuple
     , up
@@ -49,20 +50,25 @@ toFloat =
     toTuple >> Tuple.toFloat
 
 
-mapAsInternal : (Int2 -> Int2) -> Location -> Location
-mapAsInternal f =
+mapInternal : (Int2 -> Int2) -> Location -> Location
+mapInternal f =
     toTuple >> f >> fromTuple
 
 
 map : (Int -> Int) -> Location -> Location
 map f =
-    mapAsInternal (Tuple.map f)
+    mapInternal (Tuple.map f)
 
 
 map2 : (Int -> Int -> Int) -> Location -> Location -> Location
 map2 f a b =
     Tuple.map2 f (toTuple a) (toTuple b)
         |> fromTuple
+
+
+shift : Int2 -> Location -> Location
+shift xy =
+    mapInternal (Tuple.add xy)
 
 
 any : (Int -> Bool) -> Location -> Bool

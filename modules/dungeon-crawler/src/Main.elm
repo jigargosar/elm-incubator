@@ -141,8 +141,12 @@ update message model =
         NoOp ->
             ( model, Cmd.none )
 
-        KeyDown _ ->
-            ( model
+        KeyDown key ->
+            let
+                player =
+                    model.player
+            in
+            ( { model | player = { player | loc = player.loc |> Loc.shift (keyToXY key) } }
             , Cmd.none
             )
 
