@@ -94,13 +94,13 @@ init flags =
       , camera = initialCamera
       , seed = initialSeed
       }
-        |> postInit
+        |> focusPlayer
     , Cmd.none
     )
 
 
-postInit : Model -> Model
-postInit model =
+focusPlayer : Model -> Model
+focusPlayer model =
     { model | camera = focusLoc model.screenSize model.gm model.player.loc model.camera }
 
 
@@ -147,6 +147,7 @@ update message model =
                     model.player
             in
             ( { model | player = { player | loc = player.loc |> Loc.shift (keyToXY key) } }
+                |> focusPlayer
             , Cmd.none
             )
 
