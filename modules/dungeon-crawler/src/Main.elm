@@ -170,20 +170,11 @@ gmSize gm =
 
 gmToWorldCords : GridMap -> Location -> Float2
 gmToWorldCords gm loc =
-    let
-        leftTop =
-            gm
-                |> gmSize
-                |> Tuple.scale -0.5
-
-        zeroThCellCenter =
-            leftTop
-                |> Tuple.add (gm.cellSize |> Tuple.halve)
-    in
     loc
         |> Loc.toFloat
         |> Tuple.mul gm.cellSize
-        |> Tuple.add zeroThCellCenter
+        |> Tuple.add (gm.cellSize |> Tuple.halve)
+        |> Tuple.add (gmSize gm |> Tuple.halve |> Tuple.negate)
         |> Tuple.add gm.offset
 
 
