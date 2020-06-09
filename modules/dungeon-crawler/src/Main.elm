@@ -193,7 +193,7 @@ viewGridMap gm =
 
         dataAt : Location -> String
         dataAt =
-            gmGet gm >> Maybe.withDefault 0 >> fromInt
+            gmGet gm >> Maybe.map fromInt >> Maybe.withDefault "invalid loc"
 
         viewLocationDebug loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
