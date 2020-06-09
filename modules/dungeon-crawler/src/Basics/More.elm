@@ -1,5 +1,6 @@
 module Basics.More exposing (..)
 
+import Dict
 import List.Extra as List
 import Random exposing (Generator)
 import Random.List
@@ -399,3 +400,13 @@ indices n =
 
 times n f =
     indices n |> List.map f
+
+
+get : comparable -> Dict.Dict comparable v -> Maybe v
+get =
+    Dict.get
+
+
+getOr : a -> comparable -> Dict.Dict comparable a -> a
+getOr default key =
+    get key >> Maybe.withDefault default

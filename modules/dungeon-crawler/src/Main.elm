@@ -159,10 +159,16 @@ viewGridMap =
         toWorldCords =
             gmToWorldCords gm
 
+        dataAt : Location -> String
+        dataAt loc =
+            gm.dict
+                |> getOr 0 (Loc.toTuple loc)
+                |> fromInt
+
         viewLocationDebug loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
                 [ rect gm.cellSize [ S.strokeWhite ]
-                , words (Debug.toString loc) [ S.fillWhite ]
+                , words (dataAt loc) [ S.fillWhite ]
                 ]
     in
     Svg.g []
