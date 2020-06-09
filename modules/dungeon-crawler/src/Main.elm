@@ -123,6 +123,7 @@ view model =
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
             , circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
             , viewGridMap
+            , words "Dungeon Crawler" [ S.fillWhite, class "f3" ]
             ]
         , div [ class "relative", S.noEvents ]
             [ div [ class "pv3 f3 white tc" ]
