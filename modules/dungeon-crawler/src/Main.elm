@@ -175,6 +175,21 @@ gmSize gm =
         |> Tuple.mul gm.cellSize
 
 
+gmZerothCellCenter gm =
+    let
+        leftTop =
+            gm
+                |> gmSize
+                |> Tuple.scale -0.5
+                |> Tuple.add gm.offset
+
+        halfCellSize =
+            gm.cellSize
+                |> Tuple.halve
+    in
+    Tuple.add leftTop halfCellSize
+
+
 gmToWorldCords : GridMap -> Location -> Float2
 gmToWorldCords gm loc =
     loc
