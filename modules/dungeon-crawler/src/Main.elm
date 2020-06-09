@@ -316,11 +316,16 @@ viewGridMap gm =
         viewLocationDebug loc =
             Svg.g [ S.transforms [ S.translate (toWorldCords loc) ] ]
                 [ rect gm.cellSize [ S.strokeWhite ]
-                , words (Debug.toString loc)
+                , words (loc |> Loc.toTuple |> Debug.toString)
                     [ S.fillWhite
                     , S.textAnchorStart
                     , S.dominantBaselineHanging
-                    , S.transforms [ S.translate (gm.cellSize |> Tuple.scale -0.5), S.scale 0.8 ]
+                    , S.transforms
+                        [ S.translate (gm.cellSize |> Tuple.scale -0.5)
+                        , S.scale 0.9
+                        , S.translate ( 2, 2 )
+                        ]
+                    , S.fade 0.5
                     ]
                 , words (dataAt loc) [ S.fillWhite ]
                 ]
