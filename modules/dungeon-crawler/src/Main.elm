@@ -131,7 +131,7 @@ gmSize gm =
         |> Tuple.mul gm.cellSize
 
 
-gmToWorldCords : GridMap -> Location -> ( Float, Float )
+gmToWorldCords : GridMap -> Location -> Float2
 gmToWorldCords gm =
     let
         leftTop =
