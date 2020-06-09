@@ -174,14 +174,15 @@ gmToWorldCords gm loc =
         |> Loc.toFloat
         |> Tuple.mul gm.cellSize
         |> Tuple.add (gm.cellSize |> Tuple.halve)
-        |> Tuple.add (gmSize gm |> Tuple.halve |> Tuple.negate)
+        |> Tuple.add (Tuple.negate (gmSize gm |> Tuple.halve))
         |> Tuple.add gm.offset
 
 
 gmFromWorldCords gm wc =
     wc
         |> Tuple.add (Tuple.negate gm.offset)
-        |> Tuple.add (Tuple.add (gm.cellSize |> Tuple.halve |> Tuple.negate) (gmSize gm |> Tuple.halve))
+        |> Tuple.add (gmSize gm |> Tuple.halve)
+        |> Tuple.add (Tuple.negate (gm.cellSize |> Tuple.halve))
         |> Tuple.mul (Tuple.invert gm.cellSize)
         |> Tuple.map round
 
