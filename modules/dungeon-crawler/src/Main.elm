@@ -168,6 +168,25 @@ update message model =
             )
 
 
+keyToXY : String -> Float2
+keyToXY string =
+    case string of
+        "ArrowLeft" ->
+            ( -1, 0 )
+
+        "ArrowRight" ->
+            ( 1, 0 )
+
+        "ArrowUp" ->
+            ( 0, -1 )
+
+        "ArrowDown" ->
+            ( 0, 1 )
+
+        _ ->
+            ( 0, 0 )
+
+
 screenToWorld : Float2 -> Camera -> Float2 -> Float2
 screenToWorld ss cam p =
     ss
