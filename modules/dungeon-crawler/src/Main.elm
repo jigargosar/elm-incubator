@@ -178,13 +178,19 @@ gmToWorldCords gm loc =
         |> Tuple.add gm.offset
 
 
+gmFromWorldCords : GridMap -> Float2 -> Maybe Location
 gmFromWorldCords gm wc =
-    wc
-        |> Tuple.add (Tuple.negate gm.offset)
-        |> Tuple.add (gmSize gm |> Tuple.halve)
-        |> Tuple.add (Tuple.negate (gm.cellSize |> Tuple.halve))
-        |> Tuple.mul (Tuple.invert gm.cellSize)
-        |> Tuple.map round
+    let
+        loc =
+            wc
+                |> Tuple.add (Tuple.negate gm.offset)
+                |> Tuple.add (gmSize gm |> Tuple.halve)
+                |> Tuple.add (Tuple.negate (gm.cellSize |> Tuple.halve))
+                |> Tuple.mul (Tuple.invert gm.cellSize)
+                |> Tuple.map round
+                |> Loc.fromTuple
+    in
+    Dimension.validLocation loc gm.dimension
 
 
 gmGet : GridMap -> Location -> Maybe Int

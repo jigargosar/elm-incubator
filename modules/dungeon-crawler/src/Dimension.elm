@@ -9,6 +9,7 @@ module Dimension exposing
     , toLocationRows
     , toLocations
     , toTuple
+    , validLocation
     , width
     , widthScaled
     )
@@ -93,3 +94,12 @@ isValidLocation location d =
             toTuple d
     in
     isValidIndex x w && isValidIndex y h
+
+
+validLocation : Location -> Dimension -> Maybe Location
+validLocation location dimension =
+    if isValidLocation location dimension then
+        Just location
+
+    else
+        Nothing
