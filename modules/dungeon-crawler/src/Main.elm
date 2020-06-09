@@ -98,7 +98,7 @@ update message model =
             in
             ( case maybeLoc of
                 Just loc ->
-                    model
+                    { model | gm = gmOnLocClick loc model.gm }
 
                 Nothing ->
                     model
@@ -209,6 +209,25 @@ gmGet gm loc =
 
     else
         Nothing
+
+
+gmOnLocClick loc gm =
+    let
+        locTuple =
+            Loc.toTuple loc
+
+        fn mx =
+            case mx of
+                Just 10 ->
+                    Nothing
+
+                Nothing ->
+                    Just 10
+
+                _ ->
+                    Nothing
+    in
+    { gm | dict = gm.dict |> Dict.update locTuple fn }
 
 
 viewGridMap gm =
