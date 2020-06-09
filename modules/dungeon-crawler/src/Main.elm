@@ -49,11 +49,25 @@ initialGM =
 
 
 
+-- Player
+
+
+type alias Player =
+    { loc : Location }
+
+
+initialPlayer : Player
+initialPlayer =
+    { loc = Loc.zero }
+
+
+
 -- Model
 
 
 type alias Model =
     { gm : GridMap
+    , player : Player
     , camera : Camera
     , screenSize : Float2
     , seed : Seed
@@ -74,6 +88,7 @@ init flags =
             flags.window
     in
     ( { gm = initialGM
+      , player = initialPlayer
       , screenSize = pairFloat window.width window.height
       , camera = initialCamera
       , seed = initialSeed
