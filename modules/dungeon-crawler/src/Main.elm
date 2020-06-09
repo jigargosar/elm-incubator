@@ -7,7 +7,7 @@ import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html exposing (Html, div, text)
 import Json.Decode as JD
-import Location as Loc
+import Location as Loc exposing (Location)
 import Random exposing (Generator, Seed)
 import Styles as S
 import Svg
@@ -130,6 +130,7 @@ gmSize gm =
         |> Tuple.mul gm.cellSize
 
 
+gmToWorldCords : GridMap -> Location -> ( Float, Float )
 gmToWorldCords gm =
     let
         leftTop =
