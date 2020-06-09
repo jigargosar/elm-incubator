@@ -5,6 +5,7 @@ module Tuple.More exposing
     , fromFloat
     , fromInt
     , halve
+    , invert
     , join
     , map
     , map2
@@ -101,6 +102,11 @@ halve =
 negate : ( number, number ) -> ( number, number )
 negate =
     map B.negate
+
+
+invert : Float2 -> Float2
+invert =
+    map B.invert
 
 
 mul : ( number, number ) -> ( number, number ) -> ( number, number )

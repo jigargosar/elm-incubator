@@ -366,6 +366,11 @@ negate =
     mul -1
 
 
+invert : Float -> Float
+invert n =
+    1 / n
+
+
 twice : a -> ( a, a )
 twice x =
     pair x x

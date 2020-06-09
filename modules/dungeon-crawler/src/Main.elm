@@ -91,10 +91,18 @@ update message model =
 
         SvgClick event ->
             let
-                _ =
-                    Debug.log "event" event
+                loc =
+                    screenToWorld model.screenSize event.offsetPos
+                        |> gmFromWorldCords model.gm
+                        |> Debug.log "debug"
             in
             ( model, Cmd.none )
+
+
+screenToWorld ss p =
+    ss
+        |> Tuple.scale -0.5
+        |> Tuple.add p
 
 
 subscriptions : Model -> Sub Msg
@@ -173,6 +181,24 @@ gmToWorldCords gm =
                 |> Tuple.add (gm.cellSize |> Tuple.halve)
     in
     Loc.toFloat >> Tuple.mul gm.cellSize >> Tuple.add zeroThCellCenter >> Tuple.add gm.offset
+
+
+gmFromWorldCords gm wc =
+    let
+        leftTop =
+            gm
+                |> gmSize
+                |> Tuple.scale -0.5
+
+        zeroThCellCenter =
+            leftTop
+                |> Tuple.add (gm.cellSize |> Tuple.halve)
+    in
+    wc
+        |> Tuple.add (Tuple.negate gm.offset)
+        |> Tuple.add (Tuple.negate zeroThCellCenter)
+        |> Tuple.mul (Tuple.invert gm.cellSize)
+        |> Tuple.map floor
 
 
 gmGet : GridMap -> Location -> Maybe Int
