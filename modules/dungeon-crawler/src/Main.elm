@@ -100,7 +100,7 @@ init flags =
 
 postInit : Model -> Model
 postInit model =
-    { model | camera = focusLoc model.screenSize model.gm Loc.zero model.camera }
+    { model | camera = focusLoc model.screenSize model.gm model.player.loc model.camera }
 
 
 focusLoc : Float2 -> GridMap -> Location -> Camera -> Camera
