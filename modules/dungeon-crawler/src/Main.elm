@@ -127,7 +127,7 @@ view model =
                 [ S.dominantBaselineHanging
                 , S.fillWhite
                 , class "f3"
-                , S.transforms [ S.translateY (sh * -0.5 + 32) ]
+                , S.transforms [ S.translateY (sh * -0.5 + 16) ]
                 ]
             ]
         , div [ class "relative", S.noEvents ]
