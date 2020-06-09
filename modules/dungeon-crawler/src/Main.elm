@@ -192,6 +192,16 @@ gmZerothCellCenter gm =
 
 gmToWorldCords : GridMap -> Location -> Float2
 gmToWorldCords gm loc =
+    let
+        zCenter =
+            gm
+                |> gmZerothCellCenter
+
+        locCenter =
+            loc
+                |> Loc.toFloat
+                |> Tuple.mul gm.cellSize
+    in
     loc
         |> Loc.toFloat
         |> Tuple.mul gm.cellSize
