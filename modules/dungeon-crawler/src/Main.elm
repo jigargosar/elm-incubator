@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import AABB exposing (AABB)
 import Basics.More exposing (..)
 import Browser
 import Browser.Events
@@ -300,6 +301,13 @@ gmLeftTop gm =
     gmSize gm
         |> Tuple.scale -0.5
         |> Tuple.add gm.offset
+
+
+gmBounds : GridMap -> AABB
+gmBounds gm =
+    gmSize gm
+        |> AABB.fromSize
+        |> AABB.shift gm.offset
 
 
 gmRightBottom : GridMap -> Float2
