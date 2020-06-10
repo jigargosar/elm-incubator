@@ -176,7 +176,6 @@ update message model =
                 maybeLoc =
                     screenToWorld model.screenSize model.camera event.offsetPos
                         |> gmFromWorldCords model.gm
-                        |> Debug.log "debug"
             in
             ( case maybeLoc of
                 Just loc ->
