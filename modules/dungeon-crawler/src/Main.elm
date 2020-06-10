@@ -118,7 +118,7 @@ focusLoc ss gm loc cam =
                 |> Tuple.add (Tuple.negate gm.cellSize)
 
         maxCamCord =
-            Tuple.add (gmRightBottom gm) (Tuple.negate (Tuple.halve ss))
+            Tuple.sub (gmRightBottom gm) (Tuple.halve ss)
                 |> Tuple.add gm.cellSize
 
         focusCord =
