@@ -15,14 +15,6 @@ zeroXY =
 
 fromPointSize : Float2 -> Float2 -> AABB
 fromPointSize xy size =
-    let
-        _ =
-            if Tuple.abs size /= size then
-                Debug.todo "-ve size"
-
-            else
-                1
-    in
     AABB xy (Tuple.abs size)
 
 
@@ -47,14 +39,6 @@ maxXY (AABB xy wh) =
 
 mapSize : (Float2 -> Float2) -> AABB -> AABB
 mapSize f (AABB xy size) =
-    let
-        _ =
-            if Tuple.abs (f size) /= f size then
-                Debug.todo "-ve size"
-
-            else
-                1
-    in
     AABB xy (f size)
 
 
