@@ -273,7 +273,7 @@ view model =
 
 viewPlayer gm player =
     Svg.g [ S.transforms [ S.translate (gmToWorldCords gm player.loc) ] ]
-        [ circle (Tuple.first gm.cellSize)
+        [ circle (uncurry min gm.cellSize)
             [ S.fill "dodgerblue"
             , S.transforms [ S.scale 0.5 ]
             , S.fade 0.8
