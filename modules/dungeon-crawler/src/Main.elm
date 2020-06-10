@@ -286,13 +286,6 @@ gmSize gm =
         |> Tuple.mul gm.cellSize
 
 
-gmLeftTop : GridMap -> Float2
-gmLeftTop gm =
-    gmSize gm
-        |> Tuple.scale -0.5
-        |> Tuple.add gm.offset
-
-
 gmBounds : GridMap -> AABB
 gmBounds gm =
     gmSize gm
@@ -304,7 +297,8 @@ gmZerothCellCenter gm =
     let
         leftTop =
             gm
-                |> gmLeftTop
+                |> gmBounds
+                |> AABB.minXY
 
         halfCellSize =
             gm.cellSize
