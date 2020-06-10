@@ -253,9 +253,17 @@ view model =
                 [ circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
                 , words "ViewPort Background" [ S.fillBlack ]
                 ]
-            , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
-                [ viewGridMap model.gm
-                , viewPlayer model.gm model.player
+            , Svg.g
+                [ S.transforms [ S.scale 0.9, S.translate ( sw / -2, sh / -2 ) ]
+                ]
+                [ Svg.svg
+                    [ SA.viewBox ([ sw / -2, sh / -2, sw, sh ] |> spacedFloats) ]
+                    [ rect model.screenSize [ S.fillBlackA 0.1 ]
+                    , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
+                        [ viewGridMap model.gm
+                        , viewPlayer model.gm model.player
+                        ]
+                    ]
                 ]
             , Svg.g []
                 [ words "Dungeon Crawler"
