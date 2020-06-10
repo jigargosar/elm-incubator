@@ -1,4 +1,4 @@
-module AABB exposing (AABB, fromSize, grow, maxXY, minXY, shrink)
+module AABB exposing (AABB, fromSize, grow, maxXY, minXY, shift, shrink)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -18,21 +18,6 @@ fromSize size =
     AABB zeroXY size
 
 
-mapSize : (Float2 -> Float2) -> AABB -> AABB
-mapSize f (AABB xy size) =
-    AABB xy (f size)
-
-
-grow : Float2 -> AABB -> AABB
-grow dwh =
-    mapSize (\wh -> Tuple.add wh dwh)
-
-
-shrink : Float2 -> AABB -> AABB
-shrink dwh =
-    grow (Tuple.negate dwh)
-
-
 minXY : AABB -> Float2
 minXY (AABB xy wh) =
     wh
@@ -45,3 +30,28 @@ maxXY (AABB xy wh) =
     wh
         |> Tuple.scale 0.5
         |> Tuple.add xy
+
+
+mapSize : (Float2 -> Float2) -> AABB -> AABB
+mapSize f (AABB xy size) =
+    AABB xy (f size)
+
+
+mapXY : (Float2 -> Float2) -> AABB -> AABB
+mapXY f (AABB xy size) =
+    AABB (f xy) size
+
+
+shift : Float2 -> AABB -> AABB
+shift dxy =
+    mapXY (\xy -> Tuple.add xy dxy)
+
+
+grow : Float2 -> AABB -> AABB
+grow dwh =
+    mapSize (\wh -> Tuple.add wh dwh)
+
+
+shrink : Float2 -> AABB -> AABB
+shrink dwh =
+    grow (Tuple.negate dwh)
