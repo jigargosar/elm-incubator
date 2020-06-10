@@ -1,4 +1,4 @@
-module AABB exposing (AABB, fromSize, grow, shrink)
+module AABB exposing (AABB, fromSize, grow, maxXY, minXY, shrink)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -31,3 +31,17 @@ grow dwh =
 shrink : Float2 -> AABB -> AABB
 shrink dwh =
     grow (Tuple.negate dwh)
+
+
+minXY : AABB -> Float2
+minXY (AABB xy wh) =
+    wh
+        |> Tuple.scale -0.5
+        |> Tuple.add xy
+
+
+maxXY : AABB -> Float2
+maxXY (AABB xy wh) =
+    wh
+        |> Tuple.scale 0.5
+        |> Tuple.add xy
