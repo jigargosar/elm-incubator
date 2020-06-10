@@ -251,6 +251,7 @@ view model =
             [ rect model.screenSize [ S.fillBlackA 0.6 ]
             , Svg.g []
                 [ circle 128 [ S.fillWhite, S.strokeWidth 32, S.strokeBlack ]
+                , words "ViewPort Background" [ S.fillBlack ]
                 ]
             , Svg.g [ S.transforms [ S.translate (Tuple.negate model.camera.origin) ] ]
                 [ viewGridMap model.gm
