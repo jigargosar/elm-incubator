@@ -406,12 +406,6 @@ circle r xs =
     Svg.circle (S.r r :: xs) []
 
 
-
---square : Float -> List (Svg.Attribute msg) -> Svg.Svg msg
---square w =
---    rect (Tuple.repeat w)
-
-
 rect : Float2 -> List (Svg.Attribute msg) -> Svg.Svg msg
 rect ( w, h ) xs =
     Svg.rect
