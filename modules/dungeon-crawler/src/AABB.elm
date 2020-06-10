@@ -1,4 +1,4 @@
-module AABB exposing (AABB, fromSize, grow, maxXY, minXY, shift, shrink)
+module AABB exposing (AABB, fromSize, grow, maxXY, minXY, setXY, shift, shrink)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -45,6 +45,11 @@ mapXY f (AABB xy size) =
 shift : Float2 -> AABB -> AABB
 shift dxy =
     mapXY (\xy -> Tuple.add xy dxy)
+
+
+setXY : Float2 -> AABB -> AABB
+setXY xy =
+    mapXY (always xy)
 
 
 grow : Float2 -> AABB -> AABB
