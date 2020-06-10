@@ -300,13 +300,6 @@ gmBounds gm =
         |> AABB.shift gm.offset
 
 
-gmRightBottom : GridMap -> Float2
-gmRightBottom gm =
-    gmSize gm
-        |> Tuple.scale 0.5
-        |> Tuple.add gm.offset
-
-
 gmZerothCellCenter gm =
     let
         leftTop =
