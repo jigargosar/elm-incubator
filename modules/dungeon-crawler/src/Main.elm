@@ -111,32 +111,11 @@ focusLoc ss gm loc cam =
         locCord =
             gmToWorldCords gm loc
 
-        leftTop =
-            gmLeftTop gm
-
-        focusCord2 =
+        focusCord =
             gmBounds gm
                 |> AABB.shrink ss
                 |> AABB.grow (Tuple.scale 2 gm.cellSize)
                 |> AABB.clampPoint locCord
-
-        _ =
-            Debug.log "focusCord == focusCord2" (focusCord == focusCord2)
-
-        minCamCord =
-            Tuple.add leftTop (Tuple.halve ss)
-                |> Tuple.add (Tuple.negate gm.cellSize)
-
-        --|> always leftTop
-        maxCamCord =
-            Tuple.sub (gmRightBottom gm) (Tuple.halve ss)
-                |> Tuple.add gm.cellSize
-
-        --|> always (gmRightBottom gm)
-        focusCord =
-            locCord
-                |> Tuple.map2 atLeast minCamCord
-                |> Tuple.map2 atMost maxCamCord
     in
     camFocus focusCord cam
 
