@@ -1,7 +1,10 @@
 module Tuple.More exposing
-    ( add
+    ( abs
+    , add
     , andMap
     , any
+    , atLeast
+    , atMost
     , fromFloat
     , fromInt
     , halve
@@ -77,6 +80,21 @@ fromInt =
 map2 : (a -> b -> c) -> ( a, a ) -> ( b, b ) -> ( c, c )
 map2 f ( a1, a2 ) ( b1, b2 ) =
     ( f a1 b1, f a2 b2 )
+
+
+atLeast : ( comparable, comparable ) -> ( comparable, comparable ) -> ( comparable, comparable )
+atLeast =
+    map2 B.atLeast
+
+
+atMost : ( comparable, comparable ) -> ( comparable, comparable ) -> ( comparable, comparable )
+atMost =
+    map2 B.atMost
+
+
+abs : ( number, number ) -> ( number, number )
+abs =
+    map Basics.abs
 
 
 sub : ( number, number ) -> ( number, number ) -> ( number, number )

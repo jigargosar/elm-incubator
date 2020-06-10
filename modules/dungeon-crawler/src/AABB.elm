@@ -1,4 +1,4 @@
-module AABB exposing (AABB, fromSize, grow, maxXY, minXY, setXY, shift, shrink)
+module AABB exposing (AABB, clampPoint, fromSize, grow, maxXY, minXY, setXY, shift, shrink)
 
 import Basics.More exposing (..)
 import Tuple.More as Tuple
@@ -13,9 +13,22 @@ zeroXY =
     ( 0, 0 )
 
 
+fromPointSize : Float2 -> Float2 -> AABB
+fromPointSize xy size =
+    let
+        _ =
+            if Tuple.abs size /= size then
+                Debug.todo "-ve size"
+
+            else
+                1
+    in
+    AABB xy (Tuple.abs size)
+
+
 fromSize : Float2 -> AABB
 fromSize size =
-    AABB zeroXY size
+    fromPointSize zeroXY size
 
 
 minXY : AABB -> Float2
@@ -34,6 +47,14 @@ maxXY (AABB xy wh) =
 
 mapSize : (Float2 -> Float2) -> AABB -> AABB
 mapSize f (AABB xy size) =
+    let
+        _ =
+            if Tuple.abs (f size) /= f size then
+                Debug.todo "-ve size"
+
+            else
+                1
+    in
     AABB xy (f size)
 
 
@@ -60,3 +81,10 @@ grow dwh =
 shrink : Float2 -> AABB -> AABB
 shrink dwh =
     grow (Tuple.negate dwh)
+
+
+clampPoint : Float2 -> AABB -> Float2
+clampPoint pt aabb =
+    pt
+        |> Tuple.atLeast (minXY aabb)
+        |> Tuple.atMost (maxXY aabb)
