@@ -36,7 +36,7 @@ type alias GridMap =
     { dimension : Dimension
     , cellSize : Float2
     , dict : Dict Int2 Int
-    , offset : Float2
+    , origin : Float2
     }
 
 
@@ -45,7 +45,7 @@ initialGM =
     { dimension = Dimension.new 32 32
     , cellSize = twice 64
     , dict = Dict.empty
-    , offset = Tuple.zero
+    , origin = Tuple.zero
     }
 
 
@@ -290,7 +290,7 @@ gmBounds : GridMap -> AABB
 gmBounds gm =
     gmSize gm
         |> AABB.fromSize
-        |> AABB.shift gm.offset
+        |> AABB.shift gm.origin
 
 
 gmZerothCellCenter gm =
